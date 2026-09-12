@@ -219,8 +219,8 @@ body { padding-top: 0; }
   justify-content: center;
 }
 .nav-links a {
-  font-size: 17px;
-  font-weight: 400;
+  font-size: 15px;
+  font-weight: 500;
   color: #66788F;
   transition: color .2s;
   letter-spacing: -0.01em;
@@ -240,8 +240,8 @@ body { padding-top: 0; }
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 17px;
-  font-weight: 400;
+  font-size: 15px;
+  font-weight: 500;
   color: #66788F;
   transition: color .2s;
   white-space: nowrap;
@@ -254,11 +254,13 @@ body { padding-top: 0; }
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 46px;
-  height: 46px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: rgba(31,100,255,.12);
   margin-right: 2px;
+  border: none;
+  cursor: pointer;
 }
 .cart-badge {
   position: absolute;
@@ -279,7 +281,96 @@ body { padding-top: 0; }
   border: 1.5px solid #fff;
 }
 
-/* "Start Selling →" bright royal-blue pill */
+/* ── CART DROPDOWN (matches reference card) ── */
+.cart-wrap { position: relative; }
+.cart-dropdown {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  width: min(430px, 92vw);
+  background: rgba(255,255,255,.92);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  backdrop-filter: blur(20px) saturate(170%);
+  border: 1px solid rgba(255,255,255,.8);
+  border-radius: 22px;
+  box-shadow: 0 24px 70px rgba(15,28,77,.18);
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px) scale(.98);
+  transform-origin: top right;
+  transition: opacity .25s ease, transform .28s cubic-bezier(.22,1,.36,1), visibility 0s .3s;
+  z-index: 600;
+}
+.cart-wrap.open .cart-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  transition: opacity .25s ease, transform .3s cubic-bezier(.22,1,.36,1);
+}
+.cart-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid rgba(15,28,77,.07);
+}
+.cart-title { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; color: #0A172E; }
+.cart-count-pill {
+  background: linear-gradient(135deg, #1F64FF, #38AEEF);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+.cart-close {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: #66788F;
+  cursor: pointer;
+  font-size: 15px;
+}
+.cart-close:hover { background: rgba(31,100,255,.08); color: #0A172E; }
+.cart-items { max-height: 340px; overflow-y: auto; padding: 14px 14px 6px; display: flex; flex-direction: column; gap: 12px; }
+.cart-item {
+  display: flex;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid #E3ECFA;
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 6px 20px rgba(31,100,255,.07);
+}
+.cart-thumb { width: 64px; height: 64px; border-radius: 14px; overflow: hidden; flex-shrink: 0; background: #101418; }
+.cart-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cart-info { flex: 1; min-width: 0; }
+.cart-name { font-size: 13.5px; font-weight: 700; color: #0A172E; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cart-store { font-size: 12px; color: #8A97AB; margin-bottom: 8px; }
+.cart-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.qty-pill { display: inline-flex; align-items: center; gap: 12px; background: #F1F6FF; border-radius: 10px; padding: 5px 10px; }
+.qty-pill button { border: none; background: none; font-size: 15px; color: #0A172E; cursor: pointer; line-height: 1; padding: 0 2px; }
+.qty-pill span { font-size: 13px; font-weight: 700; }
+.cart-price { font-size: 14px; font-weight: 800; color: #1F64FF; }
+.cart-trash { border: none; background: none; color: #A5B1C2; cursor: pointer; align-self: flex-start; padding: 2px; }
+.cart-trash:hover { color: #E11D48; }
+.cart-foot { padding: 12px 16px 16px; background: rgba(255,255,255,.75); border-top: 1px solid rgba(15,28,77,.07); }
+.cart-subtotal { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.cart-subtotal span { color: #66788F; font-size: 14px; }
+.cart-subtotal strong { font-size: 20px; font-weight: 800; color: #0A172E; }
+.cart-escrow { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #1F64FF; border: 1px solid #D8E5FF; border-radius: 12px; padding: 9px 12px; margin-bottom: 12px; background: #F6FAFF; }
+.cart-actions { display: flex; gap: 10px; }
+.cart-btn-ghost { flex: 1; text-align: center; padding: 12px; border-radius: 12px; border: 1.5px solid #E2E8F5; color: #5B6B82; font-weight: 600; font-size: 14px; }
+.cart-btn-checkout { flex: 1; text-align: center; padding: 12px; border-radius: 12px; background: #1F64FF; color: #fff; font-weight: 700; font-size: 14px; }
+.cart-btn-checkout:hover { background: #184FE0; }
+@media (max-width: 600px) {
+  .cart-dropdown { position: fixed; top: var(--header-h); left: 12px; right: 12px; width: auto; }
+}
+
+/* "Start Selling" bright royal-blue pill */
 .btn-sell {
   display: inline-flex;
   align-items: center;
@@ -287,9 +378,9 @@ body { padding-top: 0; }
   background: #1F64FF;
   color: #fff;
   font-weight: 700;
-  font-size: 17px;
+  font-size: 15px;
   letter-spacing: -0.01em;
-  padding: 16px 32px;
+  padding: 12px 24px;
   border-radius: 999px;
   border: none;
   cursor: pointer;
@@ -311,10 +402,62 @@ body { padding-top: 0; }
   overflow: clip;
   height: 100vh;
   height: 100svh;
-  min-height: 640px;
+  min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   padding-top: var(--header-h);
+}
+/* animated aurora blobs drifting over the hero gradient */
+.hero-wrapper::before,
+.hero-wrapper::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-wrapper::before {
+  width: 560px; height: 560px;
+  left: -160px; top: -120px;
+  background: radial-gradient(circle, rgba(56,174,245,.35) 0%, rgba(56,174,245,0) 70%);
+  animation: heroDrift1 14s ease-in-out infinite alternate;
+}
+.hero-wrapper::after {
+  width: 620px; height: 620px;
+  right: -180px; bottom: -200px;
+  background: radial-gradient(circle, rgba(31,100,255,.30) 0%, rgba(31,100,255,0) 70%);
+  animation: heroDrift2 18s ease-in-out infinite alternate;
+}
+.hero-wrapper > * { position: relative; z-index: 1; }
+@keyframes heroDrift1 {
+  from { transform: translate(0,0) scale(1); }
+  to { transform: translate(90px,60px) scale(1.15); }
+}
+@keyframes heroDrift2 {
+  from { transform: translate(0,0) scale(1.1); }
+  to { transform: translate(-80px,-50px) scale(1); }
+}
+/* soft animated grid sheen */
+.hero-stars {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(31,100,255,.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(31,100,255,.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(70% 60% at 50% 40%, #000 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(70% 60% at 50% 40%, #000 30%, transparent 75%);
+  animation: heroGridPan 22s linear infinite;
+  pointer-events: none;
+}
+@keyframes heroGridPan {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 0 44px, 44px 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-wrapper::before, .hero-wrapper::after, .hero-stars { animation: none; }
 }
 .navbar-mini {
   background: rgba(255,255,255,.95);
@@ -377,7 +520,7 @@ body { padding-top: 0; }
 
 /* GIANT heading — fluid size so it always fits the viewport height */
 .hero-heading {
-  font-size: clamp(56px, 9.5vh + 2.5vw, 88px);
+  font-size: clamp(64px, 10.5vh + 3vw, 102px);
   font-weight: 900;
   line-height: .98;
   letter-spacing: -.045em;
@@ -395,12 +538,12 @@ body { padding-top: 0; }
   background-clip: text;
 }
 
-/* sub text */
+/* sub text — tight measure so it wraps into balanced lines */
 .hero-sub {
   font-size: clamp(15px, 1.6vh + .5vw, 21px);
   color: #7C8AA0;
   line-height: 1.55;
-  max-width: 880px;
+  max-width: 700px;
   margin: 0 auto 24px;
   font-weight: 400;
   letter-spacing: -.01em;

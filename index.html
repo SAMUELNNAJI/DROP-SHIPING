@@ -47,7 +47,54 @@
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
                 </button>
               </div>
-              <div class="cart-items" id="cartItemsPH"></div>
+              <div class="cart-items" id="cartItems">
+                <div class="cart-item">
+                  <div class="cart-thumb"><img src="img/headphones.jpg" alt="Headphones" /></div>
+                  <div class="cart-info">
+                    <p class="cart-name">Wireless Noise-Cancelling Headphones</p>
+                    <p class="cart-store">TechVault Store</p>
+                    <div class="cart-row">
+                      <div class="qty-pill"><button type="button">−</button><span>1</span><button type="button">+</button></div>
+                      <span class="cart-price">$89.99</span>
+                    </div>
+                  </div>
+                  <button class="cart-trash" aria-label="Remove">✕</button>
+                </div>
+                <div class="cart-item">
+                  <div class="cart-thumb"><img src="img/backpack.jpg" alt="Wallet" /></div>
+                  <div class="cart-info">
+                    <p class="cart-name">Minimalist Leather Wallet</p>
+                    <p class="cart-store">UrbanEdge Goods</p>
+                    <div class="cart-row">
+                      <div class="qty-pill"><button type="button">−</button><span>2</span><button type="button">+</button></div>
+                      <span class="cart-price">$69.98</span>
+                    </div>
+                  </div>
+                  <button class="cart-trash" aria-label="Remove">✕</button>
+                </div>
+                <div class="cart-item">
+                  <div class="cart-thumb"><img src="img/chair.jpg" alt="Tracker" /></div>
+                  <div class="cart-info">
+                    <p class="cart-name">Smart Fitness Tracker Band</p>
+                    <p class="cart-store">FitLife Pro</p>
+                    <div class="cart-row">
+                      <div class="qty-pill"><button type="button">−</button><span>1</span><button type="button">+</button></div>
+                      <span class="cart-price">$54.99</span>
+                    </div>
+                  </div>
+                  <button class="cart-trash" aria-label="Remove">✕</button>
+                </div>
+              </div>
+              <div class="cart-foot">
+                <div class="cart-subtotal"><span>Subtotal</span><strong>$214.96</strong></div>
+                <p class="cart-escrow">Escrow protected — payment held safely until delivery</p>
+                <div class="cart-actions">
+                  <a href="#" class="cart-btn-ghost">Continue Shopping</a>
+                  <a href="#" class="cart-btn-checkout">Checkout</a>
+                </div>
+              </div>
+            </div>
+          </div>
           <a href="#" class="nav-signin">
             <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#7B8798" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.8" r="3.6"/><path d="M4.8 19.8c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
             <span>Sign In</span>
@@ -1039,6 +1086,31 @@
       }
       onScroll();
       window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+
+    /* ── Cart dropdown ── */
+    (function () {
+      var wrap = document.querySelector('.cart-wrap');
+      var toggle = document.getElementById('cartToggle');
+      var dd = document.getElementById('cartDropdown');
+      var close = document.getElementById('cartClose');
+      if (!wrap || !toggle || !dd) return;
+      function setOpen(open) {
+        wrap.classList.toggle('open', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        dd.setAttribute('aria-hidden', open ? 'false' : 'true');
+      }
+      toggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        setOpen(!wrap.classList.contains('open'));
+      });
+      if (close) close.addEventListener('click', function (e) { e.stopPropagation(); setOpen(false); });
+      document.addEventListener('click', function (e) {
+        if (!wrap.contains(e.target)) setOpen(false);
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') setOpen(false);
+      });
     })();
 
     /* ── Mobile / tablet drawer menu ── */

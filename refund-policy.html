@@ -20,7 +20,7 @@
 <body class="ip">
 
 <!-- ══════════════════════ HERO WRAPPER ══════════════════════ -->
-<div class="hero-wrapper" style="background:linear-gradient(160deg,#0a0f1e 0%,#0f172a 40%,#111827 100%)">
+<div class="hero-wrapper">
   <div class="hero-stars" aria-hidden="true"></div>
 
   <!-- NAVBAR -->
@@ -702,6 +702,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if (target) {
       document.querySelectorAll('.nav-links a').forEach(function (a) {
         if (a.getAttribute('href') === target) { a.classList.add('active'); a.setAttribute('aria-current', 'page'); }
+      });
+      document.querySelectorAll('.mmenu-link').forEach(function (a) {
+        if (a.getAttribute('href') === target) { a.classList.add('mmenu-link--active'); }
       });
     }
   })();

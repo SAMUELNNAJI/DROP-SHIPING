@@ -530,6 +530,9 @@
         document.querySelectorAll('.nav-links a').forEach(function (a) {
           if (a.getAttribute('href') === target) { a.classList.add('active'); a.setAttribute('aria-current', 'page'); }
         });
+        document.querySelectorAll('.mmenu-link').forEach(function (a) {
+          if (a.getAttribute('href') === target) { a.classList.add('mmenu-link--active'); }
+        });
       }
     })();
   </script>

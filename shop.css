@@ -309,6 +309,29 @@
   box-shadow: 0 6px 18px rgba(31,100,255,.32);
 }
 
+
+.shop-quote {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 18px;
+  border-radius: 12px;
+  background: linear-gradient(92deg, #1F64FF, #3E8BFF);
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 6px 18px rgba(31,100,255,.28);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.shop-quote:hover { transform: translateY(-1px); box-shadow: 0 9px 24px rgba(31,100,255,.42); }
+.shop-quote svg { flex-shrink: 0 }
 .shop-sort { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
 .shop-count { font-size: 13px; font-weight: 700; color: #8A97AB; letter-spacing: .02em; }
 .shop-sort-label {
@@ -538,6 +561,26 @@
 .pc-price-row { margin: 2px 0 4px; }
 .pc-price { font-size: 18px; font-weight: 800; color: #0F2A66; letter-spacing: -0.02em; }
 .pc-old { font-size: 12.5px; font-weight: 600; color: #A5B1C2; text-decoration: line-through; margin-left: 7px; }
+.pc-equiv { display: inline-block; margin-left: 10px; vertical-align: middle; }
+.pc-equiv-sep { display: inline-block; width: 3px; height: 3px; background: #A5B1C2; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.pc-ngn {
+  display: inline-block;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #5B21B6;
+  letter-spacing: -.01em;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.pc-pi {
+  display: inline-block;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #7C3AED;
+  letter-spacing: -.01em;
+  vertical-align: middle;
+}
+.pc-pi::before { content: "\03C0 "; font-weight: 700; color: #7C3AED; }
 
 /* payment pills row */
 .pc-pills {

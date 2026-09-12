@@ -1,258 +1,553 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Refund Policy - DropHub | Money back, without the drama</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
-  <link rel="icon" type="image/png" href="Logo.png" />
-  <link rel="stylesheet" href="style.css" />
-  <style>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Refund Policy - DropHub | Money back, without the drama</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="Logo.png" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      /* ── Reset & Base ── */
+      .info-page .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 400;
+      }
+      body.ip {
+        padding-top: 0;
+      }
 
-.info-page { background: #f4f7fd; }
-.info-page .navbar { background: rgba(255,255,255,.92); -webkit-backdrop-filter: blur(18px) saturate(180%); backdrop-filter: blur(18px) saturate(180%); box-shadow: 0 1px 0 rgba(15,23,42,.06), 0 4px 20px rgba(15,23,42,.06); position: fixed; top: 0; left: 0; right: 0; z-index: 500; }
-body.ip { padding-top: 90px; }
-.ip-hero { position: relative; overflow: hidden; padding: 76px 24px 90px; text-align: center; background: radial-gradient(1100px 420px at 12% 8%, rgba(31,100,255,.16), transparent 62%), radial-gradient(900px 380px at 88% 18%, rgba(124,58,237,.12), transparent 62%), linear-gradient(180deg, #eef3fb 0%, #f8fafd 100%); }
-.ip-eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 7px 15px; border-radius: 999px; background: rgba(31,100,255,.09); color: #1F64FF; font-size: 13px; font-weight: 700; letter-spacing: .03em; }
-.ip-title { font-size: clamp(36px, 5.4vw + 12px, 62px); font-weight: 800; letter-spacing: -.02em; line-height: 1.06; color: #0F172A; margin: 20px auto 0; }
-.ip-title em { font-style: normal; background: linear-gradient(120deg, #1F64FF, #7C3AED); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.ip-sub { max-width: 660px; margin: 18px auto 0; font-size: clamp(16px, 1.6vw, 21px); color: #475569; line-height: 1.6; }
-.ip-hero-cta { display: inline-flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; justify-content: center; }
-.ip-pad { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
-.ip-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr)); gap: 22px; }
-.ip-card {
-  position: relative;
-  padding: 36px 32px;
-  border-radius: 28px;
-  background: rgba(255,255,255,.95);
-  border: 1px solid rgba(15,23,42,.06);
-  box-shadow: 
-    0 4px 6px -1px rgba(15,23,42,.04),
-    0 10px 30px -5px rgba(15,23,42,.08),
-    0 1px 3px rgba(15,23,42,.04),
-    inset 0 1px 0 rgba(255,255,255,.8);
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  transition: all .4s cubic-bezier(.25,.8,.25,1);
-  overflow: hidden;
-}
-.ip-card::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
-  background: linear-gradient(90deg, var(--card-accent, #1F64FF), var(--card-accent2, #7C3AED));
-  opacity: 0;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: opacity .4s ease, transform .4s cubic-bezier(.25,.8,.25,1);
-}
-.ip-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(160deg, rgba(255,255,255,.6) 0%, transparent 40%);
-  pointer-events: none;
-  opacity: 1;
-  transition: opacity .4s ease;
-}
-.ip-card:hover {
-  transform: translateY(-12px) scale(1.01);
-  box-shadow: 
-    0 20px 40px -12px rgba(15,23,42,.15),
-    0 30px 60px -15px rgba(15,23,42,.1),
-    0 8px 24px rgba(15,23,42,.08),
-    inset 0 1px 0 rgba(255,255,255,.9);
-}
-.ip-card:hover::after {
-  opacity: 1;
-  transform: scaleX(1);
-}
-.ip-card:hover::before {
-  background: linear-gradient(160deg, rgba(255,255,255,.8) 0%, rgba(255,255,255,.1) 50%);
-}
-.ip-card--glass {
-  background: rgba(255,255,255,.65) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(220%);
-  backdrop-filter: blur(28px) saturate(220%);
-  border: 1px solid rgba(255,255,255,.6) !important;
-  box-shadow: 
-    0 8px 32px rgba(15,23,42,.04),
-    0 2px 8px rgba(15,23,42,.03),
-    inset 0 1px 0 rgba(255,255,255,.7),
-    inset 0 -1px 0 rgba(15,23,42,.03);
-}
-.ip-card--glass::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(145deg, rgba(255,255,255,.5) 0%, rgba(255,255,255,.1) 40%, transparent 70%);
-  pointer-events: none;
-}
-.ip-card--glass:hover {
-  background: rgba(255,255,255,.75) !important;
-  box-shadow: 
-    0 20px 50px rgba(15,23,42,.08),
-    0 8px 20px rgba(15,23,42,.06),
-    inset 0 1px 0 rgba(255,255,255,.9),
-    inset 0 -1px 0 rgba(15,23,42,.02);
-}
-.ip-card--glass:hover {
-  background: rgba(255,255,255,.85) !important;
-  box-shadow: 0 20px 56px rgba(15,23,42,.1), inset 0 1px 0 rgba(255,255,255,.7);
-}
-.ip-ic {
-  display: grid;
-  place-items: center;
-  width: 60px;
-  height: 60px;
-  border-radius: 18px;
-  font-size: 26px;
-  flex: none;
-  position: relative;
-  overflow: hidden;
-}
-.ip-ic::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(135deg, rgba(255,255,255,.3), transparent);
-  pointer-events: none;
-}
-.ip-ic svg {
-  position: relative;
-  z-index: 1;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,.1));
-}
-.ip-card h3 {
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -.015em;
-  color: #0F172A;
-  line-height: 1.3;
-}
-.ip-card p {
-  font-size: 15px;
-  line-height: 1.6;
-  color: #4B5870;
-  margin: 0;
-}
-.ip-card a.ip-link {
-  font-weight: 700;
-  color: #1F64FF;
-  text-decoration: none;
-  font-size: 14px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: gap .2s ease, color .2s ease;
-}
-.ip-card a.ip-link:hover {
-  gap: 10px;
-  color: #0f4cd9;
-}
-.ip-card a.ip-link svg {
-  transition: transform .2s ease;
-}
-.ip-card a.ip-link:hover svg {
-  transform: translateX(3px);
-}
-.ip-sec-eyebrow { display: inline-block; padding: 5px 12px; border-radius: 999px; background: rgba(124,58,237,.09); color: #7C3AED; font-size: 12.5px; font-weight: 700; letter-spacing: .03em; }
-.ip-sec-title { font-size: clamp(26px, 3.4vw, 40px); font-weight: 800; letter-spacing: -.015em; color: #0F172A; margin: 18px 0 8px; }
-.ip-sec-sub { color: #55677E; font-size: 15.5px; line-height: 1.6; margin-bottom: 8px; }
-.ip-section { padding: 86px 24px 20px; }
-.ip-accordion summary { font-weight: 700; font-size: 17px; color: #0F172A; padding: 20px 18px; background: rgba(255,255,255,.92); border: 1px solid rgba(15,23,42,.1); border-radius: 14px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; }
-.ip-accordion summary::-webkit-details-marker { display: none; }
-.ip-accordion summary::after { content: "+"; font-size: 20px; color: #1F64FF; font-weight: 600; }
-.ip-accordion details[open] summary::after { content: "−"; }
-.ip-accordion .ip-a-body { padding: 18px 18px; color: #475569; font-size: 15px; line-height: 1.65; border: 1px solid rgba(15,23,42,.1); border-radius: 14px; background: #f6f9ff; margin-top: 8px; }
-.ip-cta-band { margin: 64px 0 0; border-radius: 26px; padding: 54px 32px; background: linear-gradient(135deg, #1F64FF, #4F6EF7 55%, #7C3AED); color: #fff; text-align: center; box-shadow: 0 24px 60px rgba(31,100,255,.22); }
-.ip-cta-band h2 { font-size: clamp(24px, 3vw, 36px); font-weight: 800; letter-spacing: -.015em; margin-bottom: 6px; }
-.ip-cta-band p { font-size: 16px; opacity: .85; max-width: 620px; margin: 0 auto 18px; }
-.ip-cta-band .btn-primary { background: #fff; color: #0F172A; }
-.ip-hero-cta .btn-primary, .ip-hero-cta .btn-ghost { padding: 15px 30px; font-size: 15.5px; }
-.ip-ruler { width: 64px; height: 4px; border-radius: 4px; margin: 0 auto; background: linear-gradient(90deg, #1F64FF, #7C3AED); }
-.ip-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; }
-.ip-stat { text-align: center; padding: 26px 18px; border-radius: 18px; background: rgba(31,100,255,.06); }
-.ip-stat b { display: block; font-size: 30px; font-weight: 800; letter-spacing: -.02em; color: #1F64FF; }
-.ip-stat span { font-size: 13.5px; color: #4B5870; }
-@media (max-width: 900px) { .ip-hero { padding: 56px 20px 68px; } .ip-section { padding: 60px 16px 12px; } .ip-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); } }
-@media (max-width: 600px) { body.ip { padding-top: 76px; } .ip-title { font-size: 33px; } .ip-sub { font-size: 16px; } .ip-hero-cta .btn-primary, .ip-hero-cta .btn-ghost { font-size: 14.5px; padding: 13px 22px; } }
+      /* ── Hero Section ── */
+      .rp-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 120px 24px 80px;
+        text-align: center;
+        background: linear-gradient(180deg, #f8faff 0%, #ffffff 100%);
+      }
+      .rp-hero::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background:
+          radial-gradient(
+            circle at 30% 20%,
+            rgba(31, 100, 255, 0.08) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 70% 80%,
+            rgba(124, 58, 237, 0.06) 0%,
+            transparent 50%
+          );
+        animation: heroFloat 20s ease-in-out infinite;
+      }
+      @keyframes heroFloat {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(-2%, -2%);
+        }
+      }
+      .rp-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .rp-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: rgba(31, 100, 255, 0.1);
+        color: #1f64ff;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        margin-bottom: 24px;
+      }
+      .rp-title {
+        font-size: clamp(40px, 6vw, 68px);
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        line-height: 1.05;
+        color: #0f172a;
+        margin: 0 0 20px;
+      }
+      .rp-title em {
+        font-style: normal;
+        background: linear-gradient(120deg, #1f64ff, #7c3aed);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .rp-sub {
+        font-size: clamp(16px, 1.8vw, 22px);
+        color: #475569;
+        line-height: 1.6;
+        margin: 0 auto 32px;
+        max-width: 600px;
+      }
+      .rp-hero-cta {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        justify-content: center;
+      }
 
-.ip-featured { display: grid; grid-template-columns: 42% 58%; gap: 24px; border-radius: 22px; overflow: hidden; background: rgba(255,255,255,.95); border: 1px solid rgba(15,23,42,.1); box-shadow: 0 18px 44px rgba(15,23,42,.1); }
-.ip-featured .ip-f-media { background: linear-gradient(135deg, #1F64FF, #4F6EF7 60%, #7C3AED); color: #fff; display: grid; place-items: center; min-height: 260px; }
-.ip-featured .ip-f-media span { font-size: 64px; }
-.ip-featured h3 { font-size: 24px; font-weight: 800; letter-spacing: -.015em; color: #0F172A; line-height: 1.25; margin: 0 0 12px; }
-.ip-featured p { color: #4B5870; font-size: 15px; line-height: 1.6; margin: 0 0 16px; }
-.ip-post { border-radius: 18px; overflow: hidden; background: #fff; border: 1px solid rgba(15,23,42,.1); box-shadow: 0 12px 30px rgba(15,23,42,.09); display: flex; flex-direction: column; }
-.ip-post .ip-p-cover { height: 130px; display: grid; place-items: center; font-size: 44px; }
-.ip-post .ip-info { padding: 16px 16px 20px; }
-.ip-post .ip-info h4 { font-size: 16px; font-weight: 800; color: #0F172A; line-height: 1.3; margin: 8px 0 6px; }
-.ip-post .ip-info p { color: #6B7A93; font-size: 13px; line-height: 1.5; }
-.ip-post .ip-meta { font-size: 11.5px; color: #93A0B5; margin-bottom: 8px; }
-.ip-tag { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; background: rgba(31,100,255,.09); color: #1F64FF; }
-.ip-timeline { border-left: 3px solid #1F64FF; padding: 6px 0 6px 20px; }
-.ip-tl-item { position: relative; margin-bottom: 26px; }
-.ip-tl-item::before { content: ""; position: absolute; left: -29px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: linear-gradient(135deg, #1F64FF, #7C3AED); }
-.ip-tl-item b { font-size: 17px; font-weight: 800; color: #1F64FF; }
-.ip-tl-item p { font-size: 14.5px; color: #475569; line-height: 1.55; margin-top: 4px; }
-.ip-team { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 22px; }
-.ip-tm { text-align: center; padding: 22px 16px; border-radius: 18px; background: rgba(255,255,255,.9); border: 1px solid rgba(15,23,42,.09); }
-.ip-avatar { display: grid; place-items: center; width: 74px; height: 74px; border-radius: 50%; color: #fff; font-size: 22px; font-weight: 800; margin: 0 auto 12px; box-shadow: 0 8px 20px rgba(31,100,255,.2); }
-.ip-tm b { display: block; font-size: 15.5px; font-weight: 800; color: #0F172A; }
-.ip-tm span { font-size: 12.5px; color: #6B7A93; }
-.ip-section-head { display: flex; flex-direction: column; gap: 8px; margin-bottom: 32px; }
-.ip-policy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
-.ip-stats--glass { background: rgba(255,255,255,.72); -webkit-backdrop-filter: blur(18px) saturate(180%); backdrop-filter: blur(18px) saturate(180%); border: 1px solid rgba(255,255,255,.45); border-radius: 22px; padding: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 24px; box-shadow: 0 8px 32px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.6); }
-.ip-stats--glass .ip-stat { text-align: center; }
-.ip-stats--glass .ip-stat b { display: block; font-size: 32px; font-weight: 800; background: linear-gradient(120deg, #1F64FF, #7C3AED); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 6px; }
-.ip-stats--glass .ip-stat span { font-size: 14px; color: #475569; line-height: 1.4; }
-.ip-timeline--glass { background: rgba(255,255,255,.72); -webkit-backdrop-filter: blur(18px) saturate(180%); backdrop-filter: blur(18px) saturate(180%); border: 1px solid rgba(255,255,255,.45); border-radius: 22px; padding: 32px; box-shadow: 0 8px 32px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.6); }
-.ip-timeline--glass .ip-tl-item { display: flex; gap: 20px; margin-bottom: 28px; }
-.ip-timeline--glass .ip-tl-item:last-child { margin-bottom: 0; }
-.ip-tl-dot-wrap { display: flex; flex-direction: column; align-items: center; width: 24px; flex-shrink: 0; }
-.ip-tl-dot { width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(135deg, #1F64FF, #7C3AED); margin-top: 4px; box-shadow: 0 0 0 4px rgba(31,100,255,.15); }
-.ip-tl-content b { font-size: 18px; font-weight: 800; color: #0F172A; }
-.ip-tl-content p { font-size: 15px; color: #475569; line-height: 1.6; margin-top: 6px; }
-.ip-cta-band--glass { background: linear-gradient(135deg, rgba(31,100,255,.9), rgba(124,58,237,.9)); -webkit-backdrop-filter: blur(18px) saturate(180%); backdrop-filter: blur(18px) saturate(180%); border-radius: 28px; padding: 56px 32px; text-align: center; color: #fff; box-shadow: 0 20px 60px rgba(31,100,255,.25); }
-.ip-cta-band--glass h2 { font-size: 32px; font-weight: 800; margin-bottom: 16px; }
-.ip-cta-band--glass p { font-size: 17px; opacity: .9; max-width: 600px; margin: 0 auto 28px; line-height: 1.6; }
-.ip-cta-actions { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; }
-.ip-cta-actions .btn-ghost { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.5); }
+      /* ── Stats Section ── */
+      .rp-stats-section {
+        padding: 60px 24px;
+        background: #ffffff;
+      }
+      .rp-stats-container {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .rp-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+      }
+      .rp-stat-card {
+        text-align: center;
+        padding: 32px 24px;
+        border-radius: 20px;
+        background: linear-gradient(
+          135deg,
+          rgba(31, 100, 255, 0.04) 0%,
+          rgba(124, 58, 237, 0.04) 100%
+        );
+        border: 1px solid rgba(31, 100, 255, 0.1);
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+      .rp-stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(31, 100, 255, 0.1);
+      }
+      .rp-stat-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        display: grid;
+        place-items: center;
+        margin: 0 auto 16px;
+        background: linear-gradient(135deg, #1f64ff, #7c3aed);
+        color: #fff;
+      }
+      .rp-stat-value {
+        font-size: 36px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        background: linear-gradient(120deg, #1f64ff, #7c3aed);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        margin-bottom: 8px;
+      }
+      .rp-stat-label {
+        font-size: 14px;
+        color: #475569;
+        line-height: 1.4;
+      }
 
-@media (max-width: 760px) {
-  .ip-featured { grid-template-columns: 1fr; }
-  .ip-policy-grid { grid-template-columns: 1fr; }
-  .ip-cta-band--glass { padding: 40px 24px; }
-  .ip-cta-band--glass h2 { font-size: 26px; }
-}
+      /* ── Policy Cards Section ── */
+      .rp-policy-section {
+        padding: 80px 24px;
+        background: linear-gradient(180deg, #ffffff 0%, #f8faff 100%);
+      }
+      .rp-policy-container {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .rp-section-header {
+        text-align: center;
+        margin-bottom: 48px;
+      }
+      .rp-section-eyebrow {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: rgba(124, 58, 237, 0.1);
+        color: #7c3aed;
+        font-size: 12.5px;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        margin-bottom: 16px;
+      }
+      .rp-section-title {
+        font-size: clamp(28px, 4vw, 44px);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: #0f172a;
+        margin: 0;
+      }
+      .rp-policy-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 24px;
+      }
+      .rp-policy-card {
+        position: relative;
+        padding: 36px 28px;
+        border-radius: 24px;
+        background: #ffffff;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+        transition:
+          transform 0.4s ease,
+          box-shadow 0.4s ease;
+        overflow: hidden;
+      }
+      .rp-policy-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--card-accent, #1f64ff),
+          var(--card-accent2, #7c3aed)
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .rp-policy-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+      }
+      .rp-policy-card:hover::before {
+        opacity: 1;
+      }
+      .rp-card-number {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 14px;
+        font-weight: 800;
+        color: #94a3b8;
+        background: #f1f5f9;
+        padding: 6px 12px;
+        border-radius: 8px;
+      }
+      .rp-card-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        margin-bottom: 20px;
+        background: linear-gradient(
+          135deg,
+          var(--card-bg-start, #e8f1ff),
+          var(--card-bg-end, #dbeafe)
+        );
+        color: var(--card-accent, #1f64ff);
+      }
+      .rp-policy-card h3 {
+        font-size: 20px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 12px;
+        letter-spacing: -0.01em;
+      }
+      .rp-policy-card p {
+        font-size: 15px;
+        line-height: 1.65;
+        color: #5a6b7e;
+        margin: 0;
+      }
 
-</style>
-</head>
-<body class="ip"><header class="navbar">
+      /* ── Timeline Section ── */
+      .rp-timeline-section {
+        padding: 80px 24px;
+        background: #ffffff;
+      }
+      .rp-timeline-container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .rp-timeline {
+        position: relative;
+        padding-left: 40px;
+      }
+      .rp-timeline::before {
+        content: "";
+        position: absolute;
+        left: 12px;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(180deg, #1f64ff, #7c3aed);
+        border-radius: 3px;
+      }
+      .rp-timeline-item {
+        position: relative;
+        margin-bottom: 32px;
+        padding: 24px 28px;
+        background: #f8fafc;
+        border-radius: 16px;
+        border: 1px solid rgba(15, 23, 42, 0.06);
+      }
+      .rp-timeline-item:last-child {
+        margin-bottom: 0;
+      }
+      .rp-timeline-item::before {
+        content: "";
+        position: absolute;
+        left: -36px;
+        top: 28px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #1f64ff, #7c3aed);
+        border: 3px solid #ffffff;
+        box-shadow: 0 0 0 4px rgba(31, 100, 255, 0.15);
+      }
+      .rp-timeline-item h4 {
+        font-size: 18px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 8px;
+      }
+      .rp-timeline-item p {
+        font-size: 15px;
+        color: #475569;
+        line-height: 1.6;
+        margin: 0;
+      }
+
+      /* ── CTA Section ── */
+      .rp-cta-section {
+        padding: 80px 24px;
+        background: linear-gradient(135deg, #1f64ff 0%, #7c3aed 100%);
+        text-align: center;
+        color: #ffffff;
+      }
+      .rp-cta-container {
+        max-width: 700px;
+        margin: 0 auto;
+      }
+      .rp-cta-section h2 {
+        font-size: clamp(28px, 4vw, 40px);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin: 0 0 16px;
+      }
+      .rp-cta-section p {
+        font-size: 17px;
+        opacity: 0.9;
+        line-height: 1.6;
+        margin: 0 0 32px;
+      }
+      .rp-cta-buttons {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        justify-content: center;
+      }
+      .rp-cta-buttons .btn-primary {
+        background: #ffffff;
+        color: #0f172a;
+      }
+      .rp-cta-buttons .btn-ghost {
+        background: transparent;
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      }
+
+      /* ── FAQ Section ── */
+      .rp-faq-section {
+        padding: 80px 24px;
+        background: #f8faff;
+      }
+      .rp-faq-container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .rp-faq-item {
+        margin-bottom: 12px;
+        border-radius: 16px;
+        background: #ffffff;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        overflow: hidden;
+      }
+      .rp-faq-item summary {
+        padding: 20px 24px;
+        font-size: 17px;
+        font-weight: 700;
+        color: #0f172a;
+        cursor: pointer;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: background 0.2s ease;
+      }
+      .rp-faq-item summary:hover {
+        background: #f8fafc;
+      }
+      .rp-faq-item summary::-webkit-details-marker {
+        display: none;
+      }
+      .rp-faq-item summary::after {
+        content: "+";
+        font-size: 22px;
+        color: #1f64ff;
+        font-weight: 600;
+        transition: transform 0.3s ease;
+      }
+      .rp-faq-item[open] summary::after {
+        content: "-";
+      }
+      .rp-faq-answer {
+        padding: 0 24px 20px;
+        color: #475569;
+        font-size: 15px;
+        line-height: 1.65;
+      }
+
+      /* ── Responsive ── */
+      @media (max-width: 768px) {
+        .rp-hero {
+          padding: 100px 20px 60px;
+        }
+        .rp-policy-grid {
+          grid-template-columns: 1fr;
+        }
+        .rp-timeline {
+          padding-left: 32px;
+        }
+        .rp-timeline-item::before {
+          left: -28px;
+          width: 14px;
+          height: 14px;
+        }
+        .rp-stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 480px) {
+        .rp-stats-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hero-wrapper">
+      <div class="hero-stars" aria-hidden="true"></div>
+      <header class="navbar">
+  <!-- NAVBAR (Identical to Homepage) -->
+  <header class="navbar">
     <div class="nav-inner">
-      <a href="index.html" class="logo" aria-label="DropHub - Shop Global, We Drop It For You"><img src="Logo.png" alt="DropHub" class="logo-img" /></a>      <nav class="nav-links">
-        <a href="index.html">Home</a>
+      <a href="index.html" class="logo" aria-label="DropHub — Shop Global · We Drop It For You">
+        <img src="Logo.png" alt="DropHub" class="logo-img" />
+      </a>
+      <nav class="nav-links">
         <a href="shop.html">Shop</a>
+        <a href="shop.html">Sell</a>
+        <a href="shop.html">Top Rated</a>
+        <a href="index.html#safe" class="scroll-link">How It Works</a>
         <a href="about.html">About</a>
         <a href="blog.html">Blog</a>
         <a href="contact.html">Contact</a>
       </nav>
       <div class="nav-actions">
+        <div class="cart-wrap">
+          <button class="nav-cart" id="cartToggle" aria-label="Open cart" aria-expanded="false" aria-controls="cartDropdown">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F0F0F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><circle cx="18" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><path d="M2.5 3.5h2l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.2L20.5 7H6"/></svg>
+            <span class="cart-badge">4</span>
+          </button>
+          <div class="cart-dropdown" id="cartDropdown" aria-hidden="true">
+            <div class="cart-head">
+              <div class="cart-title">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+                <span>Your Cart</span>
+                <span class="cart-count-pill">4 ITEMS</span>
+              </div>
+              <button class="cart-close" id="cartClose" aria-label="Close cart">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+              </button>
+            </div>
+            <div class="cart-items" id="cartItems">
+              <div class="cart-item">
+                <div class="cart-thumb"><img src="img/headphones.jpg" alt="Headphones" /></div>
+                <div class="cart-info">
+                  <p class="cart-name">Wireless Noise-Cancelling Headphones</p>
+                  <p class="cart-store">TechVault Store</p>
+                  <div class="cart-row">
+                    <div class="qty-pill"><button type="button">−</button><span>1</span><button type="button">+</button></div>
+                    <span class="cart-price">$89.99</span>
+                  </div>
+                </div>
+                <button class="cart-trash" aria-label="Remove">✕</button>
+              </div>
+              <div class="cart-item">
+                <div class="cart-thumb"><img src="img/backpack.jpg" alt="Wallet" /></div>
+                <div class="cart-info">
+                  <p class="cart-name">Minimalist Leather Wallet</p>
+                  <p class="cart-store">UrbanEdge Goods</p>
+                  <div class="cart-row">
+                    <div class="qty-pill"><button type="button">−</button><span>2</span><button type="button">+</button></div>
+                    <span class="cart-price">$69.98</span>
+                  </div>
+                </div>
+                <button class="cart-trash" aria-label="Remove">✕</button>
+              </div>
+              <div class="cart-item">
+                <div class="cart-thumb"><img src="img/chair.jpg" alt="Tracker" /></div>
+                <div class="cart-info">
+                  <p class="cart-name">Smart Fitness Tracker Band</p>
+                  <p class="cart-store">FitLife Pro</p>
+                  <div class="cart-row">
+                    <div class="qty-pill"><button type="button">−</button><span>1</span><button type="button">+</button></div>
+                    <span class="cart-price">$54.99</span>
+                  </div>
+                </div>
+                <button class="cart-trash" aria-label="Remove">✕</button>
+              </div>
+            </div>
+            <div class="cart-foot">
+              <div class="cart-subtotal"><span>Subtotal</span><strong>$214.96</strong></div>
+              <p class="cart-escrow">Escrow protected — payment held safely until delivery</p>
+              <div class="cart-actions">
+                <a href="shop.html" class="cart-btn-ghost">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                  Continue Shopping
+                </a>
+                <a href="shop.html" class="cart-btn-checkout">
+                  Checkout
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
         <a href="#" class="nav-signin">
           <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#7B8798" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.8" r="3.6"/><path d="M4.8 19.8c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
           <span>Sign In</span>
         </a>
-        <a href="shop.html" class="btn-sell">
-          <span>Start Selling</span>
+        <a href="shop.html" class="btn-sell"><span>Start Selling</span>
           <svg class="btn-sell-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
         </a>
         <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
@@ -264,258 +559,648 @@ body.ip { padding-top: 90px; }
         </button>
       </div>
     </div>
-  </header><div class="mmenu" id="mobileMenu" aria-hidden="true">
+  </header>
+
+  <!-- MOBILE / TABLET DRAWER MENU (Identical to Homepage) -->
+  <div class="mmenu" id="mobileMenu" aria-hidden="true">
     <div class="mmenu-backdrop" data-mmenu-close></div>
     <aside class="mmenu-panel" role="dialog" aria-modal="true" aria-label="Menu">
       <div class="mmenu-head">
-        <a href="index.html" class="logo" aria-label="DropHub - Shop Global, We Drop It For You"><img src="Logo.png" alt="DropHub" class="logo-img" /></a>
+        <a href="index.html" class="logo" aria-label="DropHub — Shop Global · We Drop It For You">
+          <img src="Logo.png" alt="DropHub" class="logo-img" />
+        </a>
         <button class="mmenu-close" aria-label="Close menu" data-mmenu-close>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
         </button>
       </div>
       <p class="mmenu-eyebrow">MENU</p>
       <nav class="mmenu-nav">
-          <a class="mmenu-link" href="shop.html" style="--i:0">
-            <span class="mmenu-num">01</span> Shop
-            <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
-          </a>
-          <a class="mmenu-link" href="shop.html" style="--i:1">
-            <span class="mmenu-num">02</span> Top Rated
-            <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
-          </a>
-          <a class="mmenu-link" href="index.html#safe" style="--i:2">
-            <span class="mmenu-num">03</span> How It Works
-            <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
-          </a>
-          <a class="mmenu-link" href="about.html" style="--i:3">
-            <span class="mmenu-num">04</span> About
-            <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
-          </a>
-          <a class="mmenu-link" href="blog.html" style="--i:4">
-            <span class="mmenu-num">05</span> Blog & News
-            <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
-          </a>
-          <a class="mmenu-link" href="contact.html" style="--i:5">
-            <span class="mmenu-num">06</span> Contact
-            <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
-          </a>
+        <a class="mmenu-link" href="shop.html" style="--i:0">
+          <span class="mmenu-num">01</span> Shop
+          <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+        <a class="mmenu-link" href="shop.html" style="--i:1">
+          <span class="mmenu-num">02</span> Sell
+          <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+        <a class="mmenu-link" href="shop.html" style="--i:2">
+          <span class="mmenu-num">03</span> Top Rated
+          <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+        <a class="mmenu-link" href="index.html#safe" style="--i:3">
+          <span class="mmenu-num">04</span> How It Works
+          <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+        <a class="mmenu-link mmenu-link--cart" href="shop.html" style="--i:4">
+          <span class="mmenu-num mmenu-num--cart">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+          </span> My Cart
+          <span class="mmenu-cart-count">4</span>
+          <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
       </nav>
-      <a href="shop.html" class="mmenu-cta">Start Selling <span class="link-tag">Free</span></a>
-      <a href="#" class="mmenu-signin">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.8" r="3.6"/><path d="M4.8 19.8c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
-        Sign In
-      </a>
+      <div class="mmenu-foot">
+        <a href="shop.html" class="mmenu-cta"><span>Start Selling</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+        <a href="#" class="mmenu-signin">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.8" r="3.6"/><path d="M4.8 19.8c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
+          <span>Sign In</span>
+        </a>
+        <p class="mmenu-assure">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l7.5 3v6c0 4.6-3.2 8-7.5 10-4.3-2-7.5-5.4-7.5-10v-6l7.5-3z"/><polyline points="9 12 11.2 14.2 15 10"/></svg>
+          Escrow-protected · Pi, PayPal &amp; Paystack
+        </p>
+      </div>
     </aside>
   </div>
-<section class="ip-hero">
-  <div class="ip-wrap">
-    <span class="ip-eyebrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3.5-7.1"/><polyline points="21 4 21 10 15 10"/></svg> Refund Policy</span>
-    <h1 class="ip-title">Money back, <em>without the drama</em></h1>
-    <p class="ip-sub">Every order travels under escrow. If it arrives broken, late or never &mdash; the refund process is a few clicks, not a legal saga.</p>
-    <div class="ip-hero-cta">
-      <a href="#refund-faq" class="btn-primary">Read the Policy</a>
-      <a href="help.html" class="btn-ghost">Start a Request</a>
-    </div>
-  </div>
-</section>
 
-<section class="ip-section">
-  <div class="ip-pad">
-    <span class="ip-sec-eyebrow">Guarantees at a glance</span>
-    <div class="ip-stats ip-stats--glass">
-      <div class="ip-stat"><b>3 days</b><span>Average refund speed</span></div>
-      <div class="ip-stat"><b>100%</b><span>Orders under escrow</span></div>
-      <div class="ip-stat"><b>2%</b><span>Chargeback rate &mdash; 8x below the norm</span></div>
-      <div class="ip-stat"><b>24/7</b><span>Dispute resolution desk</span></div>
+  <!-- Hero Section (Help Center Typography Style) -->
+  <section class="ip-hero">
+    <div class="ip-hero-content">
+      <span class="ip-eyebrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-3.5-7.1"/><polyline points="21 4 21 10 15 10"/></svg>
+        Refund Policy
+      </span>
+      <h1 class="ip-title">Money back, <em>without the drama.</em></h1>
+      <p class="ip-sub">Every order travels under escrow. If it arrives broken, late or never — the refund process is a few clicks, not a legal saga.</p>
+      <div class="ip-hero-cta" style="margin-top:28px;">
+        <a href="#refund-policy" class="btn-primary">Read the Policy</a>
+        <a href="help.html" class="btn-cta-ghost">Start a Request</a>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="ip-section" id="refund-faq">
-  <div class="ip-pad">
-    <div class="ip-section-head">
-      <span class="ip-sec-eyebrow">The policy</span>
-      <h2 class="ip-sec-title">Straightforward, line by line</h2>
-    </div>
-    <div class="ip-policy-grid">
-      <div class="ip-card ip-card--glass">
-        <span class="ip-ic" style="background:#e8f1ff"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
-        <h3>Eligibility</h3>
-        <p>If the item arrives damaged, materially different from the listing, never arrives within the delivery window, or if you request within 14 days of delivery &mdash; you are eligible. No forms printed, no threats needed.</p>
-      </div>
-      <div class="ip-card ip-card--glass">
-        <span class="ip-ic" style="background:#e9f3ff"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
-        <h3>Escrow clock</h3>
-        <p>Your payment sits in escrow until you confirm delivery. <b>14 days</b> to open a dispute after delivery, <b>7 days</b> after the expected window for &ldquo;late/no-show&rdquo; claims. The seller is never paid early.</p>
-      </div>
-      <div class="ip-card ip-card--glass">
-        <span class="ip-ic" style="background:#eef4ff"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
-        <h3>How to request</h3>
-        <p>Dashboard &rarr; Order &rarr; Get Help &rarr; choose a reason &rarr; add photos. That&rsquo;s it. Our Trust &amp; Safety team reviews within 24h and most decisions land in 48h.</p>
-      </div>
-      <div class="ip-card ip-card--glass">
-        <span class="ip-ic" style="background:#f3eeff"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></span>
-        <h3>Not refundable</h3>
-        <p>Custom/bespoke items already in production, digital goods already delivered, and orders where tracking shows confirmed delivery <i>and</i> your photos show no fault. Restocking is on us otherwise.</p>
-      </div>
-      <div class="ip-card ip-card--glass">
-        <span class="ip-ic" style="background:#e8f1ff"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
-        <h3>Partial refunds</h3>
-        <p>For minor issues &mdash; a chipped corner, a missing accessory &mdash; both sides can agree on a partial refund in escrow. You keep the item; the seller gets a fair portion. Fully handled in-platform.</p>
-      </div>
-      <div class="ip-card ip-card--glass">
-        <span class="ip-ic" style="background:#eef4ff"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
-        <h3>Chargebacks</h3>
-        <p>Escrow means we&rsquo;re on your side before your bank gets involved. If you do open a chargeback, we respond with the escrow evidence within 21 days and most cases close in your favour.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="ip-section">
-  <div class="ip-pad">
-    <div class="ip-section-head">
-      <span class="ip-sec-eyebrow">The refund journey</span>
-      <h2 class="ip-sec-title">How your money comes home</h2>
-    </div>
-    <div class="ip-timeline ip-timeline--glass">
-      <div class="ip-tl-item"><div class="ip-tl-dot-wrap"><span class="ip-tl-dot"></span></div><div class="ip-tl-content"><b>1 &middot; You open a case</b><p>Pick the order, pick the reason, add evidence. Two minutes, done.</p></div></div>
-      <div class="ip-tl-item"><div class="ip-tl-dot-wrap"><span class="ip-tl-dot"></span></div><div class="ip-tl-content"><b>2 &middot; Escrow freezes</b><p>The seller&rsquo;s payout pauses instantly. They see your case and can reply with evidence too.</p></div></div>
-      <div class="ip-tl-item"><div class="ip-tl-dot-wrap"><span class="ip-tl-dot"></span></div><div class="ip-tl-content"><b>3 &middot; We rule</b><p>Trust &amp; Safety reviews both sides within 24h&ndash;48h. Most cases rule in the buyer&rsquo;s favour automatically.</p></div></div>
-      <div class="ip-tl-item"><div class="ip-tl-dot-wrap"><span class="ip-tl-dot"></span></div><div class="ip-tl-content"><b>4 &middot; Money returns</b><p>Refunds land back on your Pi wallet instantly, or on PayPal/bank within 1&ndash;3 business days.</p></div></div>
-    </div>
-  </div>
-</section>
-
-<section class="ip-cta-band ip-cta-band--glass" style="margin:0 24px">
-  <h2>Ready to start a refund?</h2>
-  <p>Open a case in your dashboard, or talk to the Trust &amp; Safety team &mdash; they reply within 4 hours.</p>
-  <div class="ip-cta-actions">
-    <a class="btn-primary" href="contact.html">Talk to Us</a>
-    <a class="btn-ghost" href="help.html">Refund Guide &rarr;</a>
-  </div>
-</section><footer class="footer">
-  <div class="footer-glow-bar"></div>
-  <div class="footer-container">
-    <div class="footer-cols">
-      <div class="footer-col footer-col--brand">
-        <a href="index.html" class="footer-logo" aria-label="DropHub">
-          <img src="Logo.png" alt="DropHub" class="footer-logo-img" />
-        </a>
-        <p class="footer-brand-desc">The world's first dropshipping marketplace with Pi Network, PayPal &amp; Naira payments &mdash; built-in escrow on every order.</p>
-        <div class="footer-pay-chips">
-          <span class="pay-chip">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            Pi Network
-          </span>
-          <span class="pay-chip">PayPal</span>
-          <span class="pay-chip">Paystack</span>
+      <!-- Stats Section -->
+      <section class="rp-stats-section">
+        <div class="rp-stats-container">
+          <div class="rp-stats-grid">
+            <div class="rp-stat-card">
+              <div class="rp-stat-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+              </div>
+              <div class="rp-stat-value">3 days</div>
+              <div class="rp-stat-label">Average refund speed</div>
+            </div>
+            <div class="rp-stat-card">
+              <div class="rp-stat-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              </div>
+              <div class="rp-stat-value">100%</div>
+              <div class="rp-stat-label">Orders under escrow</div>
+            </div>
+            <div class="rp-stat-card">
+              <div class="rp-stat-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="12" y1="1" x2="12" y2="23" />
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                </svg>
+              </div>
+              <div class="rp-stat-value">2%</div>
+              <div class="rp-stat-label">
+                Chargeback rate — 8x below the norm
+              </div>
+            </div>
+            <div class="rp-stat-card">
+              <div class="rp-stat-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                </svg>
+              </div>
+              <div class="rp-stat-value">24/7</div>
+              <div class="rp-stat-label">Dispute resolution desk</div>
+            </div>
+          </div>
         </div>
-        <div class="footer-socials">
-          <a href="#" class="social-icon" aria-label="Twitter/X">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-          </a>
-          <a href="#" class="social-icon" aria-label="Instagram">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
-          </a>
-          <a href="#" class="social-icon" aria-label="YouTube">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.47a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/></svg>
-          </a>
-          <a href="#" class="social-icon" aria-label="Telegram">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
-          </a>
+      </section>
+
+      <!-- Policy Cards Section -->
+      <section class="rp-policy-section" id="refund-policy">
+        <div class="rp-policy-container">
+          <div class="rp-section-header">
+            <span class="rp-section-eyebrow">The policy</span>
+            <h2 class="rp-section-title">Straightforward, line by line</h2>
+          </div>
+          <div class="rp-policy-grid">
+            <div
+              class="rp-policy-card"
+              style="
+                --card-accent: #1f64ff;
+                --card-accent2: #4f46e5;
+                --card-bg-start: #e8f1ff;
+                --card-bg-end: #dbeafe;
+              "
+            >
+              <span class="rp-card-number">01</span>
+              <div class="rp-card-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+              </div>
+              <h3>Eligibility</h3>
+              <p>
+                If the item arrives damaged, materially different from the
+                listing, never arrives within the delivery window, or if you
+                request within 14 days of delivery — you are eligible. No forms
+                printed, no threats needed.
+              </p>
+            </div>
+            <div
+              class="rp-policy-card"
+              style="
+                --card-accent: #059669;
+                --card-accent2: #0891b2;
+                --card-bg-start: #ecfdf5;
+                --card-bg-end: #d1fae5;
+              "
+            >
+              <span class="rp-card-number">02</span>
+              <div class="rp-card-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="12" y1="1" x2="12" y2="23" />
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                </svg>
+              </div>
+              <h3>Escrow clock</h3>
+              <p>
+                Your payment sits in escrow until you confirm delivery.
+                <b>14 days</b>
+                to open a dispute after delivery,
+                <b>7 days</b>
+                after the expected window for "late/no-show" claims. The seller
+                is never paid early.
+              </p>
+            </div>
+            <div
+              class="rp-policy-card"
+              style="
+                --card-accent: #0891b2;
+                --card-accent2: #0284c7;
+                --card-bg-start: #ecfeff;
+                --card-bg-end: #cffafe;
+              "
+            >
+              <span class="rp-card-number">03</span>
+              <div class="rp-card-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <polyline points="22 4 12 14.01 9 11.01" />
+                </svg>
+              </div>
+              <h3>How to request</h3>
+              <p>
+                Dashboard → Order → Get Help → choose a reason → add photos.
+                That's it. Our Trust & Safety team reviews within 24h and most
+                decisions land in 48h.
+              </p>
+            </div>
+            <div
+              class="rp-policy-card"
+              style="
+                --card-accent: #dc2626;
+                --card-accent2: #b91c1c;
+                --card-bg-start: #fef2f2;
+                --card-bg-end: #fee2e2;
+              "
+            >
+              <span class="rp-card-number">04</span>
+              <div class="rp-card-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+                </svg>
+              </div>
+              <h3>Not refundable</h3>
+              <p>
+                Custom/bespoke items already in production, digital goods
+                already delivered, and orders where tracking shows confirmed
+                delivery
+                <i>and</i>
+                your photos show no fault. Restocking is on us otherwise.
+              </p>
+            </div>
+            <div
+              class="rp-policy-card"
+              style="
+                --card-accent: #7c3aed;
+                --card-accent2: #6d28d9;
+                --card-bg-start: #f5f3ff;
+                --card-bg-end: #ede9fe;
+              "
+            >
+              <span class="rp-card-number">05</span>
+              <div class="rp-card-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M2 12h20" />
+                  <path
+                    d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+                  />
+                </svg>
+              </div>
+              <h3>Partial refunds</h3>
+              <p>
+                For minor issues — a chipped corner, a missing accessory — both
+                sides can agree on a partial refund in escrow. You keep the
+                item; the seller gets a fair portion. Fully handled in-platform.
+              </p>
+            </div>
+            <div
+              class="rp-policy-card"
+              style="
+                --card-accent: #0f172a;
+                --card-accent2: #334155;
+                --card-bg-start: #f8fafc;
+                --card-bg-end: #e2e8f0;
+              "
+            >
+              <span class="rp-card-number">06</span>
+              <div class="rp-card-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              </div>
+              <h3>Chargebacks</h3>
+              <p>
+                Escrow means we're on your side before your bank gets involved.
+                If you do open a chargeback, we respond with the escrow evidence
+                within 21 days and most cases close in your favour.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Timeline Section -->
+      <section class="rp-timeline-section">
+        <div class="rp-timeline-container">
+          <div class="rp-section-header">
+            <span class="rp-section-eyebrow">The refund journey</span>
+            <h2 class="rp-section-title">How your money comes home</h2>
+          </div>
+          <div class="rp-timeline">
+            <div class="rp-timeline-item">
+              <h4>1 · You open a case</h4>
+              <p>
+                Pick the order, pick the reason, add evidence. Two minutes,
+                done.
+              </p>
+            </div>
+            <div class="rp-timeline-item">
+              <h4>2 · Escrow freezes</h4>
+              <p>
+                The seller's payout pauses instantly. They see your case and can
+                reply with evidence too.
+              </p>
+            </div>
+            <div class="rp-timeline-item">
+              <h4>3 · We rule</h4>
+              <p>
+                Trust & Safety reviews both sides within 24h–48h. Most cases
+                rule in the buyer's favour automatically.
+              </p>
+            </div>
+            <div class="rp-timeline-item">
+              <h4>4 · Money returns</h4>
+              <p>
+                Refunds land back on your Pi wallet instantly, or on PayPal/bank
+                within 1–3 business days.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ Section -->
+      <section class="rp-faq-section">
+        <div class="rp-faq-container">
+          <div class="rp-section-header">
+            <span class="rp-section-eyebrow">Questions?</span>
+            <h2 class="rp-section-title">Frequently asked</h2>
+          </div>
+          <div class="rp-faq-item">
+            <summary>How long do refunds take to process?</summary>
+            <div class="rp-faq-answer">
+              <p>
+                Most refunds are approved within 24–48 hours of opening a case.
+                Once approved, the money returns to your Pi wallet instantly, or
+                to your PayPal/bank account within 1–3 business days.
+              </p>
+            </div>
+          </div>
+          <div class="rp-faq-item">
+            <summary>Can I get a partial refund?</summary>
+            <div class="rp-faq-answer">
+              <p>
+                Yes! For minor issues like a chipped corner or missing
+                accessory, you and the seller can agree on a partial refund
+                directly in escrow. You keep the item and get a fair portion of
+                your money back.
+              </p>
+            </div>
+          </div>
+          <div class="rp-faq-item">
+            <summary>What if the seller disagrees with my claim?</summary>
+            <div class="rp-faq-answer">
+              <p>
+                Our Trust & Safety team reviews all evidence from both sides and
+                makes a fair decision. Most cases are resolved automatically in
+                the buyer's favour when the evidence is clear.
+              </p>
+            </div>
+          </div>
+          <div class="rp-faq-item">
+            <summary>Are there any items that can't be refunded?</summary>
+            <div class="rp-faq-answer">
+              <p>
+                Custom/bespoke items already in production, digital goods
+                already delivered, and orders where tracking shows confirmed
+                delivery with no fault shown in photos are not eligible for
+                refunds.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA Section -->
+      <section class="rp-cta-section">
+        <div class="rp-cta-container">
+          <h2>Ready to start a refund?</h2>
+          <p>
+            Open a case in your dashboard, or talk to the Trust & Safety team —
+            they reply within 4 hours.
+          </p>
+          <div class="rp-cta-buttons">
+            <a class="btn-primary" href="contact.html">Talk to Us</a>
+            <a class="btn-ghost" href="help.html">Refund Guide →</a>
+          </div>
+        </div>
+      </section>
+    </div>
+    <!-- /hero-wrapper -->
+
+    <footer class="footer">
+      <div class="footer-glow-bar"></div>
+      <div class="footer-container">
+        <!-- ── TOP: newsletter banner ── -->
+        <div class="footer-newsletter">
+          <div class="fnl-left">
+            <span class="fnl-badge">Newsletter</span>
+            <h3 class="fnl-heading">Stay ahead of the market.</h3>
+            <p class="fnl-sub">Get new product drops, seller tips and Pi Network updates — straight to your inbox.</p>
+          </div>
+          <form class="fnl-form" onsubmit="return false">
+            <input class="fnl-input" type="email" placeholder="Enter your email address" />
+            <button class="fnl-btn" type="submit">Subscribe
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </form>
+        </div>
+
+        <div class="footer-divider"></div>
+
+        <div class="footer-cols">
+          <div class="footer-col footer-col--brand">
+            <a href="index.html" class="footer-logo" aria-label="DropHub">
+              <img src="Logo.png" alt="DropHub" class="footer-logo-img" />
+            </a>
+            <p class="footer-brand-desc">The world's first dropshipping marketplace with Pi Network, PayPal &amp; Naira payments — built-in escrow on every order.</p>
+            <div class="footer-pay-chips">
+              <span class="pay-chip">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                Pi Network
+              </span>
+              <span class="pay-chip">PayPal</span>
+              <span class="pay-chip">Paystack</span>
+            </div>
+            <div class="footer-socials">
+              <a href="#" class="social-icon" aria-label="Twitter/X">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              </a>
+              <a href="#" class="social-icon" aria-label="Instagram">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+              </a>
+              <a href="#" class="social-icon" aria-label="YouTube">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.47a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/></svg>
+              </a>
+              <a href="#" class="social-icon" aria-label="Telegram">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+              </a>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h6 class="footer-col-title">Marketplace</h6>
+            <ul class="footer-link-list">
+              <li><a href="shop.html">Browse Products</a></li>
+              <li><a href="shop.html">Top Rated Items</a></li>
+              <li><a href="shop.html">New Arrivals</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h6 class="footer-col-title">Sellers</h6>
+            <ul class="footer-link-list">
+              <li><a href="#">Start Selling <span class="link-tag">Free</span></a></li>
+              <li><a href="#">Seller Dashboard</a></li>
+              <li><a href="#">Pricing &amp; Fees</a></li>
+              <li><a href="#">Payouts</a></li>
+              <li><a href="#">Analytics</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h6 class="footer-col-title">Payments</h6>
+            <ul class="footer-link-list">
+              <li><a href="#">Pi Network Wallet</a></li>
+              <li><a href="#">PayPal Checkout</a></li>
+              <li><a href="#">Naira (Paystack)</a></li>
+              <li><a href="index.html#safe">Escrow Protection</a></li>
+              <li><a href="refund-policy.html">Refund Policy</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h6 class="footer-col-title">Company</h6>
+            <ul class="footer-link-list">
+              <li><a href="about.html">About DropHub</a></li>
+              <li><a href="blog.html">Blog &amp; News</a></li>
+              <li><a href="help.html">Help Center</a></li>
+              <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-divider"></div>
+        <div class="footer-bottom">
+          <p class="footer-copy">© 2026 DropHub, Inc. All rights reserved.</p>
+          <div class="footer-badges">
+            <span class="footer-badge-item">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Escrow Protected
+            </span>
+            <span class="footer-badge-item">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              SSL Secured
+            </span>
+            <span class="footer-badge-item">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              Verified Sellers
+            </span>
+          </div>
+          <div class="footer-legal-links">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+            <a href="#">Cookies</a>
+            <a href="#">Trust &amp; Safety</a>
+          </div>
         </div>
       </div>
-      <div class="footer-col">
-        <h6 class="footer-col-title">Marketplace</h6>
-        <ul class="footer-link-list">
-          <li><a href="shop.html">Browse Products</a></li>
-          <li><a href="shop.html">Top Rated Items</a></li>
-          <li><a href="shop.html">New Arrivals</a></li>
-          <li><a href="help.html">Help Center</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h6 class="footer-col-title">Sellers</h6>
-        <ul class="footer-link-list">
-          <li><a href="shop.html">Start Selling <span class="link-tag">Free</span></a></li>
-          <li><a href="blog.html">Seller Stories</a></li>
-          <li><a href="about.html">Pricing &amp; Fees</a></li>
-          <li><a href="help.html">Payouts</a></li>
-          <li><a href="contact.html">Analytics</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h6 class="footer-col-title">Payments</h6>
-        <ul class="footer-link-list">
-          <li><a href="help.html">Pi Network Wallet</a></li>
-          <li><a href="help.html">PayPal Checkout</a></li>
-          <li><a href="help.html">Naira (Paystack)</a></li>
-          <li><a href="index.html#safe">Escrow Protection</a></li>
-          <li><a href="refund-policy.html">Refund Policy</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h6 class="footer-col-title">Company</h6>
-        <ul class="footer-link-list">
-          <li><a href="about.html">About DropHub</a></li>
-          <li><a href="blog.html">Blog &amp; News</a></li>
-          <li><a href="help.html">Help Center</a></li>
-          <li><a href="contact.html">Contact Us</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-divider"></div>
-    <div class="footer-bottom">
-      <p class="footer-copy">&copy; 2026 DropHub, Inc. All rights reserved.</p>
-      <div class="footer-legal-links">
-        <a href="refund-policy.html">Privacy</a>
-        <a href="refund-policy.html">Terms</a>
-        <a href="refund-policy.html">Cookies</a>
-        <a href="index.html#safe">Trust &amp; Safety</a>
-      </div>
-    </div>
-  </div>
-</footer>
-<script>
-(function () {
-  var burger = document.getElementById('navBurger');
-  var menu = document.getElementById('mobileMenu');
-  if (!burger || !menu) return;
-  function closeMenu() {
-    if (!menu.classList.contains('mmenu--open')) return;
-    menu.classList.remove('mmenu--open');
-    menu.setAttribute('aria-hidden', 'true');
-    burger.classList.remove('is-active');
-    burger.setAttribute('aria-expanded', 'false');
-    burger.setAttribute('aria-label', 'Open menu');
-    document.body.classList.remove('mmenu-locked');
-  }
-  burger.addEventListener('click', function () {
-    if (menu.classList.contains('mmenu--open')) { closeMenu(); return; }
-    menu.classList.add('mmenu--open');
-    menu.setAttribute('aria-hidden', 'false');
-    burger.classList.add('is-active');
-    burger.setAttribute('aria-expanded', 'true');
-    burger.setAttribute('aria-label', 'Close menu');
-    document.body.classList.add('mmenu-locked');
-  });
-  menu.querySelectorAll('[data-mmenu-close]').forEach(function (el) { el.addEventListener('click', closeMenu); });
-  menu.querySelectorAll('.mmenu-link, .mmenu-cta, .mmenu-signin').forEach(function (a) { a.addEventListener('click', closeMenu); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
-  window.addEventListener('resize', function () { if (window.innerWidth > 1100) closeMenu(); });
-})();
-</script>
+    </footer>
+    <script>
+      (function () {
+        var burger = document.getElementById("navBurger");
+        var menu = document.getElementById("mobileMenu");
+        if (!burger || !menu) return;
+        function closeMenu() {
+          if (!menu.classList.contains("mmenu--open")) return;
+          menu.classList.remove("mmenu--open");
+          menu.setAttribute("aria-hidden", "true");
+          burger.classList.remove("is-active");
+          burger.setAttribute("aria-expanded", "false");
+          burger.setAttribute("aria-label", "Open menu");
+          document.body.classList.remove("mmenu-locked");
+        }
+        burger.addEventListener("click", function () {
+          if (menu.classList.contains("mmenu--open")) {
+            closeMenu();
+            return;
+          }
+          menu.classList.add("mmenu--open");
+          menu.setAttribute("aria-hidden", "false");
+          burger.classList.add("is-active");
+          burger.setAttribute("aria-expanded", "true");
+          burger.setAttribute("aria-label", "Close menu");
+          document.body.classList.add("mmenu-locked");
+        });
+        menu.querySelectorAll("[data-mmenu-close]").forEach(function (el) {
+          el.addEventListener("click", closeMenu);
+        });
+        menu
+          .querySelectorAll(".mmenu-link, .mmenu-cta, .mmenu-signin")
+          .forEach(function (a) {
+            a.addEventListener("click", closeMenu);
+          });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") closeMenu();
+        });
+        window.addEventListener("resize", function () {
+          if (window.innerWidth > 1100) closeMenu();
+        });
+      })();
+    </script>
 
-  <script>
-    (function () {
-      var nav = document.querySelector('.navbar');
-      if (!nav) return;
-      function onScroll() { nav.classList.toggle('scrolled', window.scrollY > 12); }
-      window.addEventListener('scroll', onScroll, { passive: true });
-      onScroll();
-    })();
-  </script>
-
-</body>
+    <script>
+      (function () {
+        var nav = document.querySelector(".navbar");
+        if (!nav) return;
+        function onScroll() {
+          nav.classList.toggle("scrolled", window.scrollY > 12);
+        }
+        window.addEventListener("scroll", onScroll, { passive: true });
+        onScroll();
+      })();
+    </script>
+  </body>
 </html>

@@ -3,99 +3,116 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About - DropHub | The first Pi-first marketplace</title>
+  <title>About Us - DropHub | The first Pi-first marketplace</title>
+  <meta name="description" content="Learn about DropHub's mission to revolutionize global e-commerce with Pi Network crypto settlement, PayPal, and Naira escrow protection." />
+  <meta property="og:title" content="About DropHub - Global Drop Shipping Marketplace" />
+  <meta property="og:description" content="Discover how DropHub protects buyers and empowers merchants across 120+ countries." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="Logo.png" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet" />
   <link rel="icon" type="image/png" href="Logo.png" />
   <link rel="stylesheet" href="style.css" />
-  <style>
-
-.info-page { background: #f4f7fd; }
-.info-page .navbar { background: rgba(255,255,255,.92); -webkit-backdrop-filter: blur(18px) saturate(180%); backdrop-filter: blur(18px) saturate(180%); box-shadow: 0 1px 0 rgba(15,23,42,.06), 0 4px 20px rgba(15,23,42,.06); position: fixed; top: 0; left: 0; right: 0; z-index: 500; }
-body.ip { padding-top: 90px; }
-.ip-hero { position: relative; overflow: hidden; padding: 76px 24px 90px; text-align: center; background: radial-gradient(1100px 420px at 12% 8%, rgba(31,100,255,.16), transparent 62%), radial-gradient(900px 380px at 88% 18%, rgba(124,58,237,.12), transparent 62%), linear-gradient(180deg, #eef3fb 0%, #f8fafd 100%); }
-.ip-eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 7px 15px; border-radius: 999px; background: rgba(31,100,255,.09); color: #1F64FF; font-size: 13px; font-weight: 700; letter-spacing: .03em; }
-.ip-title { font-size: clamp(36px, 5.4vw + 12px, 62px); font-weight: 800; letter-spacing: -.02em; line-height: 1.06; color: #0F172A; margin: 20px auto 0; }
-.ip-title em { font-style: normal; background: linear-gradient(120deg, #1F64FF, #7C3AED); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.ip-sub { max-width: 660px; margin: 18px auto 0; font-size: clamp(16px, 1.6vw, 21px); color: #475569; line-height: 1.6; }
-.ip-hero-cta { display: inline-flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; justify-content: center; }
-.ip-pad { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
-.ip-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr)); gap: 22px; }
-.ip-card { position: relative; padding: 28px 24px; border-radius: 20px; background: rgba(255,255,255,.9); border: 1px solid rgba(15,23,42,.09); box-shadow: 0 14px 34px rgba(15,23,42,.09); display: flex; flex-direction: column; gap: 14px; transition: transform .25s ease, box-shadow .25s ease; }
-.ip-card:hover { transform: translateY(-5px); box-shadow: 0 22px 46px rgba(31,100,255,.18); }
-.ip-card--glass { background: rgba(255,255,255,.72) !important; -webkit-backdrop-filter: blur(18px) saturate(180%); backdrop-filter: blur(18px) saturate(180%); border: 1px solid rgba(255,255,255,.45) !important; box-shadow: 0 8px 32px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.6); }
-.ip-card--glass::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(135deg, rgba(255,255,255,.35) 0%, transparent 50%); pointer-events: none; }
-.ip-card--glass:hover { background: rgba(255,255,255,.82) !important; box-shadow: 0 16px 48px rgba(31,100,255,.2), inset 0 1px 0 rgba(255,255,255,.7); }
-.ip-ic { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 16px; font-size: 25px; flex: none; }
-.ip-card h3 { font-size: 19px; font-weight: 800; letter-spacing: -.01em; color: #0F172A; }
-.ip-card p { font-size: 14.5px; line-height: 1.55; color: #4B5870; }
-.ip-card a.ip-link { font-weight: 700; color: #1F64FF; text-decoration: none; font-size: 14px; }
-.ip-card a.ip-link:hover { text-decoration: underline; }
-.ip-sec-eyebrow { display: inline-block; padding: 5px 12px; border-radius: 999px; background: rgba(124,58,237,.09); color: #7C3AED; font-size: 12.5px; font-weight: 700; letter-spacing: .03em; }
-.ip-sec-title { font-size: clamp(26px, 3.4vw, 40px); font-weight: 800; letter-spacing: -.015em; color: #0F172A; margin: 18px 0 8px; }
-.ip-sec-sub { color: #55677E; font-size: 15.5px; line-height: 1.6; margin-bottom: 8px; }
-.ip-section { padding: 86px 24px 20px; }
-.ip-accordion summary { font-weight: 700; font-size: 17px; color: #0F172A; padding: 20px 18px; background: rgba(255,255,255,.92); border: 1px solid rgba(15,23,42,.1); border-radius: 14px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; }
-.ip-accordion summary::-webkit-details-marker { display: none; }
-.ip-accordion summary::after { content: "+"; font-size: 20px; color: #1F64FF; font-weight: 600; }
-.ip-accordion details[open] summary::after { content: "−"; }
-.ip-accordion .ip-a-body { padding: 18px 18px; color: #475569; font-size: 15px; line-height: 1.65; border: 1px solid rgba(15,23,42,.1); border-radius: 14px; background: #f6f9ff; margin-top: 8px; }
-.ip-cta-band { margin: 64px 0 0; border-radius: 26px; padding: 54px 32px; background: linear-gradient(135deg, #1F64FF, #4F6EF7 55%, #7C3AED); color: #fff; text-align: center; box-shadow: 0 24px 60px rgba(31,100,255,.22); }
-.ip-cta-band h2 { font-size: clamp(24px, 3vw, 36px); font-weight: 800; letter-spacing: -.015em; margin-bottom: 6px; }
-.ip-cta-band p { font-size: 16px; opacity: .85; max-width: 620px; margin: 0 auto 18px; }
-.ip-cta-band .btn-primary { background: #fff; color: #0F172A; }
-.ip-hero-cta .btn-primary, .ip-hero-cta .btn-ghost { padding: 15px 30px; font-size: 15.5px; }
-.ip-ruler { width: 64px; height: 4px; border-radius: 4px; margin: 0 auto; background: linear-gradient(90deg, #1F64FF, #7C3AED); }
-.ip-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; }
-.ip-stat { text-align: center; padding: 26px 18px; border-radius: 18px; background: rgba(31,100,255,.06); }
-.ip-stat b { display: block; font-size: 30px; font-weight: 800; letter-spacing: -.02em; color: #1F64FF; }
-.ip-stat span { font-size: 13.5px; color: #4B5870; }
-@media (max-width: 900px) { .ip-hero { padding: 56px 20px 68px; } .ip-section { padding: 60px 16px 12px; } .ip-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); } }
-@media (max-width: 600px) { body.ip { padding-top: 76px; } .ip-title { font-size: 33px; } .ip-sub { font-size: 16px; } .ip-hero-cta .btn-primary, .ip-hero-cta .btn-ghost { font-size: 14.5px; padding: 13px 22px; } }
-
-.ip-featured { display: grid; grid-template-columns: 42% 58%; gap: 24px; border-radius: 22px; overflow: hidden; background: rgba(255,255,255,.95); border: 1px solid rgba(15,23,42,.1); box-shadow: 0 18px 44px rgba(15,23,42,.1); }
-.ip-featured .ip-f-media { background: linear-gradient(135deg, #1F64FF, #4F6EF7 60%, #7C3AED); color: #fff; display: grid; place-items: center; min-height: 260px; }
-.ip-featured .ip-f-media span { font-size: 64px; }
-.ip-featured h3 { font-size: 24px; font-weight: 800; letter-spacing: -.015em; color: #0F172A; line-height: 1.25; margin: 0 0 12px; }
-.ip-featured p { color: #4B5870; font-size: 15px; line-height: 1.6; margin: 0 0 16px; }
-.ip-post { border-radius: 18px; overflow: hidden; background: #fff; border: 1px solid rgba(15,23,42,.1); box-shadow: 0 12px 30px rgba(15,23,42,.09); display: flex; flex-direction: column; }
-.ip-post .ip-p-cover { height: 130px; display: grid; place-items: center; font-size: 44px; }
-.ip-post .ip-info { padding: 16px 16px 20px; }
-.ip-post .ip-info h4 { font-size: 16px; font-weight: 800; color: #0F172A; line-height: 1.3; margin: 8px 0 6px; }
-.ip-post .ip-info p { color: #6B7A93; font-size: 13px; line-height: 1.5; }
-.ip-post .ip-meta { font-size: 11.5px; color: #93A0B5; margin-bottom: 8px; }
-.ip-tag { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; background: rgba(31,100,255,.09); color: #1F64FF; }
-.ip-timeline { border-left: 3px solid #1F64FF; padding: 6px 0 6px 20px; }
-.ip-tl-item { position: relative; margin-bottom: 26px; }
-.ip-tl-item::before { content: ""; position: absolute; left: -29px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: linear-gradient(135deg, #1F64FF, #7C3AED); }
-.ip-tl-item b { font-size: 17px; font-weight: 800; color: #1F64FF; }
-.ip-tl-item p { font-size: 14.5px; color: #475569; line-height: 1.55; margin-top: 4px; }
-.ip-team { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 22px; }
-.ip-tm { text-align: center; padding: 22px 16px; border-radius: 18px; background: rgba(255,255,255,.9); border: 1px solid rgba(15,23,42,.09); }
-.ip-avatar { display: grid; place-items: center; width: 74px; height: 74px; border-radius: 50%; color: #fff; font-size: 22px; font-weight: 800; margin: 0 auto 12px; box-shadow: 0 8px 20px rgba(31,100,255,.2); }
-.ip-tm b { display: block; font-size: 15.5px; font-weight: 800; color: #0F172A; }
-.ip-tm span { font-size: 12.5px; color: #6B7A93; }
-@media (max-width: 760px) { .ip-featured { grid-template-columns: 1fr; } }
-
-</style>
+  <link rel="stylesheet" href="pages.css" />
 </head>
-<body class="ip"><header class="navbar">
+<body class="ip">
+
+<div class="hero-wrapper">
+  <div class="hero-stars" aria-hidden="true"></div>
+
+  <!-- NAVBAR (Identical to Homepage) -->
+  <header class="navbar">
     <div class="nav-inner">
-      <a href="index.html" class="logo" aria-label="DropHub - Shop Global, We Drop It For You"><img src="Logo.png" alt="DropHub" class="logo-img" /></a>      <nav class="nav-links">
-        <a href="index.html">Home</a>
+      <a href="index.html" class="logo" aria-label="DropHub — Shop Global · We Drop It For You">
+        <img src="Logo.png" alt="DropHub" class="logo-img" />
+      </a>
+      <nav class="nav-links">
         <a href="shop.html">Shop</a>
-        <a href="about.html">About</a>
+        <a href="shop.html">Sell</a>
+        <a href="shop.html">Top Rated</a>
+        <a href="index.html#safe" class="scroll-link">How It Works</a>
+        <a href="about.html" class="active" aria-current="page">About</a>
         <a href="blog.html">Blog</a>
         <a href="contact.html">Contact</a>
       </nav>
       <div class="nav-actions">
+        <div class="cart-wrap">
+          <button class="nav-cart" id="cartToggle" aria-label="Open cart" aria-expanded="false" aria-controls="cartDropdown">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F0F0F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><circle cx="18" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><path d="M2.5 3.5h2l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.2L20.5 7H6"/></svg>
+            <span class="cart-badge">4</span>
+          </button>
+          <div class="cart-dropdown" id="cartDropdown" aria-hidden="true">
+            <div class="cart-head">
+              <div class="cart-title">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+                <span>Your Cart</span>
+                <span class="cart-count-pill">4 ITEMS</span>
+              </div>
+              <button class="cart-close" id="cartClose" aria-label="Close cart">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+              </button>
+            </div>
+            <div class="cart-items" id="cartItems">
+              <div class="cart-item">
+                <div class="cart-thumb"><img src="img/headphones.jpg" alt="Headphones" /></div>
+                <div class="cart-info">
+                  <p class="cart-name">Wireless Noise-Cancelling Headphones</p>
+                  <p class="cart-store">TechVault Store</p>
+                  <div class="cart-row">
+                    <div class="qty-pill"><button type="button">−</button><span>1</span><button type="button">+</button></div>
+                    <span class="cart-price">$89.99</span>
+                  </div>
+                </div>
+                <button class="cart-trash" aria-label="Remove">✕</button>
+              </div>
+              <div class="cart-item">
+                <div class="cart-thumb"><img src="img/backpack.jpg" alt="Wallet" /></div>
+                <div class="cart-info">
+                  <p class="cart-name">Minimalist Leather Wallet</p>
+                  <p class="cart-store">UrbanEdge Goods</p>
+                  <div class="cart-row">
+                    <div class="qty-pill"><button type="button">−</button><span>2</span><button type="button">+</button></div>
+                    <span class="cart-price">$69.98</span>
+                  </div>
+                </div>
+                <button class="cart-trash" aria-label="Remove">✕</button>
+              </div>
+              <div class="cart-item">
+                <div class="cart-thumb"><img src="img/chair.jpg" alt="Tracker" /></div>
+                <div class="cart-info">
+                  <p class="cart-name">Smart Fitness Tracker Band</p>
+                  <p class="cart-store">FitLife Pro</p>
+                  <div class="cart-row">
+                    <div class="qty-pill"><button type="button">−</button><span>1</span><button type="button">+</button></div>
+                    <span class="cart-price">$54.99</span>
+                  </div>
+                </div>
+                <button class="cart-trash" aria-label="Remove">✕</button>
+              </div>
+            </div>
+            <div class="cart-foot">
+              <div class="cart-subtotal"><span>Subtotal</span><strong>$214.96</strong></div>
+              <p class="cart-escrow">Escrow protected — payment held safely until delivery</p>
+              <div class="cart-actions">
+                <a href="shop.html" class="cart-btn-ghost">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                  Continue Shopping
+                </a>
+                <a href="shop.html" class="cart-btn-checkout">
+                  Checkout
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
         <a href="#" class="nav-signin">
           <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#7B8798" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.8" r="3.6"/><path d="M4.8 19.8c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
           <span>Sign In</span>
         </a>
-        <a href="shop.html" class="btn-sell">
-          <span>Start Selling</span>
+        <a href="shop.html" class="btn-sell"><span>Start Selling</span>
           <svg class="btn-sell-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
         </a>
         <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
@@ -107,130 +124,186 @@ body.ip { padding-top: 90px; }
         </button>
       </div>
     </div>
-  </header><div class="mmenu" id="mobileMenu" aria-hidden="true">
+  </header>
+
+  <!-- MOBILE / TABLET DRAWER MENU (Identical to Homepage) -->
+  <div class="mmenu" id="mobileMenu" aria-hidden="true">
     <div class="mmenu-backdrop" data-mmenu-close></div>
     <aside class="mmenu-panel" role="dialog" aria-modal="true" aria-label="Menu">
       <div class="mmenu-head">
-        <a href="index.html" class="logo" aria-label="DropHub - Shop Global, We Drop It For You"><img src="Logo.png" alt="DropHub" class="logo-img" /></a>
+        <a href="index.html" class="logo" aria-label="DropHub — Shop Global · We Drop It For You">
+          <img src="Logo.png" alt="DropHub" class="logo-img" />
+        </a>
         <button class="mmenu-close" aria-label="Close menu" data-mmenu-close>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
         </button>
       </div>
       <p class="mmenu-eyebrow">MENU</p>
       <nav class="mmenu-nav">
-          <a class="mmenu-link" href="shop.html" style="--i:0">
-            <span class="mmenu-num">01</span> Shop
-            <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
-          </a>
-          <a class="mmenu-link" href="shop.html" style="--i:1">
-            <span class="mmenu-num">02</span> Top Rated
-            <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
-          </a>
-          <a class="mmenu-link" href="index.html#safe" style="--i:2">
-            <span class="mmenu-num">03</span> How It Works
-            <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
-          </a>
-          <a class="mmenu-link" href="about.html" style="--i:3">
-            <span class="mmenu-num">04</span> About
-            <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
-          </a>
-          <a class="mmenu-link" href="blog.html" style="--i:4">
-            <span class="mmenu-num">05</span> Blog & News
-            <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
-          </a>
-          <a class="mmenu-link" href="contact.html" style="--i:5">
-            <span class="mmenu-num">06</span> Contact
-            <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
-          </a>
+        <a class="mmenu-link" href="shop.html" style="--i:0">
+          <span class="mmenu-num">01</span> Shop
+          <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+        <a class="mmenu-link" href="shop.html" style="--i:1">
+          <span class="mmenu-num">02</span> Sell
+          <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+        <a class="mmenu-link" href="shop.html" style="--i:2">
+          <span class="mmenu-num">03</span> Top Rated
+          <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+        <a class="mmenu-link" href="index.html#safe" style="--i:3">
+          <span class="mmenu-num">04</span> How It Works
+          <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+        <a class="mmenu-link mmenu-link--cart" href="shop.html" style="--i:4">
+          <span class="mmenu-num mmenu-num--cart">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+          </span> My Cart
+          <span class="mmenu-cart-count">4</span>
+          <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
       </nav>
-      <a href="shop.html" class="mmenu-cta">Start Selling <span class="link-tag">Free</span></a>
-      <a href="#" class="mmenu-signin">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.8" r="3.6"/><path d="M4.8 19.8c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
-        Sign In
-      </a>
+      <div class="mmenu-foot">
+        <a href="shop.html" class="mmenu-cta"><span>Start Selling</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+        <a href="#" class="mmenu-signin">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.8" r="3.6"/><path d="M4.8 19.8c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
+          <span>Sign In</span>
+        </a>
+        <p class="mmenu-assure">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l7.5 3v6c0 4.6-3.2 8-7.5 10-4.3-2-7.5-5.4-7.5-10v-6l7.5-3z"/><polyline points="9 12 11.2 14.2 15 10"/></svg>
+          Escrow-protected · Pi, PayPal &amp; Paystack
+        </p>
+      </div>
     </aside>
   </div>
-<section class="ip-hero">
-  <div class="ip-wrap">
-    <span class="ip-eyebrow">About DropHub</span>
-    <h1 class="ip-title">We&rsquo;re building the <em>first Pi-first marketplace</em></h1>
-    <p class="ip-sub">DropHub exists because cross-border dropshipping deserved a marketplace that is instant, trusted and fair &mdash; powered by Pi Network, PayPal and Naira.</p>
-    <div class="ip-hero-cta">
-      <a href="shop.html" class="btn-primary">Start Selling</a>
-      <a href="contact.html" class="btn-ghost">Say Hello</a>
+
+  <!-- Hero Section (Help Center Typography Style) -->
+  <section class="ip-hero">
+    <div class="ip-hero-content">
+      <span class="ip-eyebrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        Trusted by 50K+ sellers across 120+ countries
+      </span>
+      
+      <h1 class="ip-title">Shop Everything. <em>Pay Anything.</em></h1>
+      
+      <p class="ip-sub">The world's first dropshipping marketplace where you can pay with Pi Network, PayPal, or Naira — protected by built-in escrow on every order.</p>
+      
+      <div class="ip-hero-cta" style="margin-top:28px;">
+        <a href="shop.html" class="btn-primary">Start Selling Free</a>
+        <a href="contact.html" class="btn-cta-ghost">Get in Touch</a>
+      </div>
+    </div>
+  </section>
+</div><!-- /hero-wrapper -->
+
+<!-- STORY -->
+<section class="about-section">
+  <div class="about-pad">
+    <div class="about-story">
+      <div class="about-story-left">
+        <span class="ip-sec-eyebrow">Our Story</span>
+        <h2 class="about-story-title">Born from a simple idea:<br><span class="about-accent">pay your way</span></h2>
+        <p class="about-story-text">In 2022, sellers faced the same frustrating problems: slow international payments, buyers who didn't trust cross-border stores, and tools built for just one country. We knew there had to be a better way.</p>
+        <p class="about-story-text">So DropHub was built around three powerful payment options — <strong>Pi Network</strong> for instant, fee-free settlements, <strong>PayPal</strong> for trusted buyer protection, and <strong>Naira via Paystack</strong> for seamless local transactions. Every order protected by built-in escrow, so buyers and sellers can trade with confidence.</p>
+      </div>
+      <div class="about-story-right">
+        <div class="about-story-visual">
+          <div class="about-story-visual-inner">
+            <div class="about-payment-icons">
+              <div class="about-payment-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                <span>Pi Network</span>
+              </div>
+              <div class="about-payment-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                <span>PayPal</span>
+              </div>
+              <div class="about-payment-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span>Naira</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="ip-section">
-  <div class="ip-pad">
-    <span class="ip-sec-eyebrow">The story</span>
-    <h2 class="ip-sec-title">From a laptop in Lagos to a global market</h2>
-    <p class="ip-sec-sub">2022. Jaldeep and Amara were building stores for third-party sellers and watching the same three problems eat every margin: slow international payments, zero buyer trust and seller tools built for one country.</p>
-    <p class="ip-sec-sub">So they built the opposite. One marketplace where a shopper in Lagos can pay a seller in Shenzhen with Pi &mdash; settled in seconds &mdash; while escrow holds the money until the parcel actually arrives. Everything else (wallet, storefront, analytics, disputes) is built on top of that single promise.</p>
-    <div style="height:30px"></div>
-    <div class="ip-stats">
-      <div class="ip-stat"><b>120+</b><span>Countries served</span></div>
-      <div class="ip-stat"><b>50K+</b><span>Active sellers</span></div>
-      <div class="ip-stat"><b>2.4M</b><span>Orders protected by escrow</span></div>
-      <div class="ip-stat"><b>99.2%</b><span>Escrow cases resolved fairly</span></div>
+<!-- STATS -->
+<section class="about-section about-section--alt">
+  <div class="about-pad">
+    <div class="about-stats">
+      <div class="about-stat"><span class="about-stat-num">120+</span><span class="about-stat-label">Countries served</span></div>
+      <div class="about-stat"><span class="about-stat-num">50K+</span><span class="about-stat-label">Active sellers</span></div>
+      <div class="about-stat"><span class="about-stat-num">2.4M</span><span class="about-stat-label">Orders protected</span></div>
+      <div class="about-stat"><span class="about-stat-num">99.2%</span><span class="about-stat-label">Fair resolution rate</span></div>
     </div>
   </div>
 </section>
 
-<section class="ip-section">
-  <div class="ip-pad">
-    <span class="ip-sec-eyebrow">What we believe</span>
-    <h2 class="ip-sec-title">Four values, zero compromise</h2>
-    <div class="ip-grid">
-      <div class="ip-card ip-card--glass"><span class="ip-ic" style="background:#e8f1ff"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></span><h3>Trust by default</h3><p>Every single order runs through escrow. If it doesn&rsquo;t feel safe, it&rsquo;s not a DropHub transaction &mdash; full stop.</p></div>
-      <div class="ip-card ip-card--glass"><span class="ip-ic" style="background:#e9f3ff"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span><h3>Borderless commerce</h3><p>No currency walls, no 5-day payment rails. Pi moves money the way the internet moves parcels &mdash; instantly.</p></div>
-      <div class="ip-card ip-card--glass"><span class="ip-ic" style="background:#eef4ff"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span><h3>Radically fair</h3><p>1% marketplace fee at the top, and not a penny in hidden charges. Sellers keep what they earn.</p></div>
-      <div class="ip-card ip-card--glass"><span class="ip-ic" style="background:#f3eeff"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></span><h3>Craft over hype</h3><p>We ship boring, reliable software: boring checkout, boring tracking, boring refunds. Excitement is for the products.</p></div>
+<!-- VALUES -->
+<section class="about-section">
+  <div class="about-pad">
+    <div class="about-sec-head">
+      <span class="ip-sec-eyebrow">Why DropHub</span>
+      <h2 class="about-sec-title">Built for <span class="about-accent">modern commerce</span></h2>
     </div>
-  </div>
-</section>
-<section class="ip-section">
-  <div class="ip-pad">
-    <span class="ip-sec-eyebrow">Milestones</span>
-    <h2 class="ip-sec-title">The road so far</h2>
-    <div class="ip-timeline">
-      <div class="ip-tl-item"><span class="ip-tl-dot"></span><b>2022</b><p>Seed round closed. Two laptops, one bold theory about Pi payments and escrow.</p></div>
-      <div class="ip-tl-item"><span class="ip-tl-dot"></span><b>2023</b><p>First 10,000 orders protected. Escrow engine rebuilt to sub-second settlement on Pi Network.</p></div>
-      <div class="ip-tl-item"><span class="ip-tl-dot"></span><b>2024</b><p>PayPal &amp; Paystack rails added. Sellers in 40+ countries start withdrawing in their local currency.</p></div>
-      <div class="ip-tl-item"><span class="ip-tl-dot"></span><b>2025</b><p>Buyer Protection launches with instant dispute resolution and AI-assisted item checks.</p></div>
-      <div class="ip-tl-item"><span class="ip-tl-dot"></span><b>2026</b><p>2.4M orders protected. And we&rsquo;re only getting started.</p></div>
-    </div>
-  </div>
-</section>
-
-<section class="ip-section">
-  <div class="ip-pad">
-    <span class="ip-sec-eyebrow">The crew</span>
-    <h2 class="ip-sec-title">Humans behind the hub</h2>
-    <p class="ip-sec-sub">A remote-first team across Lagos, Nairobi, London and Singapore. Smaller than you&rsquo;d think, moving faster than you&rsquo;d believe.</p>
-    <div class="ip-team">
-      <div class="ip-tm"><span class="ip-avatar" style="background:linear-gradient(135deg,#1F64FF,#4F6EF7)">JD</span><b>Jaldeep Das</b><span>Co-founder &middot; CEO</span></div>
-      <div class="ip-tm"><span class="ip-avatar" style="background:linear-gradient(135deg,#7C3AED,#4F6EF7)">AM</span><b>Amara Obi</b><span>Co-founder &middot; Head of Trust</span></div>
-      <div class="ip-tm"><span class="ip-avatar" style="background:linear-gradient(135deg,#22c3e6,#1F64FF)">SM</span><b>Sana Mbeki</b><span>VP Engineering</span></div>
-      <div class="ip-tm"><span class="ip-avatar" style="background:linear-gradient(135deg,#F5A623,#FF6B6B)">KW</span><b>Kwame Yaw</b><span>Design Lead</span></div>
+    <div class="about-values">
+      <div class="about-value">
+        <div class="about-value-icon about-value-icon--blue"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+        <h3>Escrow Protection</h3>
+        <p>Every payment held securely until the buyer confirms delivery. Zero risk for both parties.</p>
+      </div>
+      <div class="about-value">
+        <div class="about-value-icon about-value-icon--purple"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+        <h3>3 Payment Options</h3>
+        <p>Pay with Pi Network, PayPal, or Naira. Give your buyers the freedom to pay their way.</p>
+      </div>
+      <div class="about-value">
+        <div class="about-value-icon about-value-icon--green"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        <h3>Instant Settlement</h3>
+        <p>Pi payments settle in seconds. PayPal and bank transfers within 1-2 business days.</p>
+      </div>
+      <div class="about-value">
+        <div class="about-value-icon about-value-icon--amber"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div>
+        <h3>1% Fair Fee</h3>
+        <p>The lowest marketplace fee in the industry. No hidden charges, ever.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="ip-cta-band" style="margin:0 24px">
-  <h2>Come build the future of commerce</h2>
-  <p>We hire slowly and carefully &mdash; and we can&rsquo;t wait to meet you.</p>
-  <a class="btn-primary" href="shop.html">Learn More</a>
-</section><footer class="footer">
+<!-- Footer (Identical to Homepage) -->
+<footer class="footer">
   <div class="footer-glow-bar"></div>
   <div class="footer-container">
+    <div class="footer-newsletter">
+      <div class="fnl-left">
+        <span class="fnl-badge">Newsletter</span>
+        <h3 class="fnl-heading">Stay ahead of the market.</h3>
+        <p class="fnl-sub">Get new product drops, seller tips and Pi Network updates — straight to your inbox.</p>
+      </div>
+      <form class="fnl-form" onsubmit="return false">
+        <input class="fnl-input" type="email" placeholder="Enter your email address" />
+        <button class="fnl-btn" type="submit">Subscribe
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </form>
+    </div>
+
+    <div class="footer-divider"></div>
+
     <div class="footer-cols">
       <div class="footer-col footer-col--brand">
         <a href="index.html" class="footer-logo" aria-label="DropHub">
           <img src="Logo.png" alt="DropHub" class="footer-logo-img" />
         </a>
-        <p class="footer-brand-desc">The world's first dropshipping marketplace with Pi Network, PayPal &amp; Naira payments &mdash; built-in escrow on every order.</p>
+        <p class="footer-brand-desc">The world's first dropshipping marketplace with Pi Network, PayPal &amp; Naira payments — built-in escrow on every order.</p>
         <div class="footer-pay-chips">
           <span class="pay-chip">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
@@ -240,18 +313,10 @@ body.ip { padding-top: 90px; }
           <span class="pay-chip">Paystack</span>
         </div>
         <div class="footer-socials">
-          <a href="#" class="social-icon" aria-label="Twitter/X">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-          </a>
-          <a href="#" class="social-icon" aria-label="Instagram">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
-          </a>
-          <a href="#" class="social-icon" aria-label="YouTube">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.47a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/></svg>
-          </a>
-          <a href="#" class="social-icon" aria-label="Telegram">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
-          </a>
+          <a href="#" class="social-icon" aria-label="Twitter/X"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="#" class="social-icon" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" class="social-icon" aria-label="YouTube"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.47a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" class="social-icon" aria-label="Telegram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg></a>
         </div>
       </div>
       <div class="footer-col">
@@ -260,14 +325,13 @@ body.ip { padding-top: 90px; }
           <li><a href="shop.html">Browse Products</a></li>
           <li><a href="shop.html">Top Rated Items</a></li>
           <li><a href="shop.html">New Arrivals</a></li>
-          <li><a href="help.html">Help Center</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h6 class="footer-col-title">Sellers</h6>
         <ul class="footer-link-list">
           <li><a href="shop.html">Start Selling <span class="link-tag">Free</span></a></li>
-          <li><a href="blog.html">Seller Stories</a></li>
+          <li><a href="shop.html">Seller Dashboard</a></li>
           <li><a href="about.html">Pricing &amp; Fees</a></li>
           <li><a href="help.html">Payouts</a></li>
           <li><a href="contact.html">Analytics</a></li>
@@ -293,9 +357,16 @@ body.ip { padding-top: 90px; }
         </ul>
       </div>
     </div>
+
     <div class="footer-divider"></div>
+
     <div class="footer-bottom">
-      <p class="footer-copy">&copy; 2026 DropHub, Inc. All rights reserved.</p>
+      <p class="footer-copy">© 2026 DropHub, Inc. All rights reserved.</p>
+      <div class="footer-badges">
+        <span class="footer-badge-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Escrow Protected</span>
+        <span class="footer-badge-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> SSL Secured</span>
+        <span class="footer-badge-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Verified Sellers</span>
+      </div>
       <div class="footer-legal-links">
         <a href="refund-policy.html">Privacy</a>
         <a href="refund-policy.html">Terms</a>
@@ -305,45 +376,71 @@ body.ip { padding-top: 90px; }
     </div>
   </div>
 </footer>
-<script>
-(function () {
-  var burger = document.getElementById('navBurger');
-  var menu = document.getElementById('mobileMenu');
-  if (!burger || !menu) return;
-  function closeMenu() {
-    if (!menu.classList.contains('mmenu--open')) return;
-    menu.classList.remove('mmenu--open');
-    menu.setAttribute('aria-hidden', 'true');
-    burger.classList.remove('is-active');
-    burger.setAttribute('aria-expanded', 'false');
-    burger.setAttribute('aria-label', 'Open menu');
-    document.body.classList.remove('mmenu-locked');
-  }
-  burger.addEventListener('click', function () {
-    if (menu.classList.contains('mmenu--open')) { closeMenu(); return; }
-    menu.classList.add('mmenu--open');
-    menu.setAttribute('aria-hidden', 'false');
-    burger.classList.add('is-active');
-    burger.setAttribute('aria-expanded', 'true');
-    burger.setAttribute('aria-label', 'Close menu');
-    document.body.classList.add('mmenu-locked');
-  });
-  menu.querySelectorAll('[data-mmenu-close]').forEach(function (el) { el.addEventListener('click', closeMenu); });
-  menu.querySelectorAll('.mmenu-link, .mmenu-cta, .mmenu-signin').forEach(function (a) { a.addEventListener('click', closeMenu); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
-  window.addEventListener('resize', function () { if (window.innerWidth > 1100) closeMenu(); });
-})();
-</script>
 
-  <script>
-    (function () {
-      var nav = document.querySelector('.navbar');
-      if (!nav) return;
-      function onScroll() { nav.classList.toggle('scrolled', window.scrollY > 12); }
-      window.addEventListener('scroll', onScroll, { passive: true });
-      onScroll();
-    })();
-  </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  
+  // Navigation Cart Dropdown & Mobile Menu Logic (Identical to Homepage)
+  (function () {
+    var burger = document.getElementById('navBurger');
+    var menu = document.getElementById('mobileMenu');
+    if (!burger || !menu) return;
+    function openMenu() {
+      menu.classList.add('mmenu--open');
+      menu.setAttribute('aria-hidden', 'false');
+      burger.classList.add('is-active');
+      burger.setAttribute('aria-expanded', 'true');
+      document.body.classList.add('mmenu-locked');
+    }
+    function closeMenu() {
+      if (!menu.classList.contains('mmenu--open')) return;
+      menu.classList.remove('mmenu--open');
+      menu.setAttribute('aria-hidden', 'true');
+      burger.classList.remove('is-active');
+      burger.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('mmenu-locked');
+    }
+    burger.addEventListener('click', function () {
+      if (menu.classList.contains('mmenu--open')) closeMenu(); else openMenu();
+    });
+    menu.querySelectorAll('[data-mmenu-close], .mmenu-link, .mmenu-cta, .mmenu-signin').forEach(el => {
+      el.addEventListener('click', closeMenu);
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+  })();
+
+  // Cart Dropdown Toggle
+  (function () {
+    var wrap = document.querySelector('.cart-wrap');
+    var toggle = document.getElementById('cartToggle');
+    var dd = document.getElementById('cartDropdown');
+    var close = document.getElementById('cartClose');
+    if (!wrap || !toggle || !dd) return;
+    function setOpen(open) {
+      wrap.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      dd.setAttribute('aria-hidden', open ? 'false' : 'true');
+    }
+    toggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!wrap.classList.contains('open'));
+    });
+    if (close) close.addEventListener('click', function (e) { e.stopPropagation(); setOpen(false); });
+    document.addEventListener('click', function (e) {
+      if (!wrap.contains(e.target)) setOpen(false);
+    });
+  })();
+
+  // Navbar Scroll state
+  const nav = document.querySelector('.navbar');
+  if (nav) {
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 12);
+    }, { passive: true });
+  }
+
+});
+</script>
 
 </body>
 </html>

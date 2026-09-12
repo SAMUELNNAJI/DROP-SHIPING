@@ -137,11 +137,34 @@ img { max-width: 100%; display: block; }
    NAVBAR — transparent over light-blue hero (matches screenshot)
 ═══════════════════════════════════════ */
 .navbar {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 200;
+  left: 0;
+  right: 0;
+  z-index: 400;
   background: transparent;
-  border-bottom: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-bottom: 1px solid transparent;
+  box-shadow: none;
+  transition: background .3s ease, box-shadow .3s ease, border-color .3s ease;
+}
+
+/* glass only once user scrolls */
+.navbar.scrolled {
+  background: rgba(255, 255, 255, 0.65);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  backdrop-filter: blur(18px) saturate(180%);
+  border-bottom-color: rgba(255, 255, 255, 0.65);
+  box-shadow: 0 8px 32px rgba(31, 100, 255, 0.10);
+}
+
+/* header overlays the hero gradient, so no offset needed */
+body { padding-top: 0; }
+
+/* solid fallback where backdrop-filter is unsupported */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .navbar.scrolled { background: rgba(245, 249, 255, 0.97); }
 }
 
 .nav-inner {
@@ -276,8 +299,8 @@ img { max-width: 100%; display: block; }
 .btn-sell:hover { background: #184FE0; transform: translateY(-1px); }
 .btn-sell-arrow { flex-shrink: 0; }
 
-/* hero-wrapper: pale blue gradient covering header + hero (matches screenshot)
-   — exactly 100vh so the whole hero is visible without scrolling */
+/* hero-wrapper: pale blue gradient for hero
+   (header is now fixed, so wrapper fills viewport minus header) */
 .hero-wrapper {
   background:
     radial-gradient(900px 420px at 15% 60%, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 60%),
@@ -290,6 +313,7 @@ img { max-width: 100%; display: block; }
   min-height: 640px;
   display: flex;
   flex-direction: column;
+  padding-top: 82px;
 }
 .navbar-mini {
   background: rgba(255,255,255,.95);

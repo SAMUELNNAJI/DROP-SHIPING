@@ -1016,6 +1016,17 @@
       }, 5000);
     })();
 
+    /* Sticky glass header: intensify frost once scrolled */
+    (function () {
+      var nav = document.querySelector('.navbar');
+      if (!nav) return;
+      function onScroll() {
+        nav.classList.toggle('scrolled', window.scrollY > 12);
+      }
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+
     /* ── Mobile / tablet drawer menu ── */
     (function () {
       var burger = document.getElementById('navBurger');

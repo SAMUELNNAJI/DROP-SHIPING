@@ -226,6 +226,23 @@ body { padding-top: 0; }
   letter-spacing: -0.01em;
 }
 .nav-links a:hover { color: #1F64FF; }
+.nav-links a.active,
+.nav-links a[aria-current="page"] {
+  color: #1F64FF;
+  font-weight: 700;
+  position: relative;
+}
+.nav-links a.active::after,
+.nav-links a[aria-current="page"]::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: #1F64FF;
+}
 .nav-links--sm a { font-size: 13px; }
 
 .nav-actions {
@@ -2347,7 +2364,23 @@ body.mmenu-locked { overflow: hidden; }
   .b-card--tall .b-media { position: relative; inset: auto; height: 230px; }
   .b-overlay { padding: 34px 16px 14px; }
   .b-card--wide { flex-direction: column; }
-  .b-media--chair { width: 100%; height: 220px; border-right: none; border-bottom: 1px solid #EEF2FA; }
+  .b-media--chair {
+    width: 100%;
+    height: 260px;
+    min-height: 260px;
+    border-right: none;
+    border-bottom: 1px solid #EEF2FA;
+    border-radius: 0;
+    flex-shrink: 0;
+  }
+  .b-media--chair img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    border-radius: 0;
+  }
   .b-card--cta { padding: 28px 20px; }
   .safe-badges     { grid-template-columns: 1fr; }
   /* footer: single column, all left-aligned */
@@ -2415,4 +2448,69 @@ body.mmenu-locked { overflow: hidden; }
     max-width: 100% !important;
     flex: 1 1 100% !important;
   }
+}
+
+/* ═══════════════════════════════════════════════════
+   SCROLL-REVEAL  &  COUNTER ANIMATIONS
+   ═══════════════════════════════════════════════════ */
+
+/* ── Base reveal state: elements start invisible & shifted ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity .65s cubic-bezier(.22,1,.36,1),
+              transform .65s cubic-bezier(.22,1,.36,1);
+}
+.reveal.reveal--left  { transform: translateX(-40px); }
+.reveal.reveal--right { transform: translateX(40px); }
+.reveal.reveal--scale { transform: scale(.92) translateY(20px); }
+.reveal.reveal--fade  { transform: none; }
+
+/* ── Visible state (added by JS) ── */
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Stagger delays for sibling groups ── */
+.reveal-group .reveal:nth-child(1) { transition-delay: 0s; }
+.reveal-group .reveal:nth-child(2) { transition-delay: .10s; }
+.reveal-group .reveal:nth-child(3) { transition-delay: .20s; }
+.reveal-group .reveal:nth-child(4) { transition-delay: .30s; }
+.reveal-group .reveal:nth-child(5) { transition-delay: .40s; }
+.reveal-group .reveal:nth-child(6) { transition-delay: .50s; }
+
+/* ── Counter number pulse when it finishes ── */
+@keyframes counterPop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+.counter-done { animation: counterPop .4s ease; }
+
+/* ── Section heading underline draw-in ── */
+.reveal-heading {
+  position: relative;
+  display: inline-block;
+}
+.reveal-heading::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -4px;
+  height: 3px;
+  width: 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #1a6fe8, #0fb8e8);
+  transition: width .7s cubic-bezier(.22,1,.36,1) .4s;
+}
+.reveal-heading.is-visible::after { width: 100%; }
+
+/* ── Respect reduced-motion preference ── */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-heading::after {
+    transition-duration: .01s !important;
+    transition-delay: 0s !important;
+  }
+  .counter-done { animation: none; }
 }

@@ -265,7 +265,7 @@
       </div>
 
       <!-- Heading -->
-      <h2 class="pay-heading">
+      <h2 class="pay-heading reveal-heading">
         Pay Your Way, <span class="pay-heading-blue">Every Time.</span>
       </h2>
 
@@ -574,7 +574,7 @@
         ESCROW PROTECTION
       </div>
 
-      <h2 class="section-heading">
+      <h2 class="section-heading reveal-heading">
         Your Money, <span class="text-blue">Always Safe.</span>
       </h2>
       <p class="section-sub">
@@ -683,7 +683,7 @@
             <svg width="12" height="12" viewBox="0 0 24 24" fill="#F5A623"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             TOP RATED PRODUCTS
           </p>
-          <h2 class="section-heading section-heading--left buyers-heading">
+          <h2 class="section-heading section-heading--left buyers-heading reveal-heading">
             Buyers Love <span class="text-blue">These.</span>
           </h2>
         </div>
@@ -830,7 +830,7 @@
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="6" fill="#fff" opacity=".3"/><circle cx="6" cy="6" r="3" fill="#fff"/></svg>
             For Sellers
           </p>
-          <h2 class="selling-heading">
+          <h2 class="selling-heading reveal-heading">
             Start Selling.<br/>
             <span class="text-yellow">Get Paid Fast.</span>
           </h2>
@@ -989,9 +989,9 @@
         <div class="footer-col">
           <h6 class="footer-col-title">Payments</h6>
           <ul class="footer-link-list">
-            <li><a href="index.html#pay-section">Pi Network Wallet</a></li>
-            <li><a href="index.html#pay-section?tab=paypal">PayPal Checkout</a></li>
-            <li><a href="index.html#pay-section?tab=paystack">Naira (Paystack)</a></li>
+            <li><a href="index.html?tab=pi#pay-section">Pi Network Wallet</a></li>
+            <li><a href="index.html?tab=paypal#pay-section">PayPal Checkout</a></li>
+            <li><a href="index.html?tab=paystack#pay-section">Naira (Paystack)</a></li>
             <li><a href="index.html#safe">Escrow Protection</a></li>
             <li><a href="refund-policy.html">Refund Policy</a></li>
           </ul>
@@ -1060,18 +1060,43 @@
 
     /* ── Deep-link tab activation: ?tab=pi|paypal|paystack ── */
     (function () {
-      const params = new URLSearchParams(window.location.search);
-      const tab = params.get('tab');
-      if (tab && ['pi', 'paypal', 'paystack'].includes(tab)) {
-        const btn = document.querySelector(`.pay-tab[onclick*="'${tab}'"]`);
+      function activatePayTab(tab) {
+        if (!tab || !['pi', 'paypal', 'paystack'].includes(tab)) return;
+        // find the matching tab button by its onclick attribute
+        var btn = document.querySelector('.pay-tab[onclick*="\'' + tab + '\'"]');
         if (btn) switchPayTab(btn, tab);
-        const section = document.getElementById('pay-section');
+        var section = document.getElementById('pay-section');
         if (section) {
           setTimeout(function () {
             section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }, 120);
+          }, 150);
         }
       }
+
+      // On page load — read ?tab= from query string
+      var params = new URLSearchParams(window.location.search);
+      var tabParam = params.get('tab');
+      if (tabParam) {
+        // Run after DOM is fully painted
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', function () { activatePayTab(tabParam); });
+        } else {
+          activatePayTab(tabParam);
+        }
+      }
+
+      // Also handle same-page footer clicks (index.html footer links)
+      document.addEventListener('click', function (e) {
+        var a = e.target.closest('a[href]');
+        if (!a) return;
+        var href = a.getAttribute('href');
+        // Match links like index.html?tab=X#pay-section OR ?tab=X#pay-section
+        var m = href.match(/[?&]tab=(pi|paypal|paystack)/);
+        if (m && href.includes('index.html')) {
+          e.preventDefault();
+          activatePayTab(m[1]);
+        }
+      });
     })();
 
     /* ── Escrow cards: green highlight jumps to the next card every 5s ── */
@@ -1254,5 +1279,135 @@
   </script>
 
   <script src="cart.js"></script>
+
+  <!-- ═══════════════════════════════════════
+       SCROLL-REVEAL + NUMBER COUNTER
+  ═══════════════════════════════════════ -->
+  <script>
+  (function () {
+    'use strict';
+
+    /* ── 1. Add reveal classes to elements ── */
+    var targets = [
+      /* sections fade up */
+      { sel: '.pay-section .pay-heading, .pay-section .section-sub, .pay-section .pay-tabs, .pay-section .pay-card-wrap', cls: 'reveal' },
+      { sel: '.safe-section .section-heading, .safe-section .section-sub',  cls: 'reveal' },
+      { sel: '.buyers-section .buyers-header',  cls: 'reveal' },
+      { sel: '.selling-section .selling-heading, .selling-section .selling-sub, .selling-section .selling-ctas', cls: 'reveal reveal--left' },
+      { sel: '.footer-newsletter', cls: 'reveal' },
+
+      /* staggered card groups */
+      { sel: '.safe-cards',          grp: true, childSel: '.safe-card',       cls: 'reveal' },
+      { sel: '.safe-badges',         grp: true, childSel: '.safe-badge',       cls: 'reveal' },
+      { sel: '.selling-features',    grp: true, childSel: '.selling-feature',  cls: 'reveal reveal--left' },
+      { sel: '.buyers-grid',         grp: true, childSel: '.b-card',           cls: 'reveal reveal--scale' },
+      { sel: '.footer-cols',         grp: true, childSel: '.footer-col',       cls: 'reveal' },
+
+      /* individual cards slide in from sides */
+      { sel: '.hero-float-left',  cls: 'reveal reveal--left' },
+      { sel: '.hero-float-right', cls: 'reveal reveal--right' },
+    ];
+
+    targets.forEach(function (t) {
+      if (t.grp) {
+        var parent = document.querySelector(t.sel);
+        if (!parent) return;
+        parent.classList.add('reveal-group');
+        parent.querySelectorAll(t.childSel).forEach(function (el) {
+          el.classList.add.apply(el.classList, t.cls.split(' ').filter(Boolean));
+        });
+      } else {
+        document.querySelectorAll(t.sel).forEach(function (el) {
+          el.classList.add.apply(el.classList, t.cls.split(' ').filter(Boolean));
+        });
+      }
+    });
+
+    /* ── 2. IntersectionObserver: fire is-visible ── */
+    var revealObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-visible');
+          revealObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(function (el) {
+      revealObs.observe(el);
+    });
+
+    /* also observe reveal-heading elements */
+    document.querySelectorAll('.reveal-heading').forEach(function (el) {
+      revealObs.observe(el);
+    });
+
+    /* ── 3. Number counter ── */
+    /* Parse "6k" → 6000, "$2.4M" → 2400000, "24h" → 24, "190+" → 190 */
+    function parseNum(raw) {
+      var s = raw.replace(/[$,+h\s]/g, '');
+      var m = 1;
+      if (/k$/i.test(s)) { m = 1000;    s = s.replace(/k$/i,''); }
+      if (/m$/i.test(s)) { m = 1000000; s = s.replace(/m$/i,''); }
+      return parseFloat(s) * m;
+    }
+    function formatNum(val, raw) {
+      /* reproduce the original suffix/prefix format */
+      var prefix = raw.match(/^[$£€₦]/) ? raw[0] : '';
+      var rawClean = raw.replace(/^[$£€₦]/, '');
+      var suffix = '';
+      if (/k\+?$/i.test(rawClean)) suffix = rawClean.match(/k\+?$/i)[0];
+      else if (/m\+?$/i.test(rawClean)) suffix = rawClean.match(/m\+?$/i)[0];
+      else if (/\+$/.test(raw)) suffix = '+';
+      else if (/h$/.test(raw)) suffix = 'h';
+
+      var num = Math.round(val);
+      /* keep one decimal for M */
+      if (/m/i.test(suffix)) num = Math.round(val / 100000) / 10;
+
+      return prefix + num + suffix;
+    }
+
+    function animateCounter(el) {
+      var raw    = el.dataset.target || el.textContent.trim();
+      var target = parseNum(raw);
+      if (!isFinite(target) || target === 0) return;
+
+      el.dataset.target = raw;          /* store original for re-reads */
+      var duration = 1600;              /* ms */
+      var start    = null;
+
+      function step(ts) {
+        if (!start) start = ts;
+        var progress = Math.min((ts - start) / duration, 1);
+        /* ease-out cubic */
+        var ease = 1 - Math.pow(1 - progress, 3);
+        el.textContent = formatNum(target * ease, raw);
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else {
+          el.textContent = raw;         /* snap to exact original string */
+          el.classList.add('counter-done');
+        }
+      }
+      requestAnimationFrame(step);
+    }
+
+    /* counter targets: .stat-num (selling section) */
+    var counterObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          animateCounter(e.target);
+          counterObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.stat-num').forEach(function (el) {
+      counterObs.observe(el);
+    });
+
+  }());
+  </script>
 </body>
 </html>

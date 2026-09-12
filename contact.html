@@ -316,7 +316,7 @@
            <span class="mmenu-num">04</span> Blog
            <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
          </a>
-         <a class="mmenu-link" href="contact.html" class="mmenu-link--active" style="--i:4">
+         <a class="mmenu-link mmenu-link--active" href="contact.html" style="--i:4">
            <span class="mmenu-num">05</span> Contact
            <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
          </a>
@@ -649,6 +649,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if (target) {
       document.querySelectorAll('.nav-links a').forEach(function (a) {
         if (a.getAttribute('href') === target) { a.classList.add('active'); a.setAttribute('aria-current', 'page'); }
+      });
+      document.querySelectorAll('.mmenu-link').forEach(function (a) {
+        if (a.getAttribute('href') === target) { a.classList.add('mmenu-link--active'); }
       });
     }
   })();

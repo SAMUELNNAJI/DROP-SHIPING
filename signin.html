@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — DropHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="Logo.png" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Page canvas ── */
+    .auth-page {
+      min-height: 100vh;
+      background: linear-gradient(160deg, #dde9f8 0%, #c8d9f2 45%, #bdd0ee 100%);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Navbar override: white glassy on light bg ── */
+    .auth-page .navbar {
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255,255,255,0.7);
+      box-shadow: 0 2px 16px rgba(31,100,255,.06);
+    }
+
+    /* ── Main area ── */
+    .auth-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px 60px;
+    }
+
+    /* ── Logo above card ── */
+    .auth-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+      text-decoration: none;
+    }
+    .auth-brand-name {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0d1f3c;
+      letter-spacing: -.02em;
+    }
+    .auth-brand-name span { color: #1F64FF; }
+    .auth-brand img { width: 36px; height: 36px; }
+
+    /* ── Card ── */
+    .auth-card {
+      width: 100%;
+      max-width: 360px;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 8px 48px rgba(15,28,77,.13);
+      border: 1px solid rgba(255,255,255,.9);
+      overflow: hidden;
+    }
+
+    /* ── Tabs ── */
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid #eef2fa;
+    }
+    .auth-tab {
+      padding: 18px 10px;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 600;
+      color: #9aa3b2;
+      cursor: pointer;
+      background: none;
+      border: none;
+      border-bottom: 2.5px solid transparent;
+      transition: color .2s, border-color .2s;
+      font-family: inherit;
+      letter-spacing: -.01em;
+    }
+    .auth-tab--active {
+      color: #1F64FF;
+      border-bottom-color: #1F64FF;
+    }
+    .auth-tab:not(.auth-tab--active):hover { color: #4b5870; }
+
+    /* ── Form body ── */
+    .auth-form-wrap { padding: 28px 28px 24px; }
+
+    .auth-form-panel { display: none; }
+    .auth-form-panel.is-active { display: block; }
+
+    /* ── Field ── */
+    .auth-field { margin-bottom: 18px; }
+    .auth-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 7px;
+    }
+    .auth-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .auth-input-icon {
+      position: absolute;
+      left: 13px;
+      color: #9aa3b2;
+      display: flex;
+      align-items: center;
+      pointer-events: none;
+    }
+    .auth-input {
+      width: 100%;
+      padding: 13px 14px 13px 38px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #0d1f3c;
+      background: #fafbff;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .auth-input::placeholder { color: #b0bac8; }
+    .auth-input:focus {
+      border-color: #1F64FF;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(31,100,255,.10);
+    }
+    /* password toggle */
+    .auth-pw-toggle {
+      position: absolute;
+      right: 13px;
+      background: none;
+      border: none;
+      color: #9aa3b2;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 0;
+      transition: color .2s;
+    }
+    .auth-pw-toggle:hover { color: #1F64FF; }
+
+    /* ── Forgot ── */
+    .auth-forgot-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: -8px;
+      margin-bottom: 20px;
+    }
+    .auth-forgot {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1F64FF;
+      text-decoration: none;
+      transition: opacity .2s;
+    }
+    .auth-forgot:hover { opacity: .75; }
+
+    /* ── Submit button ── */
+    .auth-submit {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #1F64FF 0%, #1a56db 100%);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: opacity .2s, transform .15s;
+      box-shadow: 0 6px 20px rgba(31,100,255,.30);
+      letter-spacing: -.01em;
+    }
+    .auth-submit:hover { opacity: .9; transform: translateY(-1px); }
+    .auth-submit:active { transform: scale(.98); }
+
+    /* ── Divider ── */
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0;
+      color: #b0bac8;
+      font-size: 12.5px;
+      font-weight: 500;
+    }
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e8edf5;
+    }
+
+    /* ── Social buttons ── */
+    .auth-socials {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .auth-social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 10px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      background: #fff;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #0d1f3c;
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color .2s, background .2s, transform .15s;
+    }
+    .auth-social-btn:hover {
+      border-color: #b0c4f5;
+      background: #f5f8ff;
+      transform: translateY(-1px);
+    }
+
+    /* ── Switch link ── */
+    .auth-switch {
+      text-align: center;
+      font-size: 13.5px;
+      color: #6b7a93;
+    }
+    .auth-switch a {
+      color: #1F64FF;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .auth-switch a:hover { text-decoration: underline; }
+
+    /* ── Security badges below card ── */
+    .auth-badges {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-top: 20px;
+    }
+    .auth-badge-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7a93;
+    }
+
+    /* ── Name row (signup only) ── */
+    .auth-name-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* ── Terms checkbox ── */
+    .auth-terms {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 18px;
+      font-size: 12.5px;
+      color: #6b7a93;
+      line-height: 1.5;
+    }
+    .auth-terms input[type="checkbox"] {
+      margin-top: 2px;
+      accent-color: #1F64FF;
+      flex-shrink: 0;
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+    }
+    .auth-terms a { color: #1F64FF; font-weight: 600; text-decoration: none; }
+    .auth-terms a:hover { text-decoration: underline; }
+
+    /* ── Simple footer ── */
+    .auth-footer {
+      background: #080f28;
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .auth-footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    .auth-footer-brand img { width: 22px; height: 22px; }
+    .auth-footer-brand-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .auth-footer-brand-name span { color: #4da6ff; }
+    .auth-footer-copy { font-size: 12px; color: rgba(255,255,255,.3); }
+    .auth-footer-links { display: flex; gap: 18px; }
+    .auth-footer-links a {
+      font-size: 12px;
+      color: rgba(255,255,255,.35);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .auth-footer-links a:hover { color: rgba(255,255,255,.75); }
+
+    @media (max-width: 480px) {
+      .auth-card { border-radius: 20px; }
+      .auth-form-wrap { padding: 22px 20px 20px; }
+      .auth-name-row { grid-template-columns: 1fr; }
+      .auth-footer { flex-direction: column; align-items: flex-start; gap: 8px; }
+    }
+  </style>
+</head>
+<body class="auth-page">
+
+  <!-- ── NAVBAR ── -->
+  <header class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="logo" aria-label="DropHub home">
+        <img src="Logo.png" alt="DropHub" class="logo-img" />
+      </a>
+      <nav class="nav-links">
+        <a href="shop.html">Shop</a>
+        <a href="#">Sell</a>
+        <a href="shop.html">Top Rated</a>
+        <a href="index.html#safe">How It Works</a>
+      </nav>
+      <div class="nav-actions">
+        <div class="cart-wrap">
+          <button class="nav-cart" id="cartToggle" aria-label="Open cart" aria-expanded="false" aria-controls="cartDropdown">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F0F0F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><circle cx="18" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><path d="M2.5 3.5h2l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.2L20.5 7H6"/></svg>
+            <span class="cart-badge">0</span>
+          </button>
+          <div class="cart-dropdown" id="cartDropdown" aria-hidden="true">
+            <div class="cart-head">
+              <div class="cart-title">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.7"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+                <span>Your Cart</span>
+                <span class="cart-count-pill">0 ITEMS</span>
+              </div>
+              <button class="cart-close" id="cartClose" aria-label="Close cart">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+              </button>
+            </div>
+            <div class="cart-items" id="cartItems"></div>
+            <div class="cart-foot">
+              <div class="cart-subtotal"><span>Subtotal</span><strong>$0.00</strong></div>
+              <p class="cart-escrow">Escrow protected — payment held safely until delivery</p>
+              <div class="cart-actions">
+                <a href="shop.html" class="cart-btn-ghost">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                  Continue Shopping
+                </a>
+                <a href="shop.html" class="cart-btn-checkout">Checkout <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a href="signin.html" class="nav-signin active" aria-current="page">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.8" r="3.6"/><path d="M4.8 19.8c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
+          <span>Sign In</span>
+        </a>
+        <a href="signin.html#signup" class="btn-sell">
+          <span>Start Selling</span>
+          <svg class="btn-sell-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── MAIN ── -->
+  <main class="auth-main">
+
+    <!-- Brand above card -->
+    <a href="index.html" class="auth-brand">
+      <img src="Logo.png" alt="DropHub" />
+      <span class="auth-brand-name">Drop<span>Hub</span></span>
+    </a>
+
+    <!-- Auth card -->
+    <div class="auth-card" role="main">
+
+      <!-- Tabs -->
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab auth-tab--active" role="tab" aria-selected="true"
+                aria-controls="panel-signin" id="tab-signin"
+                onclick="switchTab('signin')">Sign In</button>
+        <button class="auth-tab" role="tab" aria-selected="false"
+                aria-controls="panel-signup" id="tab-signup"
+                onclick="switchTab('signup')">Create Account</button>
+      </div>
+
+      <div class="auth-form-wrap">
+
+        <!-- ══ SIGN IN PANEL ══ -->
+        <div class="auth-form-panel is-active" id="panel-signin" role="tabpanel" aria-labelledby="tab-signin">
+          <form novalidate onsubmit="handleSignIn(event)">
+
+            <div class="auth-field">
+              <label class="auth-label" for="si-email">Email Address</label>
+              <div class="auth-input-wrap">
+                <span class="auth-input-icon">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </span>
+                <input class="auth-input" type="email" id="si-email" name="email"
+                       placeholder="ngozi.adeyemi@gmail.com"
+                       autocomplete="email" required />
+              </div>
+            </div>
+
+            <div class="auth-field">
+              <label class="auth-label" for="si-password">Password</label>
+              <div class="auth-input-wrap">
+                <span class="auth-input-icon">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </span>
+                <input class="auth-input" type="password" id="si-password" name="password"
+                       placeholder="••••••••••••"
+                       autocomplete="current-password" required />
+                <button type="button" class="auth-pw-toggle" onclick="togglePw('si-password', this)" aria-label="Show password">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="auth-forgot-row">
+              <a href="#" class="auth-forgot">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="auth-submit">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Sign In to DropHub
+            </button>
+          </form>
+
+          <div class="auth-divider">or continue with</div>
+
+          <div class="auth-socials">
+            <button class="auth-social-btn" type="button">
+              <!-- Google G -->
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              Google
+            </button>
+            <button class="auth-social-btn" type="button">
+              <!-- Apple  -->
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+              Apple
+            </button>
+          </div>
+
+          <p class="auth-switch">Don't have an account? <a href="#" onclick="switchTab('signup');return false;">Sign up free</a></p>
+        </div><!-- /signin panel -->
+
+        <!-- ══ SIGN UP PANEL ══ -->
+        <div class="auth-form-panel" id="panel-signup" role="tabpanel" aria-labelledby="tab-signup">
+          <form novalidate onsubmit="handleSignUp(event)">
+
+            <div class="auth-name-row">
+              <div class="auth-field">
+                <label class="auth-label" for="su-fname">First Name</label>
+                <div class="auth-input-wrap">
+                  <span class="auth-input-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="7" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>
+                  </span>
+                  <input class="auth-input" type="text" id="su-fname" name="fname"
+                         placeholder="Ngozi" autocomplete="given-name" required />
+                </div>
+              </div>
+              <div class="auth-field">
+                <label class="auth-label" for="su-lname">Last Name</label>
+                <div class="auth-input-wrap">
+                  <span class="auth-input-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="7" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>
+                  </span>
+                  <input class="auth-input" type="text" id="su-lname" name="lname"
+                         placeholder="Adeyemi" autocomplete="family-name" required />
+                </div>
+              </div>
+            </div>
+
+            <div class="auth-field">
+              <label class="auth-label" for="su-email">Email Address</label>
+              <div class="auth-input-wrap">
+                <span class="auth-input-icon">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </span>
+                <input class="auth-input" type="email" id="su-email" name="email"
+                       placeholder="ngozi@example.com"
+                       autocomplete="email" required />
+              </div>
+            </div>
+
+            <div class="auth-field">
+              <label class="auth-label" for="su-password">Password</label>
+              <div class="auth-input-wrap">
+                <span class="auth-input-icon">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </span>
+                <input class="auth-input" type="password" id="su-password" name="password"
+                       placeholder="Minimum 8 characters"
+                       autocomplete="new-password" required minlength="8" />
+                <button type="button" class="auth-pw-toggle" onclick="togglePw('su-password', this)" aria-label="Show password">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- password strength bar -->
+            <div class="auth-field" style="margin-top:-10px;margin-bottom:16px;">
+              <div id="pw-strength-bar" style="height:3px;border-radius:2px;background:#e2e8f0;transition:all .3s;">
+                <div id="pw-strength-fill" style="height:100%;border-radius:2px;width:0%;transition:width .3s,background .3s;"></div>
+              </div>
+              <p id="pw-strength-label" style="font-size:11px;color:#9aa3b2;margin-top:4px;"></p>
+            </div>
+
+            <div class="auth-terms">
+              <input type="checkbox" id="su-terms" name="terms" required />
+              <label for="su-terms">
+                I agree to DropHub's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. I understand my payments are escrow-protected.
+              </label>
+            </div>
+
+            <button type="submit" class="auth-submit">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+              Create Free Account
+            </button>
+          </form>
+
+          <div class="auth-divider">or sign up with</div>
+
+          <div class="auth-socials">
+            <button class="auth-social-btn" type="button">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              Google
+            </button>
+            <button class="auth-social-btn" type="button">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+              Apple
+            </button>
+          </div>
+
+          <p class="auth-switch">Already have an account? <a href="#" onclick="switchTab('signin');return false;">Sign in</a></p>
+        </div><!-- /signup panel -->
+
+      </div><!-- /auth-form-wrap -->
+    </div><!-- /auth-card -->
+
+    <!-- Security badges -->
+    <div class="auth-badges">
+      <span class="auth-badge-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4F6EF7" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+        Secure &amp; Encrypted
+      </span>
+      <span class="auth-badge-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4F6EF7" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Escrow Protected
+      </span>
+    </div>
+
+  </main>
+
+  <!-- ── SIMPLE FOOTER ── -->
+  <footer class="auth-footer">
+    <a href="index.html" class="auth-footer-brand">
+      <img src="Logo.png" alt="DropHub" />
+      <span class="auth-footer-brand-name">Drop<span>Hub</span></span>
+    </a>
+    <p class="auth-footer-copy">© 2026 DropHub, Inc.</p>
+    <nav class="auth-footer-links">
+      <a href="shop.html">Shop</a>
+      <a href="#">Sell on DropHub</a>
+      <a href="shop.html">Top Rated</a>
+      <a href="index.html#safe">How It Works</a>
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+    </nav>
+  </footer>
+
+  <script src="cart.js"></script>
+  <script>
+  /* ── Tab switching ── */
+  function switchTab(tab) {
+    var tabs    = document.querySelectorAll('.auth-tab');
+    var panels  = document.querySelectorAll('.auth-form-panel');
+    tabs.forEach(function(t) {
+      var isActive = t.id === 'tab-' + tab;
+      t.classList.toggle('auth-tab--active', isActive);
+      t.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+    panels.forEach(function(p) {
+      p.classList.toggle('is-active', p.id === 'panel-' + tab);
+    });
+  }
+
+  /* open signup if URL hash = #signup */
+  if (window.location.hash === '#signup') switchTab('signup');
+
+  /* ── Password visibility toggle ── */
+  function togglePw(inputId, btn) {
+    var inp = document.getElementById(inputId);
+    var show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    btn.innerHTML = show
+      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
+      : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+  }
+
+  /* ── Password strength ── */
+  var suPw = document.getElementById('su-password');
+  if (suPw) {
+    suPw.addEventListener('input', function() {
+      var val = this.value;
+      var score = 0;
+      if (val.length >= 8)          score++;
+      if (/[A-Z]/.test(val))        score++;
+      if (/[0-9]/.test(val))        score++;
+      if (/[^A-Za-z0-9]/.test(val)) score++;
+      var fill  = document.getElementById('pw-strength-fill');
+      var label = document.getElementById('pw-strength-label');
+      var map = [
+        { w:'0%',   bg:'#e2e8f0', text:'' },
+        { w:'25%',  bg:'#ef4444', text:'Weak' },
+        { w:'50%',  bg:'#f97316', text:'Fair' },
+        { w:'75%',  bg:'#eab308', text:'Good' },
+        { w:'100%', bg:'#22c55e', text:'Strong' }
+      ];
+      var s = val.length ? map[score] : map[0];
+      fill.style.width      = s.w;
+      fill.style.background = s.bg;
+      label.textContent     = s.text;
+      label.style.color     = s.bg;
+    });
+  }
+
+  /* ── Form submissions (demo — replace with real API calls) ── */
+  function handleSignIn(e) {
+    e.preventDefault();
+    var btn = e.target.querySelector('.auth-submit');
+    btn.textContent = 'Signing in…';
+    btn.disabled = true;
+    setTimeout(function() {
+      window.location.href = 'shop.html';
+    }, 1200);
+  }
+  function handleSignUp(e) {
+    e.preventDefault();
+    var btn = e.target.querySelector('.auth-submit');
+    btn.textContent = 'Creating account…';
+    btn.disabled = true;
+    setTimeout(function() {
+      window.location.href = 'shop.html';
+    }, 1400);
+  }
+  </script>
+</body>
+</html>

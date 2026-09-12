@@ -1584,14 +1584,13 @@ body.ip{padding-top:0}
   .contact-office-card, .help-card, .rp-card, .refund-card,
   .feature-card, .team-card, .about-timeline-item {
     min-width: 0;
-    width: calc(100% - 32px);
-    max-width: 480px;
-    margin-left: auto;
-    margin-right: auto;
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
     box-sizing: border-box;
   }
   .ip-section { padding-left: 16px; padding-right: 16px; }
-  .contact-form-card { padding: 24px 16px; }right: 16px; }
   .contact-form-card { padding: 24px 16px; }
   .contact-office-card { padding: 24px 16px; }
   .contact-layout { grid-template-columns: 1fr; gap: 24px; }
@@ -1935,4 +1934,43 @@ body.ip{padding-top:0}
   .rp-checker-grid { grid-template-columns: repeat(2, 1fr); }
   .rp-checker-opt { padding: 14px 10px; font-size: 12px; }
   .rp-opt-icon { width: 36px; height: 36px; }
+}
+
+/* ═══════════════════════════════════════════
+   MOBILE: tighten all card-parent containers to 16px side padding
+   so cards stay full-width with just a small breathing gap,
+   matching the Buyers Love These section behaviour.
+═══════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .about-pad,
+  .ip-pad,
+  .ip-section,
+  .blog-pad,
+  .rp-checker-container,
+  .rp-policy-container,
+  .rp-timeline-container,
+  .rp-faq-container,
+  .rp-cta-container,
+  .blog-cta,
+  .blog-cta-inner,
+  .about-section .about-pad,
+  .ip-grid,
+  .ip-stats {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* grids that hold the cards: remove extra side padding so cards use full width */
+  .about-values,
+  .about-stats,
+  .about-timeline-list,
+  .ip-grid,
+  .ip-stats,
+  .rp-policy-grid,
+  .rp-steps-grid,
+  .blog-grid,
+  .rp-checker-grid {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }

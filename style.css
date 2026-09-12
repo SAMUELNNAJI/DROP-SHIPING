@@ -301,6 +301,11 @@ body { padding-top: 0; }
   transform-origin: top right;
   transition: opacity .25s ease, transform .28s cubic-bezier(.22,1,.36,1), visibility 0s .3s;
   z-index: 600;
+  /* card never taller than the viewport: header + bottom breathing room */
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - var(--header-h) - 40px);
+  max-height: calc(100dvh - var(--header-h) - 40px);
 }
 .cart-wrap.open .cart-dropdown {
   opacity: 1;
@@ -314,6 +319,7 @@ body { padding-top: 0; }
   justify-content: space-between;
   padding: 16px 18px 12px;
   border-bottom: 1px solid rgba(15,28,77,.07);
+  flex-shrink: 0;
 }
 .cart-title { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; color: #0A172E; }
 .cart-count-pill {
@@ -335,7 +341,16 @@ body { padding-top: 0; }
   font-size: 15px;
 }
 .cart-close:hover { background: rgba(31,100,255,.08); color: #0A172E; }
-.cart-items { max-height: 340px; overflow-y: auto; padding: 14px 14px 6px; display: flex; flex-direction: column; gap: 12px; }
+.cart-items {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 14px 14px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 .cart-item {
   display: flex;
   gap: 12px;
@@ -357,17 +372,35 @@ body { padding-top: 0; }
 .cart-price { font-size: 14px; font-weight: 800; color: #1F64FF; }
 .cart-trash { border: none; background: none; color: #A5B1C2; cursor: pointer; align-self: flex-start; padding: 2px; }
 .cart-trash:hover { color: #E11D48; }
-.cart-foot { padding: 12px 16px 16px; background: rgba(255,255,255,.75); border-top: 1px solid rgba(15,28,77,.07); }
+.cart-foot { flex-shrink: 0; padding: 12px 16px 16px; background: rgba(255,255,255,.75); border-top: 1px solid rgba(15,28,77,.07); }
 .cart-subtotal { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .cart-subtotal span { color: #66788F; font-size: 14px; }
 .cart-subtotal strong { font-size: 20px; font-weight: 800; color: #0A172E; }
 .cart-escrow { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #1F64FF; border: 1px solid #D8E5FF; border-radius: 12px; padding: 9px 12px; margin-bottom: 12px; background: #F6FAFF; }
 .cart-actions { display: flex; gap: 10px; }
-.cart-btn-ghost { flex: 1; text-align: center; padding: 12px; border-radius: 12px; border: 1.5px solid #E2E8F5; color: #5B6B82; font-weight: 600; font-size: 14px; }
-.cart-btn-checkout { flex: 1; text-align: center; padding: 12px; border-radius: 12px; background: #1F64FF; color: #fff; font-weight: 700; font-size: 14px; }
+.cart-btn-ghost,
+.cart-btn-checkout {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+  padding: 12px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+.cart-btn-ghost { border: 1.5px solid #E2E8F5; color: #5B6B82; font-weight: 600; transition: border-color .2s, color .2s, background .2s; }
+.cart-btn-ghost:hover { border-color: #C4D3EF; color: #0A172E; background: #F6F9FF; }
+.cart-btn-checkout { background: #1F64FF; color: #fff; font-weight: 700; transition: background .2s; }
 .cart-btn-checkout:hover { background: #184FE0; }
+.cart-btn-ghost svg, .cart-btn-checkout svg { flex-shrink: 0; }
 @media (max-width: 600px) {
   .cart-dropdown { position: fixed; top: var(--header-h); left: 12px; right: 12px; width: auto; }
+  /* stack the two actions full-width so they never squeeze on phones */
+  .cart-actions { flex-direction: column; }
+  .cart-btn-ghost,
+  .cart-btn-checkout { padding: 13px 10px; }
 }
 
 /* "Start Selling" bright royal-blue pill */

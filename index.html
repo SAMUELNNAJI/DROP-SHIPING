@@ -31,10 +31,23 @@
           <a href="#">How It Works</a>
         </nav>
         <div class="nav-actions">
-          <a href="#" class="nav-cart" aria-label="Cart">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0F0F0F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><circle cx="18" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><path d="M2.5 3.5h2l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.2L20.5 7H6"/></svg>
-            <span class="cart-badge">4</span>
-          </a>
+          <div class="cart-wrap">
+            <button class="nav-cart" id="cartToggle" aria-label="Open cart" aria-expanded="false" aria-controls="cartDropdown">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F0F0F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><circle cx="18" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><path d="M2.5 3.5h2l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.2L20.5 7H6"/></svg>
+              <span class="cart-badge">4</span>
+            </button>
+            <div class="cart-dropdown" id="cartDropdown" aria-hidden="true">
+              <div class="cart-head">
+                <div class="cart-title">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+                  <span>Your Cart</span>
+                  <span class="cart-count-pill">4 ITEMS</span>
+                </div>
+                <button class="cart-close" id="cartClose" aria-label="Close cart">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+                </button>
+              </div>
+              <div class="cart-items" id="cartItemsPH"></div>
           <a href="#" class="nav-signin">
             <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#7B8798" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.8" r="3.6"/><path d="M4.8 19.8c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
             <span>Sign In</span>
@@ -149,17 +162,18 @@
 
         <!-- stats removed to match hero screenshot -->
 
-        <!-- product showcase: absolute floats on desktop, in-flow row/grid on tablet + mobile -->
-        <div class="hero-showcase">
+        <!-- product showcase: absolute floats on desktop, in-flow row/grid on tablet + mobile.
+             Images rotate every 7s (see rotator script at the bottom of the page). -->
+        <div class="hero-showcase" id="heroShowcase">
         <!-- LEFT floating product card -->
         <div class="hero-float-card hero-float-left">
           <div class="hfc-img hfc-img--dark">
-            <img src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=500&q=80&auto=format&fit=crop" alt="AirPods Pro Max" />
+            <img id="heroImgLeft" src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=500&q=80&auto=format&fit=crop" alt="AirPods Pro Max" />
           </div>
           <div class="hfc-info">
-            <p class="hfc-name">AirPods Pro Max</p>
+            <p class="hfc-name" id="heroNameLeft">AirPods Pro Max</p>
             <div class="hfc-bottom">
-              <span class="hfc-price">$249</span>
+              <span class="hfc-price" id="heroPriceLeft">$249</span>
               <span class="badge badge-toprated">TOP RATED</span>
             </div>
           </div>
@@ -168,12 +182,12 @@
         <!-- RIGHT floating product card -->
         <div class="hero-float-card hero-float-right">
           <div class="hfc-img hfc-img--light">
-            <img src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=500&q=80&auto=format&fit=crop" alt="Smart Watch Series X" />
+            <img id="heroImgRight" src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=500&q=80&auto=format&fit=crop" alt="Smart Watch Series X" />
           </div>
           <div class="hfc-info">
-            <p class="hfc-name">Smart Watch Series X</p>
+            <p class="hfc-name" id="heroNameRight">Smart Watch Series X</p>
             <div class="hfc-bottom">
-              <span class="hfc-price">$189</span>
+              <span class="hfc-price" id="heroPriceRight">$189</span>
               <span class="badge badge-featured2">FEATURED</span>
             </div>
           </div>
@@ -1091,6 +1105,62 @@
       window.addEventListener('resize', function () {
         if (window.innerWidth > 1100) closeMenu();
       });
+    })();
+
+    /* ── Hero floating cards: rotate photo + name + price every 7s ──
+       cloth · shoes · kitchen utensils · caps + the two default tech items */
+    (function () {
+      var U = function (id) {
+        return 'https://images.unsplash.com/' + id + '?w=500&q=80&auto=format&fit=crop';
+      };
+      var ITEMS = [
+        { img: U('photo-1610945265064-0e34e5519bbf'), name: 'AirPods Pro Max',            price: '$249' },
+        { img: U('photo-1579586337278-3befd40fd17a'), name: 'Smart Watch Series X',       price: '$189' },
+        { img: U('photo-1521572163474-6864f9cf17ab'), name: 'Classic Cotton T-Shirt',     price: '$29'  },
+        { img: U('photo-1542291026-7eec264c27ff'),    name: 'Nike Air Runner Shoes',      price: '$139' },
+        { img: U('photo-1556911220-bff31c812dba'),    name: 'Non-Stick Kitchen Set',      price: '$89'  },
+        { img: U('photo-1588850561407-ed78c282e89b'), name: 'Snapback Street Cap',        price: '$24'  },
+        { img: U('photo-1549298916-b41d501d3772'),    name: 'Everyday Sneakers',          price: '$99'  },
+        { img: U('photo-1523381210434-271e8be1f52b'), name: 'Folded Tees Collection',     price: '$45'  }
+      ];
+
+      var leftImg = document.getElementById('heroImgLeft');
+      var leftName = document.getElementById('heroNameLeft');
+      var leftPrice = document.getElementById('heroPriceLeft');
+      var rightImg = document.getElementById('heroImgRight');
+      var rightName = document.getElementById('heroNameRight');
+      var rightPrice = document.getElementById('heroPriceRight');
+      if (!leftImg || !rightImg) return;
+
+      /* preload so swaps never flash blank */
+      ITEMS.forEach(function (it) { var im = new Image(); im.src = it.img; });
+
+      var li = 0; // left card starts on item 0
+      var ri = 1; // right card starts on item 1
+
+      function swap(imgEl, nameEl, priceEl, item) {
+        imgEl.classList.add('hfc-fade');
+        setTimeout(function () {
+          imgEl.src = item.img;
+          imgEl.alt = item.name;
+          if (nameEl) nameEl.textContent = item.name;
+          if (priceEl) priceEl.textContent = item.price;
+          imgEl.onload = function () { imgEl.classList.remove('hfc-fade'); };
+          /* fallback in case the image was already cached */
+          setTimeout(function () { imgEl.classList.remove('hfc-fade'); }, 700);
+        }, 600);
+      }
+
+      setInterval(function () {
+        /* advance each card, never showing the same item on both cards */
+        li = (li + 2) % ITEMS.length;
+        ri = (ri + 2) % ITEMS.length;
+        if (ri === li) ri = (ri + 1) % ITEMS.length;
+        swap(leftImg, leftName, leftPrice, ITEMS[li]);
+        setTimeout(function () {
+          swap(rightImg, rightName, rightPrice, ITEMS[ri]);
+        }, 900); // right card follows shortly after — cascading effect
+      }, 7000);
     })();
   </script>
 

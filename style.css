@@ -161,6 +161,7 @@ img { max-width: 100%; display: block; }
 
 /* header overlays the hero gradient, so no offset needed */
 body { padding-top: 0; }
+:root { --header-h: 68px; }
 
 /* solid fallback where backdrop-filter is unsupported */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
@@ -171,7 +172,7 @@ body { padding-top: 0; }
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 28px;
-  height: 82px;
+  height: 68px;
   display: flex;
   align-items: center;
   gap: 36px;
@@ -201,7 +202,7 @@ body { padding-top: 0; }
    makes the white disappear on the pale-blue hero and white panel */
 .logo-img {
   display: block;
-  height: 48px;
+  height: 40px;
   width: auto;
   mix-blend-mode: multiply;
 }
@@ -313,7 +314,7 @@ body { padding-top: 0; }
   min-height: 640px;
   display: flex;
   flex-direction: column;
-  padding-top: 82px;
+  padding-top: var(--header-h);
 }
 .navbar-mini {
   background: rgba(255,255,255,.95);
@@ -493,6 +494,15 @@ body { padding-top: 0; }
 
 .hero-float-left  { left: -10px; --base-y: -32%; --float-dist: 16px; animation: heroFloatY 7s ease-in-out infinite; }
 .hero-float-right { right: -10px; --base-y: -6%; --float-dist: -18px; animation: heroFloatY 8.5s ease-in-out -2.5s infinite; }
+
+/* smooth crossfade while the 7s rotator swaps the photo */
+.hfc-img img {
+  transition: opacity .6s ease, transform .6s ease;
+}
+.hfc-img img.hfc-fade {
+  opacity: 0;
+  transform: scale(1.04);
+}
 
 @keyframes heroFloatY {
   0%, 100% { transform: translateY(var(--base-y)) translateX(0); }

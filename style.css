@@ -2112,6 +2112,8 @@ body { padding-top: 0; }
   transform: translateX(-6px);
   transition: opacity .2s, transform .2s;
 }
+.mmenu-link { cursor: pointer; }
+.mmenu-link--active { background: rgba(31,100,255,.07); color: #1F64FF; }
 .mmenu-link:hover { background: rgba(31,100,255,.07); color: #1F64FF; }
 .mmenu-link:hover .mmenu-num { background: #1F64FF; color: #fff; }
 .mmenu-link:hover .mmenu-arrow { opacity: 1; transform: translateX(0); }

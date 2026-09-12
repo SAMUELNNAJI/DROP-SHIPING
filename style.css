@@ -475,7 +475,14 @@ img { max-width: 100%; display: block; }
   50%      { transform: translateY(calc(var(--base-y) + var(--float-dist))) translateX(0); }
 }
 
+/* soft in-flow bob for tablet / mobile docked cards (no absolute offsets) */
+@keyframes heroFloatSoft {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .hero-float-card,
   .hero-float-left, .hero-float-right { animation: none; }
 }
 
@@ -1977,8 +1984,10 @@ body.mmenu-locked { overflow: hidden; }
   .hero-ctas { flex-wrap: wrap; }
   .hero-showcase {
     position: static;
+    inset: auto;
     display: flex;
     justify-content: center;
+    align-items: stretch;
     gap: 18px;
     margin-top: 36px;
     width: 100%;
@@ -1987,10 +1996,16 @@ body.mmenu-locked { overflow: hidden; }
   .hero-float-card {
     position: static;
     top: auto;
+    left: auto;
+    right: auto;
     width: min(300px, calc(50% - 9px));
+    flex: 0 1 300px;
     transform: none;
-    animation: none;
+    /* slow gentle drift — left & right staggered so they don't move in sync */
+    animation: heroFloatSoft 6s ease-in-out infinite;
   }
+  .hero-float-left { animation-delay: 0s; }
+  .hero-float-right { animation-delay: -3s; }
   .hero-float-left, .hero-float-right { left: auto; right: auto; }
   .hfc-img { height: 150px; }
 
@@ -2057,25 +2072,35 @@ body.mmenu-locked { overflow: hidden; }
   .btn-browse, .btn-selling-free { justify-content: center; width: 100%; font-size: 14px; padding: 15px 22px; }
   .hero-showcase {
     position: static;
+    inset: auto;
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
     margin-top: 30px;
     width: 100%;
-    max-width: 340px;
-    margin-left: auto;
-    margin-right: auto;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
     pointer-events: auto;
+    align-items: start;
   }
   .hero-float-card {
     position: static;
     top: auto;
+    left: auto;
+    right: auto;
     width: 100%;
+    min-width: 0;
     transform: none;
-    animation: none;
+    /* slow gentle drift — side by side, staggered timing */
+    animation: heroFloatSoft 7s ease-in-out infinite;
   }
+  .hero-float-left { animation-delay: 0s; }
+  .hero-float-right { animation-delay: -3.5s; }
   .hero-float-left, .hero-float-right { left: auto; right: auto; }
-  .hfc-img { height: 170px; }
+  .hfc-img { height: 120px; }
+  .hfc-name { font-size: 12.5px; }
+  .hfc-price { font-size: 15px; }
   .section-heading { font-size: 28px; }
   .selling-heading { font-size: 28px; }
 

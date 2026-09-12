@@ -2360,7 +2360,7 @@ body.mmenu-locked { overflow: hidden; }
   .buyers-header-right { width: 100%; flex-direction: column; align-items: stretch; }
   .boost-note { width: 100%; }
   .boost-btn { justify-content: center; width: 100%; }
-  .buyers-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; width: 100%; max-width: 420px; margin: 0 auto; }
+  .buyers-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; width: 100%; max-width: 100%; margin: 0 auto; }
   .buyers-grid > .b-card:nth-child(n) { grid-column: auto; grid-row: auto; min-width: 0; width: 100%; max-width: 100%; margin: 0; }
   .b-card--tall { min-height: 0; }
   .b-card--tall .b-media { position: relative; inset: auto; height: 230px; }

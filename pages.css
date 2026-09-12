@@ -1514,27 +1514,42 @@ body.ip{padding-top:0}
 }
 .rp-checker-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
   margin: 24px 0;
 }
 .rp-checker-opt {
-  padding: 16px;
+  padding: 18px 14px;
   border-radius: 16px;
   border: 2px solid #e2e8f0;
   background: #f8fafc;
   cursor: pointer;
   text-align: center;
   transition: all 0.2s ease;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 700;
   color: #334155;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 .rp-checker-opt:hover, .rp-checker-opt.active {
   border-color: #1f64ff;
   background: rgba(31, 100, 255, 0.05);
   color: #1f64ff;
 }
+.rp-opt-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+.rp-checker-opt:hover .rp-opt-icon,
+.rp-checker-opt.active .rp-opt-icon { transform: scale(1.08); }
 .rp-checker-result {
   margin-top: 24px;
   padding: 24px;
@@ -1834,4 +1849,90 @@ body.ip{padding-top:0}
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* ═══════════════════════════════════════════
+   REFUND SPEEDS GRID — responsive payment cards
+═══════════════════════════════════════════ */
+.rp-speed-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  position: relative;
+  z-index: 2;
+}
+.rp-speed-card {
+  background: rgba(255,255,255,.06);
+  border-radius: 22px;
+  padding: 32px 28px;
+  border: 1px solid rgba(255,255,255,.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  text-align: center;
+  transition: transform .25s ease, background .25s ease;
+}
+.rp-speed-card:hover {
+  transform: translateY(-4px);
+  background: rgba(255,255,255,.09);
+}
+.rp-speed-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 18px;
+}
+.rp-speed-label {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.rp-speed-time {
+  font-size: 32px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -.02em;
+  margin-bottom: 8px;
+}
+.rp-speed-desc {
+  font-size: 13px;
+  color: rgba(255,255,255,.5);
+  line-height: 1.5;
+}
+.rp-speed-footer {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,.1);
+}
+.rp-speed-pill {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Tablet: 2-column */
+@media (max-width: 900px) {
+  .rp-speed-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Mobile: single column, tighter padding */
+@media (max-width: 600px) {
+  .rp-speed-grid { grid-template-columns: 1fr; gap: 14px; }
+  .rp-speed-card { padding: 24px 20px; }
+  .rp-speed-time { font-size: 26px; }
+  .rp-speed-icon { width: 48px; height: 48px; }
+  /* also tighten the outer dark panel padding */
+  .rp-speed-grid + * { padding: 32px 20px; }
+}
+
+/* Estimator option icon helper */
+@media (max-width: 500px) {
+  .rp-checker-grid { grid-template-columns: repeat(2, 1fr); }
+  .rp-checker-opt { padding: 14px 10px; font-size: 12px; }
+  .rp-opt-icon { width: 36px; height: 36px; }
 }

@@ -253,7 +253,7 @@
   <!-- ═══════════════════════════════════════
        PAY YOUR WAY SECTION
   ═══════════════════════════════════════ -->
-  <section class="pay-section">
+  <section class="pay-section" id="pay-section">
     <div class="container">
 
       <!-- Eyebrow pill -->
@@ -989,9 +989,9 @@
         <div class="footer-col">
           <h6 class="footer-col-title">Payments</h6>
           <ul class="footer-link-list">
-            <li><a href="#">Pi Network Wallet</a></li>
-            <li><a href="#">PayPal Checkout</a></li>
-            <li><a href="#">Naira (Paystack)</a></li>
+            <li><a href="index.html#pay-section">Pi Network Wallet</a></li>
+            <li><a href="index.html#pay-section?tab=paypal">PayPal Checkout</a></li>
+            <li><a href="index.html#pay-section?tab=paystack">Naira (Paystack)</a></li>
             <li><a href="index.html#safe">Escrow Protection</a></li>
             <li><a href="refund-policy.html">Refund Policy</a></li>
           </ul>
@@ -1057,6 +1057,22 @@
         p.classList.toggle('pay-tab-panel--active', p.dataset.panel === tab);
       });
     }
+
+    /* ── Deep-link tab activation: ?tab=pi|paypal|paystack ── */
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab');
+      if (tab && ['pi', 'paypal', 'paystack'].includes(tab)) {
+        const btn = document.querySelector(`.pay-tab[onclick*="'${tab}'"]`);
+        if (btn) switchPayTab(btn, tab);
+        const section = document.getElementById('pay-section');
+        if (section) {
+          setTimeout(function () {
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 120);
+        }
+      }
+    })();
 
     /* ── Escrow cards: green highlight jumps to the next card every 5s ── */
     (function () {

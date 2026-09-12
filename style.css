@@ -2397,14 +2397,17 @@ body.mmenu-locked { overflow: hidden; }
   .pay-pi-btn:active { transform: none; opacity: .85; }
 }
 
-/* Mobile: full-width cards at least 90vw */
+/* Mobile: full-width cards — centred, never overflow-right */
 @media (max-width: 640px) {
   .ip-card, .about-card, .blog-card, .seller-card, .b-card,
   .contact-form-card, .contact-office-card, .help-card, .feature-card,
   .about-value, .refund-card, .rp-card {
-    min-width: 90vw;
+    min-width: 0;
+    width: 90vw;
+    max-width: 90vw;
     margin-left: auto;
     margin-right: auto;
+    box-sizing: border-box;
   }
   .contact-section-mobile-full {
     grid-column: 1 / -1;

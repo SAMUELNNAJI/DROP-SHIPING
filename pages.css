@@ -1542,20 +1542,24 @@ body.ip{padding-top:0}
   color: #1e40af;
   margin: 0;
   line-height: 1.5;
-}
+}
 /* ═══════════════════════════════════════════
-   MOBILE: full-width cards (≥90vw) on small screens
+   MOBILE: full-width cards — centred, never overflow-right
    ═══════════════════════════════════════════ */
 @media (max-width: 640px) {
   .ip-card, .about-card, .about-value, .blog-card,
   .seller-card, .b-card, .product-card, .contact-form-card,
   .contact-office-card, .help-card, .rp-card, .refund-card,
   .feature-card, .team-card, .about-timeline-item {
-    min-width: 90vw;
+    min-width: 0;
+    width: 90vw;
+    max-width: 90vw;
     margin-left: auto;
     margin-right: auto;
+    box-sizing: border-box;
   }
   .ip-section { padding-left: 16px; padding-right: 16px; }
+  .contact-form-card { padding: 24px 16px; }right: 16px; }
   .contact-form-card { padding: 24px 16px; }
   .contact-office-card { padding: 24px 16px; }
   .contact-layout { grid-template-columns: 1fr; gap: 24px; }

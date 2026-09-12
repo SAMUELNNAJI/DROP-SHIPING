@@ -4,6 +4,14 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Never allow sideways page scroll — a single overflowing rail or pill
+   must not shove whole sections off the right edge on mobile */
+html, body { overflow-x: clip; }
+@supports not (overflow: clip) {
+  html, body { overflow-x: hidden; }
+}
+img, svg, video { max-width: 100%; }
+
 :root {
   --blue:      #4F6EF7;
   --blue-dark: #3a56e0;
@@ -36,12 +44,24 @@ body {
 a { text-decoration: none; color: inherit; }
 img { max-width: 100%; display: block; }
 
-/* ── Container ── */
+/* section gutters: container owns the padding, sections own none —
+   avoids the old double-padding that pushed inner grids off the right edge */
 .container {
   max-width: 1160px;
   margin: 0 auto;
   padding: 0 24px;
+  width: 100%;
+  min-width: 0;
 }
+.safe-section .container,
+.selling-section .container,
+.buyers-section .container,
+.pay-section .container { padding-left: 24px; padding-right: 24px; }
+
+/* every grid child may shrink — long words / pills never force overflow */
+.safe-cards > *, .safe-badges > *,
+.selling-inner > *, .selling-features > *,
+.buyers-grid > * { min-width: 0; }
 
 /* ── Buttons ── */
 .btn-primary {
@@ -490,8 +510,9 @@ img { max-width: 100%; display: block; }
 ═══════════════════════════════════════ */
 .pay-section {
   background: #edf2f9;
-  padding: 84px 24px 96px;
+  padding: 84px 0 96px;
   text-align: center;
+  overflow: clip;
 }
 
 /* eyebrow pill */
@@ -835,8 +856,9 @@ img { max-width: 100%; display: block; }
 ═══════════════════════════════════════ */
 .safe-section {
   background: linear-gradient(180deg, #F3F7FF 0%, #E9F0FE 100%);
-  padding: 90px 24px 80px;
+  padding: 90px 0 80px;
   text-align: center;
+  overflow: clip;
 }
 
 /* ── eyebrow pill ── */
@@ -991,7 +1013,8 @@ img { max-width: 100%; display: block; }
 ═══════════════════════════════════════ */
 .buyers-section {
   background: #fff;
-  padding: 80px 24px;
+  padding: 80px 0;
+  overflow: clip;
 }
 
 .buyers-header {
@@ -1327,8 +1350,9 @@ img { max-width: 100%; display: block; }
 ═══════════════════════════════════════ */
 .selling-section {
   background: linear-gradient(140deg, #0f1c4d 0%, #1a2b6e 50%, #162040 100%);
-  padding: 80px 24px;
+  padding: 80px 0;
   color: #fff;
+  overflow: clip;
 }
 
 .selling-inner {
@@ -1990,7 +2014,20 @@ body.mmenu-locked { overflow: hidden; }
   .btn-browse, .btn-selling-free { font-size: 13px; padding: 14px 22px; }
   .section-heading { font-size: 28px; }
   .selling-heading { font-size: 28px; }
-  .safe-cards      { grid-template-columns: 1fr; }
+
+  /* ── escrow + sellers: one centered column, never pushed/cut on the right ── */
+  .safe-section    { padding: 60px 0; }
+  .selling-section { padding: 60px 0; }
+  .safe-section .container,
+  .selling-section .container { padding-left: 20px; padding-right: 20px; }
+  .safe-cards      { grid-template-columns: minmax(0, 1fr); gap: 14px; width: 100%; max-width: 100%; margin-left: 0; margin-right: 0; }
+  .safe-card       { width: 100%; max-width: 100%; margin: 0; }
+  .safe-card p     { overflow-wrap: anywhere; }
+  .section-sub br  { display: none; }
+  .section-sub     { max-width: 100%; }
+  .selling-inner   { grid-template-columns: minmax(0, 1fr); gap: 32px; width: 100%; max-width: 100%; text-align: left; }
+  .selling-left, .selling-right { min-width: 0; max-width: 100%; }
+  .selling-features { grid-template-columns: minmax(0, 1fr); gap: 20px; }
   .buyers-grid     { grid-template-columns: 1fr; }
   .b-card--wide    { flex-direction: column; }
   .b-media--chair  { width: 100%; height: 220px; }

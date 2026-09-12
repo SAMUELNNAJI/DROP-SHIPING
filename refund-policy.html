@@ -19,36 +19,55 @@
   <style>
     /* Mobile: tighten all refund-policy sections so cards fill full width */
     @media (max-width: 640px) {
+      /* outer section side padding reduced */
       .rp-section-wrap {
         padding-left: 16px !important;
         padding-right: 16px !important;
       }
+      /* inner max-width wrapper gets zero extra padding so cards reach the edges */
       .rp-section-wrap > div {
         padding-left: 0 !important;
         padding-right: 0 !important;
+        width: 100%;
+        box-sizing: border-box;
       }
-      /* step + policy cards */
+      /* step cards */
       .rp-step-card {
         width: 100% !important;
         max-width: 100% !important;
         box-sizing: border-box;
       }
-      /* inline stat cards in ribbon */
+      /* stat ribbon cards */
       .rp-stat-card-inline {
         width: 100% !important;
         max-width: 100% !important;
         box-sizing: border-box;
       }
-      /* policy breakdown cards (inline-styled) */
+      /* policy breakdown cards */
       .rp-policy-card-inline {
         width: 100% !important;
         max-width: 100% !important;
         box-sizing: border-box;
       }
-      /* checker container */
+      /* checker container inner card */
       .rp-checker-container {
-        padding: 24px 16px !important;
+        padding: 24px 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        border-left: none !important;
+        border-right: none !important;
       }
+      /* how-it-works grid and policy grid go single column */
+      .rp-section-wrap > div > div[style*="grid-template-columns"],
+      .rp-section-wrap > div > div > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+      }
+      /* FAQ list */
+      .rp-faq-list { padding: 0 !important; }
+      .rp-faq-item { width: 100% !important; max-width: 100% !important; box-sizing: border-box; }
+      /* speed grid */
+      .rp-speed-grid { grid-template-columns: 1fr !important; }
+      .rp-speed-card { width: 100% !important; max-width: 100% !important; }
     }
   </style>
 </head>
@@ -105,7 +124,7 @@
             </div>
           </div>
         </div>
-        <a href="#" class="nav-signin">
+        <a href="signin.html" class="nav-signin">
           <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#7B8798" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.8" r="3.6"/><path d="M4.8 19.8c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
           <span>Sign In</span>
         </a>
@@ -214,7 +233,7 @@
 
       <div class="ip-hero-cta" style="margin-top:32px;">
         <a href="#how-it-works" class="btn-primary">See How It Works</a>
-        <a href="#eligibility" class="btn-ghost" style="padding:15px 28px;font-size:15.5px;">Check Eligibility</a>
+        <a href="#eligibility" class="btn-ghost" style="padding:15px 28px;font-size:15.5px;background:rgba(31,100,255,.08);border:1.5px solid rgba(31,100,255,.25);color:#1F64FF;border-radius:50px;display:inline-flex;align-items:center;gap:8px;font-weight:600;transition:all .2s ease;">Check Eligibility</a>
       </div>
     </div>
   </section>
@@ -386,7 +405,7 @@
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;">
 
       <!-- Card 1 -->
-      <div style="background:#fff;border-radius:24px;padding:36px 28px;border:1px solid rgba(15,23,42,.07);box-shadow:0 8px 28px rgba(15,23,42,.05);border-top:4px solid #1f64ff;transition:transform .25s ease,box-shadow .25s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(31,100,255,.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(15,23,42,.05)'">
+      <div class="rp-policy-card-inline" style="background:#fff;border-radius:24px;padding:36px 28px;border:1px solid rgba(15,23,42,.07);box-shadow:0 8px 28px rgba(15,23,42,.05);border-top:4px solid #1f64ff;transition:transform .25s ease,box-shadow .25s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(31,100,255,.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(15,23,42,.05)'">
         <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
           <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#e8f1ff,#dbeafe);display:grid;place-items:center;flex-shrink:0;">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -398,7 +417,7 @@
       </div>
 
       <!-- Card 2 -->
-      <div style="background:#fff;border-radius:24px;padding:36px 28px;border:1px solid rgba(15,23,42,.07);box-shadow:0 8px 28px rgba(15,23,42,.05);border-top:4px solid #16a34a;transition:transform .25s ease,box-shadow .25s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(22,163,74,.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(15,23,42,.05)'">
+      <div class="rp-policy-card-inline" style="background:#fff;border-radius:24px;padding:36px 28px;border:1px solid rgba(15,23,42,.07);box-shadow:0 8px 28px rgba(15,23,42,.05);border-top:4px solid #16a34a;transition:transform .25s ease,box-shadow .25s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(22,163,74,.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(15,23,42,.05)'">
         <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
           <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);display:grid;place-items:center;flex-shrink:0;">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
@@ -410,7 +429,7 @@
       </div>
 
       <!-- Card 3 -->
-      <div style="background:#fff;border-radius:24px;padding:36px 28px;border:1px solid rgba(15,23,42,.07);box-shadow:0 8px 28px rgba(15,23,42,.05);border-top:4px solid #0891b2;transition:transform .25s ease,box-shadow .25s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(8,145,178,.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(15,23,42,.05)'">
+      <div class="rp-policy-card-inline" style="background:#fff;border-radius:24px;padding:36px 28px;border:1px solid rgba(15,23,42,.07);box-shadow:0 8px 28px rgba(15,23,42,.05);border-top:4px solid #0891b2;transition:transform .25s ease,box-shadow .25s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(8,145,178,.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(15,23,42,.05)'">
         <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
           <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#ecfeff,#cffafe);display:grid;place-items:center;flex-shrink:0;">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -422,7 +441,7 @@
       </div>
 
       <!-- Card 4 -->
-      <div style="background:#fff;border-radius:24px;padding:36px 28px;border:1px solid rgba(15,23,42,.07);box-shadow:0 8px 28px rgba(15,23,42,.05);border-top:4px solid #dc2626;transition:transform .25s ease,box-shadow .25s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(220,38,38,.10)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(15,23,42,.05)'">
+      <div class="rp-policy-card-inline" style="background:#fff;border-radius:24px;padding:36px 28px;border:1px solid rgba(15,23,42,.07);box-shadow:0 8px 28px rgba(15,23,42,.05);border-top:4px solid #dc2626;transition:transform .25s ease,box-shadow .25s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(220,38,38,.10)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(15,23,42,.05)'">
         <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
           <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#fef2f2,#fee2e2);display:grid;place-items:center;flex-shrink:0;">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
@@ -434,7 +453,7 @@
       </div>
 
       <!-- Card 5 -->
-      <div style="background:#fff;border-radius:24px;padding:36px 28px;border:1px solid rgba(15,23,42,.07);box-shadow:0 8px 28px rgba(15,23,42,.05);border-top:4px solid #7c3aed;transition:transform .25s ease,box-shadow .25s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(124,58,237,.10)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(15,23,42,.05)'">
+      <div class="rp-policy-card-inline" style="background:#fff;border-radius:24px;padding:36px 28px;border:1px solid rgba(15,23,42,.07);box-shadow:0 8px 28px rgba(15,23,42,.05);border-top:4px solid #7c3aed;transition:transform .25s ease,box-shadow .25s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(124,58,237,.10)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(15,23,42,.05)'">
         <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
           <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#f5f3ff,#ede9fe);display:grid;place-items:center;flex-shrink:0;">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -446,7 +465,7 @@
       </div>
 
       <!-- Card 6 -->
-      <div style="background:#fff;border-radius:24px;padding:36px 28px;border:1px solid rgba(15,23,42,.07);box-shadow:0 8px 28px rgba(15,23,42,.05);border-top:4px solid #0f172a;transition:transform .25s ease,box-shadow .25s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(15,23,42,.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(15,23,42,.05)'">
+      <div class="rp-policy-card-inline" style="background:#fff;border-radius:24px;padding:36px 28px;border:1px solid rgba(15,23,42,.07);box-shadow:0 8px 28px rgba(15,23,42,.05);border-top:4px solid #0f172a;transition:transform .25s ease,box-shadow .25s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(15,23,42,.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(15,23,42,.05)'">
         <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
           <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#f8fafc,#e2e8f0);display:grid;place-items:center;flex-shrink:0;">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>

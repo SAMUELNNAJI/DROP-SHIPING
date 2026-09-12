@@ -176,10 +176,18 @@
     .contact-form-grid {
       grid-template-columns: 1fr;
     }
-    /* ensure ip-pad and ip-section don't add extra side padding on mobile */
+    /* tighten containers to 16px side padding — cards fill full width */
     .ip-pad { padding-left: 16px !important; padding-right: 16px !important; }
     .ip-section { padding-left: 0 !important; padding-right: 0 !important; }
-    .contact-layout { gap: 20px; }
+    .contact-layout { gap: 16px; }
+    .contact-form-card,
+    .contact-office-card {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      box-sizing: border-box;
+    }
   }
   </style>
 </head>

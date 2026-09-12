@@ -1,462 +1,27 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Refund Policy - DropHub | Money back, without the drama</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="icon" type="image/png" href="Logo.png" />
-    <link rel="stylesheet" href="style.css" />
-    <style>
-      /* ── Reset & Base ── */
-      .info-page .navbar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 400;
-      }
-      body.ip {
-        padding-top: 0;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Refund Policy - DropHub | Money Back, Without the Drama</title>
+  <meta name="description" content="DropHub's 4-step escrow refund policy. Learn how buyers are 100% protected on Pi Network, PayPal, and Naira orders." />
+  <meta property="og:title" content="Refund Policy - DropHub Marketplace" />
+  <meta property="og:description" content="Simple, transparent refund policy with instant Pi payouts and 24-hour dispute review." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="Logo.png" />
 
-      /* ── Hero Section ── */
-      .rp-hero {
-        position: relative;
-        overflow: hidden;
-        padding: 120px 24px 80px;
-        text-align: center;
-        background: linear-gradient(180deg, #f8faff 0%, #ffffff 100%);
-      }
-      .rp-hero::before {
-        content: "";
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background:
-          radial-gradient(
-            circle at 30% 20%,
-            rgba(31, 100, 255, 0.08) 0%,
-            transparent 50%
-          ),
-          radial-gradient(
-            circle at 70% 80%,
-            rgba(124, 58, 237, 0.06) 0%,
-            transparent 50%
-          );
-        animation: heroFloat 20s ease-in-out infinite;
-      }
-      @keyframes heroFloat {
-        0%,
-        100% {
-          transform: translate(0, 0);
-        }
-        50% {
-          transform: translate(-2%, -2%);
-        }
-      }
-      .rp-hero-content {
-        position: relative;
-        z-index: 2;
-        max-width: 800px;
-        margin: 0 auto;
-      }
-      .rp-eyebrow {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 16px;
-        border-radius: 999px;
-        background: rgba(31, 100, 255, 0.1);
-        color: #1f64ff;
-        font-size: 13px;
-        font-weight: 700;
-        letter-spacing: 0.03em;
-        margin-bottom: 24px;
-      }
-      .rp-title {
-        font-size: clamp(40px, 6vw, 68px);
-        font-weight: 800;
-        letter-spacing: -0.025em;
-        line-height: 1.05;
-        color: #0f172a;
-        margin: 0 0 20px;
-      }
-      .rp-title em {
-        font-style: normal;
-        background: linear-gradient(120deg, #1f64ff, #7c3aed);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-      }
-      .rp-sub {
-        font-size: clamp(16px, 1.8vw, 22px);
-        color: #475569;
-        line-height: 1.6;
-        margin: 0 auto 32px;
-        max-width: 600px;
-      }
-      .rp-hero-cta {
-        display: inline-flex;
-        flex-wrap: wrap;
-        gap: 16px;
-        justify-content: center;
-      }
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="Logo.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="pages.css" />
+</head>
+<body class="ip">
 
-      /* ── Stats Section ── */
-      .rp-stats-section {
-        padding: 60px 24px;
-        background: #ffffff;
-      }
-      .rp-stats-container {
-        max-width: 1100px;
-        margin: 0 auto;
-      }
-      .rp-stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 20px;
-      }
-      .rp-stat-card {
-        text-align: center;
-        padding: 32px 24px;
-        border-radius: 20px;
-        background: linear-gradient(
-          135deg,
-          rgba(31, 100, 255, 0.04) 0%,
-          rgba(124, 58, 237, 0.04) 100%
-        );
-        border: 1px solid rgba(31, 100, 255, 0.1);
-        transition:
-          transform 0.3s ease,
-          box-shadow 0.3s ease;
-      }
-      .rp-stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 32px rgba(31, 100, 255, 0.1);
-      }
-      .rp-stat-icon {
-        width: 56px;
-        height: 56px;
-        border-radius: 16px;
-        display: grid;
-        place-items: center;
-        margin: 0 auto 16px;
-        background: linear-gradient(135deg, #1f64ff, #7c3aed);
-        color: #fff;
-      }
-      .rp-stat-value {
-        font-size: 36px;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        background: linear-gradient(120deg, #1f64ff, #7c3aed);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        margin-bottom: 8px;
-      }
-      .rp-stat-label {
-        font-size: 14px;
-        color: #475569;
-        line-height: 1.4;
-      }
+<div class="hero-wrapper">
+  <div class="hero-stars" aria-hidden="true"></div>
 
-      /* ── Policy Cards Section ── */
-      .rp-policy-section {
-        padding: 80px 24px;
-        background: linear-gradient(180deg, #ffffff 0%, #f8faff 100%);
-      }
-      .rp-policy-container {
-        max-width: 1100px;
-        margin: 0 auto;
-      }
-      .rp-section-header {
-        text-align: center;
-        margin-bottom: 48px;
-      }
-      .rp-section-eyebrow {
-        display: inline-block;
-        padding: 6px 14px;
-        border-radius: 999px;
-        background: rgba(124, 58, 237, 0.1);
-        color: #7c3aed;
-        font-size: 12.5px;
-        font-weight: 700;
-        letter-spacing: 0.03em;
-        margin-bottom: 16px;
-      }
-      .rp-section-title {
-        font-size: clamp(28px, 4vw, 44px);
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        color: #0f172a;
-        margin: 0;
-      }
-      .rp-policy-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 24px;
-      }
-      .rp-policy-card {
-        position: relative;
-        padding: 36px 28px;
-        border-radius: 24px;
-        background: #ffffff;
-        border: 1px solid rgba(15, 23, 42, 0.08);
-        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
-        transition:
-          transform 0.4s ease,
-          box-shadow 0.4s ease;
-        overflow: hidden;
-      }
-      .rp-policy-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(
-          90deg,
-          var(--card-accent, #1f64ff),
-          var(--card-accent2, #7c3aed)
-        );
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      }
-      .rp-policy-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
-      }
-      .rp-policy-card:hover::before {
-        opacity: 1;
-      }
-      .rp-card-number {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        font-size: 14px;
-        font-weight: 800;
-        color: #94a3b8;
-        background: #f1f5f9;
-        padding: 6px 12px;
-        border-radius: 8px;
-      }
-      .rp-card-icon {
-        width: 56px;
-        height: 56px;
-        border-radius: 14px;
-        display: grid;
-        place-items: center;
-        margin-bottom: 20px;
-        background: linear-gradient(
-          135deg,
-          var(--card-bg-start, #e8f1ff),
-          var(--card-bg-end, #dbeafe)
-        );
-        color: var(--card-accent, #1f64ff);
-      }
-      .rp-policy-card h3 {
-        font-size: 20px;
-        font-weight: 800;
-        color: #0f172a;
-        margin: 0 0 12px;
-        letter-spacing: -0.01em;
-      }
-      .rp-policy-card p {
-        font-size: 15px;
-        line-height: 1.65;
-        color: #5a6b7e;
-        margin: 0;
-      }
-
-      /* ── Timeline Section ── */
-      .rp-timeline-section {
-        padding: 80px 24px;
-        background: #ffffff;
-      }
-      .rp-timeline-container {
-        max-width: 800px;
-        margin: 0 auto;
-      }
-      .rp-timeline {
-        position: relative;
-        padding-left: 40px;
-      }
-      .rp-timeline::before {
-        content: "";
-        position: absolute;
-        left: 12px;
-        top: 0;
-        bottom: 0;
-        width: 3px;
-        background: linear-gradient(180deg, #1f64ff, #7c3aed);
-        border-radius: 3px;
-      }
-      .rp-timeline-item {
-        position: relative;
-        margin-bottom: 32px;
-        padding: 24px 28px;
-        background: #f8fafc;
-        border-radius: 16px;
-        border: 1px solid rgba(15, 23, 42, 0.06);
-      }
-      .rp-timeline-item:last-child {
-        margin-bottom: 0;
-      }
-      .rp-timeline-item::before {
-        content: "";
-        position: absolute;
-        left: -36px;
-        top: 28px;
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #1f64ff, #7c3aed);
-        border: 3px solid #ffffff;
-        box-shadow: 0 0 0 4px rgba(31, 100, 255, 0.15);
-      }
-      .rp-timeline-item h4 {
-        font-size: 18px;
-        font-weight: 800;
-        color: #0f172a;
-        margin: 0 0 8px;
-      }
-      .rp-timeline-item p {
-        font-size: 15px;
-        color: #475569;
-        line-height: 1.6;
-        margin: 0;
-      }
-
-      /* ── CTA Section ── */
-      .rp-cta-section {
-        padding: 80px 24px;
-        background: linear-gradient(135deg, #1f64ff 0%, #7c3aed 100%);
-        text-align: center;
-        color: #ffffff;
-      }
-      .rp-cta-container {
-        max-width: 700px;
-        margin: 0 auto;
-      }
-      .rp-cta-section h2 {
-        font-size: clamp(28px, 4vw, 40px);
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        margin: 0 0 16px;
-      }
-      .rp-cta-section p {
-        font-size: 17px;
-        opacity: 0.9;
-        line-height: 1.6;
-        margin: 0 0 32px;
-      }
-      .rp-cta-buttons {
-        display: inline-flex;
-        flex-wrap: wrap;
-        gap: 16px;
-        justify-content: center;
-      }
-      .rp-cta-buttons .btn-primary {
-        background: #ffffff;
-        color: #0f172a;
-      }
-      .rp-cta-buttons .btn-ghost {
-        background: transparent;
-        color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, 0.5);
-      }
-
-      /* ── FAQ Section ── */
-      .rp-faq-section {
-        padding: 80px 24px;
-        background: #f8faff;
-      }
-      .rp-faq-container {
-        max-width: 800px;
-        margin: 0 auto;
-      }
-      .rp-faq-item {
-        margin-bottom: 12px;
-        border-radius: 16px;
-        background: #ffffff;
-        border: 1px solid rgba(15, 23, 42, 0.08);
-        overflow: hidden;
-      }
-      .rp-faq-item summary {
-        padding: 20px 24px;
-        font-size: 17px;
-        font-weight: 700;
-        color: #0f172a;
-        cursor: pointer;
-        list-style: none;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        transition: background 0.2s ease;
-      }
-      .rp-faq-item summary:hover {
-        background: #f8fafc;
-      }
-      .rp-faq-item summary::-webkit-details-marker {
-        display: none;
-      }
-      .rp-faq-item summary::after {
-        content: "+";
-        font-size: 22px;
-        color: #1f64ff;
-        font-weight: 600;
-        transition: transform 0.3s ease;
-      }
-      .rp-faq-item[open] summary::after {
-        content: "-";
-      }
-      .rp-faq-answer {
-        padding: 0 24px 20px;
-        color: #475569;
-        font-size: 15px;
-        line-height: 1.65;
-      }
-
-      /* ── Responsive ── */
-      @media (max-width: 768px) {
-        .rp-hero {
-          padding: 100px 20px 60px;
-        }
-        .rp-policy-grid {
-          grid-template-columns: 1fr;
-        }
-        .rp-timeline {
-          padding-left: 32px;
-        }
-        .rp-timeline-item::before {
-          left: -28px;
-          width: 14px;
-          height: 14px;
-        }
-        .rp-stats-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-      @media (max-width: 480px) {
-        .rp-stats-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="hero-wrapper">
-      <div class="hero-stars" aria-hidden="true"></div>
-      <header class="navbar">
   <!-- NAVBAR (Identical to Homepage) -->
   <header class="navbar">
     <div class="nav-inner">
@@ -476,59 +41,24 @@
         <div class="cart-wrap">
           <button class="nav-cart" id="cartToggle" aria-label="Open cart" aria-expanded="false" aria-controls="cartDropdown">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F0F0F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><circle cx="18" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><path d="M2.5 3.5h2l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.2L20.5 7H6"/></svg>
-            <span class="cart-badge">4</span>
+            <span class="cart-badge">0</span>
           </button>
           <div class="cart-dropdown" id="cartDropdown" aria-hidden="true">
             <div class="cart-head">
               <div class="cart-title">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
                 <span>Your Cart</span>
-                <span class="cart-count-pill">4 ITEMS</span>
+                <span class="cart-count-pill">0 ITEMS</span>
               </div>
               <button class="cart-close" id="cartClose" aria-label="Close cart">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
               </button>
             </div>
             <div class="cart-items" id="cartItems">
-              <div class="cart-item">
-                <div class="cart-thumb"><img src="img/headphones.jpg" alt="Headphones" /></div>
-                <div class="cart-info">
-                  <p class="cart-name">Wireless Noise-Cancelling Headphones</p>
-                  <p class="cart-store">TechVault Store</p>
-                  <div class="cart-row">
-                    <div class="qty-pill"><button type="button">−</button><span>1</span><button type="button">+</button></div>
-                    <span class="cart-price">$89.99</span>
-                  </div>
-                </div>
-                <button class="cart-trash" aria-label="Remove">✕</button>
-              </div>
-              <div class="cart-item">
-                <div class="cart-thumb"><img src="img/backpack.jpg" alt="Wallet" /></div>
-                <div class="cart-info">
-                  <p class="cart-name">Minimalist Leather Wallet</p>
-                  <p class="cart-store">UrbanEdge Goods</p>
-                  <div class="cart-row">
-                    <div class="qty-pill"><button type="button">−</button><span>2</span><button type="button">+</button></div>
-                    <span class="cart-price">$69.98</span>
-                  </div>
-                </div>
-                <button class="cart-trash" aria-label="Remove">✕</button>
-              </div>
-              <div class="cart-item">
-                <div class="cart-thumb"><img src="img/chair.jpg" alt="Tracker" /></div>
-                <div class="cart-info">
-                  <p class="cart-name">Smart Fitness Tracker Band</p>
-                  <p class="cart-store">FitLife Pro</p>
-                  <div class="cart-row">
-                    <div class="qty-pill"><button type="button">−</button><span>1</span><button type="button">+</button></div>
-                    <span class="cart-price">$54.99</span>
-                  </div>
-                </div>
-                <button class="cart-trash" aria-label="Remove">✕</button>
-              </div>
+              <!-- Rendered dynamically by cart.js -->
             </div>
             <div class="cart-foot">
-              <div class="cart-subtotal"><span>Subtotal</span><strong>$214.96</strong></div>
+              <div class="cart-subtotal"><span>Subtotal</span><strong>$0.00</strong></div>
               <p class="cart-escrow">Escrow protected — payment held safely until delivery</p>
               <div class="cart-actions">
                 <a href="shop.html" class="cart-btn-ghost">
@@ -595,7 +125,7 @@
           <span class="mmenu-num mmenu-num--cart">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
           </span> My Cart
-          <span class="mmenu-cart-count">4</span>
+          <span class="mmenu-cart-count">0</span>
           <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
         </a>
       </nav>
@@ -620,587 +150,416 @@
     <div class="ip-hero-content">
       <span class="ip-eyebrow">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-3.5-7.1"/><polyline points="21 4 21 10 15 10"/></svg>
-        Refund Policy
+        Refund &amp; Escrow Guarantee
       </span>
+      
       <h1 class="ip-title">Money back, <em>without the drama.</em></h1>
+      
       <p class="ip-sub">Every order travels under escrow. If it arrives broken, late or never — the refund process is a few clicks, not a legal saga.</p>
+      
       <div class="ip-hero-cta" style="margin-top:28px;">
         <a href="#refund-policy" class="btn-primary">Read the Policy</a>
-        <a href="help.html" class="btn-cta-ghost">Start a Request</a>
+        <a href="#eligibility-checker" class="btn-cta-ghost">Check Eligibility</a>
       </div>
     </div>
   </section>
+</div><!-- /hero-wrapper -->
 
-      <!-- Stats Section -->
-      <section class="rp-stats-section">
-        <div class="rp-stats-container">
-          <div class="rp-stats-grid">
-            <div class="rp-stat-card">
-              <div class="rp-stat-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <polyline points="12 6 12 12 16 14" />
-                </svg>
-              </div>
-              <div class="rp-stat-value">3 days</div>
-              <div class="rp-stat-label">Average refund speed</div>
-            </div>
-            <div class="rp-stat-card">
-              <div class="rp-stat-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                </svg>
-              </div>
-              <div class="rp-stat-value">100%</div>
-              <div class="rp-stat-label">Orders under escrow</div>
-            </div>
-            <div class="rp-stat-card">
-              <div class="rp-stat-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <line x1="12" y1="1" x2="12" y2="23" />
-                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                </svg>
-              </div>
-              <div class="rp-stat-value">2%</div>
-              <div class="rp-stat-label">
-                Chargeback rate — 8x below the norm
-              </div>
-            </div>
-            <div class="rp-stat-card">
-              <div class="rp-stat-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                </svg>
-              </div>
-              <div class="rp-stat-value">24/7</div>
-              <div class="rp-stat-label">Dispute resolution desk</div>
-            </div>
-          </div>
+<!-- SPEED & TRUST STATS RIBBON -->
+<section class="rp-stats-section">
+  <div class="rp-stats-container">
+    <div class="rp-stats-grid">
+      <div class="rp-stat-card">
+        <div class="rp-stat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
-      </section>
-
-      <!-- Policy Cards Section -->
-      <section class="rp-policy-section" id="refund-policy">
-        <div class="rp-policy-container">
-          <div class="rp-section-header">
-            <span class="rp-section-eyebrow">The policy</span>
-            <h2 class="rp-section-title">Straightforward, line by line</h2>
-          </div>
-          <div class="rp-policy-grid">
-            <div
-              class="rp-policy-card"
-              style="
-                --card-accent: #1f64ff;
-                --card-accent2: #4f46e5;
-                --card-bg-start: #e8f1ff;
-                --card-bg-end: #dbeafe;
-              "
-            >
-              <span class="rp-card-number">01</span>
-              <div class="rp-card-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <polyline points="12 6 12 12 16 14" />
-                </svg>
-              </div>
-              <h3>Eligibility</h3>
-              <p>
-                If the item arrives damaged, materially different from the
-                listing, never arrives within the delivery window, or if you
-                request within 14 days of delivery — you are eligible. No forms
-                printed, no threats needed.
-              </p>
-            </div>
-            <div
-              class="rp-policy-card"
-              style="
-                --card-accent: #059669;
-                --card-accent2: #0891b2;
-                --card-bg-start: #ecfdf5;
-                --card-bg-end: #d1fae5;
-              "
-            >
-              <span class="rp-card-number">02</span>
-              <div class="rp-card-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <line x1="12" y1="1" x2="12" y2="23" />
-                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                </svg>
-              </div>
-              <h3>Escrow clock</h3>
-              <p>
-                Your payment sits in escrow until you confirm delivery.
-                <b>14 days</b>
-                to open a dispute after delivery,
-                <b>7 days</b>
-                after the expected window for "late/no-show" claims. The seller
-                is never paid early.
-              </p>
-            </div>
-            <div
-              class="rp-policy-card"
-              style="
-                --card-accent: #0891b2;
-                --card-accent2: #0284c7;
-                --card-bg-start: #ecfeff;
-                --card-bg-end: #cffafe;
-              "
-            >
-              <span class="rp-card-number">03</span>
-              <div class="rp-card-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                  <polyline points="22 4 12 14.01 9 11.01" />
-                </svg>
-              </div>
-              <h3>How to request</h3>
-              <p>
-                Dashboard → Order → Get Help → choose a reason → add photos.
-                That's it. Our Trust & Safety team reviews within 24h and most
-                decisions land in 48h.
-              </p>
-            </div>
-            <div
-              class="rp-policy-card"
-              style="
-                --card-accent: #dc2626;
-                --card-accent2: #b91c1c;
-                --card-bg-start: #fef2f2;
-                --card-bg-end: #fee2e2;
-              "
-            >
-              <span class="rp-card-number">04</span>
-              <div class="rp-card-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
-                </svg>
-              </div>
-              <h3>Not refundable</h3>
-              <p>
-                Custom/bespoke items already in production, digital goods
-                already delivered, and orders where tracking shows confirmed
-                delivery
-                <i>and</i>
-                your photos show no fault. Restocking is on us otherwise.
-              </p>
-            </div>
-            <div
-              class="rp-policy-card"
-              style="
-                --card-accent: #7c3aed;
-                --card-accent2: #6d28d9;
-                --card-bg-start: #f5f3ff;
-                --card-bg-end: #ede9fe;
-              "
-            >
-              <span class="rp-card-number">05</span>
-              <div class="rp-card-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M2 12h20" />
-                  <path
-                    d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
-                  />
-                </svg>
-              </div>
-              <h3>Partial refunds</h3>
-              <p>
-                For minor issues — a chipped corner, a missing accessory — both
-                sides can agree on a partial refund in escrow. You keep the
-                item; the seller gets a fair portion. Fully handled in-platform.
-              </p>
-            </div>
-            <div
-              class="rp-policy-card"
-              style="
-                --card-accent: #0f172a;
-                --card-accent2: #334155;
-                --card-bg-start: #f8fafc;
-                --card-bg-end: #e2e8f0;
-              "
-            >
-              <span class="rp-card-number">06</span>
-              <div class="rp-card-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                </svg>
-              </div>
-              <h3>Chargebacks</h3>
-              <p>
-                Escrow means we're on your side before your bank gets involved.
-                If you do open a chargeback, we respond with the escrow evidence
-                within 21 days and most cases close in your favour.
-              </p>
-            </div>
-          </div>
+        <div class="rp-stat-value">3 Days</div>
+        <div class="rp-stat-label">Average refund speed</div>
+      </div>
+      <div class="rp-stat-card">
+        <div class="rp-stat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
-      </section>
-
-      <!-- Timeline Section -->
-      <section class="rp-timeline-section">
-        <div class="rp-timeline-container">
-          <div class="rp-section-header">
-            <span class="rp-section-eyebrow">The refund journey</span>
-            <h2 class="rp-section-title">How your money comes home</h2>
-          </div>
-          <div class="rp-timeline">
-            <div class="rp-timeline-item">
-              <h4>1 · You open a case</h4>
-              <p>
-                Pick the order, pick the reason, add evidence. Two minutes,
-                done.
-              </p>
-            </div>
-            <div class="rp-timeline-item">
-              <h4>2 · Escrow freezes</h4>
-              <p>
-                The seller's payout pauses instantly. They see your case and can
-                reply with evidence too.
-              </p>
-            </div>
-            <div class="rp-timeline-item">
-              <h4>3 · We rule</h4>
-              <p>
-                Trust & Safety reviews both sides within 24h–48h. Most cases
-                rule in the buyer's favour automatically.
-              </p>
-            </div>
-            <div class="rp-timeline-item">
-              <h4>4 · Money returns</h4>
-              <p>
-                Refunds land back on your Pi wallet instantly, or on PayPal/bank
-                within 1–3 business days.
-              </p>
-            </div>
-          </div>
+        <div class="rp-stat-value">100%</div>
+        <div class="rp-stat-label">Orders under escrow</div>
+      </div>
+      <div class="rp-stat-card">
+        <div class="rp-stat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         </div>
-      </section>
-
-      <!-- FAQ Section -->
-      <section class="rp-faq-section">
-        <div class="rp-faq-container">
-          <div class="rp-section-header">
-            <span class="rp-section-eyebrow">Questions?</span>
-            <h2 class="rp-section-title">Frequently asked</h2>
-          </div>
-          <div class="rp-faq-item">
-            <summary>How long do refunds take to process?</summary>
-            <div class="rp-faq-answer">
-              <p>
-                Most refunds are approved within 24–48 hours of opening a case.
-                Once approved, the money returns to your Pi wallet instantly, or
-                to your PayPal/bank account within 1–3 business days.
-              </p>
-            </div>
-          </div>
-          <div class="rp-faq-item">
-            <summary>Can I get a partial refund?</summary>
-            <div class="rp-faq-answer">
-              <p>
-                Yes! For minor issues like a chipped corner or missing
-                accessory, you and the seller can agree on a partial refund
-                directly in escrow. You keep the item and get a fair portion of
-                your money back.
-              </p>
-            </div>
-          </div>
-          <div class="rp-faq-item">
-            <summary>What if the seller disagrees with my claim?</summary>
-            <div class="rp-faq-answer">
-              <p>
-                Our Trust & Safety team reviews all evidence from both sides and
-                makes a fair decision. Most cases are resolved automatically in
-                the buyer's favour when the evidence is clear.
-              </p>
-            </div>
-          </div>
-          <div class="rp-faq-item">
-            <summary>Are there any items that can't be refunded?</summary>
-            <div class="rp-faq-answer">
-              <p>
-                Custom/bespoke items already in production, digital goods
-                already delivered, and orders where tracking shows confirmed
-                delivery with no fault shown in photos are not eligible for
-                refunds.
-              </p>
-            </div>
-          </div>
+        <div class="rp-stat-value">2%</div>
+        <div class="rp-stat-label">Low dispute rate</div>
+      </div>
+      <div class="rp-stat-card">
+        <div class="rp-stat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
         </div>
-      </section>
-
-      <!-- CTA Section -->
-      <section class="rp-cta-section">
-        <div class="rp-cta-container">
-          <h2>Ready to start a refund?</h2>
-          <p>
-            Open a case in your dashboard, or talk to the Trust & Safety team —
-            they reply within 4 hours.
-          </p>
-          <div class="rp-cta-buttons">
-            <a class="btn-primary" href="contact.html">Talk to Us</a>
-            <a class="btn-ghost" href="help.html">Refund Guide →</a>
-          </div>
-        </div>
-      </section>
+        <div class="rp-stat-value">24/7</div>
+        <div class="rp-stat-label">Human resolution desk</div>
+      </div>
     </div>
-    <!-- /hero-wrapper -->
+  </div>
+</section>
 
-    <footer class="footer">
-      <div class="footer-glow-bar"></div>
-      <div class="footer-container">
-        <!-- ── TOP: newsletter banner ── -->
-        <div class="footer-newsletter">
-          <div class="fnl-left">
-            <span class="fnl-badge">Newsletter</span>
-            <h3 class="fnl-heading">Stay ahead of the market.</h3>
-            <p class="fnl-sub">Get new product drops, seller tips and Pi Network updates — straight to your inbox.</p>
-          </div>
-          <form class="fnl-form" onsubmit="return false">
-            <input class="fnl-input" type="email" placeholder="Enter your email address" />
-            <button class="fnl-btn" type="submit">Subscribe
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </button>
-          </form>
+<!-- INTERACTIVE REFUND ELIGIBILITY CHECKER -->
+<section class="rp-checker-section" id="eligibility-checker">
+  <div class="rp-checker-container">
+    <div style="text-align:center;">
+      <span class="rp-section-eyebrow">Instant Estimator</span>
+      <h2 style="font-size:28px; font-weight:800; color:#0F172A; margin:8px 0;">Check Your Refund Eligibility</h2>
+      <p style="color:#64748B; font-size:15px; margin:0;">Select your current scenario below to see the instant automated outcome:</p>
+    </div>
+
+    <div class="rp-checker-grid" id="checkerOptions">
+      <div class="rp-checker-opt active" data-res="damaged">📦 Item Damaged or Defective</div>
+      <div class="rp-checker-opt" data-res="delayed">⌛ Delayed Past 7 Days</div>
+      <div class="rp-checker-opt" data-res="different">🎨 Not as Described</div>
+      <div class="rp-checker-opt" data-res="mind">🤔 Changed Mind (&gt; 14 Days)</div>
+      <div class="rp-checker-opt" data-res="digital">⚡ Digital Product Delivered</div>
+    </div>
+
+    <div class="rp-checker-result" id="checkerResult">
+      <div class="rp-checker-badge" id="resBadge">✅</div>
+      <div class="rp-checker-info">
+        <h5 id="resTitle">100% Full Refund Guarantee</h5>
+        <p id="resDesc">If your item arrives broken, cracked, or defective, upload a 5-second video or photo in your dashboard. Escrow funds freeze instantly and a full refund is dispatched within 24 hours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POLICY BREAKDOWN CARDS -->
+<section class="rp-policy-section" id="refund-policy">
+  <div class="rp-policy-container">
+    <div class="rp-section-header">
+      <span class="rp-section-eyebrow">The Policy</span>
+      <h2 class="rp-section-title">Straightforward, line by line</h2>
+    </div>
+    
+    <div class="rp-policy-grid">
+      <div class="rp-policy-card" style="--card-accent:#1f64ff; --card-accent2:#4f46e5; --card-bg-start:#e8f1ff; --card-bg-end:#dbeafe;">
+        <span class="rp-card-number">01</span>
+        <div class="rp-card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
+        <h3>Eligibility Terms</h3>
+        <p>If the item arrives damaged, materially different from listing photos, or fails to arrive within the stated delivery window — you are 100% eligible. Open a request within 14 days of delivery.</p>
+      </div>
 
-        <div class="footer-divider"></div>
-
-        <div class="footer-cols">
-          <div class="footer-col footer-col--brand">
-            <a href="index.html" class="footer-logo" aria-label="DropHub">
-              <img src="Logo.png" alt="DropHub" class="footer-logo-img" />
-            </a>
-            <p class="footer-brand-desc">The world's first dropshipping marketplace with Pi Network, PayPal &amp; Naira payments — built-in escrow on every order.</p>
-            <div class="footer-pay-chips">
-              <span class="pay-chip">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                Pi Network
-              </span>
-              <span class="pay-chip">PayPal</span>
-              <span class="pay-chip">Paystack</span>
-            </div>
-            <div class="footer-socials">
-              <a href="#" class="social-icon" aria-label="Twitter/X">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-              </a>
-              <a href="#" class="social-icon" aria-label="Instagram">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
-              </a>
-              <a href="#" class="social-icon" aria-label="YouTube">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.47a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/></svg>
-              </a>
-              <a href="#" class="social-icon" aria-label="Telegram">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
-              </a>
-            </div>
-          </div>
-          <div class="footer-col">
-            <h6 class="footer-col-title">Marketplace</h6>
-            <ul class="footer-link-list">
-              <li><a href="shop.html">Browse Products</a></li>
-              <li><a href="shop.html">Top Rated Items</a></li>
-              <li><a href="shop.html">New Arrivals</a></li>
-            </ul>
-          </div>
-          <div class="footer-col">
-            <h6 class="footer-col-title">Sellers</h6>
-            <ul class="footer-link-list">
-              <li><a href="#">Start Selling <span class="link-tag">Free</span></a></li>
-              <li><a href="#">Seller Dashboard</a></li>
-              <li><a href="#">Pricing &amp; Fees</a></li>
-              <li><a href="#">Payouts</a></li>
-              <li><a href="#">Analytics</a></li>
-            </ul>
-          </div>
-          <div class="footer-col">
-            <h6 class="footer-col-title">Payments</h6>
-            <ul class="footer-link-list">
-              <li><a href="#">Pi Network Wallet</a></li>
-              <li><a href="#">PayPal Checkout</a></li>
-              <li><a href="#">Naira (Paystack)</a></li>
-              <li><a href="index.html#safe">Escrow Protection</a></li>
-              <li><a href="refund-policy.html">Refund Policy</a></li>
-            </ul>
-          </div>
-          <div class="footer-col">
-            <h6 class="footer-col-title">Company</h6>
-            <ul class="footer-link-list">
-              <li><a href="about.html">About DropHub</a></li>
-              <li><a href="blog.html">Blog &amp; News</a></li>
-              <li><a href="help.html">Help Center</a></li>
-              <li><a href="contact.html">Contact Us</a></li>
-            </ul>
-          </div>
+      <div class="rp-policy-card" style="--card-accent:#059669; --card-accent2:#0891b2; --card-bg-start:#ecfdf5; --card-bg-end:#d1fae5;">
+        <span class="rp-card-number">02</span>
+        <div class="rp-card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         </div>
-        <div class="footer-divider"></div>
-        <div class="footer-bottom">
-          <p class="footer-copy">© 2026 DropHub, Inc. All rights reserved.</p>
-          <div class="footer-badges">
-            <span class="footer-badge-item">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              Escrow Protected
-            </span>
-            <span class="footer-badge-item">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              SSL Secured
-            </span>
-            <span class="footer-badge-item">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              Verified Sellers
-            </span>
-          </div>
-          <div class="footer-legal-links">
-            <a href="#">Privacy</a>
-            <a href="#">Terms</a>
-            <a href="#">Cookies</a>
-            <a href="#">Trust &amp; Safety</a>
-          </div>
+        <h3>Escrow Lock Clock</h3>
+        <p>Your payment sits safely in the escrow vault until you click "Confirm Receipt". Sellers never receive funds prematurely before buyer verification occurs.</p>
+      </div>
+
+      <div class="rp-policy-card" style="--card-accent:#0891b2; --card-accent2:#0284c7; --card-bg-start:#ecfeff; --card-bg-end:#cffafe;">
+        <span class="rp-card-number">03</span>
+        <div class="rp-card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <h3>Simple 3-Step Process</h3>
+        <p>Go to Dashboard → Select Order → Click "Get Help". Attach a quick photo or description. Our Trust &amp; Safety desk reviews and issues decisions within 24h–48h.</p>
+      </div>
+
+      <div class="rp-policy-card" style="--card-accent:#dc2626; --card-accent2:#b91c1c; --card-bg-start:#fef2f2; --card-bg-end:#fee2e2;">
+        <span class="rp-card-number">04</span>
+        <div class="rp-card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+        </div>
+        <h3>Non-Refundable Scenarios</h3>
+        <p>Custom bespoke items already in physical production, fully delivered digital goods, or orders confirmed delivered via GPS tracking with no photo evidence of defect.</p>
+      </div>
+
+      <div class="rp-policy-card" style="--card-accent:#7c3aed; --card-accent2:#6d28d9; --card-bg-start:#f5f3ff; --card-bg-end:#ede9fe;">
+        <span class="rp-card-number">05</span>
+        <div class="rp-card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <h3>Partial Refund Agreements</h3>
+        <p>For minor cosmetic issues (e.g. minor box dent), buyer and seller can agree to a partial escrow payout. You keep the product while receiving a cash refund portion.</p>
+      </div>
+
+      <div class="rp-policy-card" style="--card-accent:#0f172a; --card-accent2:#334155; --card-bg-start:#f8fafc; --card-bg-end:#e2e8f0;">
+        <span class="rp-card-number">06</span>
+        <div class="rp-card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Chargeback Protection</h3>
+        <p>Because funds are protected in escrow first, disputes resolve without bank delays. Pi crypto refunds settle in seconds; PayPal &amp; Naira in 1–3 days.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE SECTION -->
+<section class="rp-timeline-section">
+  <div class="rp-timeline-container">
+    <div class="rp-section-header">
+      <span class="rp-section-eyebrow">The Refund Journey</span>
+      <h2 class="rp-section-title">How your money comes home</h2>
+    </div>
+    <div class="rp-timeline">
+      <div class="rp-timeline-item">
+        <h4>1 · You Open a Case</h4>
+        <p>Pick the order, choose the issue, and attach photo evidence. Takes less than 2 minutes in your dashboard.</p>
+      </div>
+      <div class="rp-timeline-item">
+        <h4>2 · Escrow Lock Activated</h4>
+        <p>The seller's payout freezes instantly. The merchant is notified and given 24 hours to respond or assist.</p>
+      </div>
+      <div class="rp-timeline-item">
+        <h4>3 · Human Review &amp; Ruling</h4>
+        <p>Trust &amp; Safety reviews evidence from both sides. Clear claims are auto-approved in the buyer's favor.</p>
+      </div>
+      <div class="rp-timeline-item">
+        <h4>4 · Payout Disbursement</h4>
+        <p>Refunds land on your Pi Wallet in seconds, or return to your PayPal account/bank card in 1–3 business days.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ SECTION -->
+<section class="rp-faq-section">
+  <div class="rp-faq-container">
+    <div class="rp-section-header">
+      <span class="rp-section-eyebrow">Got Questions?</span>
+      <h2 class="rp-section-title">Frequently Asked Questions</h2>
+    </div>
+
+    <div class="rp-faq-item">
+      <summary>How fast are refunds credited?</summary>
+      <div class="rp-faq-answer">
+        <p>Most dispute cases are reviewed within 24 to 48 hours. Once approved, Pi Network crypto refunds settle into your wallet instantly. PayPal and Naira card refunds post in 1 to 3 business days.</p>
+      </div>
+    </div>
+
+    <div class="rp-faq-item">
+      <summary>What if the seller doesn't reply?</summary>
+      <div class="rp-faq-answer">
+        <p>If a merchant fails to respond within 24 hours of a dispute lock, the escrow system automatically rules in your favor and releases a full refund to your payment method.</p>
+      </div>
+    </div>
+
+    <div class="rp-faq-item">
+      <summary>Can I request a partial refund?</summary>
+      <div class="rp-faq-answer">
+        <p>Yes! For minor flaws like missing accessories or slight color mismatches, you can propose a partial refund amount inside your dispute portal while keeping the item.</p>
+      </div>
+    </div>
+
+    <div class="rp-faq-item">
+      <summary>Are Pi Network transactions reversible?</summary>
+      <div class="rp-faq-answer">
+        <p>While blockchain transactions are final once executed, DropHub holds Pi payments inside an off-chain escrow smart vault during delivery, making full reversals 100% possible before order release.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA SECTION -->
+<section class="rp-cta-section">
+  <div class="rp-cta-container">
+    <h2>Need to start a refund or open a case?</h2>
+    <p>Open a claim directly in your buyer dashboard or talk to our Trust &amp; Safety team — real humans reply within 4 hours.</p>
+    <div class="rp-cta-buttons">
+      <a class="btn-primary" href="contact.html">Talk to Us</a>
+      <a class="btn-ghost" href="help.html">Help Center Guide →</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer (Identical to Homepage) -->
+<footer class="footer">
+  <div class="footer-glow-bar"></div>
+  <div class="footer-container">
+    <div class="footer-newsletter">
+      <div class="fnl-left">
+        <span class="fnl-badge">Newsletter</span>
+        <h3 class="fnl-heading">Stay ahead of the market.</h3>
+        <p class="fnl-sub">Get new product drops, seller tips and Pi Network updates — straight to your inbox.</p>
+      </div>
+      <form class="fnl-form" onsubmit="return false">
+        <input class="fnl-input" type="email" placeholder="Enter your email address" />
+        <button class="fnl-btn" type="submit">Subscribe
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </form>
+    </div>
+
+    <div class="footer-divider"></div>
+
+    <div class="footer-cols">
+      <div class="footer-col footer-col--brand">
+        <a href="index.html" class="footer-logo" aria-label="DropHub">
+          <img src="Logo.png" alt="DropHub" class="footer-logo-img" />
+        </a>
+        <p class="footer-brand-desc">The world's first dropshipping marketplace with Pi Network, PayPal &amp; Naira payments — built-in escrow on every order.</p>
+        <div class="footer-pay-chips">
+          <span class="pay-chip">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            Pi Network
+          </span>
+          <span class="pay-chip">PayPal</span>
+          <span class="pay-chip">Paystack</span>
+        </div>
+        <div class="footer-socials">
+          <a href="#" class="social-icon" aria-label="Twitter/X"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="#" class="social-icon" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" class="social-icon" aria-label="YouTube"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.47a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" class="social-icon" aria-label="Telegram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg></a>
         </div>
       </div>
-    </footer>
-    <script>
-      (function () {
-        var burger = document.getElementById("navBurger");
-        var menu = document.getElementById("mobileMenu");
-        if (!burger || !menu) return;
-        function closeMenu() {
-          if (!menu.classList.contains("mmenu--open")) return;
-          menu.classList.remove("mmenu--open");
-          menu.setAttribute("aria-hidden", "true");
-          burger.classList.remove("is-active");
-          burger.setAttribute("aria-expanded", "false");
-          burger.setAttribute("aria-label", "Open menu");
-          document.body.classList.remove("mmenu-locked");
-        }
-        burger.addEventListener("click", function () {
-          if (menu.classList.contains("mmenu--open")) {
-            closeMenu();
-            return;
-          }
-          menu.classList.add("mmenu--open");
-          menu.setAttribute("aria-hidden", "false");
-          burger.classList.add("is-active");
-          burger.setAttribute("aria-expanded", "true");
-          burger.setAttribute("aria-label", "Close menu");
-          document.body.classList.add("mmenu-locked");
-        });
-        menu.querySelectorAll("[data-mmenu-close]").forEach(function (el) {
-          el.addEventListener("click", closeMenu);
-        });
-        menu
-          .querySelectorAll(".mmenu-link, .mmenu-cta, .mmenu-signin")
-          .forEach(function (a) {
-            a.addEventListener("click", closeMenu);
-          });
-        document.addEventListener("keydown", function (e) {
-          if (e.key === "Escape") closeMenu();
-        });
-        window.addEventListener("resize", function () {
-          if (window.innerWidth > 1100) closeMenu();
-        });
-      })();
-    </script>
+      <div class="footer-col">
+        <h6 class="footer-col-title">Marketplace</h6>
+        <ul class="footer-link-list">
+          <li><a href="shop.html">Browse Products</a></li>
+          <li><a href="shop.html">Top Rated Items</a></li>
+          <li><a href="shop.html">New Arrivals</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h6 class="footer-col-title">Sellers</h6>
+        <ul class="footer-link-list">
+          <li><a href="shop.html">Start Selling <span class="link-tag">Free</span></a></li>
+          <li><a href="shop.html">Seller Dashboard</a></li>
+          <li><a href="about.html">Pricing &amp; Fees</a></li>
+          <li><a href="help.html">Payouts</a></li>
+          <li><a href="contact.html">Analytics</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h6 class="footer-col-title">Payments</h6>
+        <ul class="footer-link-list">
+          <li><a href="help.html">Pi Network Wallet</a></li>
+          <li><a href="help.html">PayPal Checkout</a></li>
+          <li><a href="help.html">Naira (Paystack)</a></li>
+          <li><a href="index.html#safe">Escrow Protection</a></li>
+          <li><a href="refund-policy.html">Refund Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h6 class="footer-col-title">Company</h6>
+        <ul class="footer-link-list">
+          <li><a href="about.html">About DropHub</a></li>
+          <li><a href="blog.html">Blog &amp; News</a></li>
+          <li><a href="help.html">Help Center</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
 
-    <script>
-      (function () {
-        var nav = document.querySelector(".navbar");
-        if (!nav) return;
-        function onScroll() {
-          nav.classList.toggle("scrolled", window.scrollY > 12);
-        }
-        window.addEventListener("scroll", onScroll, { passive: true });
-        onScroll();
-      })();
-    </script>
-  </body>
+    <div class="footer-divider"></div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 DropHub, Inc. All rights reserved.</p>
+      <div class="footer-badges">
+        <span class="footer-badge-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Escrow Protected</span>
+        <span class="footer-badge-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> SSL Secured</span>
+        <span class="footer-badge-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Verified Sellers</span>
+      </div>
+      <div class="footer-legal-links">
+        <a href="refund-policy.html">Privacy</a>
+        <a href="refund-policy.html">Terms</a>
+        <a href="refund-policy.html">Cookies</a>
+        <a href="index.html#safe">Trust &amp; Safety</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Mobile Drawer Menu
+  (function () {
+    var burger = document.getElementById('navBurger');
+    var menu = document.getElementById('mobileMenu');
+    if (!burger || !menu) return;
+    function openMenu() {
+      menu.classList.add('mmenu--open');
+      menu.setAttribute('aria-hidden', 'false');
+      burger.classList.add('is-active');
+      burger.setAttribute('aria-expanded', 'true');
+      document.body.classList.add('mmenu-locked');
+    }
+    function closeMenu() {
+      if (!menu.classList.contains('mmenu--open')) return;
+      menu.classList.remove('mmenu--open');
+      menu.setAttribute('aria-hidden', 'true');
+      burger.classList.remove('is-active');
+      burger.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('mmenu-locked');
+    }
+    burger.addEventListener('click', function () {
+      if (menu.classList.contains('mmenu--open')) closeMenu(); else openMenu();
+    });
+    menu.querySelectorAll('[data-mmenu-close], .mmenu-link, .mmenu-cta, .mmenu-signin').forEach(el => {
+      el.addEventListener('click', closeMenu);
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+  })();
+
+  // Navbar Scroll state
+  const nav = document.querySelector('.navbar');
+  if (nav) {
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 12);
+    }, { passive: true });
+  }
+
+  // Interactive Refund Estimator Widget logic
+  const options = document.querySelectorAll('.rp-checker-opt');
+  const resBadge = document.getElementById('resBadge');
+  const resTitle = document.getElementById('resTitle');
+  const resDesc = document.getElementById('resDesc');
+
+  const SCENARIOS = {
+    damaged: {
+      badge: '✅',
+      title: '100% Full Refund Guarantee',
+      desc: 'If your item arrives broken, cracked, or defective, upload a 5-second video or photo in your dashboard. Escrow funds freeze instantly and a full refund is dispatched within 24 hours.'
+    },
+    delayed: {
+      badge: '⌛',
+      title: '100% Full Refund Guarantee',
+      desc: 'If tracking shows no movement 7 days past the expected delivery date, the escrow system automatically marks the package lost and returns your full payment.'
+    },
+    different: {
+      badge: '🔄',
+      title: 'Full Refund or Replacement',
+      desc: 'If the item received is a different color, wrong size, or missing key advertised features, you receive a prepaid return label and full refund upon carrier scan.'
+    },
+    mind: {
+      badge: '⚠️',
+      title: 'Discretionary Store Credit / Return',
+      desc: 'For change-of-mind requests past the 14-day delivery window, approval is at seller discretion. If approved, return shipping fees apply.'
+    },
+    digital: {
+      badge: '🚫',
+      title: 'Exempt From Refund',
+      desc: 'Digital licenses, instant download keys, and customized bespoke items already manufactured cannot be refunded once delivered, unless proven non-functional.'
+    }
+  };
+
+  options.forEach(opt => {
+    opt.addEventListener('click', function () {
+      options.forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+      const key = opt.dataset.res;
+      const data = SCENARIOS[key];
+      if (data && resBadge && resTitle && resDesc) {
+        resBadge.textContent = data.badge;
+        resTitle.textContent = data.title;
+        resDesc.textContent = data.desc;
+      }
+    });
+  });
+});
+</script>
+
+<script src="cart.js"></script>
+</body>
 </html>

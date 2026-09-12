@@ -235,7 +235,8 @@
 <!-- SHOP TOOLBAR (sticky) -->
   <div class="shop-bar">
     <div class="shop-bar-inner">
-      <div class="shop-filters">
+      <!-- Desktop category chips (hidden on mobile) -->
+      <div class="shop-filters" id="desktopFilters">
         <button type="button" class="shop-chip shop-chip--active" data-filter="all">All</button>
         <button type="button" class="shop-chip" data-filter="electronics">Electronics</button>
         <button type="button" class="shop-chip" data-filter="fashion">Fashion</button>
@@ -245,6 +246,27 @@
         <button type="button" class="shop-chip" data-filter="wearables">Wearables</button>
         <button type="button" class="shop-chip" data-filter="audio">Audio</button>
       </div>
+
+      <!-- Mobile filter trigger row (visible only on mobile) -->
+      <div class="shop-mobile-bar">
+        <button type="button" class="shop-filter-trigger" id="shopFilterTrigger" aria-expanded="false" aria-controls="shopFilterDrawer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="16" y2="12"/><line x1="4" y1="18" x2="12" y2="18"/></svg>
+          Filter &amp; Categories
+          <span class="shop-filter-active-label" id="shopActiveLabel">All</span>
+        </button>
+        <div class="shop-mobile-sort">
+          <label class="shop-sort-label" for="shopSortMobile">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 6 4 12 8 18"/><polyline points="16 6 20 12 16 18"/></svg>
+            <select id="shopSortMobile">
+              <option value="featured">Featured</option>
+              <option value="price-asc">Price ↑</option>
+              <option value="price-desc">Price ↓</option>
+              <option value="rating">Top Rated</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
       <div class="shop-sort">
         <span class="shop-count" id="shopCount">12 products</span>
         <label class="shop-sort-label" for="shopSort">
@@ -262,6 +284,62 @@
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         Get a Quote
       </a>
+    </div>
+  </div>
+
+  <!-- MOBILE FILTER DRAWER -->
+  <div class="shop-filter-drawer" id="shopFilterDrawer" aria-hidden="true">
+    <div class="shop-filter-backdrop" id="shopFilterBackdrop"></div>
+    <div class="shop-filter-panel" role="dialog" aria-modal="true" aria-label="Filter products">
+      <div class="shop-filter-panel-head">
+        <div class="shop-filter-panel-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="16" y2="12"/><line x1="4" y1="18" x2="12" y2="18"/></svg>
+          <span>Browse Categories</span>
+        </div>
+        <button type="button" class="shop-filter-close" id="shopFilterClose" aria-label="Close filters">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+        </button>
+      </div>
+
+      <p class="shop-filter-label">CATEGORY</p>
+      <div class="shop-filter-cat-grid" id="shopDrawerCats">
+        <button type="button" class="shop-drawer-chip shop-drawer-chip--active" data-filter="all">
+          <span class="sdc-icon">🛍️</span>
+          <span>All Items</span>
+        </button>
+        <button type="button" class="shop-drawer-chip" data-filter="electronics">
+          <span class="sdc-icon">📱</span>
+          <span>Electronics</span>
+        </button>
+        <button type="button" class="shop-drawer-chip" data-filter="fashion">
+          <span class="sdc-icon">👗</span>
+          <span>Fashion</span>
+        </button>
+        <button type="button" class="shop-drawer-chip" data-filter="smart-home">
+          <span class="sdc-icon">🏠</span>
+          <span>Smart Home</span>
+        </button>
+        <button type="button" class="shop-drawer-chip" data-filter="kitchen">
+          <span class="sdc-icon">🍳</span>
+          <span>Kitchen</span>
+        </button>
+        <button type="button" class="shop-drawer-chip" data-filter="furniture">
+          <span class="sdc-icon">🪑</span>
+          <span>Furniture</span>
+        </button>
+        <button type="button" class="shop-drawer-chip" data-filter="wearables">
+          <span class="sdc-icon">⌚</span>
+          <span>Wearables</span>
+        </button>
+        <button type="button" class="shop-drawer-chip" data-filter="audio">
+          <span class="sdc-icon">🎧</span>
+          <span>Audio</span>
+        </button>
+      </div>
+
+      <div class="shop-filter-panel-foot">
+        <button type="button" class="shop-filter-apply" id="shopFilterApply">Show Results</button>
+      </div>
     </div>
   </div>
 
@@ -918,15 +996,73 @@
       var emptyEl = document.getElementById('shopEmpty');
       var searchInput = document.getElementById('shopSearch');
       var sortSel = document.getElementById('shopSort');
-      var chips = document.querySelectorAll('.shop-chip');
+      var sortSelMobile = document.getElementById('shopSortMobile');
+      var chips = document.querySelectorAll('.shop-chip');           /* desktop chips */
+      var drawerChips = document.querySelectorAll('.shop-drawer-chip'); /* mobile drawer chips */
       var cards = Array.prototype.slice.call(grid.querySelectorAll('.product-card'));
       var activeCat = 'all';
       var query = '';
 
+      /* ── Mobile Filter Drawer ── */
+      var drawer = document.getElementById('shopFilterDrawer');
+      var backdrop = document.getElementById('shopFilterBackdrop');
+      var trigger = document.getElementById('shopFilterTrigger');
+      var closeBtn = document.getElementById('shopFilterClose');
+      var applyBtn = document.getElementById('shopFilterApply');
+      var activeLabel = document.getElementById('shopActiveLabel');
+      var pendingCat = 'all'; /* selection held until Apply is tapped */
+
+      function openDrawer() {
+        drawer.classList.add('is-open');
+        drawer.setAttribute('aria-hidden', 'false');
+        trigger.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeDrawer() {
+        drawer.classList.remove('is-open');
+        drawer.setAttribute('aria-hidden', 'true');
+        trigger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }
+      if (trigger) trigger.addEventListener('click', openDrawer);
+      if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+      if (backdrop) backdrop.addEventListener('click', closeDrawer);
+
+      /* Sync drawer chip selection */
+      drawerChips.forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          drawerChips.forEach(function (c) { c.classList.remove('shop-drawer-chip--active'); });
+          chip.classList.add('shop-drawer-chip--active');
+          pendingCat = chip.dataset.filter;
+        });
+      });
+
+      /* Apply button — commit the selection */
+      if (applyBtn) applyBtn.addEventListener('click', function () {
+        activeCat = pendingCat;
+        /* Sync desktop chips too */
+        chips.forEach(function (c) {
+          c.classList.toggle('shop-chip--active', c.dataset.filter === activeCat);
+        });
+        /* Update label */
+        var labelText = drawer.querySelector('.shop-drawer-chip--active span:last-child');
+        if (activeLabel && labelText) activeLabel.textContent = labelText.textContent;
+        applyFilter();
+        closeDrawer();
+      });
+
       function recount() {
         var vis = cards.filter(function (c) { return !c.classList.contains('is-hidden'); }).length;
-        countEl.textContent = (vis === 1 ? '1 product' : vis + ' products');
+        if (countEl) countEl.textContent = (vis === 1 ? '1 product' : vis + ' products');
         if (emptyEl) emptyEl.hidden = vis !== 0;
+      }
+
+      function applySort(v) {
+        var sorted = cards.slice();
+        if (v === 'price-asc') sorted.sort(function (a, b) { return parseFloat(a.dataset.price) - parseFloat(b.dataset.price); });
+        else if (v === 'price-desc') sorted.sort(function (a, b) { return parseFloat(b.dataset.price) - parseFloat(a.dataset.price); });
+        else if (v === 'rating') sorted.sort(function (a, b) { return parseFloat(b.dataset.rating) - parseFloat(a.dataset.rating); });
+        if (v !== 'featured') sorted.forEach(function (c) { grid.appendChild(c); });
       }
 
       function applyFilter() {
@@ -938,11 +1074,18 @@
         recount();
       }
 
+      /* Desktop chips */
       chips.forEach(function (chip) {
         chip.addEventListener('click', function () {
           chips.forEach(function (c) { c.classList.remove('shop-chip--active'); });
           chip.classList.add('shop-chip--active');
           activeCat = chip.dataset.filter;
+          pendingCat = activeCat;
+          /* Sync drawer */
+          drawerChips.forEach(function (c) {
+            c.classList.toggle('shop-drawer-chip--active', c.dataset.filter === activeCat);
+          });
+          if (activeLabel) activeLabel.textContent = chip.textContent.trim();
           applyFilter();
         });
       });
@@ -952,23 +1095,25 @@
         applyFilter();
       });
 
-      if (sortSel) sortSel.addEventListener('change', function () {
-        var v = sortSel.value;
-        var sorted = cards.slice();
-        if (v === 'price-asc') sorted.sort(function (a, b) { return parseFloat(a.dataset.price) - parseFloat(b.dataset.price); });
-        else if (v === 'price-desc') sorted.sort(function (a, b) { return parseFloat(b.dataset.price) - parseFloat(a.dataset.price); });
-        else if (v === 'rating') sorted.sort(function (a, b) { return parseFloat(b.dataset.rating) - parseFloat(a.dataset.rating); });
-        /* "featured" keeps the original DOM order */
-        if (v !== 'featured') sorted.forEach(function (c) { grid.appendChild(c); });
+      if (sortSel) sortSel.addEventListener('change', function () { applySort(sortSel.value); });
+
+      /* Mobile sort syncs with desktop sort */
+      if (sortSelMobile) sortSelMobile.addEventListener('change', function () {
+        if (sortSel) sortSel.value = sortSelMobile.value;
+        applySort(sortSelMobile.value);
       });
 
       var reset = document.getElementById('shopEmptyReset');
       if (reset) reset.addEventListener('click', function () {
         activeCat = 'all';
+        pendingCat = 'all';
         query = '';
         chips.forEach(function (c) { c.classList.toggle('shop-chip--active', c.dataset.filter === 'all'); });
+        drawerChips.forEach(function (c) { c.classList.toggle('shop-drawer-chip--active', c.dataset.filter === 'all'); });
+        if (activeLabel) activeLabel.textContent = 'All';
         if (searchInput) searchInput.value = '';
         if (sortSel) sortSel.value = 'featured';
+        if (sortSelMobile) sortSelMobile.value = 'featured';
         applyFilter();
       });
     })();

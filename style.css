@@ -2450,6 +2450,17 @@ body.mmenu-locked { overflow: hidden; }
     max-width: 100% !important;
     flex: 1 1 100% !important;
   }
+
+  /* Tighten all section containers to 16px side padding on mobile */
+  .container,
+  .help-container,
+  .blog-pad,
+  .about-pad,
+  .ip-pad,
+  .ip-section {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
 }
 
 /* ═══════════════════════════════════════════════════

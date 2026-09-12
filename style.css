@@ -430,7 +430,10 @@ body { padding-top: 0; }
   background: radial-gradient(circle, rgba(31,100,255,.30) 0%, rgba(31,100,255,0) 70%);
   animation: heroDrift2 18s ease-in-out infinite alternate;
 }
-.hero-wrapper > * { position: relative; z-index: 1; }
+/* put hero content above the blurred blobs; navbar & drawer stay fixed */
+.hero-wrapper > .hero         { position: relative; z-index: 1; }
+.hero-wrapper > .navbar       { position: fixed; top: 0; left: 0; right: 0; z-index: 400; }
+.hero-wrapper > .mmenu        { position: fixed; inset: 0; z-index: 500; }
 @keyframes heroDrift1 {
   from { transform: translate(0,0) scale(1); }
   to { transform: translate(90px,60px) scale(1.15); }
@@ -443,6 +446,7 @@ body { padding-top: 0; }
 .hero-stars {
   position: absolute;
   inset: 0;
+  z-index: 1;
   background-image:
     linear-gradient(rgba(31,100,255,.06) 1px, transparent 1px),
     linear-gradient(90deg, rgba(31,100,255,.06) 1px, transparent 1px);

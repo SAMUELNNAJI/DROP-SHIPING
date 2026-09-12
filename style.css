@@ -2396,3 +2396,20 @@ body.mmenu-locked { overflow: hidden; }
   .pay-pi-btn svg  { width: 17px; height: 17px; }
   .pay-pi-btn:active { transform: none; opacity: .85; }
 }
+
+/* Mobile: full-width cards at least 90vw */
+@media (max-width: 640px) {
+  .ip-card, .about-card, .blog-card, .seller-card, .b-card,
+  .contact-form-card, .contact-office-card, .help-card, .feature-card,
+  .about-value, .refund-card, .rp-card {
+    min-width: 90vw;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .contact-section-mobile-full {
+    grid-column: 1 / -1;
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+}

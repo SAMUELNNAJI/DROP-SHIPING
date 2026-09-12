@@ -1221,6 +1221,32 @@
       });
     })();
 
+    /* ── Nav active-link highlight ── */
+    (function () {
+      var path = window.location.pathname.split('/').pop() || 'index.html';
+      var search = window.location.search;
+      // Map filenames to the href value used in nav-links
+      var navMap = {
+        'shop.html':    'shop.html',
+        'about.html':   'about.html',
+        'blog.html':    'blog.html',
+        'contact.html': 'contact.html'
+      };
+      var target = navMap[path];
+      // On index.html with ?tab= param, highlight "How It Works" (pay section)
+      if ((path === 'index.html' || path === '') && search.includes('tab=')) {
+        target = 'index.html#safe'; // highlight How It Works since pay is on homepage
+      }
+      if (target) {
+        document.querySelectorAll('.nav-links a').forEach(function (a) {
+          if (a.getAttribute('href') === target) {
+            a.classList.add('active');
+            a.setAttribute('aria-current', 'page');
+          }
+        });
+      }
+    })();
+
     /* ── Hero floating cards: rotate photo + name + price every 7s ──
        cloth · shoes · kitchen utensils · caps + the two default tech items */
     (function () {

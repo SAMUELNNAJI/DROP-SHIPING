@@ -428,6 +428,18 @@ document.addEventListener('DOMContentLoaded', function () {
       nav.classList.toggle('scrolled', window.scrollY > 12);
     }, { passive: true });
   }
+
+  // Nav active-link highlight
+  (function () {
+    var path = window.location.pathname.split('/').pop() || 'index.html';
+    var navMap = { 'shop.html': 'shop.html', 'about.html': 'about.html', 'blog.html': 'blog.html', 'contact.html': 'contact.html' };
+    var target = navMap[path];
+    if (target) {
+      document.querySelectorAll('.nav-links a').forEach(function (a) {
+        if (a.getAttribute('href') === target) { a.classList.add('active'); a.setAttribute('aria-current', 'page'); }
+      });
+    }
+  })();
 });
 </script>
 

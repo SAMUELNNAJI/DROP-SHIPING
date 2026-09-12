@@ -16,6 +16,41 @@
   <link rel="icon" type="image/png" href="Logo.png" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="pages.css" />
+  <style>
+    /* Mobile: tighten all refund-policy sections so cards fill full width */
+    @media (max-width: 640px) {
+      .rp-section-wrap {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+      }
+      .rp-section-wrap > div {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+      /* step + policy cards */
+      .rp-step-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+      }
+      /* inline stat cards in ribbon */
+      .rp-stat-card-inline {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+      }
+      /* policy breakdown cards (inline-styled) */
+      .rp-policy-card-inline {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+      }
+      /* checker container */
+      .rp-checker-container {
+        padding: 24px 16px !important;
+      }
+    }
+  </style>
 </head>
 <body class="ip">
 

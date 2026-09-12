@@ -227,12 +227,14 @@ body { padding-top: 0; }
 }
 .nav-links a:hover { color: #1F64FF; }
 .nav-links a.active,
+.nav-links a.is-active,
 .nav-links a[aria-current="page"] {
   color: #1F64FF;
   font-weight: 700;
   position: relative;
 }
 .nav-links a.active::after,
+.nav-links a.is-active::after,
 .nav-links a[aria-current="page"]::after {
   content: '';
   position: absolute;
@@ -2488,27 +2490,15 @@ body.mmenu-locked { overflow: hidden; }
 }
 .counter-done { animation: counterPop .4s ease; }
 
-/* ── Section heading underline draw-in ── */
+/* ── Section heading (no underline animation) ── */
 .reveal-heading {
   position: relative;
   display: inline-block;
 }
-.reveal-heading::after {
-  content: '';
-  position: absolute;
-  left: 0; bottom: -4px;
-  height: 3px;
-  width: 0;
-  border-radius: 2px;
-  background: linear-gradient(90deg, #1a6fe8, #0fb8e8);
-  transition: width .7s cubic-bezier(.22,1,.36,1) .4s;
-}
-.reveal-heading.is-visible::after { width: 100%; }
 
 /* ── Respect reduced-motion preference ── */
 @media (prefers-reduced-motion: reduce) {
-  .reveal,
-  .reveal-heading::after {
+  .reveal {
     transition-duration: .01s !important;
     transition-delay: 0s !important;
   }

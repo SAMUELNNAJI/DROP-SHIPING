@@ -14,8 +14,8 @@ body.ip{padding-top:0}
 .ip-sec-eyebrow{display:inline-block;padding:5px 12px;border-radius:999px;background:rgba(124,58,237,.09);color:#7C3AED;font-size:12.5px;font-weight:700;letter-spacing:.03em}
 .ip-sec-title{font-size:clamp(26px,3.4vw,40px);font-weight:800;letter-spacing:-.015em;color:#0F172A;margin:18px 0 8px}
 .ip-sec-sub{color:#55677E;font-size:15.5px;line-height:1.6;margin-bottom:8px}
-.ip-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:22px}
-.ip-card{position:relative;padding:28px 24px;border-radius:20px;background:rgba(255,255,255,.9);border:1px solid rgba(15,23,42,.09);box-shadow:0 14px 34px rgba(15,23,42,.09);display:flex;flex-direction:column;gap:14px;transition:transform .25s ease,box-shadow .25s ease}
+.ip-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:22px;justify-content:center;justify-items:center}
+.ip-card{position:relative;padding:28px 24px;border-radius:20px;background:rgba(255,255,255,.9);border:1px solid rgba(15,23,42,.09);box-shadow:0 14px 34px rgba(15,23,42,.09);display:flex;flex-direction:column;gap:14px;transition:transform .25s ease,box-shadow .25s ease;width:100%}
 .ip-card:hover{transform:translateY(-5px);box-shadow:0 22px 46px rgba(31,100,255,.18)}
 .ip-ic{display:grid;place-items:center;width:54px;height:54px;border-radius:16px;font-size:25px;flex:none}
 .ip-card h3{font-size:19px;font-weight:800;letter-spacing:-.01em;color:#0F172A}
@@ -60,7 +60,7 @@ body.ip{padding-top:0}
 .about-sec-head{text-align:center;margin-bottom:56px}
 .about-sec-title{font-size:clamp(32px,4vw,44px);font-weight:800;letter-spacing:-.02em;color:#0F172A;margin:16px 0 12px}
 .about-sec-sub{max-width:520px;margin:0 auto;color:#64748B;font-size:16px;line-height:1.6}
-.about-values{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
+.about-values{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;justify-content:center;justify-items:center}
 .about-value{padding:36px 28px;border-radius:24px;background:linear-gradient(145deg,#fff,#fafbff);border:1px solid rgba(15,23,42,.06);box-shadow:0 4px 20px rgba(15,23,42,.04);transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s ease}
 .about-value:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(31,100,255,.12)}
 .about-value-icon{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;margin-bottom:20px}
@@ -524,6 +524,8 @@ body.ip{padding-top:0}
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
   gap: 28px;
+  justify-content: center;
+  justify-items: center;
 }
 
 /* Pagination Bar */
@@ -638,9 +640,10 @@ body.ip{padding-top:0}
   background: #ffffff;
   border: 1px solid rgba(15, 23, 42, 0.07);
   box-shadow: 0 6px 24px rgba(15, 23, 42, 0.04);
-  transition: all 0.35 cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .blog-card:hover {

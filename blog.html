@@ -113,7 +113,7 @@
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
                   Continue Shopping
                 </a>
-                <a href="shop.html" class="cart-btn-checkout">
+                <a href="checkout.html" class="cart-btn-checkout">
                   Checkout
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 </a>
@@ -935,28 +935,6 @@ document.addEventListener('DOMContentLoaded', function () {
       el.addEventListener('click', closeMenu);
     });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
-  })();
-
-  // Cart Dropdown Toggle
-  (function () {
-    var wrap = document.querySelector('.cart-wrap');
-    var toggle = document.getElementById('cartToggle');
-    var dd = document.getElementById('cartDropdown');
-    var close = document.getElementById('cartClose');
-    if (!wrap || !toggle || !dd) return;
-    function setOpen(open) {
-      wrap.classList.toggle('open', open);
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      dd.setAttribute('aria-hidden', open ? 'false' : 'true');
-    }
-    toggle.addEventListener('click', function (e) {
-      e.stopPropagation();
-      setOpen(!wrap.classList.contains('open'));
-    });
-    if (close) close.addEventListener('click', function (e) { e.stopPropagation(); setOpen(false); });
-    document.addEventListener('click', function (e) {
-      if (!wrap.contains(e.target)) setOpen(false);
-    });
   })();
 
   // Navbar Scroll state

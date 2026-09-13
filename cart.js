@@ -229,6 +229,17 @@
       return;
     }
 
+    /* Checkout button inside dropdown: fall back to checkout.html if link is a stub */
+    var btnCheckout = e.target.closest('.cart-btn-checkout');
+    if (btnCheckout) {
+      var ckHref = btnCheckout.getAttribute('href');
+      if (!ckHref || ckHref === '#') {
+        e.preventDefault();
+        window.location.href = 'checkout.html';
+        return;
+      }
+    }
+
     /* Remove Item */
     var btnRemove = e.target.closest('.btn-cart-remove');
     if (btnRemove) {

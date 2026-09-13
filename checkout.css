@@ -11,43 +11,50 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ── Main area ── (natural flow — content is never squeezed into 100vh) */
+/* ── Main area ── compact: fits the viewport (100vh minus fixed header)
+   so shoppers see the cards without scrolling ── */
 .ck-main {
   position: relative;
   z-index: 1;
-  padding: 44px 24px 96px;
+  min-height: calc(100vh - var(--header-h));
+  min-height: calc(100dvh - var(--header-h));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px 24px 28px;
 }
 
 /* ══════════════════════════════════
-   STEPPER
+   STEPPER (compact)
    ══════════════════════════════════ */
 .ck-stepper {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  margin: 14px auto 46px;
+  margin: 6px auto 24px;
 }
 .ck-step {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 13px;
-  width: 150px;
+  gap: 8px;
+  width: 120px;
 }
 .ck-step-circle {
-  width: 54px;
-  height: 54px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   display: grid;
   place-items: center;
-  font-size: 19px;
+  font-size: 15px;
   font-weight: 600;
   background: #dbe7fb;
   color: #64809f;
   transition: background .25s, color .25s, box-shadow .25s;
 }
+.ck-step-circle svg { width: 18px; height: 18px; }
 .ck-step-label {
-  font-size: 14.5px;
+  font-size: 12.5px;
   font-weight: 500;
   color: #8aa0c4;
   white-space: nowrap;
@@ -55,59 +62,61 @@
 .ck-step--active .ck-step-circle {
   background: #1F64FF;
   color: #fff;
-  box-shadow: 0 10px 24px rgba(31,100,255,.35);
+  box-shadow: 0 6px 16px rgba(31,100,255,.35);
 }
 .ck-step--active .ck-step-label { color: #1F64FF; font-weight: 600; }
 .ck-step--done .ck-step-circle  { background: #22c55e; color: #fff; }
 .ck-step--done .ck-step-label   { color: #64748b; }
 .ck-step-line {
-  width: 148px;
+  width: 110px;
   height: 2px;
   border-radius: 2px;
   background: #c7d9f5;
-  margin-top: 26px;
+  margin-top: 18px;
   flex-shrink: 0;
 }
 .ck-step-line--done { background: #22c55e; }
 
 /* ══════════════════════════════════
-   LAYOUT  (main card + order summary)
+   LAYOUT  (compact main card + order summary)
    ══════════════════════════════════ */
 .ck-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 520px;
-  gap: 56px;
-  max-width: 1720px;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 28px;
+  max-width: 1080px;
   margin: 0 auto;
   align-items: start;
+  width: 100%;
 }
 
-/* ── Cards ── */
+/* ── Cards (slim, compact) ── */
 .ck-card {
   background: #fff;
-  border-radius: 28px;
+  border-radius: 20px;
   border: 1px solid rgba(255,255,255,.9);
   box-shadow:
     0 2px 6px rgba(15,28,77,.05),
-    0 18px 48px rgba(15,28,77,.09);
-  padding: 44px 48px 48px;
+    0 12px 32px rgba(15,28,77,.08);
+  padding: 24px 26px 26px;
+  min-width: 0;
 }
 .ck-card--summary {
-  padding: 34px 34px 30px;
+  padding: 22px 22px 20px;
   position: sticky;
-  top: 108px;
+  top: calc(var(--header-h) + 16px);
 }
 .ck-card-head {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 32px;
+  gap: 10px;
+  margin-bottom: 18px;
 }
-.ck-card-head svg { color: #1F64FF; flex-shrink: 0; }
-.ck-card-head--sum { margin-bottom: 16px; }
-.ck-card-head--sum .ck-card-title { font-size: 20px; letter-spacing: -.015em; }
+.ck-card-head svg { color: #1F64FF; flex-shrink: 0; width: 22px; height: 22px; }
+.ck-card-head--sum { margin-bottom: 12px; }
+.ck-card-head--sum .ck-card-title { font-size: 17px; letter-spacing: -.015em; }
 .ck-card-title {
-  font-size: 26px;
+  font-size: 20px;
   font-weight: 700;
   color: #0f172a;
   letter-spacing: -.02em;
@@ -120,33 +129,33 @@
 .ck-item {
   display: flex;
   align-items: center;
-  gap: 22px;
+  gap: 14px;
   border: 1px solid #e3eaf5;
-  border-radius: 18px;
-  padding: 22px 26px 22px 22px;
-  margin-bottom: 20px;
+  border-radius: 14px;
+  padding: 12px 14px 12px 12px;
+  margin-bottom: 12px;
   background: #fff;
 }
 .ck-item-img {
-  width: 86px;
-  height: 86px;
-  border-radius: 14px;
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
   object-fit: cover;
   background: #f1f5f9;
   flex-shrink: 0;
 }
 .ck-item-info { flex: 1; min-width: 0; }
 .ck-item-name {
-  font-size: 17px;
+  font-size: 14.5px;
   font-weight: 600;
   color: #0f172a;
   margin: 0 0 4px;
   letter-spacing: -.01em;
 }
-.ck-item-store { font-size: 14px; color: #8a94a6; margin: 0 0 14px; }
-.ck-item-qty   { font-size: 14.5px; color: #64748b; margin: 0; }
+.ck-item-store { font-size: 12px; color: #8a94a6; margin: 0 0 8px; }
+.ck-item-qty   { font-size: 12.5px; color: #64748b; margin: 0; }
 .ck-item-price {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 700;
   color: #1F64FF;
   white-space: nowrap;
@@ -158,18 +167,18 @@
   align-items: flex-start;
   gap: 14px;
   border: 1px solid #e3eaf5;
-  border-radius: 16px;
-  padding: 21px 24px;
-  margin: 28px 0 36px;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 14px 0 18px;
 }
 .ck-note svg { flex-shrink: 0; margin-top: 1px; }
 .ck-note-title {
   color: #1F64FF;
   font-weight: 600;
-  font-size: 15.5px;
-  margin: 0 0 4px;
+  font-size: 13.5px;
+  margin: 0 0 2px;
 }
-.ck-note-text { color: #64748b; font-size: 14.5px; margin: 0; line-height: 1.55; }
+.ck-note-text { color: #64748b; font-size: 12.5px; margin: 0; line-height: 1.5; }
 
 /* ══════════════════════════════════
    ORDER SUMMARY SIDEBAR
@@ -177,12 +186,12 @@
 .ck-sum-item {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 11px 0;
+  gap: 10px;
+  padding: 7px 0;
 }
 .ck-sum-img {
-  width: 54px;
-  height: 54px;
+  width: 42px;
+  height: 42px;
   border-radius: 12px;
   object-fit: cover;
   background: #f1f5f9;
@@ -190,42 +199,42 @@
 }
 .ck-sum-info { min-width: 0; }
 .ck-sum-name {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
   color: #0f172a;
-  margin: 0 0 3px;
+  margin: 0 0 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.ck-sum-qty { font-size: 13px; color: #8a94a6; margin: 0; }
+.ck-sum-qty { font-size: 11.5px; color: #8a94a6; margin: 0; }
 .ck-sum-price {
   margin-left: auto;
-  font-size: 15px;
+  font-size: 13.5px;
   font-weight: 700;
   color: #0f172a;
   white-space: nowrap;
 }
-.ck-sum-rows { border-top: 1px solid #e9eef7; margin-top: 12px; padding-top: 16px; }
+.ck-sum-rows { border-top: 1px solid #e9eef7; margin-top: 8px; padding-top: 10px; }
 .ck-sum-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 15.5px;
+  font-size: 13.5px;
   color: #5c6b84;
-  padding: 7px 0;
+  padding: 4px 0;
 }
-.ck-sum-row .ck-mono { font-size: 15.5px; font-weight: 600; color: #0f172a; }
+.ck-sum-row .ck-mono { font-size: 13.5px; font-weight: 600; color: #0f172a; }
 .ck-sum-total {
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-top: 1px solid #e9eef7;
-  margin-top: 12px;
-  padding: 18px 0 22px;
+  margin-top: 8px;
+  padding: 10px 0 12px;
 }
-.ck-sum-total-label { font-size: 17px; font-weight: 600; color: #0f172a; }
-.ck-sum-total-val   { font-size: 22px; font-weight: 700; color: #1F64FF; }
+.ck-sum-total-label { font-size: 14.5px; font-weight: 600; color: #0f172a; }
+.ck-sum-total-val   { font-size: 19px; font-weight: 700; color: #1F64FF; }
 
 /* ── Summary info boxes ── */
 .ck-sum-box {
@@ -233,19 +242,19 @@
   align-items: flex-start;
   gap: 12px;
   border: 1px solid #e3eaf5;
-  border-radius: 16px;
-  padding: 18px 20px;
-  margin-bottom: 14px;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
 }
 .ck-sum-box:last-child { margin-bottom: 0; }
 .ck-sum-box svg { flex-shrink: 0; margin-top: 2px; }
 .ck-sum-box-title {
   color: #1F64FF;
   font-weight: 600;
-  font-size: 15px;
-  margin: 0 0 4px;
+  font-size: 13.5px;
+  margin: 0 0 2px;
 }
-.ck-sum-box-text { color: #64748b; font-size: 13.5px; margin: 0; line-height: 1.55; }
+.ck-sum-box-text { color: #64748b; font-size: 12.5px; margin: 0; line-height: 1.5; }
 
 /* "Paying with …" strip (steps 2–3) */
 .ck-paying {
@@ -256,9 +265,9 @@
   background: #f7f3ff;
   color: #8b5cf6;
   font-weight: 600;
-  font-size: 15px;
-  border-radius: 14px;
-  padding: 17px 20px;
+  font-size: 13px;
+  border-radius: 10px;
+  padding: 10px 12px;
   transition: border-color .25s, background .25s, color .25s;
 }
 .ck-paying--paypal   { border-color: #d3e2fc; background: #f4f8ff; color: #1F64FF; }
@@ -275,13 +284,13 @@
   gap: 12px;
   background: #1F64FF;
   color: #fff;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 700;
   font-family: inherit;
   letter-spacing: -.01em;
   border: none;
-  border-radius: 20px;
-  min-height: 64px;
+  border-radius: 12px;
+  min-height: 48px;
   cursor: pointer;
   box-shadow: 0 12px 28px rgba(31,100,255,.30);
   text-decoration: none;
@@ -299,12 +308,12 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  height: 62px;
-  border-radius: 16px;
+  height: 48px;
+  border-radius: 12px;
   border: 1px solid #e3eaf5;
   background: #fff;
   color: #334155;
-  font-size: 16.5px;
+  font-size: 14px;
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
@@ -322,12 +331,12 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  min-height: 62px;
+  min-height: 48px;
   border-radius: 999px;
   border: 1.5px solid #1F64FF;
   background: #fff;
   color: #1F64FF;
-  font-size: 17px;
+  font-size: 14.5px;
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;
@@ -337,8 +346,8 @@
 .ck-btn-outline:hover { background: #f0f5ff; box-shadow: 0 8px 22px rgba(31,100,255,.14); }
 
 /* Button rows */
-.ck-actions       { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
-.ck-actions--even { display: grid; grid-template-columns: 1fr 1.15fr; gap: 22px; margin-top: 6px; }
+.ck-actions       { display: grid; grid-template-columns: 1fr 2fr; gap: 12px; }
+.ck-actions--even { display: grid; grid-template-columns: 1fr 1.15fr; gap: 12px; margin-top: 4px; }
 
 /* ══════════════════════════════════
    PAYMENT METHODS  (step 2)
@@ -349,11 +358,11 @@
   --accent-soft: #f4f8ff;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 14px;
   border: 1.5px solid #e3eaf5;
-  border-radius: 18px;
-  padding: 20px 24px;
-  margin-bottom: 18px;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
   cursor: pointer;
   background: #fff;
   transition: border-color .2s, background .2s, box-shadow .2s;
@@ -369,9 +378,9 @@
 .ck-pay-option--paystack { --accent: #0891b2; --accent-soft: #f2fbfc; }
 
 .ck-pay-icon {
-  width: 62px;
-  height: 62px;
-  border-radius: 16px;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
   display: grid;
   place-items: center;
   flex-shrink: 0;
@@ -384,8 +393,8 @@
 .ck-pay-name {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 17px;
+  gap: 8px;
+  font-size: 15px;
   font-weight: 600;
   color: #0f172a;
   margin: 0;
@@ -400,7 +409,7 @@
 .ck-pay-badge--crypto { background: #f3e8ff; color: #8b5cf6; }
 .ck-pay-badge--usd    { background: #eef2f7; color: #64748b; }
 .ck-pay-badge--ngn    { background: #e0f7f7; color: #0891b2; }
-.ck-pay-sub { font-size: 14.5px; color: #8a94a6; margin: 4px 0 0; }
+.ck-pay-sub { font-size: 12.5px; color: #8a94a6; margin: 2px 0 0; }
 
 .ck-radio {
   width: 26px;
@@ -427,91 +436,104 @@
   background: #f7f3ff;
   border: 1px solid #eadfff;
   color: #7c3aed;
-  font-size: 14.5px;
-  border-radius: 14px;
-  padding: 17px 20px;
-  margin: 10px 0 34px;
+  font-size: 12.5px;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin: 8px 0 18px;
 }
 .ck-info svg { flex-shrink: 0; }
 
 /* ══════════════════════════════════
    SUCCESS  (step 3)
    ══════════════════════════════════ */
-.ck-success-head { text-align: center; padding: 16px 0 36px; }
+.ck-success-head { text-align: center; padding: 8px 0 18px; }
 .ck-success-check {
-  width: 104px;
-  height: 104px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   background: #22c55e;
   display: grid;
   place-items: center;
-  margin: 0 auto 36px;
-  box-shadow: 0 18px 44px rgba(34,197,94,.38);
+  margin: 0 auto 18px;
+  box-shadow: 0 14px 34px rgba(34,197,94,.38);
 }
 .ck-success-title {
-  font-size: 34px;
+  font-size: 26px;
   font-weight: 700;
   color: #0f172a;
   letter-spacing: -.025em;
-  margin: 0 0 16px;
+  margin: 0 0 8px;
 }
 .ck-success-sub {
-  font-size: 17.5px;
+  font-size: 14.5px;
   color: #5c6b84;
-  line-height: 1.65;
-  max-width: 640px;
+  line-height: 1.6;
+  max-width: 560px;
   margin: 0 auto;
 }
 .ck-status {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: 14px;
   border: 1px solid #e3eaf5;
-  border-radius: 16px;
-  padding: 20px 24px;
-  margin-bottom: 16px;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
 }
 .ck-status svg { flex-shrink: 0; margin-top: 2px; }
 .ck-status-title {
-  font-size: 16px;
+  font-size: 14.5px;
   font-weight: 600;
   color: #0f172a;
-  margin: 0 0 4px;
+  margin: 0 0 2px;
 }
-.ck-status-sub { font-size: 14px; color: #8a94a6; margin: 0; }
-.ck-success-actions { margin-top: 34px; }
+.ck-status-sub { font-size: 12.5px; color: #8a94a6; margin: 0; }
+.ck-success-actions { margin-top: 18px; }
 
 /* ══════════════════════════════════
-   RESPONSIVE
+   RESPONSIVE — cards stack, everything fits small screens
    ══════════════════════════════════ */
-@media (max-width: 1440px) {
-  .ck-layout { grid-template-columns: minmax(0, 1fr) 440px; gap: 36px; }
-  .ck-card { padding: 38px 40px 42px; }
+.ck-success-check svg { width: 36px; height: 36px; }
+@media (max-width: 1100px) {
+  .ck-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
 }
-@media (max-width: 1200px) {
-  .ck-layout { grid-template-columns: minmax(0, 1fr) 380px; gap: 28px; }
-  .ck-card--summary { padding: 28px 26px 24px; }
+@media (max-width: 900px) {
+  .ck-main { justify-content: flex-start; min-height: 0; padding: 18px 16px 56px; }
+  .ck-stepper { margin: 4px auto 20px; }
+  .ck-step { width: 96px; gap: 6px; }
+  .ck-step-circle { width: 34px; height: 34px; font-size: 14px; }
+  .ck-step-circle svg { width: 16px; height: 16px; }
+  .ck-step-label { font-size: 11.5px; }
+  .ck-step-line { width: 56px; margin-top: 16px; }
+  .ck-layout { grid-template-columns: 1fr; gap: 16px; max-width: 560px; }
+  .ck-card { padding: 20px 18px 22px; border-radius: 18px; }
+  .ck-card--summary { position: static; order: 2; }
+  .ck-card-title { font-size: 18px; }
+  .ck-card-head { margin-bottom: 14px; }
+  .ck-card-head--sum .ck-card-title { font-size: 16px; }
+  .ck-item { gap: 12px; padding: 10px; }
+  .ck-item-img { width: 52px; height: 52px; }
+  .ck-item-name { font-size: 13.5px; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .ck-item-price { font-size: 14.5px; }
+  .ck-note { flex-direction: row; }
+  .ck-actions, .ck-actions--even { grid-template-columns: 1fr; gap: 10px; }
+  .ck-btn-primary { width: 100%; min-height: 50px; font-size: 15px; }
+  .ck-btn-ghost, .ck-btn-outline { width: 100%; min-height: 50px; font-size: 14px; }
+  .ck-success-check { width: 64px; height: 64px; margin-bottom: 14px; }
+  .ck-success-title { font-size: 22px; }
+  .ck-success-sub { font-size: 14px; }
+  .ck-pay-option { gap: 12px; padding: 12px 14px; }
+  .ck-pay-icon { width: 42px; height: 42px; }
+  .ck-radio { margin-left: auto; }
 }
-@media (max-width: 1024px) {
-  .ck-layout { grid-template-columns: 1fr; }
-  .ck-card--summary { position: static; }
-  .ck-stepper { margin-bottom: 32px; }
-  .ck-step { width: 120px; }
-  .ck-step-line { width: 90px; }
-}
-@media (max-width: 640px) {
-  .ck-main { padding: 18px 14px 64px; }
-  .ck-stepper { transform: scale(.82); margin: 0 auto 22px; }
-  .ck-card { padding: 26px 20px 30px; border-radius: 22px; }
-  .ck-card-title { font-size: 21px; }
-  .ck-item { flex-wrap: wrap; padding: 18px; gap: 14px; }
-  .ck-item-img { width: 64px; height: 64px; }
-  .ck-item-price { width: 100%; text-align: right; margin-left: 78px; }
-  .ck-btn-primary { font-size: 16px; min-height: 58px; border-radius: 16px; }
-  .ck-actions, .ck-actions--even { grid-template-columns: 1fr; gap: 12px; }
-  .ck-success-title { font-size: 26px; }
-  .ck-success-sub { font-size: 15.5px; }
-  .ck-success-check { width: 84px; height: 84px; margin-bottom: 26px; }
-  .ck-pay-option { flex-wrap: wrap; padding: 16px; gap: 14px; }
+@media (max-width: 420px) {
+  .ck-main { padding: 14px 12px 48px; }
+  .ck-step { width: 84px; }
+  .ck-step-line { width: 40px; }
+  .ck-step-label { font-size: 10.5px; }
+  .ck-card { padding: 18px 14px 20px; }
+  .ck-item-store { display: none; }
+  .ck-sum-name { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .ck-pay-option { flex-wrap: wrap; }
   .ck-radio { margin-left: auto; }
 }

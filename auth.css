@@ -7,6 +7,8 @@
    Natural document flow: NO min-height/100vh flex trap — content and the
    real site footer simply follow the header and grow the page. */
 .auth-page {
+  /* fixed header overlays the top, so offset the page content */
+  padding-top: var(--header-h);
   background:
     radial-gradient(1100px 520px at 88% -10%, rgba(31, 100, 255, .12), transparent 60%),
     radial-gradient(900px 480px at 4% 2%, rgba(31, 100, 255, .08), transparent 55%),
@@ -32,11 +34,13 @@
   z-index: 0;
 }
 
-/* ── EXACT SITE HEADER, pinned sticky on the light canvas ──
+/* ── EXACT SITE HEADER, pinned like every other page (fixed) ──
    (same markup as every other page — glassy white here from the start) */
 .auth-page .navbar {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 400;
   background: rgba(255,255,255,.86);
   backdrop-filter: blur(16px) saturate(160%);
@@ -45,14 +49,15 @@
   box-shadow: 0 2px 18px rgba(31,100,255,.07);
 }
 
-/* ── Main area: flows naturally (no viewport-height stretching) ── */
+/* ── Main area: right column of the split layout; flows naturally ── */
 .auth-main {
   position: relative;
   z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 54px 16px 96px;
+  justify-content: center;
+  padding: 48px 28px 72px;
 }
 
 /* ── Brand logo above card ── */
@@ -344,6 +349,63 @@
   gap: 12px;
 }
 
+/* ── Account type selector (Shop & Buy / Start Selling) ── */
+.auth-type-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.auth-type-pill { cursor: pointer; position: relative; }
+.auth-type-pill input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.auth-type-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 10px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fafbff;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #6b7a93;
+  letter-spacing: -.01em;
+  transition: border-color .2s, background .2s, box-shadow .2s, color .2s;
+}
+.auth-type-box svg { flex-shrink: 0; color: #9aa3b2; transition: color .2s; }
+.auth-type-pill input:checked + .auth-type-box {
+  border-color: #1F64FF;
+  background: #f4f8ff;
+  color: #1F64FF;
+  box-shadow: 0 0 0 3px rgba(31, 100, 255, .10);
+}
+.auth-type-pill input:checked + .auth-type-box svg { color: #1F64FF; }
+.auth-type-pill input:focus-visible + .auth-type-box {
+  box-shadow: 0 0 0 3px rgba(31, 100, 255, .22);
+}
+
+/* ── "(optional)" label hint ── */
+.auth-optional {
+  font-weight: 500;
+  color: #9aa3b2;
+  font-size: 11.5px;
+}
+
+/* ── Passwords-match confirmation ── */
+.auth-match-ok {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  margin-top: 5px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #16a34a;
+}
+
 /* ── Password strength meter ── */
 .auth-strength-wrap {
   margin-top: -10px;
@@ -461,4 +523,129 @@
   .auth-tab { font-size: 13.5px; padding: 16px 8px 14px; }
   .auth-input { font-size: 13px; padding: 12px 12px 12px 36px; }
   .auth-submit { font-size: 14px; padding: 14px; }
+}
+
+/* ═══════════════════════════════════════════════════
+   SPLIT-SCREEN AUTH LAYOUT
+   Left: brand story panel · Right: sign-in card
+   ═══════════════════════════════════════════════════ */
+.auth-shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr);
+  min-height: calc(100vh - var(--header-h));
+}
+
+/* ── Left: brand story panel ── */
+.auth-side {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 72px 56px;
+  color: #fff;
+  background:
+    radial-gradient(720px 420px at 82% 12%, rgba(56, 174, 245, .28), transparent 62%),
+    radial-gradient(760px 520px at 10% 96%, rgba(31, 100, 255, .38), transparent 60%),
+    linear-gradient(155deg, #0A172E 0%, #0E2249 52%, #123677 100%);
+}
+/* soft grid sheen, echoing the homepage hero */
+.auth-side::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(80% 70% at 60% 35%, #000 20%, transparent 78%);
+  mask-image: radial-gradient(80% 70% at 60% 35%, #000 20%, transparent 78%);
+  pointer-events: none;
+}
+.auth-side-inner {
+  position: relative;
+  max-width: 460px;
+  width: 100%;
+}
+
+.auth-side-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, .08);
+  border: 1px solid rgba(255, 255, 255, .16);
+  color: #cfe0ff;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: .14em;
+}
+.auth-side-badge svg { flex-shrink: 0; }
+
+.auth-side-title {
+  margin: 24px 0 16px;
+  font-size: 44px;
+  line-height: 1.06;
+  font-weight: 800;
+  letter-spacing: -.03em;
+}
+.auth-side-title span { color: #4D8DFF; }
+
+.auth-side-text {
+  margin: 0 0 38px;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #B9C9E8;
+}
+
+.auth-points {
+  display: grid;
+  gap: 22px;
+  margin-bottom: 40px;
+}
+.auth-point {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+}
+.auth-point-icon {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  color: #7FB0FF;
+  background: rgba(31, 100, 255, .16);
+  border: 1px solid rgba(77, 141, 255, .32);
+}
+.auth-point-title { margin: 0 0 3px; font-size: 15.5px; font-weight: 700; }
+.auth-point-text  { margin: 0; font-size: 13.5px; line-height: 1.6; color: #9DB2DB; }
+
+.auth-side-stats {
+  display: flex;
+  gap: 34px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+}
+.auth-stat-num {
+  margin: 0 0 4px;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: #fff;
+}
+.auth-stat-label {
+  margin: 0;
+  font-size: 12px;
+  color: #8FA6CE;
+}
+
+/* ── Responsive: form-first on tablets & phones ── */
+@media (max-width: 1080px) {
+  .auth-shell { grid-template-columns: 1fr; }
+  .auth-side  { display: none; }
 }

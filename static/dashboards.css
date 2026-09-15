@@ -108,3 +108,47 @@ body.db-locked .dashboard-workspace{overflow:hidden}
   body.dashboard-body--seller .sside,body.dashboard-body--buyer .bside,body.dashboard-body--admin .dashboard-sidebar{z-index:60!important}
   .dashboard-sidebar-close{display:grid}
 }
+
+/* Mobile drawers must scroll as one surface: navigation and the bottom actions
+   stay reachable even on short screens or with browser safe-area controls. */
+@media(max-width:800px){
+  body.dashboard-body--seller .sside,
+  body.dashboard-body--buyer .bside,
+  body.dashboard-body--admin .dashboard-sidebar{
+    box-sizing:border-box!important;
+    min-height:100svh!important;
+    height:100dvh!important;
+    max-height:100dvh!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:calc(18px + env(safe-area-inset-bottom))!important;
+  }
+
+  body.dashboard-body--seller .sside > *,
+  body.dashboard-body--buyer .bside > *,
+  body.dashboard-body--admin .dashboard-sidebar > *{flex-shrink:0}
+
+  body.dashboard-body--seller .sside__nav,
+  body.dashboard-body--buyer .bside__nav,
+  body.dashboard-body--admin .dashboard-nav{overflow:visible!important}
+
+  /* The workspace is the page scroller. Reserve a real scroll-end area, rather
+     than relying only on padding, so the final card/button can clear browser UI. */
+  body.dashboard-body .dashboard-workspace{
+    scroll-padding-bottom:calc(96px + env(safe-area-inset-bottom));
+  }
+  body.dashboard-body .dashboard-main{
+    box-sizing:border-box;
+    flex:0 0 auto;
+    min-height:0;
+    padding-bottom:calc(48px + env(safe-area-inset-bottom))!important;
+  }
+  body.dashboard-body .dashboard-main::after{
+    content:"";
+    display:block;
+    height:calc(56px + env(safe-area-inset-bottom));
+    pointer-events:none;
+  }
+}

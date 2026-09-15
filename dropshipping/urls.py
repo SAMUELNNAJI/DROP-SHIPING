@@ -15,11 +15,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.views.generic import RedirectView
 
 from django.conf import settings
-from django.conf.urls.static import static
+from django.views.static import serve
 
 from shop import views
 from accounts import views as accounts_views
@@ -51,5 +51,15 @@ urlpatterns = [
     path('checkout/success/', RedirectView.as_view(url='/checkout-success/', permanent=False)),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG or getattr(settings, 'SERVE_MEDIA', False):
+    # Uploaded files (seller verification documents, etc.) are not handled by
+    # WhiteNoise, so Django serves them here for both local development and the
+    # Render deployment. Turn SERVE_MEDIA off once media moves to object
+    # storage (S3/Cloudinary) or a dedicated static host.
+    urlpatterns += [
+        re_path(
+            r'^{}/(?P<path>.*)$'.format(settings.MEDIA_URL.strip('/')),
+            serve,
+            {'document_root': settings.MEDIA_ROOT},
+        ),
+    ]

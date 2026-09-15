@@ -1,0 +1,4 @@
+# Keep shell scripts LF-only so Render's Linux build can run them, even when
+# the repo is checked out on Windows.
+* text=auto
+*.sh text eol=lf

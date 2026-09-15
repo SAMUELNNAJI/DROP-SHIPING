@@ -13,20 +13,95 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 import os
 from pathlib import Path
 
+import dj_database_url
+from django.core.exceptions import ImproperlyConfigured
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+def _load_env_file(path):
+    """Load KEY=VALUE pairs from a local .env file (never committed to git).
+
+    Returns the set of keys that came from the file, so the rest of this module
+    can tell a developer's `.env` apart from real environment variables.
+    """
+    keys = set()
+    if not path.exists():
+        return keys
+    for raw_line in path.read_text(encoding='utf-8').splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith('#') or '=' not in line:
+            continue
+        key, _, value = line.partition('=')
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = value
+            keys.add(key)
+    return keys
+
+
+def env_bool(name, default=False):
+    """Read a boolean environment variable (1/true/yes/on)."""
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return value.strip().lower() in ('1', 'true', 'yes', 'on')
+
+
+def env_list(name, default=None):
+    """Read a comma-separated environment variable into a list."""
+    items = [item.strip() for item in os.environ.get(name, '').split(',') if item.strip()]
+    return items or list(default or [])
+
+
+_ENV_FILE_KEYS = _load_env_file(BASE_DIR / '.env')
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
+#
+# Render sets RENDER=true on every service it runs, which lets this single
+# settings module behave like a development box locally and like production on
+# Render without extra configuration.
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-l1o!b2x#^_9e=66g$nl6ysieyry_dv+&7d+7ri%p171m-^*ahf'
+ON_RENDER = env_bool('RENDER')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env_bool('DEBUG', default=not ON_RENDER)
+if ON_RENDER and 'DEBUG' in _ENV_FILE_KEYS:
+    # `.env` is a local-development convenience, so it must never be able to
+    # switch off the production hardening at the bottom of this file. Export
+    # DEBUG=True as a real environment variable if you truly need it on Render.
+    DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver']
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get('SECRET_KEY', '').strip()
+if not SECRET_KEY:
+    if not DEBUG:
+        raise ImproperlyConfigured(
+            'The SECRET_KEY environment variable must be set when DEBUG is disabled.'
+        )
+    # Local development fallback only — never used when DEBUG is off.
+    SECRET_KEY = 'django-insecure-l1o!b2x#^_9e=66g$nl6ysieyry_dv+&7d+7ri%p171m-^*ahf'
+
+ALLOWED_HOSTS = env_list(
+    'DJANGO_ALLOWED_HOSTS',
+    ['127.0.0.1', 'localhost', 'testserver', '.onrender.com'],
+)
+# Render injects the service's public hostname/URL at runtime.
+if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
+    ALLOWED_HOSTS.append(os.environ['RENDER_EXTERNAL_HOSTNAME'])
+
+# Needed for POSTs (admin login, sign in, checkout) coming from the Render
+# hostname once DEBUG is off. Render's proxy already redirects http -> https.
+_csrf_origins = env_list('DJANGO_CSRF_TRUSTED_ORIGINS')
+if os.environ.get('RENDER_EXTERNAL_URL'):
+    _csrf_origins.append(os.environ['RENDER_EXTERNAL_URL'])
+if not DEBUG and not _csrf_origins:
+    _csrf_origins.append('https://*.onrender.com')
+CSRF_TRUSTED_ORIGINS = sorted({origin.rstrip('/') for origin in _csrf_origins})
 
 # Optional OAuth credentials. Set these in the deployment environment before
 # enabling Google or Apple account linking.
@@ -52,6 +127,9 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # WhiteNoise serves the collected static files straight from the WSGI app,
+    # which is how CSS/JS/images are delivered on Render.
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -82,13 +160,31 @@ WSGI_APPLICATION = 'dropshipping.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
+#
+# DATABASE_URL drives the production database (Neon Postgres on Render). When
+# it is not set — the default for local development — the project falls back to
+# the bundled SQLite file so `runserver` keeps working out of the box.
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+DATABASE_URL = os.environ.get('DATABASE_URL', '').strip()
+
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=int(os.environ.get('DB_CONN_MAX_AGE', '0')),
+            conn_health_checks=True,
+        ),
     }
-}
+    # Neon's pooled (-pooler) endpoint is PgBouncer in transaction mode, where
+    # server-side cursors and long-lived connections are not safe to rely on.
+    DATABASES['default']['DISABLE_SERVER_SIDE_CURSORS'] = True
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        },
+    }
 
 
 # Password validation
@@ -129,10 +225,27 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
+# Where `collectstatic` writes the files WhiteNoise then serves in production.
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage',
+    },
+}
+
 AUTH_USER_MODEL = 'accounts.User'
 
+# Uploaded files (e.g. seller verification documents).
+# MEDIA_ROOT can be pointed at a Render persistent disk mount (for example
+# /var/data/media) so uploads survive deploys; otherwise it lives on the
+# service's ephemeral disk and is served by Django when SERVE_MEDIA is on.
 MEDIA_URL = 'media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = Path(os.environ.get('MEDIA_ROOT') or (BASE_DIR / 'media'))
+SERVE_MEDIA = env_bool('SERVE_MEDIA', default=True)
 
 LOGIN_URL = '/signin/'
 LOGIN_REDIRECT_URL = '/dashboards/'
@@ -141,9 +254,77 @@ LOGOUT_REDIRECT_URL = '/'
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
+#
+# With no EMAIL_HOST configured, mail is written to the logs (same behaviour as
+# the original console backend). Set EMAIL_HOST/EMAIL_HOST_USER/EMAIL_HOST_PASSWORD
+# (and optionally EMAIL_PORT/EMAIL_USE_TLS) to send real mail.
+
+_email_backend = os.environ.get('DJANGO_EMAIL_BACKEND', '').strip()
+if not _email_backend:
+    # SMTP as soon as credentials exist, otherwise log the email instead of
+    # failing a deploy because no mailbox has been configured yet.
+    _email_backend = (
+        'django.core.mail.backends.smtp.EmailBackend'
+        if os.environ.get('EMAIL_HOST')
+        else 'django.core.mail.backends.console.EmailBackend'
+    )
 
 MAILERS = {
     'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+        'BACKEND': _email_backend,
     },
 }
+
+if _email_backend.endswith('smtp.EmailBackend'):
+    MAILERS['default']['OPTIONS'] = {
+        'host': os.environ.get('EMAIL_HOST', 'localhost'),
+        'port': int(os.environ.get('EMAIL_PORT', '587')),
+        'username': os.environ.get('EMAIL_HOST_USER', ''),
+        'password': os.environ.get('EMAIL_HOST_PASSWORD', ''),
+        'use_tls': env_bool('EMAIL_USE_TLS', default=True),
+    }
+
+
+# Production hardening — applied whenever DEBUG is off (i.e. on Render).
+if not DEBUG:
+    # Render terminates TLS at its proxy and forwards the original scheme.
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = env_bool('SECURE_SSL_REDIRECT', default=True)
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    # Off by default on purpose: enable (e.g. 31536000) once a custom domain is
+    # fully live, since HSTS is remembered by browsers for the whole max-age.
+    SECURE_HSTS_SECONDS = int(os.environ.get('SECURE_HSTS_SECONDS', '0'))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool('SECURE_HSTS_INCLUDE_SUBDOMAINS')
+    SECURE_HSTS_PRELOAD = env_bool('SECURE_HSTS_PRELOAD')
+
+
+# Logging — everything goes to stdout so it shows up in Render's log stream.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '{levelname} {asctime} {name} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': os.environ.get('DJANGO_LOG_LEVEL', 'INFO'),
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    },
+}
+

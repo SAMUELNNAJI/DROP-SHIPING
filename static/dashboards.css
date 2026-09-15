@@ -1,154 +1,732 @@
-
 /* DropHub Dashboard shared layout */
 
 /* Exact main-site typeface: Plus Jakarta Sans (see templates/base.html + static/style.css). */
-body.dashboard-body,body.dashboard-body button,body.dashboard-body input,body.dashboard-body select,body.dashboard-body textarea{font-family:'Plus Jakarta Sans','Plus Jakarta Sans Fallback',-apple-system,BlinkMacSystemFont,sans-serif}
+body.dashboard-body,
+body.dashboard-body button,
+body.dashboard-body input,
+body.dashboard-body select,
+body.dashboard-body textarea {
+  font-family:
+    "Plus Jakarta Sans",
+    "Plus Jakarta Sans Fallback",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+}
 
-.dashboard-app{display:flex;min-height:100vh;flex-direction:row}
-.dashboard-workspace{min-height:100vh;display:flex;flex-direction:column;overflow-y:auto}
+.dashboard-app {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: row;
+}
+.dashboard-workspace {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
 
 /* Shared dashboard chrome: a compact, responsive command bar. */
-body.dashboard-body .dashboard-topbar{position:sticky;top:0;z-index:30;min-height:78px!important;height:auto!important;padding:12px 28px!important;display:flex;align-items:center;gap:18px;background:rgba(255,255,255,.78)!important;border-bottom:1px solid rgba(30,55,110,.10)!important;box-shadow:0 8px 26px rgba(19,39,85,.06)!important;backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%)}
-body.dashboard-body .dashboard-topbar-title{min-width:0;display:flex;align-items:center;gap:12px}
-body.dashboard-body .dashboard-topbar-title h1{margin:0!important;color:#12203b;font-size:22px!important;font-weight:800;line-height:1.15;letter-spacing:-.035em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-body.dashboard-body .dashboard-topbar-title p{margin:3px 0 0;color:#73819a;font-size:11.5px;font-weight:600}
-body.dashboard-body .dashboard-topbar-actions{margin-left:auto;display:flex;align-items:center;gap:10px;min-width:0}
-body.dashboard-body .topbar-search{display:flex;align-items:center;gap:9px;width:clamp(170px,21vw,280px);height:42px;padding:0 13px;border:1px solid rgba(30,55,110,.11);border-radius:13px;background:rgba(245,248,253,.92);color:#8190a9}
-body.dashboard-body .topbar-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:#12203b;font:inherit;font-size:13px}
-body.dashboard-body .topbar-search:focus-within{border-color:rgba(36,86,230,.45);box-shadow:0 0 0 3px rgba(36,86,230,.10);background:#fff}
-body.dashboard-body .topbar-icon,body.dashboard-body .topbar-avatar,body.dashboard-body .topbar-logout{width:42px;height:42px;border-radius:13px;flex-shrink:0}
-body.dashboard-body .dashboard-menu-toggle{width:42px;height:42px;border-radius:13px;flex-shrink:0}
+body.dashboard-body .dashboard-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  min-height: 78px !important;
+  height: auto !important;
+  padding: 12px 28px !important;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: rgba(255, 255, 255, 0.78) !important;
+  border-bottom: 1px solid rgba(30, 55, 110, 0.1) !important;
+  box-shadow: 0 8px 26px rgba(19, 39, 85, 0.06) !important;
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+}
+body.dashboard-body .dashboard-topbar-title {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+body.dashboard-body .dashboard-topbar-title h1 {
+  margin: 0 !important;
+  color: #12203b;
+  font-size: 22px !important;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+body.dashboard-body .dashboard-topbar-title p {
+  margin: 3px 0 0;
+  color: #73819a;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+body.dashboard-body .dashboard-topbar-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+body.dashboard-body .topbar-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: clamp(170px, 21vw, 280px);
+  height: 42px;
+  padding: 0 13px;
+  border: 1px solid rgba(30, 55, 110, 0.11);
+  border-radius: 13px;
+  background: rgba(245, 248, 253, 0.92);
+  color: #8190a9;
+}
+body.dashboard-body .topbar-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #12203b;
+  font: inherit;
+  font-size: 13px;
+}
+body.dashboard-body .topbar-search:focus-within {
+  border-color: rgba(36, 86, 230, 0.45);
+  box-shadow: 0 0 0 3px rgba(36, 86, 230, 0.1);
+  background: #fff;
+}
+body.dashboard-body .topbar-icon,
+body.dashboard-body .topbar-avatar,
+body.dashboard-body .topbar-logout {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  flex-shrink: 0;
+}
+body.dashboard-body .dashboard-menu-toggle {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  flex-shrink: 0;
+}
 
 /* Sidebar, rather than the navigation list, owns its scrollbar. */
-body.dashboard-body--seller .sside__nav,body.dashboard-body--buyer .bside__nav,body.dashboard-body--admin .dashboard-nav{overflow:visible;flex-shrink:0}
+body.dashboard-body--seller .sside__nav,
+body.dashboard-body--buyer .bside__nav,
+body.dashboard-body--admin .dashboard-nav {
+  overflow: visible;
+  flex-shrink: 0;
+}
 
-@media(max-width:1100px){body.dashboard-body .dashboard-topbar{padding:11px 20px!important;gap:12px}body.dashboard-body .topbar-search{width:190px}}
-@media(max-width:800px){body.dashboard-body .dashboard-topbar{min-height:68px!important;padding:9px 14px!important;gap:10px}body.dashboard-body .dashboard-menu-toggle{display:grid!important}body.dashboard-body .dashboard-topbar-title{gap:9px;flex:1}body.dashboard-body .dashboard-topbar-title h1{font-size:18px!important}body.dashboard-body .dashboard-topbar-title .stop__crumbs,body.dashboard-body .dashboard-topbar-title .stop__sub,body.dashboard-body .dashboard-topbar-title>div>p:not(.stop__crumbs):not(.stop__sub){display:none}body.dashboard-body .topbar-search{display:none}body.dashboard-body .dashboard-topbar-actions{gap:7px}body.dashboard-body .topbar-icon,body.dashboard-body .topbar-avatar,body.dashboard-body .topbar-logout{width:40px;height:40px}body.dashboard-body .topbar-btn{width:40px;height:40px;padding:0;font-size:0;border-radius:12px}body.dashboard-body .topbar-btn .sic{width:19px;height:19px}}
-@media(max-width:430px){body.dashboard-body .dashboard-topbar-actions .topbar-icon:nth-of-type(n+2),body.dashboard-body .dashboard-topbar-actions form{display:none}body.dashboard-body .dashboard-topbar-title h1{font-size:16px}}
+@media (max-width: 1100px) {
+  body.dashboard-body .dashboard-topbar {
+    padding: 11px 20px !important;
+    gap: 12px;
+  }
+  body.dashboard-body .topbar-search {
+    width: 190px;
+  }
+}
+@media (max-width: 800px) {
+  body.dashboard-body .dashboard-topbar {
+    min-height: 68px !important;
+    padding: 9px 14px !important;
+    gap: 10px;
+  }
+  body.dashboard-body .dashboard-menu-toggle {
+    display: grid !important;
+  }
+  body.dashboard-body .dashboard-topbar-title {
+    gap: 9px;
+    flex: 1;
+  }
+  body.dashboard-body .dashboard-topbar-title h1 {
+    font-size: 18px !important;
+  }
+  body.dashboard-body .dashboard-topbar-title .stop__crumbs,
+  body.dashboard-body .dashboard-topbar-title .stop__sub,
+  body.dashboard-body
+    .dashboard-topbar-title
+    > div
+    > p:not(.stop__crumbs):not(.stop__sub) {
+    display: none;
+  }
+  body.dashboard-body .topbar-search {
+    display: none;
+  }
+  body.dashboard-body .dashboard-topbar-actions {
+    gap: 7px;
+  }
+  body.dashboard-body .topbar-icon,
+  body.dashboard-body .topbar-avatar,
+  body.dashboard-body .topbar-logout {
+    width: 40px;
+    height: 40px;
+  }
+  body.dashboard-body .topbar-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    font-size: 0;
+    border-radius: 12px;
+  }
+  body.dashboard-body .topbar-btn .sic {
+    width: 19px;
+    height: 19px;
+  }
+}
+@media (max-width: 430px) {
+  body.dashboard-body .dashboard-topbar-actions .topbar-icon:nth-of-type(n + 2),
+  body.dashboard-body .dashboard-topbar-actions form {
+    display: none;
+  }
+  body.dashboard-body .dashboard-topbar-title h1 {
+    font-size: 16px;
+  }
+}
 
 /* Floating dashboard frame: narrower side rails leave a deliberate breathing gap. */
-@media(min-width:801px){
-  body.dashboard-body--seller .sside,body.dashboard-body--buyer .bside,body.dashboard-body--admin .dashboard-sidebar{left:16px!important;top:16px!important;bottom:16px!important;width:244px!important;height:auto!important;min-height:0!important;border-radius:22px!important;overflow-y:auto!important;overflow-x:hidden}
-  body.dashboard-body--seller .dashboard-workspace,body.dashboard-body--buyer .dashboard-workspace,body.dashboard-body--admin .dashboard-workspace{width:calc(100% - 276px)!important;margin-left:276px!important}
+@media (min-width: 801px) {
+  body.dashboard-body--seller .sside,
+  body.dashboard-body--buyer .bside,
+  body.dashboard-body--admin .dashboard-sidebar {
+    left: 16px !important;
+    top: 16px !important;
+    bottom: 16px !important;
+    width: 244px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    border-radius: 22px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden;
+  }
+  body.dashboard-body--seller .dashboard-workspace,
+  body.dashboard-body--buyer .dashboard-workspace,
+  body.dashboard-body--admin .dashboard-workspace {
+    width: calc(100% - 276px) !important;
+    margin-left: 276px !important;
+  }
 }
-@media(min-width:801px) and (max-width:1100px){
-  body.dashboard-body--seller .sside,body.dashboard-body--buyer .bside,body.dashboard-body--admin .dashboard-sidebar{width:220px!important}
-  body.dashboard-body--seller .dashboard-workspace,body.dashboard-body--buyer .dashboard-workspace,body.dashboard-body--admin .dashboard-workspace{width:calc(100% - 248px)!important;margin-left:248px!important}
+@media (min-width: 801px) and (max-width: 1100px) {
+  body.dashboard-body--seller .sside,
+  body.dashboard-body--buyer .bside,
+  body.dashboard-body--admin .dashboard-sidebar {
+    width: 220px !important;
+  }
+  body.dashboard-body--seller .dashboard-workspace,
+  body.dashboard-body--buyer .dashboard-workspace,
+  body.dashboard-body--admin .dashboard-workspace {
+    width: calc(100% - 248px) !important;
+    margin-left: 248px !important;
+  }
 }
 
 /* Elevated, expressive workspace header shared by seller, buyer and admin. */
-body.dashboard-body .dashboard-topbar{position:sticky!important;top:14px!important;margin:0 18px 14px!important;min-height:82px!important;padding:12px 20px!important;overflow:hidden;border:1px solid rgba(255,255,255,.82)!important;border-radius:22px!important;background:radial-gradient(420px 120px at 100% 0%,rgba(92,132,255,.20),transparent 70%),radial-gradient(280px 120px at 0% 100%,rgba(70,205,180,.12),transparent 70%),rgba(255,255,255,.82)!important;box-shadow:0 16px 38px rgba(25,52,110,.12),inset 0 1px 0 rgba(255,255,255,.9)!important}
-body.dashboard-body .dashboard-topbar::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:4px;border-radius:0 10px 10px 0;background:linear-gradient(180deg,#2456e6,#6d58eb)}
-body.dashboard-body--seller .dashboard-topbar::before{background:linear-gradient(180deg,#2456e6,#0ca678)}
-body.dashboard-body--buyer .dashboard-topbar::before{background:linear-gradient(180deg,#b98a2f,#2456e6)}
-body.dashboard-body--admin .dashboard-topbar::before{background:linear-gradient(180deg,#7048e8,#0ea5c9)}
-body.dashboard-body .dashboard-topbar-title{position:relative;padding-left:6px}
-body.dashboard-body .dashboard-menu-toggle{border:1px solid rgba(36,86,230,.16)!important;background:linear-gradient(135deg,#f4f7ff,#eaf0ff)!important;color:#2456e6!important;box-shadow:0 5px 14px rgba(36,86,230,.10)}
-body.dashboard-body .dashboard-topbar-actions{position:relative}
-body.dashboard-body .topbar-search{height:44px!important;border-radius:14px!important;background:rgba(255,255,255,.78)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
-body.dashboard-body .topbar-icon,body.dashboard-body .topbar-avatar,body.dashboard-body .topbar-logout{border:1px solid rgba(30,55,110,.10);background:rgba(255,255,255,.78);box-shadow:0 5px 14px rgba(25,52,110,.07)}
+body.dashboard-body .dashboard-topbar {
+  position: sticky !important;
+  top: 14px !important;
+  margin: 0 18px 14px !important;
+  min-height: 82px !important;
+  padding: 12px 20px !important;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.82) !important;
+  border-radius: 22px !important;
+  background:
+    radial-gradient(
+      420px 120px at 100% 0%,
+      rgba(92, 132, 255, 0.2),
+      transparent 70%
+    ),
+    radial-gradient(
+      280px 120px at 0% 100%,
+      rgba(70, 205, 180, 0.12),
+      transparent 70%
+    ),
+    rgba(255, 255, 255, 0.82) !important;
+  box-shadow:
+    0 16px 38px rgba(25, 52, 110, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+body.dashboard-body .dashboard-topbar::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 18px;
+  bottom: 18px;
+  width: 4px;
+  border-radius: 0 10px 10px 0;
+  background: linear-gradient(180deg, #2456e6, #6d58eb);
+}
+body.dashboard-body--seller .dashboard-topbar::before {
+  background: linear-gradient(180deg, #2456e6, #0ca678);
+}
+body.dashboard-body--buyer .dashboard-topbar::before {
+  background: linear-gradient(180deg, #b98a2f, #2456e6);
+}
+body.dashboard-body--admin .dashboard-topbar::before {
+  background: linear-gradient(180deg, #7048e8, #0ea5c9);
+}
+body.dashboard-body .dashboard-topbar-title {
+  position: relative;
+  padding-left: 6px;
+}
+body.dashboard-body .dashboard-menu-toggle {
+  border: 1px solid rgba(36, 86, 230, 0.16) !important;
+  background: linear-gradient(135deg, #f4f7ff, #eaf0ff) !important;
+  color: #2456e6 !important;
+  box-shadow: 0 5px 14px rgba(36, 86, 230, 0.1);
+}
+body.dashboard-body .dashboard-topbar-actions {
+  position: relative;
+}
+body.dashboard-body .topbar-search {
+  height: 44px !important;
+  border-radius: 14px !important;
+  background: rgba(255, 255, 255, 0.78) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+body.dashboard-body .topbar-icon,
+body.dashboard-body .topbar-avatar,
+body.dashboard-body .topbar-logout {
+  border: 1px solid rgba(30, 55, 110, 0.1);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 5px 14px rgba(25, 52, 110, 0.07);
+}
 
 /* Keep Buyer sign-out visible at the base of its complete scrolling sidebar. */
-body.dashboard-body--buyer .bside__logout{display:block;position:sticky;bottom:0;z-index:2;flex-shrink:0;margin-top:auto;padding:12px 2px 2px;background:linear-gradient(180deg,rgba(250,247,240,0),rgba(250,245,235,.96) 24%)}
+body.dashboard-body--buyer .bside__logout {
+  display: block;
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  flex-shrink: 0;
+  margin-top: auto;
+  padding: 12px 2px 2px;
+  background: linear-gradient(
+    180deg,
+    rgba(250, 247, 240, 0),
+    rgba(250, 245, 235, 0.96) 24%
+  );
+}
 
-@media(max-width:800px){
-  body.dashboard-body--seller .sside,body.dashboard-body--buyer .bside,body.dashboard-body--admin .dashboard-sidebar{left:0!important;top:0!important;bottom:0!important;width:284px!important;height:100dvh!important;border-radius:0 20px 20px 0!important}
-  body.dashboard-body--seller .dashboard-workspace,body.dashboard-body--buyer .dashboard-workspace,body.dashboard-body--admin .dashboard-workspace{width:100%!important;margin-left:0!important}
-  body.dashboard-body .dashboard-topbar{top:0!important;margin:0 0 10px!important;min-height:70px!important;padding:10px 14px!important;border-radius:0 0 18px 18px!important;border-left:0!important;border-right:0!important;box-shadow:0 9px 22px rgba(25,52,110,.10)!important}
-  body.dashboard-body .dashboard-topbar::before{top:auto;bottom:0;left:18px;right:18px;width:auto;height:3px;border-radius:10px 10px 0 0;background:linear-gradient(90deg,#2456e6,rgba(36,86,230,.08))}
-  body.dashboard-body .dashboard-topbar-title{padding-left:0}
-  body.dashboard-body--buyer .bside__logout{position:static;margin-top:12px;background:none;padding:0 2px}
+@media (max-width: 800px) {
+  body.dashboard-body--seller .sside,
+  body.dashboard-body--buyer .bside,
+  body.dashboard-body--admin .dashboard-sidebar {
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 284px !important;
+    height: 100dvh !important;
+    border-radius: 0 20px 20px 0 !important;
+  }
+  body.dashboard-body--seller .dashboard-workspace,
+  body.dashboard-body--buyer .dashboard-workspace,
+  body.dashboard-body--admin .dashboard-workspace {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+  body.dashboard-body .dashboard-topbar {
+    top: 0 !important;
+    margin: 0 0 10px !important;
+    min-height: 70px !important;
+    padding: 10px 14px !important;
+    border-radius: 0 0 18px 18px !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    box-shadow: 0 9px 22px rgba(25, 52, 110, 0.1) !important;
+  }
+  body.dashboard-body .dashboard-topbar::before {
+    top: auto;
+    bottom: 0;
+    left: 18px;
+    right: 18px;
+    width: auto;
+    height: 3px;
+    border-radius: 10px 10px 0 0;
+    background: linear-gradient(90deg, #2456e6, rgba(36, 86, 230, 0.08));
+  }
+  body.dashboard-body .dashboard-topbar-title {
+    padding-left: 0;
+  }
+  body.dashboard-body--buyer .bside__logout {
+    position: static;
+    margin-top: 12px;
+    background: none;
+    padding: 0 2px;
+  }
 }
 
 /* Clean desktop header controls and complete button treatment. */
-@media(min-width:801px){body.dashboard-body .dashboard-topbar{top:0!important;margin:0!important;min-height:76px!important;padding:10px 28px!important;border:0!important;border-bottom:1px solid rgba(26,48,92,.10)!important;border-radius:0!important;background:rgba(255,255,255,.92)!important;box-shadow:0 5px 18px rgba(20,43,89,.05)!important}body.dashboard-body .dashboard-topbar::before{top:0;bottom:0;left:0;width:4px;border-radius:0}body.dashboard-body .dashboard-menu-toggle{display:none!important}}
-body.dashboard-body .topbar-icon,body.dashboard-body .topbar-avatar,body.dashboard-body .topbar-logout{display:grid!important;place-items:center!important;width:42px!important;height:42px!important;padding:0!important;line-height:1!important;text-decoration:none!important;color:#243758!important}
-body.dashboard-body .topbar-icon .sic,body.dashboard-body .topbar-avatar .sic,body.dashboard-body .topbar-logout .sic,body.dashboard-body .dashboard-menu-toggle .sic{display:block;width:19px!important;height:19px!important;margin:0!important}
-body.dashboard-body .topbar-logout{border:1px solid rgba(229,72,77,.18)!important;background:#fff8f8!important;color:#c43b42!important;cursor:pointer}body.dashboard-body .topbar-logout:hover{background:#ffeef0!important}
-body.dashboard-body .topbar-avatar{font-size:14px;font-weight:800;color:#fff!important;background:linear-gradient(135deg,#2456e6,#6d58eb)!important;box-shadow:0 8px 18px rgba(65,77,170,.22)!important;outline:3px solid rgba(36,86,230,.09);border:0!important}
-body.dashboard-body .topbar-icon{background:#fff!important}body.dashboard-body .topbar-icon:hover{color:#2456e6!important;border-color:rgba(36,86,230,.28)!important;background:#f4f7ff!important}
-body.dashboard-body--buyer .bside__logout{position:static!important;z-index:auto;margin:12px 2px 0!important;padding:0!important;background:none!important;flex-shrink:0}
-body.dashboard-body--seller .sside__brandcard{flex-shrink:0}
-body.dashboard-body .topbar-btn{height:42px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0 15px;border:0;border-radius:13px;background:linear-gradient(135deg,#2456e6,#1d43bd);color:#fff;font:inherit;font-size:13px;font-weight:800;box-shadow:0 9px 20px rgba(36,86,230,.25);cursor:pointer;white-space:nowrap}body.dashboard-body .topbar-btn:hover{transform:translateY(-1px);box-shadow:0 13px 25px rgba(36,86,230,.34)}body.dashboard-body .topbar-btn .sic{display:block;width:17px;height:17px}
-body.dashboard-body .topbar-search{position:relative;padding-left:42px!important}body.dashboard-body .topbar-search>.sic{position:absolute;left:15px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:#7183a0;pointer-events:none}body.dashboard-body .topbar-search input{height:100%;padding:0!important}
-body.dashboard-body--admin .topbar-icon{color:#5e36a5!important;background:#fbf9ff!important;border-color:rgba(112,72,232,.15)!important}body.dashboard-body--admin .topbar-icon:hover{color:#fff!important;background:#7048e8!important;border-color:#7048e8!important}body.dashboard-body--admin .topbar-avatar{background:linear-gradient(135deg,#7048e8,#a78bfa)!important}body.dashboard-body--admin .topbar-search:focus-within{border-color:rgba(112,72,232,.50)!important;box-shadow:0 0 0 3px rgba(112,72,232,.11)!important}
-@media(max-width:800px){body.dashboard-body .topbar-btn{width:42px;height:42px;padding:0;font-size:0}body.dashboard-body .topbar-btn .sic{width:19px;height:19px}}
-
-/* Restore the elevated header rail while preserving the compact button system. */
-@media(min-width:801px){body.dashboard-body .dashboard-topbar{top:14px!important;margin:0 18px 14px!important;min-height:78px!important;padding:11px 22px!important;border:1px solid rgba(255,255,255,.86)!important;border-radius:20px!important;background:radial-gradient(360px 120px at 100% 0%,rgba(92,132,255,.17),transparent 72%),rgba(255,255,255,.84)!important;box-shadow:0 14px 32px rgba(25,52,110,.10),inset 0 1px 0 rgba(255,255,255,.92)!important}body.dashboard-body .dashboard-topbar::before{top:16px;bottom:16px;left:0;width:4px;border-radius:0 8px 8px 0}}
-
-/* SVGs in icon buttons are pinned to the true visual center. */
-body.dashboard-body .topbar-icon{position:relative!important}body.dashboard-body .topbar-icon>.sic{position:absolute!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important}
-
-/* Prevent the Buyer profile action from exceeding its activity card width. */
-body.dashboard-body--buyer .bhero-side .mbtn{box-sizing:border-box!important;max-width:100%!important;min-width:0!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-/* Independent workspace scrolling keeps the header visible while content moves. */
-.dashboard-app{height:100dvh;min-height:0;overflow:hidden}.dashboard-workspace{height:100dvh;min-height:0;overflow-y:auto;overscroll-behavior:contain}
-body.dashboard-body .dashboard-topbar{position:sticky!important;z-index:40}
-
-/* Role-coloured scrollbar rails for both sidebar and workspace. */
-body.dashboard-body--seller .sside{scrollbar-color:#4f8dff rgba(255,255,255,.10)}body.dashboard-body--seller .dashboard-workspace{scrollbar-color:#2456e6 #edf3ff}body.dashboard-body--seller .sside::-webkit-scrollbar,body.dashboard-body--seller .dashboard-workspace::-webkit-scrollbar{width:10px}body.dashboard-body--seller .sside::-webkit-scrollbar-thumb{background:#4f8dff;border:3px solid transparent;border-radius:20px;background-clip:content-box}body.dashboard-body--seller .dashboard-workspace::-webkit-scrollbar-thumb{background:#2456e6;border:3px solid transparent;border-radius:20px;background-clip:content-box}
-body.dashboard-body--buyer .bside{scrollbar-color:#b98a2f rgba(255,255,255,.44)}body.dashboard-body--buyer .dashboard-workspace{scrollbar-color:#b98a2f #fbf7ed}body.dashboard-body--buyer .bside::-webkit-scrollbar,body.dashboard-body--buyer .dashboard-workspace::-webkit-scrollbar{width:10px}body.dashboard-body--buyer .bside::-webkit-scrollbar-thumb{background:#b98a2f;border:3px solid transparent;border-radius:20px;background-clip:content-box}body.dashboard-body--buyer .dashboard-workspace::-webkit-scrollbar-thumb{background:#b98a2f;border:3px solid transparent;border-radius:20px;background-clip:content-box}
-body.dashboard-body--admin .dashboard-sidebar{scrollbar-color:#8b6cf4 rgba(255,255,255,.10)}body.dashboard-body--admin .dashboard-workspace{scrollbar-color:#7048e8 #f3efff}body.dashboard-body--admin .dashboard-sidebar::-webkit-scrollbar,body.dashboard-body--admin .dashboard-workspace::-webkit-scrollbar{width:10px}body.dashboard-body--admin .dashboard-sidebar::-webkit-scrollbar-thumb{background:#8b6cf4;border:3px solid transparent;border-radius:20px;background-clip:content-box}body.dashboard-body--admin .dashboard-workspace::-webkit-scrollbar-thumb{background:#7048e8;border:3px solid transparent;border-radius:20px;background-clip:content-box}
-
-/* ── Dashboard drawer controls: centered hamburger, in-drawer close, scrim ── */
-body.dashboard-body .dashboard-menu-toggle .db-toggle-icon--close{display:none!important}
-body.dashboard-body .dashboard-menu-toggle.is-active .db-toggle-icon--menu{display:none!important}
-body.dashboard-body .dashboard-menu-toggle.is-active .db-toggle-icon--close{display:block!important}
-.db-backdrop{position:fixed;inset:0;z-index:55;background:rgba(10,20,40,.5);opacity:0;visibility:hidden;transition:opacity .25s ease,visibility .25s ease;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
-.db-backdrop.show{opacity:1;visibility:visible}
-body.db-locked{overflow:hidden}
-body.db-locked .dashboard-workspace{overflow:hidden}
-.dashboard-sidebar-close{display:none;align-self:flex-end;margin:0 0 10px auto;width:38px;max-width:38px;height:38px;flex:0 0 38px;border-radius:11px;border:1px solid rgba(120,130,150,.30);background:rgba(120,130,150,.12);color:inherit;place-items:center;cursor:pointer;padding:0;line-height:1}
-.dashboard-sidebar-close:hover{background:rgba(120,130,150,.22)}
-.dashboard-sidebar-close .sic{display:block;width:18px;height:18px;margin:0}
-@media(max-width:800px){
-  body.dashboard-body .dashboard-menu-toggle{display:grid!important;place-items:center!important;padding:0!important;line-height:1!important;cursor:pointer}
-  body.dashboard-body--seller .sside,body.dashboard-body--buyer .bside,body.dashboard-body--admin .dashboard-sidebar{z-index:60!important}
-  .dashboard-sidebar-close{display:grid}
+@media (min-width: 801px) {
+  body.dashboard-body .dashboard-topbar {
+    top: 0 !important;
+    margin: 0 !important;
+    min-height: 76px !important;
+    padding: 10px 28px !important;
+    border: 0 !important;
+    border-bottom: 1px solid rgba(26, 48, 92, 0.1) !important;
+    border-radius: 0 !important;
+    background: rgba(255, 255, 255, 0.92) !important;
+    box-shadow: 0 5px 18px rgba(20, 43, 89, 0.05) !important;
+  }
+  body.dashboard-body .dashboard-topbar::before {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 4px;
+    border-radius: 0;
+  }
+  body.dashboard-body .dashboard-menu-toggle {
+    display: none !important;
+  }
+}
+body.dashboard-body .topbar-icon,
+body.dashboard-body .topbar-avatar,
+body.dashboard-body .topbar-logout {
+  display: grid !important;
+  place-items: center !important;
+  width: 42px !important;
+  height: 42px !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  color: #243758 !important;
+}
+body.dashboard-body .topbar-icon .sic,
+body.dashboard-body .topbar-avatar .sic,
+body.dashboard-body .topbar-logout .sic,
+body.dashboard-body .dashboard-menu-toggle .sic {
+  display: block;
+  width: 19px !important;
+  height: 19px !important;
+  margin: 0 !important;
+}
+body.dashboard-body .topbar-logout {
+  border: 1px solid rgba(229, 72, 77, 0.18) !important;
+  background: #fff8f8 !important;
+  color: #c43b42 !important;
+  cursor: pointer;
+}
+body.dashboard-body .topbar-logout:hover {
+  background: #ffeef0 !important;
+}
+body.dashboard-body .topbar-avatar {
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff !important;
+  background: linear-gradient(135deg, #2456e6, #6d58eb) !important;
+  box-shadow: 0 8px 18px rgba(65, 77, 170, 0.22) !important;
+  outline: 3px solid rgba(36, 86, 230, 0.09);
+  border: 0 !important;
+}
+body.dashboard-body .topbar-icon {
+  background: #fff !important;
+}
+body.dashboard-body .topbar-icon:hover {
+  color: #2456e6 !important;
+  border-color: rgba(36, 86, 230, 0.28) !important;
+  background: #f4f7ff !important;
+}
+body.dashboard-body--buyer .bside__logout {
+  position: static !important;
+  z-index: auto;
+  margin: 12px 2px 0 !important;
+  padding: 0 !important;
+  background: none !important;
+  flex-shrink: 0;
+}
+body.dashboard-body--seller .sside__brandcard {
+  flex-shrink: 0;
+}
+body.dashboard-body .topbar-btn {
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #2456e6, #1d43bd);
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: 0 9px 20px rgba(36, 86, 230, 0.25);
+  cursor: pointer;
+  white-space: nowrap;
+}
+body.dashboard-body .topbar-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 13px 25px rgba(36, 86, 230, 0.34);
+}
+body.dashboard-body .topbar-btn .sic {
+  display: block;
+  width: 17px;
+  height: 17px;
+}
+body.dashboard-body .topbar-search {
+  position: relative;
+  padding-left: 42px !important;
+}
+body.dashboard-body .topbar-search > .sic {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translateY(-50%);
+  color: #7183a0;
+  pointer-events: none;
+}
+body.dashboard-body .topbar-search input {
+  height: 100%;
+  padding: 0 !important;
+}
+body.dashboard-body--admin .topbar-icon {
+  color: #5e36a5 !important;
+  background: #fbf9ff !important;
+  border-color: rgba(112, 72, 232, 0.15) !important;
+}
+body.dashboard-body--admin .topbar-icon:hover {
+  color: #fff !important;
+  background: #7048e8 !important;
+  border-color: #7048e8 !important;
+}
+body.dashboard-body--admin .topbar-avatar {
+  background: linear-gradient(135deg, #7048e8, #a78bfa) !important;
+}
+body.dashboard-body--admin .topbar-search:focus-within {
+  border-color: rgba(112, 72, 232, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(112, 72, 232, 0.11) !important;
+}
+@media (max-width: 800px) {
+  body.dashboard-body .topbar-btn {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    font-size: 0;
+  }
+  body.dashboard-body .topbar-btn .sic {
+    width: 19px;
+    height: 19px;
+  }
 }
 
-/* Mobile drawers must scroll as one surface: navigation and the bottom actions
-   stay reachable even on short screens or with browser safe-area controls. */
-@media(max-width:800px){
+/* Restore the elevated header rail while preserving the compact button system. */
+@media (min-width: 801px) {
+  body.dashboard-body .dashboard-topbar {
+    top: 14px !important;
+    margin: 0 18px 14px !important;
+    min-height: 78px !important;
+    padding: 11px 22px !important;
+    border: 1px solid rgba(255, 255, 255, 0.86) !important;
+    border-radius: 20px !important;
+    background:
+      radial-gradient(
+        360px 120px at 100% 0%,
+        rgba(92, 132, 255, 0.17),
+        transparent 72%
+      ),
+      rgba(255, 255, 255, 0.84) !important;
+    box-shadow:
+      0 14px 32px rgba(25, 52, 110, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
+  }
+  body.dashboard-body .dashboard-topbar::before {
+    top: 16px;
+    bottom: 16px;
+    left: 0;
+    width: 4px;
+    border-radius: 0 8px 8px 0;
+  }
+}
+
+/* SVGs in icon buttons are pinned to the true visual center. */
+body.dashboard-body .topbar-icon {
+  position: relative !important;
+}
+body.dashboard-body .topbar-icon > .sic {
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+/* Prevent the Buyer profile action from exceeding its activity card width. */
+body.dashboard-body--buyer .bhero-side .mbtn {
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Independent workspace scrolling keeps the header visible while content moves. */
+.dashboard-app {
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+.dashboard-workspace {
+  height: 100dvh;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+body.dashboard-body .dashboard-topbar {
+  position: sticky !important;
+  z-index: 40;
+}
+
+/* Role-coloured scrollbar rails for both sidebar and workspace. */
+body.dashboard-body--seller .sside {
+  scrollbar-color: #4f8dff rgba(255, 255, 255, 0.1);
+}
+body.dashboard-body--seller .dashboard-workspace {
+  scrollbar-color: #2456e6 #edf3ff;
+}
+body.dashboard-body--seller .sside::-webkit-scrollbar,
+body.dashboard-body--seller .dashboard-workspace::-webkit-scrollbar {
+  width: 10px;
+}
+body.dashboard-body--seller .sside::-webkit-scrollbar-thumb {
+  background: #4f8dff;
+  border: 3px solid transparent;
+  border-radius: 20px;
+  background-clip: content-box;
+}
+body.dashboard-body--seller .dashboard-workspace::-webkit-scrollbar-thumb {
+  background: #2456e6;
+  border: 3px solid transparent;
+  border-radius: 20px;
+  background-clip: content-box;
+}
+body.dashboard-body--buyer .bside {
+  scrollbar-color: #b98a2f rgba(255, 255, 255, 0.44);
+}
+body.dashboard-body--buyer .dashboard-workspace {
+  scrollbar-color: #b98a2f #fbf7ed;
+}
+body.dashboard-body--buyer .bside::-webkit-scrollbar,
+body.dashboard-body--buyer .dashboard-workspace::-webkit-scrollbar {
+  width: 10px;
+}
+body.dashboard-body--buyer .bside::-webkit-scrollbar-thumb {
+  background: #b98a2f;
+  border: 3px solid transparent;
+  border-radius: 20px;
+  background-clip: content-box;
+}
+body.dashboard-body--buyer .dashboard-workspace::-webkit-scrollbar-thumb {
+  background: #b98a2f;
+  border: 3px solid transparent;
+  border-radius: 20px;
+  background-clip: content-box;
+}
+body.dashboard-body--admin .dashboard-sidebar {
+  scrollbar-color: #8b6cf4 rgba(255, 255, 255, 0.1);
+}
+body.dashboard-body--admin .dashboard-workspace {
+  scrollbar-color: #7048e8 #f3efff;
+}
+body.dashboard-body--admin .dashboard-sidebar::-webkit-scrollbar,
+body.dashboard-body--admin .dashboard-workspace::-webkit-scrollbar {
+  width: 10px;
+}
+body.dashboard-body--admin .dashboard-sidebar::-webkit-scrollbar-thumb {
+  background: #8b6cf4;
+  border: 3px solid transparent;
+  border-radius: 20px;
+  background-clip: content-box;
+}
+body.dashboard-body--admin .dashboard-workspace::-webkit-scrollbar-thumb {
+  background: #7048e8;
+  border: 3px solid transparent;
+  border-radius: 20px;
+  background-clip: content-box;
+}
+
+/* ── Dashboard drawer controls: centered hamburger, in-drawer close, scrim ── */
+body.dashboard-body .dashboard-menu-toggle .db-toggle-icon--close {
+  display: none !important;
+}
+body.dashboard-body .dashboard-menu-toggle.is-active .db-toggle-icon--menu {
+  display: none !important;
+}
+body.dashboard-body .dashboard-menu-toggle.is-active .db-toggle-icon--close {
+  display: block !important;
+}
+.db-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: rgba(10, 20, 40, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.25s ease,
+    visibility 0.25s ease;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+.db-backdrop.show {
+  opacity: 1;
+  visibility: visible;
+}
+body.db-locked {
+  overflow: hidden;
+}
+body.db-locked .dashboard-workspace {
+  overflow: hidden;
+}
+.dashboard-sidebar-close {
+  display: none;
+  align-self: flex-end;
+  margin: 0 0 10px auto;
+  width: 38px;
+  max-width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: 11px;
+  border: 1px solid rgba(120, 130, 150, 0.3);
+  background: rgba(120, 130, 150, 0.12);
+  color: inherit;
+  place-items: center;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+.dashboard-sidebar-close:hover {
+  background: rgba(120, 130, 150, 0.22);
+}
+.dashboard-sidebar-close .sic {
+  display: block;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+@media (max-width: 800px) {
+  body.dashboard-body .dashboard-menu-toggle {
+    display: grid !important;
+    place-items: center !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+    cursor: pointer;
+  }
   body.dashboard-body--seller .sside,
   body.dashboard-body--buyer .bside,
-  body.dashboard-body--admin .dashboard-sidebar{
-    box-sizing:border-box!important;
-    min-height:100svh!important;
-    height:100dvh!important;
-    max-height:100dvh!important;
-    overflow-x:hidden!important;
-    overflow-y:auto!important;
-    overscroll-behavior:contain;
-    -webkit-overflow-scrolling:touch;
-    padding-bottom:calc(18px + env(safe-area-inset-bottom))!important;
+  body.dashboard-body--admin .dashboard-sidebar {
+    z-index: 60 !important;
   }
-
-  body.dashboard-body--seller .sside > *,
-  body.dashboard-body--buyer .bside > *,
-  body.dashboard-body--admin .dashboard-sidebar > *{flex-shrink:0}
-
-  body.dashboard-body--seller .sside__nav,
-  body.dashboard-body--buyer .bside__nav,
-  body.dashboard-body--admin .dashboard-nav{overflow:visible!important}
-
-  /* The workspace is the page scroller. Reserve a real scroll-end area, rather
-     than relying only on padding, so the final card/button can clear browser UI. */
-  body.dashboard-body .dashboard-workspace{
-    scroll-padding-bottom:calc(96px + env(safe-area-inset-bottom));
-  }
-  body.dashboard-body .dashboard-main{
-    box-sizing:border-box;
-    flex:0 0 auto;
-    min-height:0;
-    padding-bottom:calc(48px + env(safe-area-inset-bottom))!important;
-  }
-  body.dashboard-body .dashboard-main::after{
-    content:"";
-    display:block;
-    height:calc(56px + env(safe-area-inset-bottom));
-    pointer-events:none;
+  .dashboard-sidebar-close {
+    display: grid;
   }
 }

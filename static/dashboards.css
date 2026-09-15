@@ -1,6 +1,9 @@
 
 /* DropHub Dashboard shared layout */
 
+/* Exact main-site typeface: Plus Jakarta Sans (see templates/base.html + static/style.css). */
+body.dashboard-body,body.dashboard-body button,body.dashboard-body input,body.dashboard-body select,body.dashboard-body textarea{font-family:'Plus Jakarta Sans','Plus Jakarta Sans Fallback',-apple-system,BlinkMacSystemFont,sans-serif}
+
 .dashboard-app{display:flex;min-height:100vh;flex-direction:row}
 .dashboard-workspace{min-height:100vh;display:flex;flex-direction:column;overflow-y:auto}
 
@@ -88,3 +91,20 @@ body.dashboard-body .dashboard-topbar{position:sticky!important;z-index:40}
 body.dashboard-body--seller .sside{scrollbar-color:#4f8dff rgba(255,255,255,.10)}body.dashboard-body--seller .dashboard-workspace{scrollbar-color:#2456e6 #edf3ff}body.dashboard-body--seller .sside::-webkit-scrollbar,body.dashboard-body--seller .dashboard-workspace::-webkit-scrollbar{width:10px}body.dashboard-body--seller .sside::-webkit-scrollbar-thumb{background:#4f8dff;border:3px solid transparent;border-radius:20px;background-clip:content-box}body.dashboard-body--seller .dashboard-workspace::-webkit-scrollbar-thumb{background:#2456e6;border:3px solid transparent;border-radius:20px;background-clip:content-box}
 body.dashboard-body--buyer .bside{scrollbar-color:#b98a2f rgba(255,255,255,.44)}body.dashboard-body--buyer .dashboard-workspace{scrollbar-color:#b98a2f #fbf7ed}body.dashboard-body--buyer .bside::-webkit-scrollbar,body.dashboard-body--buyer .dashboard-workspace::-webkit-scrollbar{width:10px}body.dashboard-body--buyer .bside::-webkit-scrollbar-thumb{background:#b98a2f;border:3px solid transparent;border-radius:20px;background-clip:content-box}body.dashboard-body--buyer .dashboard-workspace::-webkit-scrollbar-thumb{background:#b98a2f;border:3px solid transparent;border-radius:20px;background-clip:content-box}
 body.dashboard-body--admin .dashboard-sidebar{scrollbar-color:#8b6cf4 rgba(255,255,255,.10)}body.dashboard-body--admin .dashboard-workspace{scrollbar-color:#7048e8 #f3efff}body.dashboard-body--admin .dashboard-sidebar::-webkit-scrollbar,body.dashboard-body--admin .dashboard-workspace::-webkit-scrollbar{width:10px}body.dashboard-body--admin .dashboard-sidebar::-webkit-scrollbar-thumb{background:#8b6cf4;border:3px solid transparent;border-radius:20px;background-clip:content-box}body.dashboard-body--admin .dashboard-workspace::-webkit-scrollbar-thumb{background:#7048e8;border:3px solid transparent;border-radius:20px;background-clip:content-box}
+
+/* ── Dashboard drawer controls: centered hamburger, in-drawer close, scrim ── */
+body.dashboard-body .dashboard-menu-toggle .db-toggle-icon--close{display:none!important}
+body.dashboard-body .dashboard-menu-toggle.is-active .db-toggle-icon--menu{display:none!important}
+body.dashboard-body .dashboard-menu-toggle.is-active .db-toggle-icon--close{display:block!important}
+.db-backdrop{position:fixed;inset:0;z-index:55;background:rgba(10,20,40,.5);opacity:0;visibility:hidden;transition:opacity .25s ease,visibility .25s ease;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+.db-backdrop.show{opacity:1;visibility:visible}
+body.db-locked{overflow:hidden}
+body.db-locked .dashboard-workspace{overflow:hidden}
+.dashboard-sidebar-close{display:none;align-self:flex-end;margin:0 0 10px auto;width:38px;max-width:38px;height:38px;flex:0 0 38px;border-radius:11px;border:1px solid rgba(120,130,150,.30);background:rgba(120,130,150,.12);color:inherit;place-items:center;cursor:pointer;padding:0;line-height:1}
+.dashboard-sidebar-close:hover{background:rgba(120,130,150,.22)}
+.dashboard-sidebar-close .sic{display:block;width:18px;height:18px;margin:0}
+@media(max-width:800px){
+  body.dashboard-body .dashboard-menu-toggle{display:grid!important;place-items:center!important;padding:0!important;line-height:1!important;cursor:pointer}
+  body.dashboard-body--seller .sside,body.dashboard-body--buyer .bside,body.dashboard-body--admin .dashboard-sidebar{z-index:60!important}
+  .dashboard-sidebar-close{display:grid}
+}

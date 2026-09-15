@@ -126,10 +126,10 @@ body.dashboard-body--seller .dashboard-page{max-width:1180px}
 .sgrid2{display:grid;grid-template-columns:1.5fr 1fr;gap:14px;margin-bottom:16px}
 .sgrid2b{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
 .scard{background:var(--sc);border:1px solid var(--sbd);border-radius:var(--sr);box-shadow:var(--ssh);overflow:hidden;min-width:0}
-.scard__head{display:flex;align-items:center;gap:12px;padding:17px 20px;border-bottom:1px solid var(--sbd2)}
+.scard__head{display:flex;align-items:center;gap:12px;padding:17px 20px;border-bottom:1px solid var(--sbd2);flex-wrap:wrap}
 .scard__head h3{margin:0;font-size:15px;font-weight:800;letter-spacing:-.02em}
 .scard__head p{margin:2px 0 0;font-size:12.5px;color:var(--sm)}
-.scard__head .spacer{margin-left:auto;display:flex;gap:8px;align-items:center}
+.scard__head .spacer{margin-left:auto;display:flex;gap:8px;align-items:center;min-width:0;flex-wrap:wrap;justify-content:flex-end}
 .scard__body{padding:20px}
 .scard__link{font-size:13px;font-weight:800;color:var(--sblue);text-decoration:none;white-space:nowrap}
 .chipx{font-size:11.5px;font-weight:800;padding:6px 10px;border-radius:20px;background:#eef2f8;color:#5b6b84;border:1px solid var(--sbd);white-space:nowrap}
@@ -233,7 +233,7 @@ body.dashboard-body--seller .dashboard-page{max-width:1180px}
 .stoast{position:fixed;bottom:22px;right:22px;z-index:80;background:#0d1d3d;color:#fff;padding:13px 16px;border-radius:13px;font-size:13.5px;font-weight:600;display:none;align-items:center;gap:10px;box-shadow:0 18px 40px rgba(0,0,0,.28)}
 .stoast.show{display:flex}
 @media(max-width:1180px){.sside{width:248px}body.dashboard-body--seller .dashboard-workspace{width:calc(100% - 248px);margin-left:248px}.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.seller-hero,.sgrid2,.sgrid2b{grid-template-columns:1fr}}
-@media(max-width:800px){.sside{transform:translateX(-105%);transition:transform .25s ease;width:284px}.sside.is-open{transform:none}body.dashboard-body--seller .dashboard-workspace{width:100%;margin-left:0}body.dashboard-body--seller .dashboard-main{padding:16px}.seller-search{display:none}.seller-hero-main h2{font-size:22px}.kpi-grid{grid-template-columns:1fr 1fr;gap:10px}.pipex{grid-template-columns:1fr 1fr}.balgrid{grid-template-columns:1fr}.ff-row{grid-template-columns:1fr}body.dashboard-body--seller .dashboard-topbar{padding:0 14px}}
+@media(max-width:800px){.sside{transform:translateX(-105%);transition:transform .25s ease;width:284px}.sside.is-open{transform:none}body.dashboard-body--seller .dashboard-workspace{width:100%;margin-left:0}body.dashboard-body--seller .dashboard-main{padding:16px}.seller-search{display:none}.seller-hero-main h2{font-size:22px}.kpi-grid{grid-template-columns:1fr 1fr;gap:10px}.pipex{grid-template-columns:1fr 1fr}.balgrid{grid-template-columns:1fr}.ff-row{grid-template-columns:1fr}.seller-hero-stats{flex-direction:column;gap:12px}body.dashboard-body--seller .dashboard-topbar{padding:0 14px}}
 @media(max-width:520px){.kpi-grid{grid-template-columns:1fr}.pipex{grid-template-columns:1fr}.seller-hero-stats{flex-wrap:wrap;gap:14px}}
 
 
@@ -435,4 +435,16 @@ body.dashboard-body--seller .sside{top:0;left:0;bottom:auto;right:auto;height:10
   body.dashboard-body--seller .sside.is-open{transform:none}
 }
 @media(max-width:800px){body.dashboard-body--seller .dashboard-table th{padding:9px 14px}body.dashboard-body--seller .dashboard-table td{padding:12px 14px}body.dashboard-body--seller .stop__logout{padding:0 10px}body.dashboard-body--seller .kpi-grid{grid-template-columns:1fr 1fr}}
+
+/* ═══ mobile card headers: stack title above actions (no tight 1-row squeeze) ═══ */
+@media(max-width:800px){
+  body.dashboard-body--seller .scard__head{flex-direction:column;align-items:stretch}
+  body.dashboard-body--seller .scard__head .spacer{margin-left:0;flex-basis:auto;width:100%;justify-content:stretch;flex-wrap:wrap}
+  body.dashboard-body--seller .scard__head .spacer .chipx,
+  body.dashboard-body--seller .scard__head .spacer .mbtn,
+  body.dashboard-body--seller .scard__head .spacer .segx,
+  body.dashboard-body--seller .scard__head .spacer .scard__link{flex:1 1 140px;justify-content:center;text-align:center;white-space:nowrap}
+  body.dashboard-body--seller .paymethod{flex-wrap:wrap}
+  body.dashboard-body--seller .paymethod .mbtn{margin-left:0}
+}
 @media(max-width:520px){body.dashboard-body--seller .kpi-grid{grid-template-columns:1fr}body.dashboard-body--seller .dashboard-topbar{min-height:64px}body.dashboard-body--seller .dashboard-topbar h1{font-size:17px}body.dashboard-body--seller .seller-avatar{display:none}}

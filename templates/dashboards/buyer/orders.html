@@ -1,0 +1,73 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="My Orders">
+
+  <section class="glass" style="margin-bottom:14px">
+    <div class="glass__head">
+      <h3>Order history</h3>
+      <p>Every purchase, from payment into escrow through to delivery.</p>
+      <span class="spacer">
+        <span class="chipb chipb--ok"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Escrow protected</span>
+        <a class="mbtn" href="/shop/"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg> Shop again</a>
+      </span>
+    </div>
+    <div class="glass__body">
+      <div class="journey">
+        <div class="journey__step is-now">
+          <span>Status 1</span>
+          <strong>Paid into escrow</strong>
+          <small>We hold your money safely — the seller cannot touch it yet.</small>
+        </div>
+        <div class="journey__step">
+          <span>Status 2</span>
+          <strong>Processing</strong>
+          <small>The seller is packing your item for dispatch.</small>
+        </div>
+        <div class="journey__step">
+          <span>Status 3</span>
+          <strong>Shipped</strong>
+          <small>On the move with a tracking number you can follow.</small>
+        </div>
+        <div class="journey__step">
+          <span>Status 4</span>
+          <strong>Delivered</strong>
+          <small>Confirm within 7 days and we release the payment.</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bkpi">
+    <article class="glass bkpi__card" style="--gs:rgba(36,86,230,.12);--ga:#2456e6">
+      <div class="bkpi__top">
+        <span class="bkpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></span>
+        <span class="bkpi__label">Total orders</span>
+      </div>
+      <strong>0</strong>
+      <p class="bkpi__sub">Lifetime purchases</p>
+    </article>
+    <article class="glass bkpi__card" style="--gs:rgba(185,138,47,.14);--ga:#8a6420">
+      <div class="bkpi__top">
+        <span class="bkpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg></span>
+        <span class="bkpi__label">In progress</span>
+      </div>
+      <strong>0</strong>
+      <p class="bkpi__sub">Awaiting delivery</p>
+    </article>
+    <article class="glass bkpi__card" style="--gs:rgba(12,166,120,.12);--ga:#0ca678">
+      <div class="bkpi__top">
+        <span class="bkpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.6 12.4 2.4 2.4 4.5-4.9"/></svg></span>
+        <span class="bkpi__label">Delivered</span>
+      </div>
+      <strong>0</strong>
+      <p class="bkpi__sub">Received &amp; confirmed</p>
+    </article>
+    <article class="glass bkpi__card" style="--gs:rgba(229,72,77,.12);--ga:#b4232a">
+      <div class="bkpi__top">
+        <span class="bkpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></span>
+        <span class="bkpi__label">Refunded</span>
+      </div>
+      <strong>0</strong>
+      <p class="bkpi__sub">Money returned to you</p>
+    </article>
+  </section>
+</div>

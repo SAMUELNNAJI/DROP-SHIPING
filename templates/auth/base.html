@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}DropHub Account{% endblock %}</title>
+  <meta name="description" content="Sign in or create your free DropHub account. Every order is escrow-protected." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="/static/Logo.png" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/auth.css" />
+  <link rel="stylesheet" href="/static/alerts.css" />
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="auth-page">
+  {% include "auth/header.html" %}
+
+  <div class="auth-shell">
+    <aside class="auth-side">
+      <div class="auth-side-inner">
+        <span class="auth-side-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9.2 12.3 2 2 3.7-4"/></svg> ESCROW-PROTECTED MARKETPLACE</span>
+        <h2 class="auth-side-title">Shop Everything.<br /><span>Pay Anything.</span></h2>
+        <p class="auth-side-text">One account for the world's first Pi-powered dropshipping marketplace — buy globally, sell instantly, and pay with Pi Network, PayPal or Naira.</p>
+        <div class="auth-points">
+          <div class="auth-point"><span class="auth-point-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="19" height="19"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9.2 12.3 2 2 3.7-4"/></svg></span><div><p class="auth-point-title">Escrow on every order</p><p class="auth-point-text">Your payment is held safely by DropHub until you confirm delivery.</p></div></div>
+          <div class="auth-point"><span class="auth-point-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="19" height="19"><path d="M13 2 4.5 13.4h6.2L11 22l8.5-11.4h-6.2L13 2z"/></svg></span><div><p class="auth-point-title">Instant multi-rail payments</p><p class="auth-point-text">Pi Network, PayPal and Paystack — settle in seconds, not days.</p></div></div>
+          <div class="auth-point"><span class="auth-point-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="19" height="19"><circle cx="12" cy="12" r="9.2"/><path d="M2.8 12h18.4"/><path d="M12 2.8c2.6 2.6 3.9 5.8 3.9 9.2S14.6 18.6 12 21.2c-2.6-2.6-3.9-5.8-3.9-9.2S9.4 5.4 12 2.8z"/></svg></span><div><p class="auth-point-title">Sell to the world</p><p class="auth-point-text">List products free and reach verified buyers in 120+ countries.</p></div></div>
+        </div>
+        <div class="auth-side-stats"><div><p class="auth-stat-num">120+</p><p class="auth-stat-label">Countries Served</p></div><div><p class="auth-stat-num">50K+</p><p class="auth-stat-label">Active Merchants</p></div><div><p class="auth-stat-num">2.4M</p><p class="auth-stat-label">Orders Protected</p></div></div>
+      </div>
+    </aside>
+    <main class="auth-main">{% block auth_card %}{% endblock %}</main>
+  </div>
+
+  {% include "base_footer.html" %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var burger = document.getElementById('navBurger');
+      var menu = document.getElementById('mobileMenu');
+      if (burger && menu) {
+        function closeMenu() { menu.classList.remove('mmenu--open'); menu.setAttribute('aria-hidden', 'true'); burger.setAttribute('aria-expanded', 'false'); document.body.classList.remove('mmenu-locked'); }
+        burger.addEventListener('click', function () { var open = menu.classList.toggle('mmenu--open'); menu.setAttribute('aria-hidden', open ? 'false' : 'true'); burger.setAttribute('aria-expanded', open ? 'true' : 'false'); document.body.classList.toggle('mmenu-locked', open); });
+        menu.querySelectorAll('[data-mmenu-close], .mmenu-link, .mmenu-cta, .mmenu-signin').forEach(function (item) { item.addEventListener('click', closeMenu); });
+      }
+      var nav = document.querySelector('.navbar');
+      if (nav) window.addEventListener('scroll', function () { nav.classList.toggle('scrolled', window.scrollY > 12); }, { passive: true });
+    });
+    function toggleAuthPassword(id, button) { var input = document.getElementById(id); var visible = input.type === 'password'; input.type = visible ? 'text' : 'password'; button.classList.toggle('is-on', visible); button.setAttribute('aria-label', visible ? 'Hide password' : 'Show password'); }
+  </script>
+  {% block extra_scripts %}{% endblock %}
+  <script src="/static/cart.js"></script>
+</body>
+</html>

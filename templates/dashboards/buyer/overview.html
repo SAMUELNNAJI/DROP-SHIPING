@@ -1,0 +1,155 @@
+<div class="dashboard-page" data-page-title="Buyer Overview">
+
+  <section class="bhero-split">
+    <div class="buyer-hero">
+      <span class="buyer-eyebrow"><span class="live-dot light"></span> Buyer Lounge</span>
+      <h2>Good to see you, {{ user.username|default:"shopper" }}.</h2>
+      <p>Every order you place is escrow-protected — your money is only released to the seller once your item actually arrives.</p>
+      <div class="buyer-hero-actions">
+        <a class="buyer-btn-gold" href="/shop/"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg> Continue shopping</a>
+        <a class="buyer-btn-ghost" href="/dashboards/buyer/orders/" data-dashboard-link><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg> Track my orders</a>
+      </div>
+      <div class="buyer-hero-stats">
+        <div><strong>Escrow</strong><span>Protected payments</span></div>
+        <div><strong>7 days</strong><span>Inspection window</span></div>
+        <div><strong>24/7</strong><span>Buyer support</span></div>
+      </div>
+    </div>
+
+    <aside class="bhero-side">
+      <h4>Your activity</h4>
+      <p>A live snapshot of your shopping journey.</p>
+      <div class="bstat">
+        <span class="bstat__ic" style="--gs:rgba(36,86,230,.12);--ga:#2456e6"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v13H3z"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span>
+        <span><b>Orders placed</b><small>Lifetime purchases</small></span>
+        <span class="bstat__val">0</span>
+      </div>
+      <div class="bstat">
+        <span class="bstat__ic" style="--gs:rgba(12,166,120,.12);--ga:#0ca678"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.6 12.4 2.4 2.4 4.5-4.9"/></svg></span>
+        <span><b>Items delivered</b><small>Signed for successfully</small></span>
+        <span class="bstat__val up">0</span>
+      </div>
+      <div class="bstat">
+        <span class="bstat__ic" style="--gs:rgba(229,72,77,.12);--ga:#b4232a"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5S4.5 15.6 4.5 10.4A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 7.5 3.1c0 5.2-7.5 10.1-7.5 10.1z"/></svg></span>
+        <span><b>Wishlist</b><small>Saved for later</small></span>
+        <span class="bstat__val">0</span>
+      </div>
+      <div class="bstat">
+        <span class="bstat__ic" style="--gs:rgba(185,138,47,.14);--ga:#8a6420"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M17 6.5c0-1.6-2.2-2.5-5-2.5S7 5.1 7 6.9c0 4.4 10 2 10 6.6 0 1.8-2.2 2.9-5 2.9s-5-1-5-2.9"/></svg></span>
+        <span><b>Total spent</b><small>All-time value</small></span>
+        <span class="bstat__val">$0.00</span>
+      </div>
+      <a class="mbtn mbtn--gold" style="margin-top:14px;width:100%;justify-content:center" href="/dashboards/buyer/settings/" data-dashboard-link><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M4.8 20c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg> Complete my profile</a>
+    </aside>
+  </section>
+<section class="bkpi">
+    <article class="glass bkpi__card" style="--gs:rgba(36,86,230,.12);--ga:#2456e6">
+      <div class="bkpi__top">
+        <span class="bkpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></span>
+        <span class="bkpi__label">Active orders</span>
+      </div>
+      <strong>0</strong>
+      <p class="bkpi__sub">Nothing in transit right now</p>
+    </article>
+    <article class="glass bkpi__card" style="--gs:rgba(12,166,120,.12);--ga:#0ca678">
+      <div class="bkpi__top">
+        <span class="bkpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.6 12.4 2.4 2.4 4.5-4.9"/></svg></span>
+        <span class="bkpi__label">Delivered</span>
+      </div>
+      <strong>0</strong>
+      <p class="bkpi__sub">Completed purchases</p>
+    </article>
+    <article class="glass bkpi__card" style="--gs:rgba(185,138,47,.14);--ga:#8a6420">
+      <div class="bkpi__top">
+        <span class="bkpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M17 6.5c0-1.6-2.2-2.5-5-2.5S7 5.1 7 6.9c0 4.4 10 2 10 6.6 0 1.8-2.2 2.9-5 2.9s-5-1-5-2.9"/></svg></span>
+        <span class="bkpi__label">Total spent</span>
+      </div>
+      <strong>$0.00</strong>
+      <p class="bkpi__sub">Across every order</p>
+    </article>
+    <article class="glass bkpi__card" style="--gs:rgba(112,72,232,.12);--ga:#7048e8">
+      <div class="bkpi__top">
+        <span class="bkpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5S4.5 15.6 4.5 10.4A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 7.5 3.1c0 5.2-7.5 10.1-7.5 10.1z"/></svg></span>
+        <span class="bkpi__label">Saved items</span>
+      </div>
+      <strong>0</strong>
+      <p class="bkpi__sub">Waiting in your wishlist</p>
+    </article>
+  </section>
+
+  <section class="glass" style="margin-bottom:14px">
+    <div class="glass__head">
+      <h3>How buyer protection works</h3>
+      <p>Four steps between payment and release — you stay in control the whole way.</p>
+    </div>
+    <div class="glass__body">
+      <div class="journey">
+        <div class="journey__step is-done">
+          <span>Step 1</span>
+          <strong>You pay into escrow</strong>
+          <small>Funds are held safely — never sent to the seller yet.</small>
+        </div>
+        <div class="journey__step is-now">
+          <span>Step 2</span>
+          <strong>Seller ships it</strong>
+          <small>You get live tracking from warehouse to doorstep.</small>
+        </div>
+        <div class="journey__step">
+          <span>Step 3</span>
+          <strong>You inspect it</strong>
+          <small>7 days to confirm the item is exactly as described.</small>
+        </div>
+        <div class="journey__step">
+          <span>Step 4</span>
+          <strong>We release payment</strong>
+          <small>Only after you're happy does the seller get paid.</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bgrid2">
+    <article class="glass">
+      <div class="glass__head">
+        <h3>Recent orders</h3>
+        <p>Your latest purchases and their delivery status.</p>
+        <span class="spacer"><a class="mbtn" href="/dashboards/buyer/orders/" data-dashboard-link>View all</a></span>
+      </div>
+      <div class="glass__body">
+        <div class="emptyb">
+          <div class="emptyb__art"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v13H3z"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg></div>
+          <h4>No orders yet</h4>
+          <p>When you place your first order it will appear here with live tracking and escrow status.</p>
+          <a class="mbtn mbtn--gold" href="/shop/"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg> Start shopping</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="glass">
+      <div class="glass__head">
+        <h3>Your protection</h3>
+        <p>What DropHub handles for you.</p>
+      </div>
+      <div class="glass__body">
+        <div class="border-row">
+          <span class="border-row__ic" style="--gs:rgba(12,166,120,.12);--ga:#0ca678"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div><b>Escrow protected</b><p>Money held until delivery</p></div>
+        </div>
+        <div class="border-row">
+          <span class="border-row__ic" style="--gs:rgba(36,86,230,.12);--ga:#2456e6"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h13v10H4z"/><path d="M17 10h3l1 4h-4"/><circle cx="8" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg></span>
+          <div><b>Tracked delivery</b><p>Know where every parcel is</p></div>
+        </div>
+        <div class="border-row">
+          <span class="border-row__ic" style="--gs:rgba(229,72,77,.12);--ga:#b4232a"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></span>
+          <div><b>Refund policy</b><p>Not as described? Get it back</p></div>
+        </div>
+        <div class="border-row">
+          <span class="border-row__ic" style="--gs:rgba(112,72,232,.12);--ga:#7048e8"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1 .9-1 1.6v.4"/><circle cx="12" cy="17.2" r=".9" fill="currentColor" stroke="none"/></svg></span>
+          <div><b>24/7 support</b><p>Real humans, any timezone</p></div>
+        </div>
+        <a class="mbtn mbtn--dark" style="width:100%;justify-content:center;margin-top:14px" href="/help/"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Contact support</a>
+      </div>
+    </article>
+  </section>
+</div>
+

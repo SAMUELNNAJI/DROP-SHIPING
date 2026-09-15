@@ -1,0 +1,21 @@
+{% if messages %}
+<div class="auth-alerts" id="dashboardAlerts">
+  {% for message in messages %}
+  <div class="auth-alert auth-alert--{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}">
+    {% if message.tags == 'error' %}
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9.2"/><path d="M12 7.6v5.2"/><circle cx="12" cy="16.4" r=".9" fill="currentColor" stroke="none"/></svg>
+    {% elif message.tags == 'success' %}
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="m8.2 12.3 2.5 2.5 5.1-5.3"/></svg>
+    {% elif message.tags == 'warning' %}
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 2.5 17.4A1.9 1.9 0 0 0 4.2 20.3h15.6a1.9 1.9 0 0 0 1.7-2.9L13.7 3.9a1.9 1.9 0 0 0-3.4 0z"/><path d="M12 9v4"/><circle cx="12" cy="16.6" r=".9" fill="currentColor" stroke="none"/></svg>
+    {% else %}
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9.2"/><path d="M12 11v5.4"/><circle cx="12" cy="7.7" r=".9" fill="currentColor" stroke="none"/></svg>
+    {% endif %}
+    <span class="auth-alert__body">{{ message }}</span>
+    <button class="auth-alert__close" type="button" onclick="this.closest('.auth-alert').remove()" aria-label="Dismiss">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m5 5 14 14M19 5 5 19"/></svg>
+    </button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}

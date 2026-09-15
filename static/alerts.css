@@ -1,0 +1,108 @@
+/* ═══════════════════════════════════════════════════
+   ALERTS.CSS — DropHub message banners
+   Shared by: auth pages (templates/auth/base.html)
+              dashboards  (templates/dashboards/base.html)
+   Rendered by: templates/partials/messages.html
+   ═══════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════
+   MESSAGE BANNERS  (Django messages: success / error / info / warning)
+══════════════════════════════════ */
+.auth-alerts {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 20px;
+}
+
+.auth-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 13px;
+  border: 1.5px solid transparent;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: -.005em;
+  animation: authAlertIn .34s cubic-bezier(.22, 1, .36, 1);
+}
+
+.auth-alert > svg { flex-shrink: 0; margin-top: 1px; }
+
+.auth-alert__body { min-width: 0; }
+
+.auth-alert__body strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 1px;
+}
+
+.auth-alert__body span {
+  display: block;
+  font-weight: 500;
+  font-size: 12.5px;
+  opacity: .88;
+}
+
+.auth-alert__close {
+  margin-left: auto;
+  border: 0;
+  background: none;
+  color: inherit;
+  opacity: .55;
+  cursor: pointer;
+  padding: 0 0 0 6px;
+  line-height: 1;
+  font-size: 15px;
+}
+
+.auth-alert__close:hover { opacity: 1; }
+
+.auth-alert--error {
+  color: #b4232a;
+  background: #fff5f5;
+  border-color: #fbd0d0;
+  box-shadow: 0 6px 18px rgba(180, 35, 42, .07);
+}
+
+.auth-alert--success {
+  color: #0a7a57;
+  background: #f0fdf8;
+  border-color: #b6eed8;
+  box-shadow: 0 6px 18px rgba(10, 122, 87, .07);
+}
+
+.auth-alert--info {
+  color: #1a41b4;
+  background: #f4f7ff;
+  border-color: #d2dfff;
+  box-shadow: 0 6px 18px rgba(26, 65, 180, .07);
+}
+
+.auth-alert--warning {
+  color: #8a5a00;
+  background: #fffbf0;
+  border-color: #f7e0ac;
+  box-shadow: 0 6px 18px rgba(138, 90, 0, .07);
+}
+
+@keyframes authAlertIn {
+  from { opacity: 0; transform: translateY(-7px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* invalid field helper — pairs with Django's bound-field errors */
+.auth-input.is-error { border-color: #ef4444; background: #fffafa; }
+.auth-field-error svg { flex-shrink: 0; }
+
+/* dashboard placement: sits between the glass topbar and the page content */
+.dashboard-workspace > .auth-alerts {
+  padding: 18px 30px 0;
+  margin: 0;
+}
+
+@media (max-width: 800px) {
+  .dashboard-workspace > .auth-alerts { padding: 14px 16px 0; }
+}

@@ -1,0 +1,295 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ page_title }} - DropHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="/static/Logo.png" />
+  <link rel="stylesheet" href="/static/dashboards.css" />
+  <link rel="stylesheet" href="/static/alerts.css" />
+
+  {% if role == 'admin' %}<link rel="stylesheet" href="/static/admin.css" />{% endif %}
+  {% if role == 'seller' %}<link rel="stylesheet" href="/static/seller.css" />{% endif %}
+  {% if role == 'buyer' %}<link rel="stylesheet" href="/static/buyer.css" />{% endif %}
+</head>
+<body class="dashboard-body dashboard-body--{{ role }}">
+  <div class="dashboard-app">
+    {% if role == 'seller' %}
+    <aside class="sside" id="dashboardSidebar">
+      <div class="sside__brandcard">
+        <div class="sside__brandrow">
+          <a class="sside__logo" href="/dashboards/seller/" data-dashboard-link aria-label="DropHub Seller Center"><img src="/static/Logo.png" alt="DropHub" /></a>
+          <span class="sside__brandtext"><b>DropHub</b><small>Seller Center</small></span>
+          <span class="sside__live"><i></i>Live</span>
+        </div>
+        <div class="sside__brandstats">
+          <div class="sside__brandstat"><b>{{ user.username|default:"Seller"|truncatechars:10 }}</b><small>Store</small></div>
+          <div class="sside__brandstat"><b>4.9</b><small>Rating</small></div>
+          <div class="sside__brandstat"><b>Pro</b><small>Plan</small></div>
+        </div>
+        <span class="sside__trustline"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Verified workspace · escrow protected payments</span>
+      </div>
+      <div class="sside__store">
+        <span class="sside__avatar">{{ user.username|first|upper|default:"S" }}</span>
+        <span class="sside__storetext"><strong>{{ user.username|default:"My Store" }}</strong><small>Pro seller</small></span>
+        <a class="sside__storebtn" href="/shop/" aria-label="View storefront"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14 21 3"/></svg></a>
+      </div>
+      <nav class="sside__nav" aria-label="Seller navigation">
+        <p class="sside__label">Manage</p>
+        <a href="/dashboards/seller/" data-dashboard-link class="{% if section == 'overview' %}is-active{% endif %}"><span class="sside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><span>Overview</span></a>
+        <a href="/dashboards/seller/products/" data-dashboard-link class="{% if section == 'products' %}is-active{% endif %}"><span class="sside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8.5 12.5 3.5 3 8.5v7l9.5 5 9.5-5z"/><path d="M3 8.5l9.5 5 9.5-5M12.5 13.5V20"/></svg></span><span>Products</span></a>
+        <a href="/dashboards/seller/orders/" data-dashboard-link class="{% if section == 'orders' %}is-active{% endif %}"><span class="sside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 8h13l-1 12.5h-11z"/><path d="M9 10.5V6a3 3 0 0 1 6 0v4.5"/></svg></span><span>Orders</span><em class="sside__badge">5</em></a>
+        <p class="sside__label">Finance</p>
+        <a href="/dashboards/seller/earnings/" data-dashboard-link class="{% if section == 'earnings' %}is-active{% endif %}"><span class="sside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 14l4-4 3 3 5-6"/></svg></span><span>Earnings</span></a>
+        <a href="/dashboards/seller/payouts/" data-dashboard-link class="{% if section == 'payouts' %}is-active{% endif %}"><span class="sside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span><span>Payouts</span></a>
+        <p class="sside__label">Trust</p>
+        <a href="/dashboards/seller/verification/" class="{% if section == 'verification' %}is-active{% endif %}"><span class="sside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span><span>Verification</span>{% if verification and verification.status == 'verified' %}<em class="sside__badge sside__badge--ok">Done</em>{% elif verification and verification.status == 'pending' %}<em class="sside__badge">Review</em>{% else %}<em class="sside__badge sside__badge--warn">68%</em>{% endif %}</a>
+        <p class="sside__label">Storefront</p>
+        <a href="/shop/"><span class="sside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg></span><span>View store</span></a>
+      </nav>
+      <div class="sside__setup">
+        <div class="sside__setuphead"><span class="sside__setupic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span><strong>Setup · 68% complete</strong></div>
+        <div class="sside__bar"><i style="width:68%"></i></div>
+        <p>Verify your ID and payout account to unlock instant payouts.</p>
+        <a href="/dashboards/seller/verification/" data-dashboard-link>Complete verification <span aria-hidden="true"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span></a>
+      </div>
+      <div class="sside__user">
+        <span class="sside__avatar sside__avatar--sm">{{ user.username|first|upper|default:"S" }}</span>
+        <span class="sside__usertext"><strong>{{ user.username }}</strong><small>{{ user.email|default:"Seller account" }}</small></span>
+        <form method="post" action="/accounts/signout/">{% csrf_token %}<button aria-label="Log out" title="Log out"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg></button></form>
+      </div>
+    </aside>
+    {% elif role == 'admin' %}
+    <aside class="dashboard-sidebar" id="dashboardSidebar">
+      <a class="dashboard-brand" href="/dashboards/admin/" data-dashboard-link>
+        <img src="/static/Logo.png" alt="DropHub" />
+        <span><b>DropHub</b><small>ADMIN CONSOLE</small></span>
+      </a>
+      <div class="aside-console">
+
+        <span class="aside-console__avatar">{{ user.username|first|upper|default:"A" }}</span>
+
+        <span class="aside-console__text"><strong>{{ user.username|default:"Administrator" }}</strong><small>Platform control</small></span>
+
+        <span class="aside-console__dot" title="Systems online"></span>
+
+      </div>
+
+      <nav class="dashboard-nav" aria-label="Dashboard navigation">
+
+        <p class="anav-label">Marketplace</p>
+        <a href="/dashboards/admin/" data-dashboard-link class="{% if section == 'overview' %}is-active{% endif %}"><span class="anav-icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span>Overview</a>
+        <a href="/dashboards/admin/orders/" data-dashboard-link class="{% if section == 'orders' %}is-active{% endif %}"><span class="anav-icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></span>Orders<span class="dash-nav-badge dash-nav-badge--soft">2</span></a>
+        <a href="/dashboards/admin/products/" data-dashboard-link class="{% if section == 'products' %}is-active{% endif %}"><span class="anav-icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8.5 12 3 3 8.5v7L12 21l9-5.5z"/><path d="m3 8.5 9 5.5 9-5.5M12 21v-7"/></svg></span>Products</a>
+        <p class="anav-label">People &amp; money</p>
+
+        <a href="/dashboards/admin/users/" data-dashboard-link class="{% if section == 'users' %}is-active{% endif %}"><span class="anav-icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 20c.6-3.2 3.3-5 6.2-5s5.6 1.8 6.2 5"/><path d="M16.4 5.6a3 3 0 0 1 0 5.6M18 20c-.2-1.7-.9-3.1-1.9-4.1"/></svg></span>Users</a>
+        <a href="/dashboards/admin/featured/" data-dashboard-link class="{% if section == 'featured' %}is-active{% endif %}"><span class="anav-icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.6 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9-5.3-2.9-5.3 2.9 1.1-5.9L3.5 9.8l5.9-.8z"/></svg></span>Featured</a>
+        <a href="/dashboards/admin/payments/" data-dashboard-link class="{% if section == 'payments' %}is-active{% endif %}"><span class="anav-icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="3"/><path d="M2.5 10h19M6 14.5h4"/></svg></span>Payments</a>
+      </nav>
+      <div class="aside-statcard">
+
+        <div class="aside-statcard__row"><b>Marketplace volume</b><small>GMV target</small></div>
+
+        <div class="aside-statcard__bar"><i></i></div>
+
+        <div class="aside-statcard__meta"><span>$284,920 of $440K</span><span>64%</span></div>
+
+      </div>
+
+      <div class="dashboard-profile">
+        <div class="dashboard-avatar">{{ user.username|first|upper }}</div>
+        <div><strong>{{ user.username }}</strong><small>{{ user.email|default:"DropHub member" }}</small></div>
+        <form method="post" action="/accounts/signout/">{% csrf_token %}<button aria-label="Log out" title="Log out"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></button></form>
+      </div>
+    </aside>
+    {% else %}
+    <aside class="bside" id="dashboardSidebar">
+      <a class="bside__brand" href="/dashboards/buyer/">
+        <span class="bside__logo"><img src="/static/Logo.png" alt="DropHub" /></span>
+        <span class="bside__brandtext"><b>DropHub</b><small>Buyer Lounge</small></span>
+        <span class="bside__pill"><i></i>Member</span>
+      </a>
+      <div class="bside__member">
+        <span class="bside__avatar">{{ user.username|first|upper|default:"B" }}</span>
+        <span class="bside__membertext"><strong>{{ user.username|default:"Guest" }}</strong><small>Verified buyer</small></span>
+      </div>
+      <nav class="bside__nav" aria-label="Buyer navigation">
+        <p class="bside__label">Shopping</p>
+        <a href="/dashboards/buyer/" data-dashboard-link class="{% if section == 'overview' %}is-active{% endif %}"><span class="bside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span>Overview</a>
+        <a href="/dashboards/buyer/orders/" data-dashboard-link class="{% if section == 'orders' %}is-active{% endif %}"><span class="bside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></span>My Orders<span class="dash-nav-badge">0</span></a>
+        <a href="/dashboards/buyer/wishlist/" data-dashboard-link class="{% if section == 'wishlist' %}is-active{% endif %}"><span class="bside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5S4.5 15.6 4.5 10.4A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 7.5 3.1c0 5.2-7.5 10.1-7.5 10.1z"/></svg></span>Wishlist</a>
+        <p class="bside__label">Account</p>
+        <a href="/dashboards/buyer/addresses/" data-dashboard-link class="{% if section == 'addresses' %}is-active{% endif %}"><span class="bside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="11" r="2.6"/></svg></span>Addresses</a>
+        <a href="/dashboards/buyer/settings/" data-dashboard-link class="{% if section == 'settings' %}is-active{% endif %}"><span class="bside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h9M19 6h1M4 12h3M13 12h7M4 18h7M17 18h3"/><circle cx="15.5" cy="6" r="2"/><circle cx="9.5" cy="12" r="2"/><circle cx="13.5" cy="18" r="2"/></svg></span>Settings</a>
+        <a href="/help/"><span class="bside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1 .9-1 1.6v.4"/><circle cx="12" cy="17.2" r=".9" fill="currentColor" stroke="none"/></svg></span>Help Center</a>
+      </nav>
+      <div class="bside__concierge">
+        <div class="bside__conciergehead">
+          <span class="bside__conciergeic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 14v-2a8.5 8.5 0 0 1 17 0v2"/><rect x="2.6" y="13" width="4.2" height="7" rx="2.1"/><rect x="17.2" y="13" width="4.2" height="7" rx="2.1"/></svg></span>
+          <strong>Concierge</strong>
+        </div>
+        <p>Questions about an order, refund or delivery? Our team replies in minutes.</p>
+        <a href="/contact/">Message support</a>
+      </div>
+      <div class="bside__logout">
+        <form method="post" action="/accounts/signout/">{% csrf_token %}<button type="submit"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg> Log out</button></form>
+      </div>
+    </aside>
+    {% endif %}
+
+    <div class="db-backdrop" id="dbBackdrop" aria-hidden="true"></div>
+
+    <div class="dashboard-workspace">
+      <header class="dashboard-topbar">
+        <div class="dashboard-topbar-title"><button class="dashboard-menu-toggle" id="dashboardMenuToggle" aria-label="Open dashboard menu"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div>{% if role == 'seller' %}<p class="stop__crumbs">{{ role|title }} Center<svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>{{ page_title }}</p>{% elif role == 'admin' %}<p class="stop__crumbs">Admin Console<svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>{{ page_title }}</p>{% endif %}<h1 id="dashboardPageTitle">{{ page_title }}</h1>{% if role == 'seller' %}<p class="stop__sub"><span>Welcome back, {{ user.username|default:"seller" }}</span><span class="stop__chip"><i></i>Store live</span></p>{% else %}<p>Sep 14, 2026 · DropHub {% if role == 'admin' %}Admin{% else %}{{ role|title }}{% endif %}</p>{% endif %}</div></div>
+        {% if role == 'seller' %}
+        <div class="dashboard-topbar-actions">
+          <label class="topbar-search">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="sellerGlobalSearch" type="search" placeholder="Search products, orders…" />
+          </label>
+          <button class="topbar-icon" id="sellerNotifBtn" aria-label="Notifications">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+            <i class="dot"></i>
+          </button>
+          <button class="topbar-btn" data-open-product-modal>
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Add product
+          </button>
+          <div class="topbar-avatar">{{ user.username|first|upper|default:"S" }}</div>
+        </div>
+        {% elif role == 'admin' %}
+        <div class="dashboard-topbar-actions">
+          <label class="topbar-search">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="adminGlobalSearch" type="search" placeholder="Search orders, users, payouts…" />
+          </label>
+          <button class="topbar-icon" type="button" aria-label="Notifications">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+            <i class="dot"></i>
+          </button>
+          <form method="post" action="/accounts/signout/">
+            {% csrf_token %}
+            <button class="topbar-logout" type="submit" title="Log out">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>
+            </button>
+          </form>
+          <span class="topbar-avatar">{{ user.username|first|upper|default:"A" }}</span>
+        </div>
+        {% else %}
+        <div class="dashboard-topbar-actions">
+          <label class="topbar-search">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="buyerGlobalSearch" type="search" placeholder="Search orders, products…" />
+          </label>
+          <a href="/dashboards/buyer/orders/" data-dashboard-link class="topbar-icon" aria-label="Orders">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>
+          </a>
+          <a href="/help/" class="topbar-icon" aria-label="Help center">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1 .9-1 1.6v.4"/><circle cx="12" cy="17.2" r=".9" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <form method="post" action="/accounts/signout/">
+            {% csrf_token %}
+            <button class="topbar-logout" type="submit" title="Log out">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+            </button>
+          </form>
+          <a href="/dashboards/buyer/settings/" data-dashboard-link class="topbar-avatar" aria-label="Account settings">{{ user.username|first|upper|default:"B" }}</a>
+        </div>
+        {% endif %}
+      </header>
+      {% include "partials/messages.html" %}
+      <main class="dashboard-main" id="dashboardContent">{% include dashboard_template %}</main>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var content = document.getElementById('dashboardContent');
+      var title = document.getElementById('dashboardPageTitle');
+      var menu = document.getElementById('dashboardSidebar');
+      var toggle = document.getElementById('dashboardMenuToggle');
+      function setActive(url) {
+        document.querySelectorAll('[data-dashboard-link]').forEach(function (link) {
+          link.classList.toggle('is-active', new URL(link.href, location.origin).pathname === url);
+        });
+      }
+      function loadPage(url, push) {
+        content.classList.add('is-loading');
+        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } }).then(function (response) {
+          if (!response.ok) throw new Error('Unable to load dashboard page');
+          return response.text();
+        }).then(function (html) {
+          content.innerHTML = html;
+          var nextTitle = content.querySelector('[data-page-title]');
+          if (nextTitle) { title.textContent = nextTitle.dataset.pageTitle; document.title = nextTitle.dataset.pageTitle + ' - DropHub'; }
+          if (push) history.pushState({ url: url }, '', url);
+          setActive(new URL(url, location.origin).pathname);
+          content.classList.remove('is-loading');
+          setMenu(false);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }).catch(function () { window.location.href = url; });
+      }
+      document.addEventListener('click', function (event) {
+        var link = event.target.closest('[data-dashboard-link]');
+        if (!link || link.target === '_blank') return;
+        event.preventDefault();
+        loadPage(link.href, true);
+      });
+      window.addEventListener('popstate', function () { loadPage(location.href, false); });
+      var backdrop = document.getElementById('dbBackdrop');
+
+      function setMenu(open) { if (!menu) return; menu.classList.toggle('is-open', open); if (backdrop) backdrop.classList.toggle('show', open); document.body.classList.toggle('db-locked', open); }
+
+      if (toggle) toggle.addEventListener('click', function () { setMenu(!menu.classList.contains('is-open')); });
+
+      if (backdrop) backdrop.addEventListener('click', function () { setMenu(false); });
+
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenu(false); });
+      document.addEventListener('click', function (e) {
+        var seg = e.target.closest('.segx button, .seg button');
+        if (seg) { seg.parentElement.querySelectorAll('button').forEach(function(b){b.classList.remove('on')}); seg.classList.add('on'); }
+        var nb = e.target.closest('#sellerNotifBtn');
+        if (nb) { showSellerToast('3 updates: 2 orders to ship · 1 low-stock alert · payout tomorrow'); }
+        var pm = e.target.closest('[data-open-product-modal]');
+        if (pm) { var m = document.getElementById('sellerProductModal'); if (m) m.classList.add('open'); }
+        var po = e.target.closest('[data-open-payout-modal]');
+        if (po) { var m2 = document.getElementById('sellerPayoutModal'); if (m2) m2.classList.add('open'); }
+        var close = e.target.closest('[data-close-modal]');
+        if (close) { close.closest('.smodal').classList.remove('open'); }
+        var save = e.target.closest('[data-save-demo]');
+        if (save) { save.closest('.smodal').classList.remove('open'); showSellerToast('Saved — demo preview only, connect backend to persist'); }
+      });
+      document.addEventListener('input', function(e){
+        var s1 = e.target.closest('#sellerProductSearch');
+        if (s1) filterSellerRows(s1, 0);
+        var s2 = e.target.closest('#sellerOrderSearch');
+        if (s2) filterSellerRows(s2, 0);
+        var sg = e.target.closest('#sellerGlobalSearch');
+        if (sg) filterSellerRows(sg, 0);
+      });
+      function filterSellerRows(input){
+        var q = input.value.toLowerCase();
+        document.querySelectorAll('#dashboardContent .stable tbody tr').forEach(function(r){
+          r.style.display = r.textContent.toLowerCase().indexOf(q) > -1 ? '' : 'none';
+        });
+      }
+      function showSellerToast(msg){
+        var t = document.getElementById('sellerToast');
+        if(!t){ t = document.createElement('div'); t.id='sellerToast'; t.className='stoast'; document.body.appendChild(t); }
+        t.textContent = msg; t.classList.add('show');
+        clearTimeout(window.__st); window.__st = setTimeout(function(){t.classList.remove('show')}, 3200);
+      }
+      document.addEventListener('keydown', function(e){ if(e.key==='Escape') document.querySelectorAll('.smodal.open').forEach(function(m){m.classList.remove('open')}); });
+    }());
+  </script>
+  {% if role == 'seller' %}
+  <div class="smodal" id="sellerProductModal" role="dialog" aria-modal="true"><div class="smodal__box"><div class="smodal__head"><span class="sside__setupic" style="background:#eaf0ff;border-color:#d4e2ff;color:#2456e6"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8.5 12.5 3.5 3 8.5v7l9.5 5 9.5-5z"/><path d="M3 8.5l9.5 5 9.5-5M12.5 13.5V20"/></svg></span><h3>Add product</h3><span style="margin-left:auto"></span><button class="mbtn" data-close-modal><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="smodal__body"><div class="ff"><label>Product name</label><input placeholder="e.g. Wireless Headphones Pro" /></div><div class="ff-row"><div class="ff"><label>Price (USD)</label><input placeholder="69.99" /></div><div class="ff"><label>Stock</label><input placeholder="100" /></div></div><div class="ff-row"><div class="ff"><label>Category</label><select><option>Audio</option><option>Home</option><option>Fashion</option><option>Gadgets</option></select></div><div class="ff"><label>Status</label><select><option>Draft</option><option>Live</option></select></div></div><div class="ff"><label>Description</label><textarea placeholder="Key features, materials, delivery notes…"></textarea></div></div><div class="smodal__foot"><button class="btngs" data-close-modal>Cancel</button><button class="btnps" data-save-demo>Save product</button></div></div></div>
+  <div class="smodal" id="sellerPayoutModal" role="dialog" aria-modal="true"><div class="smodal__box"><div class="smodal__head"><span class="sside__setupic" style="background:#eaf0ff;border-color:#d4e2ff;color:#2456e6"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22h18M5 10v12M9.5 10v12M14.5 10v12M19 10v12M12 3 3 10h18z"/></svg></span><h3>Payout method</h3><span style="margin-left:auto"></span><button class="mbtn" data-close-modal><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="smodal__body"><div class="ff"><label>Bank</label><select><option>Guaranty Trust Bank</option><option>Access Bank</option><option>First Bank</option><option>UBA</option><option>PayPal / Pi Wallet</option></select></div><div class="ff-row"><div class="ff"><label>Account number</label><input placeholder="0123454821" /></div><div class="ff"><label>Account name</label><input placeholder="Store name" /></div></div><div class="ff"><label>Note</label><input placeholder="Daily schedule · min $10 · 2-4h arrival" disabled /></div></div><div class="smodal__foot"><button class="btngs" data-close-modal>Cancel</button><button class="btnps" data-save-demo>Save method</button></div></div></div>
+  <div class="stoast" id="sellerToast"></div>
+  {% endif %}
+</body>
+</html>

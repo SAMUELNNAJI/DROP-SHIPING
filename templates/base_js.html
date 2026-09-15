@@ -1,0 +1,54 @@
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  (function () {
+    var burger = document.getElementById('navBurger');
+    var menu = document.getElementById('mobileMenu');
+    if (!burger || !menu) return;
+    function openMenu() {
+      menu.classList.add('mmenu--open');
+      menu.setAttribute('aria-hidden', 'false');
+      burger.classList.add('is-active');
+      burger.setAttribute('aria-expanded', 'true');
+      document.body.classList.add('mmenu-locked');
+    }
+    function closeMenu() {
+      if (!menu.classList.contains('mmenu--open')) return;
+      menu.classList.remove('mmenu--open');
+      menu.setAttribute('aria-hidden', 'true');
+      burger.classList.remove('is-active');
+      burger.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('mmenu-locked');
+    }
+    burger.addEventListener('click', function () { if (menu.classList.contains('mmenu--open')) closeMenu(); else openMenu(); });
+    menu.querySelectorAll('[data-mmenu-close], .mmenu-link, .mmenu-cta, .mmenu-signin').forEach(function(el) { el.addEventListener('click', closeMenu); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMenu(); });
+  })();
+  var nav = document.querySelector('.navbar');
+  if (nav) {
+    window.addEventListener('scroll', function() { nav.classList.toggle('scrolled', window.scrollY > 12); }, { passive: true });
+  }
+  (function () {
+    var seg = window.location.pathname.split('/');
+    var page = seg[1] ? '/' + seg[1] + '/' : '/';
+    var navMap = { '/': '/', '/shop/': '/shop/', '/about/': '/about/', '/blog/': '/blog/', '/contact/': '/contact/', '/privacy/': '/privacy/', '/terms/': '/terms/', '/refund-policy/': '/refund-policy/', '/help/': '/help/', '/payouts/': '/payouts/', '/signin/': '/signin/' };
+    var target = navMap[page];
+    if (target) {
+      document.querySelectorAll('.nav-links a').forEach(function(a) { if (a.getAttribute('href') === target) { a.classList.add('active'); a.setAttribute('aria-current', 'page'); } });
+      document.querySelectorAll('.mmenu-link').forEach(function(a) { if (a.getAttribute('href') === target) { a.classList.add('mmenu-link--active'); } });
+    }
+  })();
+  document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      var id = a.getAttribute('href').slice(1);
+      var el = document.getElementById(id);
+      if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+});
+</script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>

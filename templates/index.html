@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dropb.it – Shop Everything. Pay Anything.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="/static/Logo.png" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════
+       HERO WRAPPER (navbar + hero share the blue bg)
+  ═══════════════════════════════════════ -->
+  <div class="hero-wrapper">
+    <div class="hero-stars" aria-hidden="true"></div>
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+      <div class="nav-inner">
+        <a href="/" class="logo" aria-label="DropHub — Shop Global · We Drop It For You">
+          <img src="/static/Logo.png" alt="DropHub" class="logo-img" />
+        </a>
+        <nav class="nav-links">
+          <a href="/shop/">Shop</a>
+          <a href="/#safe" class="scroll-link">How It Works</a>
+          <a href="/about/">About</a>
+          <a href="/blog/">Blog</a>
+          <a href="/contact/">Contact</a>
+        </nav>
+        <div class="nav-actions">
+          <div class="cart-wrap">
+            <button class="nav-cart" id="cartToggle" aria-label="Open cart" aria-expanded="false" aria-controls="cartDropdown">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F0F0F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><circle cx="18" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><path d="M2.5 3.5h2l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.2L20.5 7H6"/></svg>
+              <span class="cart-badge">4</span>
+            </button>
+            <div class="cart-dropdown" id="cartDropdown" aria-hidden="true">
+              <div class="cart-head">
+                <div class="cart-title">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+                  <span>Your Cart</span>
+                  <span class="cart-count-pill">4 ITEMS</span>
+                </div>
+                <button class="cart-close" id="cartClose" aria-label="Close cart">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+                </button>
+              </div>
+              <div class="cart-items" id="cartItems">
+                <div class="cart-item">
+                  <div class="cart-thumb"><img src="/static/img/headphones.jpg" alt="Headphones" /></div>
+                  <div class="cart-info">
+                    <p class="cart-name">Wireless Noise-Cancelling Headphones</p>
+                    <p class="cart-store">TechVault Store</p>
+                    <div class="cart-row">
+                      <div class="qty-pill"><button type="button">−</button><span>1</span><button type="button">+</button></div>
+                      <span class="cart-price">$89.99</span>
+                    </div>
+                  </div>
+                  <button class="cart-trash" aria-label="Remove">✕</button>
+                </div>
+                <div class="cart-item">
+                  <div class="cart-thumb"><img src="/static/img/backpack.jpg" alt="Wallet" /></div>
+                  <div class="cart-info">
+                    <p class="cart-name">Minimalist Leather Wallet</p>
+                    <p class="cart-store">UrbanEdge Goods</p>
+                    <div class="cart-row">
+                      <div class="qty-pill"><button type="button">−</button><span>2</span><button type="button">+</button></div>
+                      <span class="cart-price">$69.98</span>
+                    </div>
+                  </div>
+                  <button class="cart-trash" aria-label="Remove">✕</button>
+                </div>
+                <div class="cart-item">
+                  <div class="cart-thumb"><img src="/static/img/chair.jpg" alt="Tracker" /></div>
+                  <div class="cart-info">
+                    <p class="cart-name">Smart Fitness Tracker Band</p>
+                    <p class="cart-store">FitLife Pro</p>
+                    <div class="cart-row">
+                      <div class="qty-pill"><button type="button">−</button><span>1</span><button type="button">+</button></div>
+                      <span class="cart-price">$54.99</span>
+                    </div>
+                  </div>
+                  <button class="cart-trash" aria-label="Remove">✕</button>
+                </div>
+              </div>
+              <div class="cart-foot">
+                <div class="cart-subtotal"><span>Subtotal</span><strong>$214.96</strong></div>
+                <p class="cart-escrow">Escrow protected — payment held safely until delivery</p>
+                <div class="cart-actions">
+                  <a href="/shop/" class="cart-btn-ghost">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                    Continue Shopping
+                  </a>
+                  <a href="/checkout/" class="cart-btn-checkout">
+                    Checkout
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <a href="/signin/" class="nav-signin">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#7B8798" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.8" r="3.6"/><path d="M4.8 19.8c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
+            <span>Sign In</span>
+          </a>
+          <a href="/signin/#signup" class="btn-sell"><span>Start Selling</span>
+            <svg class="btn-sell-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+          </a>
+          <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+            <span class="nav-burger-box">
+              <span class="nav-burger-line"></span>
+              <span class="nav-burger-line"></span>
+              <span class="nav-burger-line"></span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════
+         MOBILE / TABLET DRAWER MENU
+    ═══════════════════════════════════════ -->
+    <div class="mmenu" id="mobileMenu" aria-hidden="true">
+      <div class="mmenu-backdrop" data-mmenu-close></div>
+      <aside class="mmenu-panel" role="dialog" aria-modal="true" aria-label="Menu">
+        <div class="mmenu-head">
+          <a href="/" class="logo" aria-label="DropHub — Shop Global · We Drop It For You">
+            <img src="/static/Logo.png" alt="DropHub" class="logo-img" />
+          </a>
+          <button class="mmenu-close" aria-label="Close menu" data-mmenu-close>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+          </button>
+        </div>
+
+        <p class="mmenu-eyebrow">MENU</p>
+        <nav class="mmenu-nav">
+          <a class="mmenu-link" href="/shop/" style="--i:0">
+            <span class="mmenu-num">01</span> Shop
+            <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+          </a>
+          <a class="mmenu-link" href="/#safe" style="--i:1">
+            <span class="mmenu-num">02</span> How It Works
+            <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+          </a>
+          <a class="mmenu-link" href="/about/" style="--i:2">
+            <span class="mmenu-num">03</span> About
+            <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+          </a>
+          <a class="mmenu-link" href="/blog/" style="--i:3">
+            <span class="mmenu-num">04</span> Blog
+            <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+          </a>
+          <a class="mmenu-link" href="/contact/" style="--i:4">
+            <span class="mmenu-num">05</span> Contact
+            <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+          </a>
+        </nav>
+
+        <div class="mmenu-foot">
+          <a href="/signin/#signup" class="mmenu-cta"><span>Start Selling</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+          </a>
+          <a href="/signin/" class="mmenu-signin">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.8" r="3.6"/><path d="M4.8 19.8c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
+            <span>Sign In</span>
+          </a>
+          <p class="mmenu-assure">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l7.5 3v6c0 4.6-3.2 8-7.5 10-4.3-2-7.5-5.4-7.5-10v-6l7.5-3z"/><polyline points="9 12 11.2 14.2 15 10"/></svg>
+            Escrow-protected · Pi, PayPal &amp; Paystack
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         HERO SECTION
+    ═══════════════════════════════════════ -->
+    <section class="hero">
+      <div class="hero-inner">
+
+        <!-- eyebrow pill -->
+        <div class="hero-eyebrow-wrap">
+          <span class="hero-eyebrow-pill">
+            <span class="eyebrow-dot"></span>
+            PI NETWORK &nbsp;·&nbsp; PAYPAL &nbsp;·&nbsp; PAYSTACK &nbsp;—&nbsp; ALL IN ONE
+          </span>
+        </div>
+
+        <!-- giant heading -->
+        <h1 class="hero-heading">
+          Shop Everything.
+          <br/>
+          <span class="hero-heading-blue">Pay Anything.</span>
+        </h1>
+
+        <!-- sub text (desktop max-width is 700px: tight balanced two-line measure) -->
+        <p class="hero-sub">The world's first dropshipping marketplace with Pi Network wallet, PayPal, and Naira payments — with built-in escrow that protects every transaction.</p>
+
+        <!-- CTA buttons -->
+        <div class="hero-ctas">
+          <a href="/shop/" class="btn-browse">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+            Browse Products
+          </a>
+          <a href="/shop/" class="btn-selling-free">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D5BD8" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><line x1="12" y1="8.5" x2="12" y2="15.5"/><line x1="8.5" y1="12" x2="15.5" y2="12"/></svg>
+            Start Selling Free
+          </a>
+        </div>
+
+        <!-- stats removed to match hero screenshot -->
+
+        <!-- product showcase: absolute floats on desktop, in-flow row/grid on tablet + mobile.
+             Images rotate every 7s (see rotator script at the bottom of the page). -->
+        <div class="hero-showcase" id="heroShowcase">
+        <!-- LEFT floating product card -->
+        <div class="hero-float-card hero-float-left">
+          <div class="hfc-img hfc-img--dark">
+            <img id="heroImgLeft" src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=500&q=80&auto=format&fit=crop" alt="AirPods Pro Max" />
+          </div>
+          <div class="hfc-info">
+            <p class="hfc-name" id="heroNameLeft">AirPods Pro Max</p>
+            <div class="hfc-bottom">
+              <span class="hfc-price" id="heroPriceLeft">$249</span>
+              <span class="badge badge-toprated">TOP RATED</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT floating product card -->
+        <div class="hero-float-card hero-float-right">
+          <div class="hfc-img hfc-img--light">
+            <img id="heroImgRight" src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=500&q=80&auto=format&fit=crop" alt="Smart Watch Series X" />
+          </div>
+          <div class="hfc-info">
+            <p class="hfc-name" id="heroNameRight">Smart Watch Series X</p>
+            <div class="hfc-bottom">
+              <span class="hfc-price" id="heroPriceRight">$189</span>
+              <span class="badge badge-featured2">FEATURED</span>
+            </div>
+          </div>
+        </div>
+        </div><!-- /hero-showcase -->
+
+      </div>
+    </section>
+
+  </div><!-- /hero-wrapper -->
+
+  <!-- ═══════════════════════════════════════
+       PAY YOUR WAY SECTION
+  ═══════════════════════════════════════ -->
+  <section class="pay-section" id="pay-section">
+    <div class="container">
+
+      <!-- Eyebrow pill -->
+      <div class="pay-eyebrow-wrap">
+        <span class="pay-eyebrow-pill">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          3 WAYS TO PAY
+        </span>
+      </div>
+
+      <!-- Heading -->
+      <h2 class="pay-heading reveal-heading">
+        Pay Your Way, <span class="pay-heading-blue">Every Time.</span>
+      </h2>
+
+      <!-- Sub -->
+      <p class="pay-sub">
+        Pi Network, PayPal, or Paystack Naira — choose what works for you.<br/>
+        All protected by escrow.
+      </p>
+
+      <!-- Tabs -->
+      <div class="pay-tabs">
+        <button class="pay-tab pay-tab--active" onclick="switchPayTab(this,'pi')">
+          <!-- chip / processor icon -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="7" y="7" width="10" height="10" rx="1"/>
+            <path d="M9 7V4M12 7V4M15 7V4"/>
+            <path d="M9 20v-3M12 20v-3M15 20v-3"/>
+            <path d="M7 9H4M7 12H4M7 15H4"/>
+            <path d="M20 9h-3M20 12h-3M20 15h-3"/>
+          </svg>
+          Pi Network
+        </button>
+        <button class="pay-tab" onclick="switchPayTab(this,'paypal')">
+          <!-- credit card with two line stripes -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="5" width="20" height="14" rx="2"/>
+            <line x1="2" y1="10" x2="22" y2="10"/>
+            <line x1="6" y1="15" x2="10" y2="15"/>
+          </svg>
+          PayPal
+        </button>
+        <button class="pay-tab" onclick="switchPayTab(this,'paystack')">
+          <!-- card with inner screen/display -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="5" width="20" height="14" rx="2"/>
+            <rect x="6" y="9" width="7" height="6" rx="1"/>
+            <line x1="17" y1="10" x2="19" y2="10"/>
+            <line x1="17" y1="13" x2="19" y2="13"/>
+          </svg>
+          Paystack
+        </button>
+      </div>
+
+      <!-- Payment card mockup -->
+      <div class="pay-card-wrap">
+        <div class="pay-card pay-card--pi" id="payCard">
+
+          <!-- ═══ PANEL: PI NETWORK ═══ -->
+          <div class="pay-tab-panel pay-tab-panel--active" data-panel="pi">
+
+          <!-- LEFT: Pi Network info -->
+          <div class="pay-card-left">
+            <div class="pay-method-header">
+              <div class="pay-method-icon pay-method-icon--pi">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="7" y="7" width="10" height="10" rx="1"/>
+                  <path d="M9 7V4M12 7V4M15 7V4"/>
+                  <path d="M9 20v-3M12 20v-3M15 20v-3"/>
+                  <path d="M7 9H4M7 12H4M7 15H4"/>
+                  <path d="M20 9h-3M20 12h-3M20 15h-3"/>
+                </svg>
+              </div>
+              <div>
+                <p class="pay-method-name">Pi Network</p>
+                <p class="pay-method-tag">CRYPTO</p>
+              </div>
+            </div>
+            <p class="pay-method-desc">
+              Connect your Pi wallet directly and pay using Pi cryptocurrency. Instant settlement, zero card fees, global reach.
+            </p>
+            <div class="pay-features-grid">
+              <div class="pay-feature-item">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#ede9fe"/><path d="M8 12.4l2.6 2.6L16.2 9.2" stroke="#7c3aed" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Pi Wallet Connect
+              </div>
+              <div class="pay-feature-item">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#ede9fe"/><path d="M8 12.4l2.6 2.6L16.2 9.2" stroke="#7c3aed" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Instant Verification
+              </div>
+              <div class="pay-feature-item">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#ede9fe"/><path d="M8 12.4l2.6 2.6L16.2 9.2" stroke="#7c3aed" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Zero Gas Fees
+              </div>
+              <div class="pay-feature-item">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#ede9fe"/><path d="M8 12.4l2.6 2.6L16.2 9.2" stroke="#7c3aed" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Global Transfers
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: Payment summary -->
+          <div class="pay-card-right">
+            <div class="pay-summary-header">
+              <span class="pay-summary-label">PAYMENT SUMMARY</span>
+              <span class="pay-summary-badge">1.2M Pi transactions</span>
+            </div>
+
+            <div class="pay-summary-rows">
+              <div class="pay-sum-row">
+                <span>Product Total</span>
+                <span>$89.99</span>
+              </div>
+              <div class="pay-sum-row">
+                <span>Escrow Fee</span>
+                <span>$1.80</span>
+              </div>
+              <div class="pay-sum-row">
+                <span>Platform Fee</span>
+                <span>$0.90</span>
+              </div>
+            </div>
+
+            <div class="pay-summary-sep"></div>
+
+            <div class="pay-sum-total">
+              <span>Total</span>
+              <span class="pay-sum-total-amount">$92.69</span>
+            </div>
+
+            <div class="pay-escrow-note">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#2f6bf6" stroke-width="2"/><path d="M8.4 12.3l2.5 2.5 4.7-5" stroke="#2f6bf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Held in escrow until you confirm delivery
+            </div>
+
+            <button class="pay-pi-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+              Pay with Pi Network
+            </button>
+          </div>
+
+          </div><!-- /panel pi -->
+
+          <!-- ═══ PANEL: PAYPAL ═══ -->
+          <div class="pay-tab-panel" data-panel="paypal">
+
+            <!-- LEFT: PayPal info -->
+            <div class="pay-card-left">
+              <div class="pay-method-header">
+                <div class="pay-method-icon pay-method-icon--paypal">
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#2f6bf6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                </div>
+                <div>
+                  <p class="pay-method-name">PayPal</p>
+                  <p class="pay-method-tag pay-method-tag--blue">USD</p>
+                </div>
+              </div>
+              <p class="pay-method-desc">
+                Pay securely with PayPal using your balance, bank account, or card. Buyer protection included on every order.
+              </p>
+              <div class="pay-features-grid">
+                <div class="pay-feature-item">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#dbeafe"/><path d="M8 12.4l2.6 2.6L16.2 9.2" stroke="#2f6bf6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  PayPal Balance
+                </div>
+                <div class="pay-feature-item">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#dbeafe"/><path d="M8 12.4l2.6 2.6L16.2 9.2" stroke="#2f6bf6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Debit/Credit Card
+                </div>
+                <div class="pay-feature-item">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#dbeafe"/><path d="M8 12.4l2.6 2.6L16.2 9.2" stroke="#2f6bf6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Buyer Protection
+                </div>
+                <div class="pay-feature-item">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#dbeafe"/><path d="M8 12.4l2.6 2.6L16.2 9.2" stroke="#2f6bf6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  190+ Countries
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT: Payment summary -->
+            <div class="pay-card-right">
+              <div class="pay-summary-header">
+                <span class="pay-summary-label">PAYMENT SUMMARY</span>
+                <span class="pay-summary-badge pay-summary-badge--blue">$2.4M processed</span>
+              </div>
+
+              <div class="pay-summary-rows">
+                <div class="pay-sum-row">
+                  <span>Product Total</span>
+                  <span>$89.99</span>
+                </div>
+                <div class="pay-sum-row">
+                  <span>Escrow Fee</span>
+                  <span>$1.80</span>
+                </div>
+                <div class="pay-sum-row">
+                  <span>Platform Fee</span>
+                  <span>$0.90</span>
+                </div>
+              </div>
+
+              <div class="pay-summary-sep"></div>
+
+              <div class="pay-sum-total">
+                <span>Total</span>
+                <span class="pay-sum-total-amount">$92.69</span>
+              </div>
+
+              <div class="pay-escrow-note">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#2f6bf6" stroke-width="2"/><path d="M8.4 12.3l2.5 2.5 4.7-5" stroke="#2f6bf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Held in escrow until you confirm delivery
+              </div>
+
+              <button class="pay-pi-btn pay-btn--paypal">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                Pay with PayPal
+              </button>
+            </div>
+
+          </div><!-- /panel paypal -->
+
+          <!-- ═══ PANEL: PAYSTACK ═══ -->
+          <div class="pay-tab-panel" data-panel="paystack">
+
+            <!-- LEFT: Paystack info -->
+            <div class="pay-card-left">
+              <div class="pay-method-header">
+                <div class="pay-method-icon pay-method-icon--paystack">
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0d9aa5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.5"/><line x1="5.5" y1="9" x2="5.5" y2="9.01"/><line x1="18.5" y1="15" x2="18.5" y2="15.01"/></svg>
+                </div>
+                <div>
+                  <p class="pay-method-name">Paystack</p>
+                  <p class="pay-method-tag pay-method-tag--blue">&#8358; NGN</p>
+                </div>
+              </div>
+              <p class="pay-method-desc">
+                Pay in Nigerian Naira using Paystack. Supports all Nigerian banks, USSD, and mobile money transfers.
+              </p>
+              <div class="pay-features-grid">
+                <div class="pay-feature-item">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#dbeafe"/><path d="M8 12.4l2.6 2.6L16.2 9.2" stroke="#2f6bf6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Nigerian Banks
+                </div>
+                <div class="pay-feature-item">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#dbeafe"/><path d="M8 12.4l2.6 2.6L16.2 9.2" stroke="#2f6bf6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  USSD Transfers
+                </div>
+                <div class="pay-feature-item">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#dbeafe"/><path d="M8 12.4l2.6 2.6L16.2 9.2" stroke="#2f6bf6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Mobile Money
+                </div>
+                <div class="pay-feature-item">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#dbeafe"/><path d="M8 12.4l2.6 2.6L16.2 9.2" stroke="#2f6bf6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Instant Settlement
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT: Payment summary -->
+            <div class="pay-card-right">
+              <div class="pay-summary-header">
+                <span class="pay-summary-label">PAYMENT SUMMARY</span>
+                <span class="pay-summary-badge pay-summary-badge--blue">&#8358;890M processed</span>
+              </div>
+
+              <div class="pay-summary-rows">
+                <div class="pay-sum-row">
+                  <span>Product Total</span>
+                  <span>&#8358;45,000</span>
+                </div>
+                <div class="pay-sum-row">
+                  <span>Escrow Fee</span>
+                  <span>&#8358;900</span>
+                </div>
+                <div class="pay-sum-row">
+                  <span>Platform Fee</span>
+                  <span>&#8358;450</span>
+                </div>
+              </div>
+
+              <div class="pay-summary-sep"></div>
+
+              <div class="pay-sum-total">
+                <span>Total</span>
+                <span class="pay-sum-total-amount">&#8358;46,350</span>
+              </div>
+
+              <div class="pay-escrow-note">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#2f6bf6" stroke-width="2"/><path d="M8.4 12.3l2.5 2.5 4.7-5" stroke="#2f6bf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Held in escrow until you confirm delivery
+              </div>
+
+              <button class="pay-pi-btn pay-btn--paystack">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                Pay with Paystack
+              </button>
+            </div>
+
+          </div><!-- /panel paystack -->
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       YOUR MONEY ALWAYS SAFE
+  ═══════════════════════════════════════ -->
+  <section class="safe-section" id="safe">
+    <div class="container">
+
+      <!-- eyebrow pill -->
+      <div class="safe-eyebrow">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#4F6EF7" stroke-width="2.4" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        ESCROW PROTECTION
+      </div>
+
+      <h2 class="section-heading reveal-heading">
+        Your Money, <span class="text-blue">Always Safe.</span>
+      </h2>
+      <p class="section-sub">
+        Every transaction on DropHub is protected by our 4-step escrow<br/>
+        system. No more scams, no more chargebacks.
+      </p>
+
+      <!-- 4-step escrow cards -->
+      <div class="safe-cards">
+        <div class="safe-card">
+          <div class="safe-card-top">
+            <div class="safe-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4F6EF7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            </div>
+            <span class="safe-num">01</span>
+          </div>
+          <h4>Buyer Pays</h4>
+          <p>Buyer completes payment via Pi, PayPal, or Paystack. Funds are immediately captured.</p>
+        </div>
+
+        <div class="safe-card">
+          <div class="safe-card-top">
+            <div class="safe-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4F6EF7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><rect x="9" y="11" width="6" height="5" rx="1"/><path d="M10.5 11V9.5a1.5 1.5 0 0 1 3 0V11"/></svg>
+            </div>
+            <span class="safe-num">02</span>
+          </div>
+          <h4>DropHub Holds</h4>
+          <p>Payment enters DropHub secure escrow. Neither buyer nor seller can access it yet.</p>
+        </div>
+
+        <div class="safe-card">
+          <div class="safe-card-top">
+            <div class="safe-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4F6EF7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><polyline points="3 8 12 13 21 8"/><line x1="12" y1="13" x2="12" y2="21"/></svg>
+            </div>
+            <span class="safe-num">03</span>
+          </div>
+          <h4>Seller Ships</h4>
+          <p>Seller receives order and ships the product. Tracking details are uploaded to the platform.</p>
+        </div>
+
+        <div class="safe-card">
+          <div class="safe-card-top">
+            <div class="safe-icon safe-icon--green">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8 12.5 11 15.5 16 9.5"/></svg>
+            </div>
+            <span class="safe-num">04</span>
+          </div>
+          <h4>Buyer Confirms</h4>
+          <p>Buyer confirms delivery and approves the transaction. Escrow is released to the seller.</p>
+        </div>
+      </div>
+
+      <!-- trust badge chips -->
+      <div class="safe-badges">
+        <div class="safe-badge">
+          <div class="safe-badge-icon safe-badge-icon--green">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          </div>
+          <div>
+            <h5>SSL Encrypted</h5>
+            <span>256-BIT</span>
+          </div>
+        </div>
+        <div class="safe-badge">
+          <div class="safe-badge-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4F6EF7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div>
+            <h5>Escrow Held</h5>
+            <span>Not Released</span>
+          </div>
+        </div>
+        <div class="safe-badge">
+          <div class="safe-badge-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4F6EF7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          </div>
+          <div>
+            <h5>Easy Refunds</h5>
+            <span>100% Refunded</span>
+          </div>
+        </div>
+        <div class="safe-badge">
+          <div class="safe-badge-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4F6EF7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <h5>48k+ Sellers</h5>
+            <span>Verified &amp; Trusted</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       BUYERS LOVE THESE
+  ═══════════════════════════════════════ -->
+  <section class="buyers-section">
+    <div class="container">
+      <div class="buyers-header">
+        <div>
+          <p class="buyers-eyebrow">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="#F5A623"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            TOP RATED PRODUCTS
+          </p>
+          <h2 class="section-heading section-heading--left buyers-heading reveal-heading">
+            Buyers Love <span class="text-blue">These.</span>
+          </h2>
+        </div>
+        <div class="buyers-header-right">
+          <div class="boost-note">
+            <p class="boost-note-title">Want to feature your product?</p>
+            <p class="boost-note-sub">Boost from $9.99/week &rarr;</p>
+          </div>
+          <a href="/contact/" class="btn-primary btn-sm boost-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="#fff"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Boost Product
+          </a>
+        </div>
+      </div>
+
+      <!-- Product grid -->
+      <div class="buyers-grid">
+
+        <!-- 01 · Headphones — tall card with overlay info -->
+        <div class="b-card b-card--tall">
+          <span class="b-badge b-badge--orange">TOP RATED</span>
+          <div class="b-media b-media--headphones">
+            <img src="/static/img/headphones.jpg" alt="Sony WH-1000XM5 wireless headphones" loading="lazy">
+          </div>
+          <div class="b-overlay">
+            <p class="b-cat">ELECTRONICS</p>
+            <p class="b-name b-name--light">Sony WH-1000XM5 Headphones</p>
+            <div class="b-rating b-rating--light"><span class="stars">★★★★★</span><span class="b-count">(2.4K)</span></div>
+            <div class="b-price-row">
+              <div>
+                <p class="b-price b-price--light">$349.99</p>
+                <p class="b-old">$399.99</p>
+              </div>
+              <div class="b-pay-pills">
+                <span class="pill-pi">Pi</span>
+                <span>PayPal</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 02 · Backpack -->
+        <div class="b-card">
+          <span class="b-badge b-badge--blue">FEATURED</span>
+          <div class="b-media b-media--backpack">
+            <img src="/static/img/backpack.jpg" alt="Minimal leather backpack" loading="lazy">
+            <div class="b-overlay b-overlay--soft">
+              <p class="b-cat">FASHION</p>
+              <p class="b-name b-name--light">Minmal Leather Backpack</p>
+            </div>
+          </div>
+          <div class="b-info">
+            <div class="b-rating"><span class="stars">★★★★☆</span><span class="b-count">(1.2K)</span></div>
+            <div class="b-info-row">
+              <p class="b-shop">UrbanEdge Goods</p>
+              <p class="b-price">$129.00</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 03 · Security camera -->
+        <div class="b-card">
+          <span class="b-badge b-badge--blue">FEATURED</span>
+          <div class="b-media b-media--camera">
+            <img src="/static/img/camera.jpg" alt="Smart home security camera 4K" loading="lazy">
+            <div class="b-overlay b-overlay--soft">
+              <p class="b-cat">SMART HOME</p>
+              <p class="b-name b-name--light">Smart Home Security Camera 4K</p>
+            </div>
+          </div>
+          <div class="b-info">
+            <div class="b-rating"><span class="stars">★★★★★</span><span class="b-count">(948)</span></div>
+            <div class="b-info-row">
+              <p class="b-shop">SafeHome Drops</p>
+              <p class="b-price">$89.99</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 04 · Tumbler -->
+        <div class="b-card">
+          <span class="b-badge b-badge--blue">BEST SELLER</span>
+          <div class="b-media b-media--tumbler">
+            <img src="/static/img/mug.jpg" alt="Insulated stainless tumbler" loading="lazy">
+            <div class="b-overlay b-overlay--soft">
+              <p class="b-cat">KITCHEN</p>
+              <p class="b-name b-name--light">Stainless Insulated Tumbler</p>
+            </div>
+          </div>
+          <div class="b-info">
+            <div class="b-rating"><span class="stars">★★★★☆</span><span class="b-count">(5.2K)</span></div>
+            <div class="b-info-row">
+              <p class="b-shop">EcoCupMarket</p>
+              <p class="b-price">$34.99</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 05 · Chair — wide horizontal card -->
+        <div class="b-card b-card--wide">
+          <div class="b-media b-media--chair">
+            <img src="/static/img/chair.jpg" alt="Ergonomic office chair pro" loading="lazy">
+          </div>
+          <div class="b-info b-info--wide">
+            <div class="b-tags">
+              <span class="b-badge b-badge--orange b-badge--static">TOP RATED</span>
+              <span class="b-cat-tag">FURNITURE</span>
+            </div>
+            <p class="b-name">Ergonomic Office Chair Pro</p>
+            <div class="b-rating"><span class="stars">★★★★★</span><span class="b-count">(5.0) (12 reviews)</span></div>
+            <p class="b-shop">by ComfortWave Co</p>
+            <div class="b-info-row b-info-row--push">
+              <p class="b-price b-price--blue">$449.00</p>
+              <span class="b-pay-pill">PayPal</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 06 · Boost CTA -->
+        <div class="b-card b-card--cta">
+          <div class="cta-bolt">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#4F6EF7"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <p class="cta-title">Feature Your Product Here</p>
+          <p class="cta-sub">Get seen by thousands of buyers. Starting at $9.99/week.</p>
+          <a href="/contact/" class="btn-primary btn-sm boost-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Boost My Product
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       START SELLING CTA
+  ═══════════════════════════════════════ -->
+  <section class="selling-section">
+    <div class="container">
+      <div class="selling-inner">
+        <div class="selling-left">
+          <p class="section-eyebrow section-eyebrow--light">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="6" fill="#fff" opacity=".3"/><circle cx="6" cy="6" r="3" fill="#fff"/></svg>
+            For Sellers
+          </p>
+          <h2 class="selling-heading reveal-heading">
+            Start Selling.<br/>
+            <span class="text-yellow">Get Paid Fast.</span>
+          </h2>
+          <p class="selling-sub">
+            Join 6,000+ sellers who are building their stores and selling smarter every day. No hidden fees, no surprises.
+          </p>
+          <div class="selling-ctas">
+            <a href="/shop/" class="btn-primary btn-white">Start Selling Now</a>
+            <a href="/about/#pricing" class="btn-ghost">View Pricing</a>
+          </div>
+          <div class="selling-stats">
+            <div class="stat">
+              <span class="stat-num">6k</span>
+              <span class="stat-label">Sellers</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num">2k</span>
+              <span class="stat-label">Products</span>
+            </div>
+            <div class="stat">
+              <span class="stat-num">24h</span>
+              <span class="stat-label">Support</span>
+            </div>
+          </div>
+        </div>
+        <div class="selling-right">
+          <div class="selling-features">
+            <div class="selling-feature">
+              <div class="sf-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4F6EF7" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <div>
+                <h5>Secure Storefront</h5>
+                <p>Your store is fully protected with SSL, fraud detection, and automated dispute resolution.</p>
+              </div>
+            </div>
+            <div class="selling-feature">
+              <div class="sf-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4F6EF7" stroke-width="1.8"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              </div>
+              <div>
+                <h5>Fast Payouts</h5>
+                <p>Get your earnings transferred directly to your bank account within 24 hours of a sale.</p>
+              </div>
+            </div>
+            <div class="selling-feature">
+              <div class="sf-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4F6EF7" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <div>
+                <h5>Seller Support</h5>
+                <p>Dedicated account managers and 24/7 live chat for all your selling needs and questions.</p>
+              </div>
+            </div>
+            <div class="selling-feature">
+              <div class="sf-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4F6EF7" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              <div>
+                <h5>Analytics Dashboard</h5>
+                <p>Track your store's performance with real-time sales data, visitor insights, and revenue reports.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FOOTER  (redesigned)
+  ═══════════════════════════════════════ -->
+  <footer class="footer">
+
+    <!-- glow bar at very top -->
+    <div class="footer-glow-bar"></div>
+
+    <div class="footer-container">
+
+      <!-- ── TOP: newsletter banner ── -->
+      <div class="footer-newsletter">
+        <div class="fnl-left">
+          <span class="fnl-badge">Newsletter</span>
+          <h3 class="fnl-heading">Stay ahead of the market.</h3>
+          <p class="fnl-sub">Get new product drops, seller tips and Pi Network updates — straight to your inbox.</p>
+        </div>
+        <form class="fnl-form" onsubmit="return false">
+          <input class="fnl-input" type="email" placeholder="Enter your email address" />
+          <button class="fnl-btn" type="submit">Subscribe
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </form>
+      </div>
+
+      <!-- ── DIVIDER ── -->
+      <div class="footer-divider"></div>
+
+      <!-- ── MAIN COLUMNS ── -->
+      <div class="footer-cols">
+
+        <!-- Brand col -->
+        <div class="footer-col footer-col--brand">
+          <a href="/" class="footer-logo" aria-label="DropHub">
+            <img src="/static/Logo.png" alt="DropHub" class="footer-logo-img" />
+          </a>
+          <p class="footer-brand-desc">The world's first dropshipping marketplace with Pi Network, PayPal &amp; Naira payments — built-in escrow on every order.</p>
+
+          <!-- payment chips -->
+          <div class="footer-pay-chips">
+            <span class="pay-chip">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              Pi Network
+            </span>
+            <span class="pay-chip">PayPal</span>
+            <span class="pay-chip">Paystack</span>
+          </div>
+
+          <!-- social icons -->
+          <div class="footer-socials">
+            <a href="https://twitter.com/drophub" class="social-icon" aria-label="Twitter/X" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="https://instagram.com/drophub" class="social-icon" aria-label="Instagram" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="https://youtube.com/@drophub" class="social-icon" aria-label="YouTube" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.47a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="https://t.me/drophub" class="social-icon" aria-label="Telegram" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Links cols -->
+        <div class="footer-col">
+          <h6 class="footer-col-title">Marketplace</h6>
+          <ul class="footer-link-list">
+            <li><a href="/shop/">Browse Products</a></li>
+            <li><a href="/shop/">Top Rated Items</a></li>
+            <li><a href="/shop/">New Arrivals</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h6 class="footer-col-title">Sellers</h6>
+          <ul class="footer-link-list">
+            <li><a href="/signin/">Start Selling <span class="link-tag">Free</span></a></li>
+            <li><a href="/shop/">Seller Dashboard</a></li>
+            <li><a href="/payouts/">Payouts</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h6 class="footer-col-title">Payments</h6>
+          <ul class="footer-link-list">
+            <li><a href="/?tab=pi#pay-section">Pi Network Wallet</a></li>
+            <li><a href="/?tab=paypal#pay-section">PayPal Checkout</a></li>
+            <li><a href="/?tab=paystack#pay-section">Naira (Paystack)</a></li>
+            <li><a href="/#safe">Escrow Protection</a></li>
+            <li><a href="/refund-policy/">Refund Policy</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h6 class="footer-col-title">Company</h6>
+          <ul class="footer-link-list">
+            <li><a href="/about/">About DropHub</a></li>
+            <li><a href="/blog/">Blog &amp; News</a></li>
+            <li><a href="/help/">Help Center</a></li>
+            <li><a href="/contact/">Contact Us</a></li>
+          </ul>
+        </div>
+
+      </div><!-- /footer-cols -->
+
+      <!-- ── DIVIDER ── -->
+      <div class="footer-divider"></div>
+
+      <!-- ── BOTTOM BAR ── -->
+      <div class="footer-bottom">
+        <p class="footer-copy">© 2026 DropHub, Inc. All rights reserved.</p>
+
+        <div class="footer-badges">
+          <span class="footer-badge-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Escrow Protected
+          </span>
+          <span class="footer-badge-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            SSL Secured
+          </span>
+          <span class="footer-badge-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Verified Sellers
+          </span>
+        </div>
+
+        <div class="footer-legal-links">
+          <a href="/privacy/">Privacy</a>
+          <a href="/terms/">Terms</a>
+          <a href="/#safe">Trust &amp; Safety</a>
+        </div>
+      </div>
+
+    </div><!-- /footer-container -->
+  </footer>
+
+
+  <script>
+    function switchPayTab(btn, tab) {
+      document.querySelectorAll('.pay-tab').forEach(t => t.classList.remove('pay-tab--active'));
+      btn.classList.add('pay-tab--active');
+
+      /* swap the visible panel inside the payment card */
+      const card = document.getElementById('payCard');
+      card.classList.remove('pay-card--pi', 'pay-card--paypal', 'pay-card--paystack');
+      card.classList.add('pay-card--' + tab);
+
+      document.querySelectorAll('.pay-tab-panel').forEach(p => {
+        p.classList.toggle('pay-tab-panel--active', p.dataset.panel === tab);
+      });
+    }
+
+    /* ── Deep-link tab activation: ?tab=pi|paypal|paystack ── */
+    (function () {
+      function activatePayTab(tab) {
+        if (!tab || !['pi', 'paypal', 'paystack'].includes(tab)) return;
+        // find the matching tab button by its onclick attribute
+        var btn = document.querySelector('.pay-tab[onclick*="\'' + tab + '\'"]');
+        if (btn) switchPayTab(btn, tab);
+        var section = document.getElementById('pay-section');
+        if (section) {
+          setTimeout(function () {
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 150);
+        }
+      }
+
+      // On page load — read ?tab= from query string
+      var params = new URLSearchParams(window.location.search);
+      var tabParam = params.get('tab');
+      if (tabParam) {
+        // Run after DOM is fully painted
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', function () { activatePayTab(tabParam); });
+        } else {
+          activatePayTab(tabParam);
+        }
+      }
+
+      // Also handle same-page footer clicks (index.html footer links)
+      document.addEventListener('click', function (e) {
+        var a = e.target.closest('a[href]');
+        if (!a) return;
+        var href = a.getAttribute('href');
+        // Match links like /?tab=X#pay-section OR ?tab=X#pay-section
+        var m = href.match(/[?&]tab=(pi|paypal|paystack)/);
+        var base = href.split(/[?#]/)[0];
+        if (m && (base === '/' || base === window.location.pathname)) {
+          e.preventDefault();
+          activatePayTab(m[1]);
+        }
+      });
+    })();
+
+    /* ── Escrow cards: green highlight jumps to the next card every 5s ── */
+    (function () {
+      const cards = document.querySelectorAll('.safe-cards .safe-card');
+      if (!cards.length) return;
+
+      let activeIndex = 0; // start on step 01
+
+      function setActive(i) {
+        cards.forEach(c => c.classList.remove('safe-card--active'));
+        cards[i].classList.add('safe-card--active');
+      }
+
+      setActive(activeIndex);
+
+      setInterval(function () {
+        activeIndex = (activeIndex + 1) % cards.length; // 01 → 02 → 03 → 04 → 01 …
+        setActive(activeIndex);
+      }, 5000);
+    })();
+
+    /* Sticky glass header: intensify frost once scrolled */
+    (function () {
+      var nav = document.querySelector('.navbar');
+      if (!nav) return;
+      function onScroll() {
+        nav.classList.toggle('scrolled', window.scrollY > 12);
+      }
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+
+    /* ── Mobile / tablet drawer menu ── */
+    (function () {
+      var burger = document.getElementById('navBurger');
+      var menu = document.getElementById('mobileMenu');
+      if (!burger || !menu) return;
+
+      var lastFocus = null;
+
+      function openMenu() {
+        lastFocus = document.activeElement;
+        menu.classList.add('mmenu--open');
+        menu.setAttribute('aria-hidden', 'false');
+        burger.classList.add('is-active');
+        burger.setAttribute('aria-expanded', 'true');
+        burger.setAttribute('aria-label', 'Close menu');
+        document.body.classList.add('mmenu-locked');
+        setTimeout(function () {
+          var first = menu.querySelector('.mmenu-link');
+          if (first) first.focus();
+        }, 420);
+      }
+
+      function closeMenu() {
+        if (!menu.classList.contains('mmenu--open')) return;
+        menu.classList.remove('mmenu--open');
+        menu.setAttribute('aria-hidden', 'true');
+        burger.classList.remove('is-active');
+        burger.setAttribute('aria-expanded', 'false');
+        burger.setAttribute('aria-label', 'Open menu');
+        document.body.classList.remove('mmenu-locked');
+        if (lastFocus && lastFocus.focus) lastFocus.focus();
+      }
+
+      burger.addEventListener('click', function () {
+        if (menu.classList.contains('mmenu--open')) closeMenu(); else openMenu();
+      });
+
+      /* close on backdrop / close button */
+      menu.querySelectorAll('[data-mmenu-close]').forEach(function (el) {
+        el.addEventListener('click', closeMenu);
+      });
+
+      /* close when a link or CTA is chosen */
+      menu.querySelectorAll('.mmenu-link, .mmenu-cta, .mmenu-signin').forEach(function (a) {
+        a.addEventListener('click', closeMenu);
+      });
+
+      /* close on Escape + keep focus inside the drawer */
+      document.addEventListener('keydown', function (e) {
+        if (!menu.classList.contains('mmenu--open')) return;
+        if (e.key === 'Escape') { closeMenu(); return; }
+        if (e.key !== 'Tab') return;
+        var focusables = menu.querySelectorAll('a, button');
+        if (!focusables.length) return;
+        var first = focusables[0];
+        var last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      });
+
+      /* auto-reset if resized back to desktop while open */
+      window.addEventListener('resize', function () {
+        if (window.innerWidth > 1100) closeMenu();
+      });
+    })();
+
+    /* ── Nav active-link highlight ── */
+    (function () {
+      var seg = window.location.pathname.split('/');
+      var path = seg[1] ? '/' + seg[1] + '/' : '/';
+      var search = window.location.search;
+      // Map page paths to the href value used in nav-links
+      var navMap = {
+        '/shop/':    '/shop/',
+        '/about/':   '/about/',
+        '/blog/':    '/blog/',
+        '/contact/': '/contact/'
+      };
+      var target = navMap[path];
+      // On the homepage with ?tab= param, highlight "How It Works" (pay section)
+      if (path === '/' && search.includes('tab=')) {
+        target = '/#safe'; // highlight How It Works since pay is on homepage
+      }
+      if (target) {
+        document.querySelectorAll('.nav-links a').forEach(function (a) {
+          if (a.getAttribute('href') === target) {
+            a.classList.add('active');
+            a.setAttribute('aria-current', 'page');
+          }
+        });
+        document.querySelectorAll('.mmenu-link').forEach(function (a) {
+          if (a.getAttribute('href') === target) { a.classList.add('mmenu-link--active'); }
+        });
+      }
+    })();
+
+    /* ── Hero floating cards: rotate photo + name + price every 7s ──
+       cloth · shoes · kitchen utensils · caps + the two default tech items */
+    (function () {
+      var U = function (id) {
+        return 'https://images.unsplash.com/' + id + '?w=500&q=80&auto=format&fit=crop';
+      };
+      var ITEMS = [
+        { img: U('photo-1610945265064-0e34e5519bbf'), name: 'AirPods Pro Max',            price: '$249' },
+        { img: U('photo-1579586337278-3befd40fd17a'), name: 'Smart Watch Series X',       price: '$189' },
+        { img: U('photo-1521572163474-6864f9cf17ab'), name: 'Classic Cotton T-Shirt',     price: '$29'  },
+        { img: U('photo-1542291026-7eec264c27ff'),    name: 'Nike Air Runner Shoes',      price: '$139' },
+        { img: U('photo-1556911220-bff31c812dba'),    name: 'Non-Stick Kitchen Set',      price: '$89'  },
+        { img: U('photo-1588850561407-ed78c282e89b'), name: 'Snapback Street Cap',        price: '$24'  },
+        { img: U('photo-1549298916-b41d501d3772'),    name: 'Everyday Sneakers',          price: '$99'  },
+        { img: U('photo-1523381210434-271e8be1f52b'), name: 'Folded Tees Collection',     price: '$45'  }
+      ];
+
+      var leftImg = document.getElementById('heroImgLeft');
+      var leftName = document.getElementById('heroNameLeft');
+      var leftPrice = document.getElementById('heroPriceLeft');
+      var rightImg = document.getElementById('heroImgRight');
+      var rightName = document.getElementById('heroNameRight');
+      var rightPrice = document.getElementById('heroPriceRight');
+      if (!leftImg || !rightImg) return;
+
+      /* preload so swaps never flash blank */
+      ITEMS.forEach(function (it) { var im = new Image(); im.src = it.img; });
+
+      var li = 0; // left card starts on item 0
+      var ri = 1; // right card starts on item 1
+
+      function swap(imgEl, nameEl, priceEl, item) {
+        imgEl.classList.add('hfc-fade');
+        setTimeout(function () {
+          imgEl.src = item.img;
+          imgEl.alt = item.name;
+          if (nameEl) nameEl.textContent = item.name;
+          if (priceEl) priceEl.textContent = item.price;
+          imgEl.onload = function () { imgEl.classList.remove('hfc-fade'); };
+          /* fallback in case the image was already cached */
+          setTimeout(function () { imgEl.classList.remove('hfc-fade'); }, 700);
+        }, 600);
+      }
+
+      setInterval(function () {
+        /* advance each card, never showing the same item on both cards */
+        li = (li + 2) % ITEMS.length;
+        ri = (ri + 2) % ITEMS.length;
+        if (ri === li) ri = (ri + 1) % ITEMS.length;
+        swap(leftImg, leftName, leftPrice, ITEMS[li]);
+        setTimeout(function () {
+          swap(rightImg, rightName, rightPrice, ITEMS[ri]);
+        }, 900); // right card follows shortly after — cascading effect
+      }, 7000);
+    })();
+  </script>
+
+  <script src="/static/cart.js"></script>
+
+  <!-- ═══════════════════════════════════════
+       SCROLL-REVEAL + NUMBER COUNTER
+  ═══════════════════════════════════════ -->
+  <script>
+  (function () {
+    'use strict';
+
+    /* ── 1. Add reveal classes to elements ── */
+    var targets = [
+      /* sections fade up */
+      { sel: '.pay-section .pay-heading, .pay-section .section-sub, .pay-section .pay-tabs, .pay-section .pay-card-wrap', cls: 'reveal' },
+      { sel: '.safe-section .section-heading, .safe-section .section-sub',  cls: 'reveal' },
+      { sel: '.buyers-section .buyers-header',  cls: 'reveal' },
+      { sel: '.selling-section .selling-heading, .selling-section .selling-sub, .selling-section .selling-ctas', cls: 'reveal reveal--left' },
+      { sel: '.footer-newsletter', cls: 'reveal' },
+
+      /* staggered card groups */
+      { sel: '.safe-cards',          grp: true, childSel: '.safe-card',       cls: 'reveal' },
+      { sel: '.safe-badges',         grp: true, childSel: '.safe-badge',       cls: 'reveal' },
+      { sel: '.selling-features',    grp: true, childSel: '.selling-feature',  cls: 'reveal reveal--left' },
+      { sel: '.buyers-grid',         grp: true, childSel: '.b-card',           cls: 'reveal reveal--scale' },
+      { sel: '.footer-cols',         grp: true, childSel: '.footer-col',       cls: 'reveal' },
+
+      /* individual cards slide in from sides */
+      { sel: '.hero-float-left',  cls: 'reveal reveal--left' },
+      { sel: '.hero-float-right', cls: 'reveal reveal--right' },
+    ];
+
+    targets.forEach(function (t) {
+      if (t.grp) {
+        var parent = document.querySelector(t.sel);
+        if (!parent) return;
+        parent.classList.add('reveal-group');
+        parent.querySelectorAll(t.childSel).forEach(function (el) {
+          el.classList.add.apply(el.classList, t.cls.split(' ').filter(Boolean));
+        });
+      } else {
+        document.querySelectorAll(t.sel).forEach(function (el) {
+          el.classList.add.apply(el.classList, t.cls.split(' ').filter(Boolean));
+        });
+      }
+    });
+
+    /* ── 2. IntersectionObserver: fire is-visible ── */
+    var revealObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-visible');
+          revealObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(function (el) {
+      revealObs.observe(el);
+    });
+
+    /* also observe reveal-heading elements */
+    document.querySelectorAll('.reveal-heading').forEach(function (el) {
+      revealObs.observe(el);
+    });
+
+    /* ── 3. Number counter ── */
+    /* Parse "6k" → 6000, "$2.4M" → 2400000, "24h" → 24, "190+" → 190 */
+    function parseNum(raw) {
+      var s = raw.replace(/[$,+h\s]/g, '');
+      var m = 1;
+      if (/k$/i.test(s)) { m = 1000;    s = s.replace(/k$/i,''); }
+      if (/m$/i.test(s)) { m = 1000000; s = s.replace(/m$/i,''); }
+      return parseFloat(s) * m;
+    }
+    function formatNum(val, raw) {
+      /* reproduce the original suffix/prefix format */
+      var prefix = raw.match(/^[$£€₦]/) ? raw[0] : '';
+      var rawClean = raw.replace(/^[$£€₦]/, '');
+      var suffix = '';
+      if (/k\+?$/i.test(rawClean)) suffix = rawClean.match(/k\+?$/i)[0];
+      else if (/m\+?$/i.test(rawClean)) suffix = rawClean.match(/m\+?$/i)[0];
+      else if (/\+$/.test(raw)) suffix = '+';
+      else if (/h$/.test(raw)) suffix = 'h';
+
+      var num = Math.round(val);
+      /* keep one decimal for M */
+      if (/m/i.test(suffix)) num = Math.round(val / 100000) / 10;
+
+      return prefix + num + suffix;
+    }
+
+    function animateCounter(el) {
+      var raw    = el.dataset.target || el.textContent.trim();
+      var target = parseNum(raw);
+      if (!isFinite(target) || target === 0) return;
+
+      el.dataset.target = raw;          /* store original for re-reads */
+      var duration = 1600;              /* ms */
+      var start    = null;
+
+      function step(ts) {
+        if (!start) start = ts;
+        var progress = Math.min((ts - start) / duration, 1);
+        /* ease-out cubic */
+        var ease = 1 - Math.pow(1 - progress, 3);
+        el.textContent = formatNum(target * ease, raw);
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else {
+          el.textContent = raw;         /* snap to exact original string */
+          el.classList.add('counter-done');
+        }
+      }
+      requestAnimationFrame(step);
+    }
+
+    /* counter targets: .stat-num (selling section) */
+    var counterObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          animateCounter(e.target);
+          counterObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.stat-num').forEach(function (el) {
+      counterObs.observe(el);
+    });
+
+  }());
+  </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Settings">
+
+  <section class="glass" style="margin-bottom:14px">
+    <div class="glass__head">
+      <h3>Account overview</h3>
+      <p>Your DropHub identity at a glance.</p>
+      <span class="spacer"><span class="chipb chipb--ok"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.6 12.4 2.4 2.4 4.5-4.9"/></svg> Account active</span></span>
+    </div>
+    <div class="glass__body">
+      <div class="bhero-split" style="margin-bottom:0">
+        <div>
+          <div class="set-row">
+            <span class="set-ic" style="--gs:rgba(36,86,230,.12);--ga:#2456e6"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M4.8 20c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg></span>
+            <span class="set-row__meta"><strong>Username</strong><span>{{ user.username }}</span></span>
+            <span class="chipb chipb--info">Buyer</span>
+          </div>
+          <div class="set-row">
+            <span class="set-ic" style="--gs:rgba(112,72,232,.12);--ga:#7048e8"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6 8.5-6"/></svg></span>
+            <span class="set-row__meta"><strong>Email address</strong><span>{{ user.email|default:"Not set yet" }}</span></span>
+          </div>
+          <div class="set-row">
+            <span class="set-ic" style="--gs:rgba(12,166,120,.12);--ga:#0ca678"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg></span>
+            <span class="set-row__meta"><strong>Phone number</strong><span>{{ user.phone|default:"Not provided" }}</span></span>
+          </div>
+          <div class="set-row">
+            <span class="set-ic" style="--gs:rgba(185,138,47,.14);--ga:#8a6420"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v3M16 3v3"/></svg></span>
+            <span class="set-row__meta"><strong>Member since</strong><span>{{ user.date_joined|date:"F j, Y"|default:"Today" }}</span></span>
+          </div>
+        </div>
+
+        <aside class="bhero-side" style="height:100%">
+          <h4>Account security</h4>
+          <p>Two checks keep your account yours alone.</p>
+          <div class="bstat">
+            <span class="bstat__ic" style="--gs:rgba(12,166,120,.12);--ga:#0ca678"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+            <span><b>Password</b><small>Strong &amp; encrypted</small></span>
+            <span class="bstat__val up">Active</span>
+          </div>
+          <div class="bstat">
+            <span class="bstat__ic" style="--gs:rgba(36,86,230,.12);--ga:#2456e6"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+            <span><b>Payment protection</b><small>Escrow on every order</small></span>
+            <span class="bstat__val up">On</span>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="bgrid2b">
+    <article class="glass">
+      <div class="glass__head">
+        <h3>Preferences</h3>
+        <p>Choose what we tell you about.</p>
+      </div>
+      <div class="glass__body">
+        <div class="set-row">
+          <span class="set-ic" style="--gs:rgba(36,86,230,.12);--ga:#2456e6"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></span>
+          <span class="set-row__meta"><strong>Order updates</strong><span>Tracking and delivery alerts</span></span>
+          <button class="mbtn" type="button">Manage</button>
+        </div>
+        <div class="set-row">
+          <span class="set-ic" style="--gs:rgba(185,138,47,.14);--ga:#8a6420"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6 8.5-6"/></svg></span>
+          <span class="set-row__meta"><strong>Deals &amp; newsletter</strong><span>New drops and price cuts</span></span>
+          <button class="mbtn" type="button">Manage</button>
+        </div>
+        <div class="set-row">
+          <span class="set-ic" style="--gs:rgba(112,72,232,.12);--ga:#7048e8"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
+          <span class="set-row__meta"><strong>Addresses</strong><span>Saved delivery details</span></span>
+          <a class="mbtn" href="/dashboards/buyer/addresses/" data-dashboard-link>Open</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="glass">
+      <div class="glass__head">
+        <h3>Session</h3>
+        <p>Signed in on this device.</p>
+      </div>
+      <div class="glass__body">
+        <div class="border-row">
+          <span class="border-row__ic" style="--gs:rgba(12,166,120,.12);--ga:#0ca678"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.6 12.4 2.4 2.4 4.5-4.9"/></svg></span>
+          <div><b>Current session</b><p>Active right now</p></div>
+          <span class="border-row__right"><span class="chipb chipb--ok">Secure</span></span>
+        </div>
+        <p style="margin:14px 0 16px;font-size:12.5px;color:#6f7686;line-height:1.6">Signing out ends this session immediately. Your cart, wishlist and escrow orders stay safe on your account.</p>
+        <form method="post" action="/accounts/signout/">{% csrf_token %}
+          <button class="mbtn" style="width:100%;justify-content:center;height:44px;border-color:#f3d4d4;color:#b4232a;background:#fff5f5" type="submit">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg> Log out
+          </button>
+        </form>
+      </div>
+    </article>
+  </section>
+</div>

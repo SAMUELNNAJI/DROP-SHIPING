@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block page_title %}Terms of Service - DropHub{% endblock %}
+
+{% block head_extra %}
+<meta name="description" content="The DropHub Terms of Service: clear rules for buyers and sellers, escrow protection, and a fair dispute process." />
+<meta property="og:title" content="Terms of Service - DropHub" />
+<meta property="og:description" content="Clear marketplace rules and real protection for every DropHub order." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="/static/Logo.png" />
+{% endblock %}
+
+{% block body %}
+<section class="ip-hero legal-hero">
+  <div class="ip-hero-content">
+    <span class="ip-eyebrow">Trust &amp; Safety &middot; Version 1.0</span>
+    <h1 class="ip-title">Fair rules for a <em>global marketplace.</em></h1>
+    <p class="ip-sub">These terms explain how DropHub works, what buyers and sellers can expect, and how we keep every order accountable.</p>
+    <div class="legal-hero-meta"><span>Last updated September 14, 2026</span><span>Plain-English policy</span><span>Human-reviewed disputes</span></div>
+  </div>
+</section>
+
+<main class="legal-page">
+  <div class="legal-layout">
+    <aside class="legal-toc" aria-label="Terms contents">
+      <span class="legal-toc-label">On this page</span>
+      <a href="#relationship">01 &middot; Our relationship</a>
+      <a href="#accounts">02 &middot; Accounts</a>
+      <a href="#orders">03 &middot; Orders and escrow</a>
+      <a href="#sellers">04 &middot; Seller standards</a>
+      <a href="#disputes">05 &middot; Disputes</a>
+      <a href="#contact">06 &middot; Contact</a>
+    </aside>
+
+    <div class="legal-content">
+      <div class="legal-intro"><span class="ip-sec-eyebrow">Welcome to DropHub</span><p>By using DropHub, you agree to these terms. They are designed to make the marketplace predictable: sellers own their listings, buyers get a clear path to help, and funds stay protected while an order is being fulfilled.</p></div>
+
+      <section class="legal-section" id="relationship"><span class="legal-kicker">01 &middot; The basics</span><h2>Our relationship</h2><p>DropHub, Inc. operates a marketplace that connects independent sellers with buyers. We provide the storefront, payment rails, escrow workflow, order records, and dispute process. The seller is responsible for the product, listing accuracy, fulfillment, and support for each item.</p><div class="legal-note legal-note--blue"><strong>Important:</strong> A purchase creates an agreement between you and the seller. DropHub supports that transaction and applies these marketplace rules.</div></section>
+
+      <section class="legal-section" id="accounts"><span class="legal-kicker">02 &middot; Participation</span><h2>Accounts and responsible use</h2><div class="legal-grid"><article class="legal-card"><span class="legal-card-number">A</span><h3>Keep your account secure</h3><p>Use accurate information, protect your password, and tell us promptly if you suspect unauthorized access. You must be at least 18 to use DropHub.</p></article><article class="legal-card"><span class="legal-card-number">B</span><h3>Use the marketplace honestly</h3><p>No counterfeit goods, illegal products, misleading listings, fake reviews, payment abuse, scraping, or attempts to bypass escrow or platform fees.</p></article></div></section>
+
+      <section class="legal-section" id="orders"><span class="legal-kicker">03 &middot; Buying</span><h2>Orders, payments, and escrow</h2><p>Prices, shipping estimates, seller details, and available payment methods are shown before checkout. An order becomes binding when payment is authorized. DropHub may pause an order to verify payment, prevent fraud, or resolve a material listing issue.</p><div class="legal-step-list"><div><b>01</b><p><strong>Payment is held.</strong> Funds are placed into the applicable payment or escrow flow while the seller prepares the order.</p></div><div><b>02</b><p><strong>The seller fulfills.</strong> Tracking and status updates are recorded in your order history where available.</p></div><div><b>03</b><p><strong>The order is completed.</strong> Funds are released according to the order status, return window, and any active dispute.</p></div></div></section>
+
+      <section class="legal-section" id="sellers"><span class="legal-kicker">04 &middot; Selling</span><h2>Seller standards</h2><p>Sellers must describe products accurately, honor stated prices, ship within the promised window, provide genuine tracking when required, and respond to buyer issues. Repeated late fulfillment, misleading listings, or unresolved complaints can lead to listings being removed or accounts being restricted.</p></section>
+
+      <section class="legal-section" id="disputes"><span class="legal-kicker">05 &middot; Resolution</span><h2>Returns and disputes</h2><p>Start with the order support flow or contact us as soon as something goes wrong. We review the order record, messages, tracking, payment status, and evidence from both sides. Our target is a human decision within 72 hours after the required information is received.</p><div class="legal-note legal-note--green"><strong>Fair process:</strong> Both buyers and sellers can submit evidence. Outcomes may include a replacement, partial refund, full refund, release of funds, or account action where policy was broken.</div></section>
+
+      <section class="legal-section" id="contact"><span class="legal-kicker">06 &middot; Questions</span><h2>Need a clear answer?</h2><p>For order help, contact the team through the Help Center. For legal notices or questions about these terms, email <a href="mailto:legal@drophub.com">legal@drophub.com</a>. We may update these terms when the service or law changes and will give notice for material changes.</p><div class="legal-footer-line"><span>DropHub, Inc.</span><span>Last updated September 14, 2026</span><a href="/privacy/">Read the Privacy Policy &rarr;</a></div></section>
+    </div>
+  </div>
+</main>
+{% endblock %}

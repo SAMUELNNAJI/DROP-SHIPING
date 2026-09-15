@@ -1,0 +1,42 @@
+  <header class="navbar">
+    <div class="nav-inner">
+      <a href="/" class="logo" aria-label="DropHub — Shop Global · We Drop It For You"><img src="/static/Logo.png" alt="DropHub" class="logo-img" /></a>
+      <nav class="nav-links">
+        <a href="/shop/">Shop</a>
+        <a href="/#safe" class="scroll-link">How It Works</a>
+        <a href="/about/">About</a>
+        <a href="/blog/">Blog</a>
+        <a href="/contact/">Contact</a>
+      </nav>
+      <div class="nav-actions">
+        <div class="cart-wrap">
+          <button class="nav-cart" id="cartToggle" aria-label="Open cart" aria-expanded="false" aria-controls="cartDropdown">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F0F0F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><circle cx="18" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><path d="M2.5 3.5h2l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.2L20.5 7H6"/></svg>
+            <span class="cart-badge">0</span>
+          </button>
+          <div class="cart-dropdown" id="cartDropdown" aria-hidden="true">
+            <div class="cart-head"><div class="cart-title"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg><span>Your Cart</span><span class="cart-count-pill">0 ITEMS</span></div><button class="cart-close" id="cartClose" aria-label="Close cart"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button></div>
+            <div class="cart-items" id="cartItems"></div>
+            <div class="cart-foot"><div class="cart-subtotal"><span>Subtotal</span><strong>$0.00</strong></div><p class="cart-note">You stay locked in until every item arrives.</p><a href="/checkout/" class="btn-primary btn-sm" style="margin-top:12px;display:inline-block;text-align:center;">Checkout</a></div>
+          </div>
+        </div>
+        {% if user.is_authenticated %}
+        <a href="{% if user.is_superuser %}/dashboards/admin/{% elif user.role == 'seller' %}/dashboards/seller/{% else %}/dashboards/buyer/{% endif %}" class="btn-sell"><span>Dashboard</span><svg class="btn-sell-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></a>
+        {% else %}
+        <a href="/accounts/signin/" class="nav-signin {% if auth_mode == 'signin' %}active{% endif %}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#7B8798" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.8" r="3.6"/><path d="M4.8 19.8c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg><span>Sign In</span></a>
+        <a href="/accounts/signup/" class="btn-sell"><span>Start Selling</span><svg class="btn-sell-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg></a>
+        {% endif %}
+        <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span class="nav-burger-box"><span class="nav-burger-line"></span><span class="nav-burger-line"></span><span class="nav-burger-line"></span></span></button>
+      </div>
+    </div>
+    <div class="mmenu" id="mobileMenu" aria-hidden="true"><div class="mmenu-backdrop" data-mmenu-close></div><aside class="mmenu-panel" role="dialog" aria-modal="true" aria-label="Menu">
+      <div class="mmenu-head"><a href="/" class="logo" aria-label="DropHub"><img src="/static/Logo.png" alt="DropHub" class="logo-img"/></a><button class="mmenu-close" aria-label="Close menu" data-mmenu-close><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button></div>
+      <p class="mmenu-eyebrow">MENU</p><nav class="mmenu-nav">
+        <a class="mmenu-link" href="/shop/" style="--i:0"><span class="mmenu-num">01</span> Shop<svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg></a>
+        <a class="mmenu-link" href="/#safe" style="--i:1"><span class="mmenu-num">02</span> How It Works<svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg></a>
+        <a class="mmenu-link" href="/about/" style="--i:2"><span class="mmenu-num">03</span> About<svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg></a>
+        <a class="mmenu-link" href="/blog/" style="--i:3"><span class="mmenu-num">04</span> Blog<svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg></a>
+        <a class="mmenu-link" href="/contact/" style="--i:4"><span class="mmenu-num">05</span> Contact<svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg></a>
+      </nav><div class="mmenu-foot">{% if user.is_authenticated %}<a href="{% if user.is_superuser %}/dashboards/admin/{% elif user.role == 'seller' %}/dashboards/seller/{% else %}/dashboards/buyer/{% endif %}" class="mmenu-cta"><span>Dashboard</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></a>{% else %}<a href="/accounts/signup/" class="mmenu-cta"><span>Start Selling</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="m13 6 6 6-6 6"/></svg></a><a href="/accounts/signin/" class="mmenu-signin"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 19.6c.7-3.4 3.6-5.2 7-5.2s6.3 1.8 7 5.2"/></svg><span>Sign In</span></a>{% endif %}<p class="mmenu-assure"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4.2 4.2L19 6.6"/></svg> Escrow-protected · Pi, PayPal &amp; Paystack</p></div>
+    </aside></div>
+  </header>

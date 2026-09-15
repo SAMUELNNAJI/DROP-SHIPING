@@ -1,0 +1,59 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Wishlist">
+
+  <section class="glass" style="margin-bottom:14px">
+    <div class="glass__head">
+      <h3>Saved products</h3>
+      <p>Keep an eye on the items you love — prices and stock update automatically.</p>
+      <span class="spacer">
+        <span class="chipb"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5S4.5 15.6 4.5 10.4A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 7.5 3.1c0 5.2-7.5 10.1-7.5 10.1z"/></svg> 0 items saved</span>
+        <a class="mbtn mbtn--gold" href="/shop/"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg> Browse marketplace</a>
+      </span>
+    </div>
+    <div class="glass__body">
+      <div class="emptyb">
+        <div class="emptyb__art"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5S4.5 15.6 4.5 10.4A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 7.5 3.1c0 5.2-7.5 10.1-7.5 10.1z"/></svg></div>
+        <h4>Your wishlist is empty</h4>
+        <p>Tap the heart on any product in the marketplace and it will land here, ready for your next order.</p>
+        <a class="mbtn mbtn--dark" href="/shop/"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg> Find something you love</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bgrid2b">
+    <article class="glass">
+      <div class="glass__head">
+        <h3>Why save items?</h3>
+        <p>Your wishlist works harder than a bookmark.</p>
+      </div>
+      <div class="glass__body">
+        <div class="border-row">
+          <span class="border-row__ic" style="--gs:rgba(185,138,47,.14);--ga:#8a6420"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M17 6.5c0-1.6-2.2-2.5-5-2.5S7 5.1 7 6.9c0 4.4 10 2 10 6.6 0 1.8-2.2 2.9-5 2.9s-5-1-5-2.9"/></svg></span>
+          <div><b>Price drop alerts</b><p>We'll flag it when the price falls</p></div>
+        </div>
+        <div class="border-row">
+          <span class="border-row__ic" style="--gs:rgba(229,72,77,.12);--ga:#b4232a"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><circle cx="12" cy="17" r=".9" fill="currentColor" stroke="none"/><path d="M10.3 3.9 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>
+          <div><b>Low stock warning</b><p>Buy before it sells out</p></div>
+        </div>
+        <div class="border-row">
+          <span class="border-row__ic" style="--gs:rgba(36,86,230,.12);--ga:#2456e6"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v3M16 3v3"/></svg></span>
+          <div><b>One-tap checkout</b><p>Jump straight back in later</p></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="glass">
+      <div class="glass__head">
+        <h3>Recently viewed</h3>
+        <p>Pick up where you left off.</p>
+      </div>
+      <div class="glass__body">
+        <div class="emptyb" style="padding:26px 12px">
+          <div class="emptyb__art" style="width:60px;height:60px"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.6"/></svg></div>
+          <h4>Nothing viewed yet</h4>
+          <p>Products you open in the marketplace will show up here.</p>
+        </div>
+      </div>
+    </article>
+  </section>
+</div>

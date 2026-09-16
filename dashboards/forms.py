@@ -30,8 +30,18 @@ class BuyerAddressForm(forms.ModelForm):
     class Meta:
         model = BuyerAddress
         fields = ("label", "recipient_name", "phone", "line1", "line2", "city", "state", "postal_code", "country", "is_default")
-        widgets = {name: forms.TextInput(attrs={"class": "ff-input"}) for name in ("label", "recipient_name", "phone", "line1", "line2", "city", "state", "postal_code", "country")}
-        widgets["is_default"] = forms.CheckboxInput(attrs={"class": "ff-check"})
+        widgets = {
+            "label":          forms.TextInput(attrs={"class": "ff-input", "placeholder": "e.g. Home, Office"}),
+            "recipient_name": forms.TextInput(attrs={"class": "ff-input", "placeholder": "Full name of recipient"}),
+            "phone":          forms.TextInput(attrs={"class": "ff-input", "placeholder": "+234 800 000 0000"}),
+            "line1":          forms.TextInput(attrs={"class": "ff-input", "placeholder": "Street address"}),
+            "line2":          forms.TextInput(attrs={"class": "ff-input", "placeholder": "Apt, suite, unit (optional)"}),
+            "city":           forms.TextInput(attrs={"class": "ff-input", "placeholder": "City"}),
+            "state":          forms.TextInput(attrs={"class": "ff-input", "placeholder": "State / Province"}),
+            "postal_code":    forms.TextInput(attrs={"class": "ff-input", "placeholder": "Postal code"}),
+            "country":        forms.TextInput(attrs={"class": "ff-input", "placeholder": "Country"}),
+            "is_default":     forms.CheckboxInput(attrs={"class": "ff-check"}),
+        }
 
 
 class SellerVerificationForm(forms.ModelForm):

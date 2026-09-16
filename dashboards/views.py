@@ -207,6 +207,8 @@ def dashboard_section(request, role, section):
         return redirect("dashboard")
     if role == "buyer" and section == "addresses":
         return buyer_addresses(request)
+    if role == "buyer" and section == "settings":
+        return buyer_settings(request)
     return dashboard_page(request, role, section)
 
 
@@ -421,15 +423,116 @@ def buyer_addresses(request):
                 BuyerAddress.objects.filter(user=request.user).update(is_default=False)
                 address.is_default = True
             address.save()
-            messages.success(request, "Your delivery address has been saved.")
+            messages.success(request, "Address saved successfully.")
+            if request.headers.get("x-requested-with") == "XMLHttpRequest":
+                return JsonResponse({"ok": True})
             return redirect("dashboard_buyer_addresses")
-        messages.error(request, "Please correct the address details below.")
+        messages.error(request, "Please correct the highlighted fields.")
     else:
-        form = BuyerAddressForm(initial={"recipient_name": request.user.get_full_name() or request.user.username, "phone": getattr(request.user, "phone", ""), "country": "Nigeria"})
+        form = BuyerAddressForm(initial={
+            "recipient_name": request.user.get_full_name() or request.user.username,
+            "phone": getattr(request.user, "phone", ""),
+            "country": "Nigeria",
+        })
     context = dashboard_context(request, "buyer", "addresses")
     context.update({"addresses": addresses, "form": form, "dashboard_template": "dashboards/buyer/addresses.html"})
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         return render(request, "dashboards/buyer/addresses.html", context)
+    return render(request, "dashboards/base.html", context)
+
+
+@require_POST
+@login_required
+def buyer_address_delete(request, pk):
+    if request.user.role != "buyer":
+        return redirect("dashboard")
+    address = get_object_or_404(BuyerAddress, pk=pk, user=request.user)
+    was_default = address.is_default
+    address.delete()
+    # Promote next address to default if deleted one was default
+    if was_default:
+        nxt = BuyerAddress.objects.filter(user=request.user).first()
+        if nxt:
+            nxt.is_default = True
+            nxt.save(update_fields=["is_default"])
+    messages.success(request, "Address removed.")
+    return redirect("dashboard_buyer_addresses")
+
+
+@require_POST
+@login_required
+def buyer_address_set_default(request, pk):
+    if request.user.role != "buyer":
+        return redirect("dashboard")
+    address = get_object_or_404(BuyerAddress, pk=pk, user=request.user)
+    BuyerAddress.objects.filter(user=request.user).update(is_default=False)
+    address.is_default = True
+    address.save(update_fields=["is_default"])
+    messages.success(request, f'"{address.label}" is now your default address.')
+    return redirect("dashboard_buyer_addresses")
+
+
+@login_required
+def buyer_settings(request):
+    if request.user.role != "buyer":
+        return redirect("dashboard")
+    user = request.user
+    profile_errors = {}
+
+    if request.method == "POST":
+        action = request.POST.get("action", "profile")
+
+        if action == "profile":
+            first_name  = request.POST.get("first_name", "").strip()
+            last_name   = request.POST.get("last_name", "").strip()
+            email       = request.POST.get("email", "").strip().lower()
+            phone       = request.POST.get("phone", "").strip()
+
+            # Validate email uniqueness
+            from django.contrib.auth import get_user_model
+            User = get_user_model()
+            if email and email != user.email:
+                if User.objects.exclude(pk=user.pk).filter(email__iexact=email).exists():
+                    profile_errors["email"] = "This email is already used by another account."
+
+            if not profile_errors:
+                user.first_name = first_name
+                user.last_name  = last_name
+                if email:
+                    user.email = email
+                user.phone = phone
+                user.save(update_fields=["first_name", "last_name", "email", "phone"])
+                messages.success(request, "Profile updated successfully.")
+                return redirect("buyer_settings")
+            else:
+                messages.error(request, "Please fix the highlighted fields.")
+
+        elif action == "password":
+            from django.contrib.auth import update_session_auth_hash
+            current  = request.POST.get("current_password", "")
+            new_pw   = request.POST.get("new_password", "")
+            confirm  = request.POST.get("confirm_password", "")
+
+            if not user.check_password(current):
+                messages.error(request, "Current password is incorrect.")
+            elif len(new_pw) < 8:
+                messages.error(request, "New password must be at least 8 characters.")
+            elif new_pw != confirm:
+                messages.error(request, "New passwords do not match.")
+            else:
+                user.set_password(new_pw)
+                user.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, "Password changed. You're still logged in.")
+                return redirect("buyer_settings")
+
+    context = dashboard_context(request, "buyer", "settings")
+    context.update({
+        "profile_errors": profile_errors,
+        "dashboard_template": "dashboards/buyer/settings.html",
+    })
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(request, "dashboards/buyer/settings.html", context)
     return render(request, "dashboards/base.html", context)
 
 

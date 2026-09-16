@@ -1,72 +1,217 @@
 {% load static %}
 <div class="dashboard-page" data-page-title="Settings">
 
+  <!-- ── account overview card ── -->
   <section class="glass" style="margin-bottom:14px">
     <div class="glass__head">
       <h3>Account overview</h3>
       <p>Your DropHub identity at a glance.</p>
-      <span class="spacer"><span class="chipb chipb--ok"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.6 12.4 2.4 2.4 4.5-4.9"/></svg> Account active</span></span>
+      <span class="spacer">
+        <span class="chipb chipb--ok">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.6 12.4 2.4 2.4 4.5-4.9"/></svg>
+          Account active
+        </span>
+      </span>
     </div>
     <div class="glass__body">
       <div class="bhero-split" style="margin-bottom:0">
         <div>
           <div class="set-row">
-            <span class="set-ic" style="--gs:rgba(36,86,230,.12);--ga:#2456e6"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M4.8 20c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg></span>
+            <span class="set-ic" style="--gs:rgba(36,86,230,.12);--ga:#2456e6">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M4.8 20c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
+            </span>
             <span class="set-row__meta"><strong>Username</strong><span>{{ user.username }}</span></span>
             <span class="chipb chipb--info">Buyer</span>
           </div>
           <div class="set-row">
-            <span class="set-ic" style="--gs:rgba(112,72,232,.12);--ga:#7048e8"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6 8.5-6"/></svg></span>
+            <span class="set-ic" style="--gs:rgba(112,72,232,.12);--ga:#7048e8">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6 8.5-6"/></svg>
+            </span>
             <span class="set-row__meta"><strong>Email address</strong><span>{{ user.email|default:"Not set yet" }}</span></span>
           </div>
           <div class="set-row">
-            <span class="set-ic" style="--gs:rgba(12,166,120,.12);--ga:#0ca678"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg></span>
+            <span class="set-ic" style="--gs:rgba(12,166,120,.12);--ga:#0ca678">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 4 4.2 2 2 0 0 1 6 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L10 9.9a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7A2 2 0 0 1 24 17z"/></svg>
+            </span>
             <span class="set-row__meta"><strong>Phone number</strong><span>{{ user.phone|default:"Not provided" }}</span></span>
           </div>
           <div class="set-row">
-            <span class="set-ic" style="--gs:rgba(185,138,47,.14);--ga:#8a6420"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v3M16 3v3"/></svg></span>
-            <span class="set-row__meta"><strong>Member since</strong><span>{{ user.date_joined|date:"F j, Y"|default:"Today" }}</span></span>
+            <span class="set-ic" style="--gs:rgba(185,138,47,.14);--ga:#8a6420">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v3M16 3v3"/></svg>
+            </span>
+            <span class="set-row__meta"><strong>Member since</strong><span>{{ user.date_joined|date:"F j, Y" }}</span></span>
           </div>
         </div>
 
-        <aside class="bhero-side" style="height:100%">
+        <aside class="bhero-side">
           <h4>Account security</h4>
-          <p>Two checks keep your account yours alone.</p>
+          <p>Two checks keep your account yours.</p>
           <div class="bstat">
-            <span class="bstat__ic" style="--gs:rgba(12,166,120,.12);--ga:#0ca678"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+            <span class="bstat__ic" style="--gs:rgba(12,166,120,.12);--ga:#0ca678">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+            </span>
             <span><b>Password</b><small>Strong &amp; encrypted</small></span>
-            <span class="bstat__val up">Active</span>
+            <span class="bstat__val" style="color:var(--bgreen,#0ca678)">Active</span>
           </div>
           <div class="bstat">
-            <span class="bstat__ic" style="--gs:rgba(36,86,230,.12);--ga:#2456e6"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+            <span class="bstat__ic" style="--gs:rgba(36,86,230,.12);--ga:#2456e6">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            </span>
             <span><b>Payment protection</b><small>Escrow on every order</small></span>
-            <span class="bstat__val up">On</span>
+            <span class="bstat__val" style="color:var(--bgreen,#0ca678)">On</span>
           </div>
         </aside>
       </div>
     </div>
   </section>
 
+  <!-- ── two-col: edit profile + change password ── -->
+  <div class="bgrid2b" style="margin-bottom:14px">
+
+    <!-- edit profile -->
+    <article class="glass">
+      <div class="glass__head">
+        <span class="set-form__icon" style="--ci:#2456e6;--cs:#eaf0ff">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </span>
+        <div>
+          <h3>Edit profile</h3>
+          <p>Update your name, email and phone number.</p>
+        </div>
+      </div>
+      <div class="glass__body">
+        <form method="post" action="{% url 'buyer_settings' %}" class="set-form">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="profile">
+
+          <div class="set-form__row">
+            <div class="set-form__field">
+              <label>First name</label>
+              <input class="ff-input" type="text" name="first_name" value="{{ user.first_name }}" placeholder="First name" />
+            </div>
+            <div class="set-form__field">
+              <label>Last name</label>
+              <input class="ff-input" type="text" name="last_name" value="{{ user.last_name }}" placeholder="Last name" />
+            </div>
+          </div>
+
+          <div class="set-form__field">
+            <label>Email address</label>
+            <input class="ff-input {% if profile_errors.email %}is-error{% endif %}"
+                   type="email" name="email" value="{{ user.email }}" placeholder="you@example.com" />
+            {% if profile_errors.email %}<span class="set-form__err">{{ profile_errors.email }}</span>{% endif %}
+          </div>
+
+          <div class="set-form__field">
+            <label>Phone number</label>
+            <input class="ff-input" type="tel" name="phone" value="{{ user.phone }}" placeholder="+234 800 000 0000" />
+          </div>
+
+          <div class="set-form__actions">
+            <button class="mbtn mbtn--gold" type="submit">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </article>
+
+    <!-- change password -->
+    <article class="glass">
+      <div class="glass__head">
+        <span class="set-form__icon" style="--ci:#7048e8;--cs:#efe9fb">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+        </span>
+        <div>
+          <h3>Change password</h3>
+          <p>Keep your account secure with a strong password.</p>
+        </div>
+      </div>
+      <div class="glass__body">
+        <form method="post" action="{% url 'buyer_settings' %}" class="set-form">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="password">
+
+          <div class="set-form__field">
+            <label>Current password</label>
+            <div class="set-form__pw-wrap">
+              <input class="ff-input" type="password" name="current_password" placeholder="Enter current password" id="pwCurrent" autocomplete="current-password" />
+              <button class="set-form__pw-toggle" type="button" data-target="pwCurrent" aria-label="Show/hide password">
+                <svg class="sic eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="set-form__field">
+            <label>New password</label>
+            <div class="set-form__pw-wrap">
+              <input class="ff-input" type="password" name="new_password" placeholder="Min 8 characters" id="pwNew" autocomplete="new-password" />
+              <button class="set-form__pw-toggle" type="button" data-target="pwNew" aria-label="Show/hide password">
+                <svg class="sic eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <!-- strength bar -->
+            <div class="set-form__strength" id="pwStrengthBar">
+              <div class="set-form__strength-track"><div class="set-form__strength-fill" id="pwStrengthFill"></div></div>
+              <span id="pwStrengthLabel"></span>
+            </div>
+          </div>
+
+          <div class="set-form__field">
+            <label>Confirm new password</label>
+            <div class="set-form__pw-wrap">
+              <input class="ff-input" type="password" name="confirm_password" placeholder="Repeat new password" id="pwConfirm" autocomplete="new-password" />
+              <button class="set-form__pw-toggle" type="button" data-target="pwConfirm" aria-label="Show/hide password">
+                <svg class="sic eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="set-form__actions">
+            <button class="mbtn" type="submit" style="background:linear-gradient(135deg,#7048e8,#a78bfa);color:#fff;border:0;box-shadow:0 8px 18px rgba(112,72,232,.28)">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+              Update password
+            </button>
+          </div>
+        </form>
+      </div>
+    </article>
+  </div>
+
+  <!-- ── preferences + session ── -->
   <section class="bgrid2b">
     <article class="glass">
       <div class="glass__head">
         <h3>Preferences</h3>
-        <p>Choose what we tell you about.</p>
+        <p>Choose what we notify you about.</p>
       </div>
       <div class="glass__body">
         <div class="set-row">
-          <span class="set-ic" style="--gs:rgba(36,86,230,.12);--ga:#2456e6"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></span>
-          <span class="set-row__meta"><strong>Order updates</strong><span>Tracking and delivery alerts</span></span>
-          <button class="mbtn" type="button">Manage</button>
+          <span class="set-ic" style="--gs:rgba(36,86,230,.12);--ga:#2456e6">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          </span>
+          <span class="set-row__meta"><strong>Order updates</strong><span>Tracking &amp; delivery alerts</span></span>
+          <label class="set-toggle" title="Order updates">
+            <input type="checkbox" checked disabled />
+            <span class="set-toggle__track"></span>
+          </label>
         </div>
         <div class="set-row">
-          <span class="set-ic" style="--gs:rgba(185,138,47,.14);--ga:#8a6420"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6 8.5-6"/></svg></span>
+          <span class="set-ic" style="--gs:rgba(185,138,47,.14);--ga:#8a6420">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6 8.5-6"/></svg>
+          </span>
           <span class="set-row__meta"><strong>Deals &amp; newsletter</strong><span>New drops and price cuts</span></span>
-          <button class="mbtn" type="button">Manage</button>
+          <label class="set-toggle" title="Deals newsletter">
+            <input type="checkbox" />
+            <span class="set-toggle__track"></span>
+          </label>
         </div>
         <div class="set-row">
-          <span class="set-ic" style="--gs:rgba(112,72,232,.12);--ga:#7048e8"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
-          <span class="set-row__meta"><strong>Addresses</strong><span>Saved delivery details</span></span>
+          <span class="set-ic" style="--gs:rgba(112,72,232,.12);--ga:#7048e8">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+          </span>
+          <span class="set-row__meta"><strong>Saved addresses</strong><span>Manage delivery locations</span></span>
           <a class="mbtn" href="/dashboards/buyer/addresses/" data-dashboard-link>Open</a>
         </div>
       </div>
@@ -79,17 +224,112 @@
       </div>
       <div class="glass__body">
         <div class="border-row">
-          <span class="border-row__ic" style="--gs:rgba(12,166,120,.12);--ga:#0ca678"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.6 12.4 2.4 2.4 4.5-4.9"/></svg></span>
-          <div><b>Current session</b><p>Active right now</p></div>
+          <span class="border-row__ic" style="--gs:rgba(12,166,120,.12);--ga:#0ca678">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.6 12.4 2.4 2.4 4.5-4.9"/></svg>
+          </span>
+          <div><b>Current session</b><p>Active on this device right now</p></div>
           <span class="border-row__right"><span class="chipb chipb--ok">Secure</span></span>
         </div>
-        <p style="margin:14px 0 16px;font-size:12.5px;color:#6f7686;line-height:1.6">Signing out ends this session immediately. Your cart, wishlist and escrow orders stay safe on your account.</p>
-        <form method="post" action="/accounts/signout/">{% csrf_token %}
+        <p style="margin:14px 0 16px;font-size:12.5px;color:var(--bm);line-height:1.6">Signing out ends your session immediately. Your cart, wishlist and escrow orders stay safely on your account.</p>
+        <form method="post" action="/accounts/signout/">
+          {% csrf_token %}
           <button class="mbtn" style="width:100%;justify-content:center;height:44px;border-color:#f3d4d4;color:#b4232a;background:#fff5f5" type="submit">
-            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg> Log out
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+            Log out
           </button>
         </form>
       </div>
     </article>
   </section>
+
 </div>
+
+<style>
+/* ── Settings form pieces ── */
+.set-form__icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--cs,#eaf0ff);color:var(--ci,#2456e6);flex-shrink:0}
+.set-form__icon .sic{width:18px;height:18px}
+.set-form{display:flex;flex-direction:column;gap:0}
+.set-form__row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.set-form__field{margin-bottom:16px}
+.set-form__field:last-child{margin-bottom:0}
+.set-form__field label{display:block;font-size:12.5px;font-weight:800;margin-bottom:7px;color:var(--bt)}
+.ff-input{width:100%;min-height:46px;border:1px solid var(--bbd);border-radius:12px;padding:0 13px;font:inherit;font-size:13.5px;background:rgba(255,255,255,.78);color:var(--bt);outline:0;transition:border-color .2s,box-shadow .2s;box-sizing:border-box}
+.ff-input:focus{border-color:var(--bblue,#2456e6);box-shadow:0 0 0 3.5px rgba(36,86,230,.10);background:#fff}
+.ff-input.is-error{border-color:#e5484d;box-shadow:0 0 0 3px rgba(229,72,77,.12)}
+.set-form__err{display:block;font-size:12px;font-weight:700;color:#b4232a;margin-top:5px}
+.set-form__actions{display:flex;justify-content:flex-end;padding-top:10px;border-top:1px solid var(--bbd2);margin-top:8px}
+
+/* password show/hide */
+.set-form__pw-wrap{position:relative}
+.set-form__pw-wrap .ff-input{padding-right:44px}
+.set-form__pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:28px;height:28px;border:0;background:transparent;cursor:pointer;color:var(--bm);display:grid;place-items:center;border-radius:7px}
+.set-form__pw-toggle:hover{color:var(--bt);background:rgba(0,0,0,.05)}
+.set-form__pw-toggle .sic{width:17px;height:17px}
+
+/* strength bar */
+.set-form__strength{display:flex;align-items:center;gap:10px;margin-top:8px;min-height:16px}
+.set-form__strength-track{flex:1;height:5px;border-radius:20px;background:var(--bbd2);overflow:hidden}
+.set-form__strength-fill{height:100%;border-radius:20px;width:0;transition:width .3s,background .3s}
+.set-form__strength span{font-size:11.5px;font-weight:700;min-width:60px}
+
+/* toggle switch */
+.set-toggle{position:relative;display:inline-block;width:42px;height:24px;flex-shrink:0;cursor:pointer}
+.set-toggle input{opacity:0;width:0;height:0;position:absolute}
+.set-toggle__track{position:absolute;inset:0;border-radius:20px;background:#d1d5db;transition:background .2s}
+.set-toggle__track::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.2);transition:transform .2s}
+.set-toggle input:checked + .set-toggle__track{background:var(--bgreen,#0ca678)}
+.set-toggle input:checked + .set-toggle__track::after{transform:translateX(18px)}
+.set-toggle input:disabled + .set-toggle__track{opacity:.7;cursor:not-allowed}
+
+/* set-ic reuse */
+.set-ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex-shrink:0;background:var(--gs,#eef2f8);color:var(--ga,#4c5468)}
+.set-ic .sic{width:16px;height:16px}
+.set-row__meta{flex:1;min-width:0}
+.set-row__meta strong{display:block;font-size:13.5px}
+.set-row__meta span{font-size:12.5px;color:var(--bm)}
+
+@media(max-width:700px){
+  .set-form__row{grid-template-columns:1fr}
+}
+</style>
+
+<script>
+(function () {
+  /* ── Show/hide password toggles ── */
+  document.querySelectorAll('.set-form__pw-toggle').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var input = document.getElementById(btn.dataset.target);
+      if (!input) return;
+      var isText = input.type === 'text';
+      input.type = isText ? 'password' : 'text';
+      btn.setAttribute('aria-label', isText ? 'Show password' : 'Hide password');
+    });
+  });
+
+  /* ── Password strength meter ── */
+  var pwNew    = document.getElementById('pwNew');
+  var fill     = document.getElementById('pwStrengthFill');
+  var label    = document.getElementById('pwStrengthLabel');
+
+  if (pwNew && fill && label) {
+    pwNew.addEventListener('input', function () {
+      var v = pwNew.value;
+      var score = 0;
+      if (v.length >= 8)  score++;
+      if (v.length >= 12) score++;
+      if (/[A-Z]/.test(v)) score++;
+      if (/[0-9]/.test(v)) score++;
+      if (/[^A-Za-z0-9]/.test(v)) score++;
+
+      var pct   = Math.round((score / 5) * 100);
+      var color = score <= 1 ? '#e5484d' : score <= 3 ? '#f59e0b' : '#0ca678';
+      var text  = score <= 1 ? 'Too weak' : score <= 2 ? 'Weak' : score <= 3 ? 'Fair' : score <= 4 ? 'Good' : 'Strong';
+
+      fill.style.width     = pct + '%';
+      fill.style.background = color;
+      label.textContent    = v.length ? text : '';
+      label.style.color    = color;
+    });
+  }
+})();
+</script>

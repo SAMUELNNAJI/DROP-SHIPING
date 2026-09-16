@@ -8,6 +8,9 @@ urlpatterns = [
     path("admin/", views.admin_dashboard, name="dashboard_admin"),
     path("seller/verification/", views.seller_verification_view, name="dashboard_seller_verification"),
     path("buyer/addresses/", views.buyer_addresses, name="dashboard_buyer_addresses"),
+    path("buyer/addresses/<int:pk>/delete/", views.buyer_address_delete, name="buyer_address_delete"),
+    path("buyer/addresses/<int:pk>/default/", views.buyer_address_set_default, name="buyer_address_set_default"),
+    path("buyer/settings/", views.buyer_settings, name="buyer_settings"),
 
     # Wishlist
     path("wishlist/toggle/", views.wishlist_toggle, name="wishlist_toggle"),

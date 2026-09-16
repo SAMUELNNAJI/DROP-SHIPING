@@ -7,8 +7,8 @@
    Natural document flow: NO min-height/100vh flex trap — content and the
    real site footer simply follow the header and grow the page. */
 .auth-page {
-  /* fixed header overlays the top, so offset the page content */
-  padding-top: var(--header-h);
+    /* The main content (.auth-main) applies the header offset, preventing a double gap. */
+  padding-top: 0;
   background:
     radial-gradient(
       1100px 520px at 88% -10%,
@@ -65,21 +65,21 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 0 40px 48px;
+    padding: calc(var(--header-h) + 16px) 40px 48px;
   min-height: calc(100vh - var(--header-h));
 }
 
 /* Reduce gap on smaller desktop/tablet screens */
 @media (max-width: 1024px) {
   .auth-main {
-    padding: 0 32px 64px;
+        padding: calc(var(--header-h) + 24px) 32px 64px;
   }
 }
 
 /* Mobile: tighter spacing, full-width card */
 @media (max-width: 760px) {
   .auth-main {
-    padding: 0 16px 40px;
+        padding: calc(var(--header-h) + 16px) 16px 40px;
     justify-content: flex-start;
     align-items: stretch;
   }
@@ -952,7 +952,7 @@
 /* Active Django auth pages use the reference split-screen composition. */
 .auth-shell {
   background: linear-gradient(135deg, #e8f0ff 0%, #d7e4fa 100%);
-  padding-top: max(var(--header-h), env(safe-area-inset-top));
+    padding-top: 0;
   min-height: 100vh;
 }
 .auth-main {
@@ -1056,7 +1056,7 @@
     display: none !important;
   }
   .auth-main {
-    padding-top: 36px;
+        padding-top: calc(var(--header-h) + 16px);
   }
   .auth-page .nav-links,
   .auth-page .nav-signin,

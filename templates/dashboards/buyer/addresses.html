@@ -1,67 +1,13 @@
-{% load static %}
 <div class="dashboard-page" data-page-title="Addresses">
-
   <section class="glass" style="margin-bottom:14px">
-    <div class="glass__head">
-      <h3>Delivery addresses</h3>
-      <p>Save your details once and checkout in seconds next time.</p>
-      <span class="spacer">
-        <span class="chipb chipb--info"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Encrypted &amp; private</span>
-        <button class="mbtn mbtn--gold" type="button" data-addr-add><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> Add address</button>
-      </span>
-    </div>
+    <div class="glass__head"><h3>Delivery addresses</h3><p>Save an address for faster, accurate checkout.</p></div>
     <div class="glass__body">
-      <div class="emptyb">
-        <div class="emptyb__art"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg></div>
-        <h4>No saved addresses yet</h4>
-        <p>Add the address where you want your parcels delivered — you can keep a home and a work address side by side.</p>
-        <button class="mbtn mbtn--dark" type="button" data-addr-add><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> Add your first address</button>
-      </div>
+      {% if addresses %}{% for address in addresses %}
+      <div class="border-row"><span class="border-row__ic" style="--gs:rgba(36,86,230,.12);--ga:#2456e6">{{ address.label|first|upper }}</span><div><b>{{ address.label }}{% if address.is_default %} · Default{% endif %}</b><p>{{ address.recipient_name }} · {{ address.phone }}<br>{{ address.line1 }}{% if address.line2 %}, {{ address.line2 }}{% endif %}, {{ address.city }}{% if address.state %}, {{ address.state }}{% endif %}, {{ address.country }}</p></div></div>
+      {% endfor %}{% else %}<div class="emptyb"><h4>No saved addresses yet</h4><p>Add the address where you want your parcels delivered.</p></div>{% endif %}
     </div>
   </section>
-
-  <section class="bgrid2b">
-    <article class="glass">
-      <div class="glass__head">
-        <h3>Delivery checklist</h3>
-        <p>Getting the details right avoids delays.</p>
-      </div>
-      <div class="glass__body">
-        <div class="border-row">
-          <span class="border-row__ic" style="--gs:rgba(12,166,120,.12);--ga:#0ca678"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.6 12.4 2.4 2.4 4.5-4.9"/></svg></span>
-          <div><b>Full street address</b><p>House number, street and apartment</p></div>
-        </div>
-        <div class="border-row">
-          <span class="border-row__ic" style="--gs:rgba(12,166,120,.12);--ga:#0ca678"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.6 12.4 2.4 2.4 4.5-4.9"/></svg></span>
-          <div><b>City &amp; postcode</b><p>Helps the courier route your parcel</p></div>
-        </div>
-        <div class="border-row">
-          <span class="border-row__ic" style="--gs:rgba(12,166,120,.12);--ga:#0ca678"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.6 12.4 2.4 2.4 4.5-4.9"/></svg></span>
-          <div><b>Working phone number</b><p>The courier may call on delivery day</p></div>
-        </div>
-      </div>
-    </article>
-
-    <article class="glass">
-      <div class="glass__head">
-        <h3>Where we deliver</h3>
-        <p>DropHub ships worldwide.</p>
-      </div>
-      <div class="glass__body">
-        <div class="journey" style="grid-template-columns:1fr 1fr">
-          <div class="journey__step is-done">
-            <span>Local</span>
-            <strong>Domestic</strong>
-            <small>3–6 days typical</small>
-          </div>
-          <div class="journey__step is-now">
-            <span>Global</span>
-            <strong>International</strong>
-            <small>7–21 days, tracked</small>
-          </div>
-        </div>
-        <p style="margin:14px 0 0;font-size:12.5px;color:#6f7686;line-height:1.6">Every shipment is insured and escrow-held until you confirm delivery — so a slow parcel never costs you money.</p>
-      </div>
-    </article>
-  </section>
+  <section class="glass"><div class="glass__head"><h3>Add a delivery address</h3><p>Your details are used only for delivery.</p></div><div class="glass__body">
+    <form method="post" class="ff">{% csrf_token %}{% for field in form %}<div class="ff"><label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} *{% endif %}</label>{{ field }}{% for error in field.errors %}<p class="ff-err">{{ error }}</p>{% endfor %}</div>{% endfor %}<button class="mbtn mbtn--gold" type="submit">Save address</button></form>
+  </div></section>
 </div>

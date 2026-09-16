@@ -28,6 +28,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.page, {'slug': 'index'}, name='home'),
     path('shop/', views.page, {'slug': 'shop'}, name='shop'),
+    path('products/<int:pk>/', views.product_detail, name='product_detail'),
     path('about/', views.page, {'slug': 'about'}, name='about'),
     path('blog/', views.page, {'slug': 'blog'}, name='blog'),
     path('contact/', views.page, {'slug': 'contact'}, name='contact'),

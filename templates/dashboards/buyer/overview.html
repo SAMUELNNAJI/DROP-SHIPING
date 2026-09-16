@@ -32,7 +32,7 @@
       <div class="bstat">
         <span class="bstat__ic" style="--gs:rgba(229,72,77,.12);--ga:#b4232a"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5S4.5 15.6 4.5 10.4A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 7.5 3.1c0 5.2-7.5 10.1-7.5 10.1z"/></svg></span>
         <span><b>Wishlist</b><small>Saved for later</small></span>
-        <span class="bstat__val">0</span>
+        <span class="bstat__val">{{ wishlist_count }}</span>
       </div>
       <div class="bstat">
         <span class="bstat__ic" style="--gs:rgba(185,138,47,.14);--ga:#8a6420"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M17 6.5c0-1.6-2.2-2.5-5-2.5S7 5.1 7 6.9c0 4.4 10 2 10 6.6 0 1.8-2.2 2.9-5 2.9s-5-1-5-2.9"/></svg></span>
@@ -72,7 +72,7 @@
         <span class="bkpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5S4.5 15.6 4.5 10.4A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 7.5 3.1c0 5.2-7.5 10.1-7.5 10.1z"/></svg></span>
         <span class="bkpi__label">Saved items</span>
       </div>
-      <strong>0</strong>
+      <strong>{{ wishlist_count }}</strong>
       <p class="bkpi__sub">Waiting in your wishlist</p>
     </article>
   </section>

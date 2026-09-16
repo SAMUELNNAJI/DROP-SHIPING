@@ -236,13 +236,8 @@
       <!-- Desktop category chips (hidden on mobile) -->
       <div class="shop-filters" id="desktopFilters">
         <button type="button" class="shop-chip shop-chip--active" data-filter="all">All</button>
-        <button type="button" class="shop-chip" data-filter="electronics">Electronics</button>
-        <button type="button" class="shop-chip" data-filter="fashion">Fashion</button>
-        <button type="button" class="shop-chip" data-filter="smart-home">Smart Home</button>
-        <button type="button" class="shop-chip" data-filter="kitchen">Kitchen</button>
-        <button type="button" class="shop-chip" data-filter="furniture">Furniture</button>
-        <button type="button" class="shop-chip" data-filter="wearables">Wearables</button>
-        <button type="button" class="shop-chip" data-filter="audio">Audio</button>
+        {% for slug, label in categories %}<button type="button" class="shop-chip{% if slug == active.category %} shop-chip--active{% endif %}" data-filter="{{ slug }}">{{ label }}</button>
+        {% endfor %}
       </div>
 
       <!-- Mobile filter trigger row (visible only on mobile) -->
@@ -266,7 +261,7 @@
       </div>
 
       <div class="shop-sort">
-        <span class="shop-count" id="shopCount">12 products</span>
+        <span class="shop-count" id="shopCount">{{ product_count }} product{{ product_count|pluralize }}</span>
         <label class="shop-sort-label" for="shopSort">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="9" y2="18"/></svg>
           <select id="shopSort">
@@ -305,34 +300,11 @@
           <span class="sdc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L2 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-4-4z"/><path d="M16 10a4 4 0 01-8 0"/></svg></span>
           <span>All Items</span>
         </button>
-        <button type="button" class="shop-drawer-chip" data-filter="electronics">
-          <span class="sdc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span>
-          <span>Electronics</span>
+        {% for slug, label in categories %}<button type="button" class="shop-drawer-chip{% if slug == active.category %} shop-drawer-chip--active{% endif %}" data-filter="{{ slug }}">
+          <span class="sdc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L2 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-4-4z"/><path d="M16 10a4 4 0 01-8 0"/></svg></span>
+          <span>{{ label }}</span>
         </button>
-        <button type="button" class="shop-drawer-chip" data-filter="fashion">
-          <span class="sdc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99 1.06l3.81-.94a4 4 0 013.53 3.4l.21 2.54a2 2 0 001.78 1.78l2.54.21a4 4 0 013.4 3.53l-.94 3.81a1 1 0 001.06.99l3.47.58a2 2 0 002.23-1.34z"/><path d="M12 13l-2 3H8l4-5z"/></svg></span>
-          <span>Fashion</span>
-        </button>
-        <button type="button" class="shop-drawer-chip" data-filter="smart-home">
-          <span class="sdc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
-          <span>Smart Home</span>
-        </button>
-        <button type="button" class="shop-drawer-chip" data-filter="kitchen">
-          <span class="sdc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h12l2 5H4l2-5z"/><path d="M12 13v8"/><path d="M8 21h8"/><path d="M4 21h16"/></svg></span>
-          <span>Kitchen</span>
-        </button>
-        <button type="button" class="shop-drawer-chip" data-filter="furniture">
-          <span class="sdc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span>
-          <span>Furniture</span>
-        </button>
-        <button type="button" class="shop-drawer-chip" data-filter="wearables">
-          <span class="sdc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
-          <span>Wearables</span>
-        </button>
-        <button type="button" class="shop-drawer-chip" data-filter="audio">
-          <span class="sdc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg></span>
-          <span>Audio</span>
-        </button>
+        {% endfor %}
       </div>
 
       <div class="shop-filter-panel-foot">
@@ -345,373 +317,43 @@
   <main class="shop-main">
     <div class="shop-main-inner">
       <div class="shop-grid" id="productGrid">
-<!-- 01 -->
-        <article class="product-card" data-cat="electronics" data-price="89.99" data-rating="4.8" data-name="wireless noise cancelling headphones">
-          <span class="pc-badge pc-badge--orange">TOP RATED</span>
+{% for p in products %}
+        <article class="product-card" data-detail-url="{% url 'product_detail' p.pk %}" data-cat="{{ p.category }}" data-price="{{ p.price|floatformat:2 }}" data-rating="{{ p.rating|floatformat:1 }}" data-name="{{ p.name|lower }}">
+          {% if p.badge_label %}<span class="pc-badge {{ p.badge_class }}">{{ p.badge_label }}</span>{% endif %}
           <button class="pc-heart" aria-label="Add to wishlist" aria-pressed="false">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
           </button>
           <div class="pc-media" style="background:linear-gradient(145deg,#EFF3FF,#C7D9FF)">
-            <img src="/static/img/headphones.jpg" alt="Wireless Noise-Cancelling Headphones" loading="lazy" />
+            <img src="{{ p.image_src }}" alt="{{ p.name }}" loading="lazy" onerror="this.onerror=null;this.src='/static/img/headphones.jpg'" />
             <div class="pc-actions">
               <button type="button" class="pc-add">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
                 Add to Cart
               </button>
-              <button type="button" class="pc-view" aria-label="Quick view">
+              <a href="{% url 'product_detail' p.pk %}" class="pc-view" aria-label="View product details">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
+              </a>
             </div>
           </div>
           <div class="pc-body">
-            <p class="pc-cat">Electronics</p>
-            <h3 class="pc-name">Wireless Noise-Cancelling Headphones</h3>
-            <p class="pc-store">TechVault Store</p>
+            <p class="pc-cat">{{ p.category_label }}</p>
+            <h3 class="pc-name"><a href="{% url 'product_detail' p.pk %}">{{ p.name }}</a></h3>
+            <p class="pc-store">{{ p.get_store_display }}</p>
             <div class="pc-meta">
-              <span class="pc-rating"><span class="stars">★★★★★</span><b>4.8</b><em>(2.4K)</em></span>
-              <span class="pc-chip">Free Ship</span>
+              <span class="pc-rating"><span class="stars">{{ p.stars }}</span><b>{{ p.rating|floatformat:1 }}</b><em>({{ p.reviews_display }})</em></span>
+              <span class="pc-chip">{{ p.card_chip }}</span>
             </div>
-            <div class="pc-price-row"><p class="pc-price">$89.99 <span class="pc-old">$129.99</span><span class="pc-equiv"><span class="pc-equiv-sep"></span><span class="pc-ngn">&#8358;134,985</span><span class="pc-pi">&#960;355,460.50</span></span></p></div>
+            <div class="pc-price-row"><p class="pc-price">${{ p.price|floatformat:2 }}{% if p.old_price %} <span class="pc-old">${{ p.old_price|floatformat:2 }}</span>{% endif %}<span class="pc-equiv"><span class="pc-equiv-sep"></span><span class="pc-ngn">{{ p.price_ngn }}</span><span class="pc-pi">{{ p.price_pi }}</span></span></p></div>
             <div class="pc-pills"><span class="pill-pi">Pi</span><span>PayPal</span><span>Paystack</span></div>
           </div>
         </article>
-
-        <!-- 02 -->
-        <article class="product-card" data-cat="fashion" data-price="129.00" data-rating="4.2" data-name="minimalist leather backpack">
-          <span class="pc-badge pc-badge--blue">FEATURED</span>
-          <button class="pc-heart" aria-label="Add to wishlist" aria-pressed="false">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
-          </button>
-          <div class="pc-media" style="background:linear-gradient(145deg,#E7E3F7,#B9A8E8)">
-            <img src="/static/img/backpack.jpg" alt="Minimalist Leather Backpack" loading="lazy" />
-            <div class="pc-actions">
-              <button type="button" class="pc-add">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
-                Add to Cart
-              </button>
-              <button type="button" class="pc-view" aria-label="Quick view">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-          </div>
-          <div class="pc-body">
-            <p class="pc-cat">Fashion</p>
-            <h3 class="pc-name">Minimalist Leather Backpack</h3>
-            <p class="pc-store">UrbanEdge Goods</p>
-            <div class="pc-meta">
-              <span class="pc-rating"><span class="stars">★★★★☆</span><b>4.2</b><em>(1.2K)</em></span>
-              <span class="pc-chip">Hot</span>
-            </div>
-            <div class="pc-price-row"><p class="pc-price">$129.00 <span class="pc-old">$159.00</span><span class="pc-equiv"><span class="pc-equiv-sep"></span><span class="pc-ngn">&#8358;193,500</span><span class="pc-pi">&#960;509,550.00</span></span></p></div>
-            <div class="pc-pills"><span class="pill-pi">Pi</span><span>PayPal</span><span>Paystack</span></div>
-          </div>
-        </article>
-
-<!-- 03 -->
-        <article class="product-card" data-cat="smart-home" data-price="89.99" data-rating="4.9" data-name="smart home security camera 4k">
-          <span class="pc-badge pc-badge--green">NEW</span>
-          <button class="pc-heart" aria-label="Add to wishlist" aria-pressed="false">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
-          </button>
-          <div class="pc-media" style="background:linear-gradient(145deg,#E3EDF7,#B9CDE4)">
-            <img src="/static/img/camera.jpg" alt="Smart Home Security Camera 4K" loading="lazy" />
-            <div class="pc-actions">
-              <button type="button" class="pc-add">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
-                Add to Cart
-              </button>
-              <button type="button" class="pc-view" aria-label="Quick view">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-          </div>
-          <div class="pc-body">
-            <p class="pc-cat">Smart Home</p>
-            <h3 class="pc-name">Smart Home Security Camera 4K</h3>
-            <p class="pc-store">SafeHome Drops</p>
-            <div class="pc-meta">
-              <span class="pc-rating"><span class="stars">★★★★★</span><b>4.9</b><em>(948)</em></span>
-              <span class="pc-chip">Free Ship</span>
-            </div>
-            <div class="pc-price-row"><p class="pc-price">$89.99<span class="pc-equiv"><span class="pc-equiv-sep"></span><span class="pc-ngn">&#8358;134,985</span><span class="pc-pi">&#960;355,460.50</span></span></p></div>
-            <div class="pc-pills"><span class="pill-pi">Pi</span><span>PayPal</span><span>Paystack</span></div>
-          </div>
-        </article>
-
-        <!-- 04 -->
-        <article class="product-card" data-cat="kitchen" data-price="24.99" data-rating="4.3" data-name="stainless insulated tumbler">
-          <span class="pc-badge pc-badge--purple">BEST SELLER</span>
-          <button class="pc-heart" aria-label="Add to wishlist" aria-pressed="false">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
-          </button>
-          <div class="pc-media" style="background:linear-gradient(145deg,#FDEFF2,#F6C9D4)">
-            <img src="/static/img/mug.jpg" alt="Stainless Insulated Tumbler" loading="lazy" />
-            <div class="pc-actions">
-              <button type="button" class="pc-add">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
-                Add to Cart
-              </button>
-              <button type="button" class="pc-view" aria-label="Quick view">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-          </div>
-          <div class="pc-body">
-            <p class="pc-cat">Kitchen</p>
-            <h3 class="pc-name">Stainless Insulated Tumbler</h3>
-            <p class="pc-store">EcoCupMarket</p>
-            <div class="pc-meta">
-              <span class="pc-rating"><span class="stars">★★★★☆</span><b>4.3</b><em>(5.2K)</em></span>
-              <span class="pc-chip">Low Price</span>
-            </div>
-            <div class="pc-price-row"><p class="pc-price">$24.99 <span class="pc-old">$34.99</span><span class="pc-equiv"><span class="pc-equiv-sep"></span><span class="pc-ngn">&#8358;37,485</span><span class="pc-pi">&#960;98,710.50</span></span></p></div>
-            <div class="pc-pills"><span class="pill-pi">Pi</span><span>PayPal</span><span>Paystack</span></div>
-          </div>
-        </article>
-<!-- 05 -->
-        <article class="product-card" data-cat="furniture" data-price="199.00" data-rating="4.7" data-name="ergonomic office chair">
-          <span class="pc-badge pc-badge--orange">TOP RATED</span>
-          <button class="pc-heart" aria-label="Add to wishlist" aria-pressed="false">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
-          </button>
-          <div class="pc-media" style="background:linear-gradient(145deg,#EAF4EE,#BFDCC9)">
-            <img src="/static/img/chair.jpg" alt="Ergonomic Office Chair" loading="lazy" />
-            <div class="pc-actions">
-              <button type="button" class="pc-add">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
-                Add to Cart
-              </button>
-              <button type="button" class="pc-view" aria-label="Quick view">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-          </div>
-          <div class="pc-body">
-            <p class="pc-cat">Furniture</p>
-            <h3 class="pc-name">Ergonomic Office Chair</h3>
-            <p class="pc-store">ComfortWorks Studio</p>
-            <div class="pc-meta">
-              <span class="pc-rating"><span class="stars">★★★★★</span><b>4.7</b><em>(3.1K)</em></span>
-              <span class="pc-chip">Free Ship</span>
-            </div>
-            <div class="pc-price-row"><p class="pc-price">$199.00 <span class="pc-old">$259.00</span><span class="pc-equiv"><span class="pc-equiv-sep"></span><span class="pc-ngn">&#8358;298,500</span><span class="pc-pi">&#960;786,050.00</span></span></p></div>
-            <div class="pc-pills"><span class="pill-pi">Pi</span><span>PayPal</span><span>Paystack</span></div>
-          </div>
-        </article>
-
-        <!-- 06 -->
-        <article class="product-card" data-cat="kitchen" data-price="32.99" data-rating="4.1" data-name="insulated travel tumblers 2 pack">
-          <span class="pc-badge pc-badge--green">NEW</span>
-          <button class="pc-heart" aria-label="Add to wishlist" aria-pressed="false">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
-          </button>
-          <div class="pc-media" style="background:linear-gradient(145deg,#F2F6FE,#CFD9F9)">
-            <img src="/static/img/tumblers.jpg" alt="Insulated Travel Tumblers (2-Pack)" loading="lazy" />
-            <div class="pc-actions">
-              <button type="button" class="pc-add">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
-                Add to Cart
-              </button>
-              <button type="button" class="pc-view" aria-label="Quick view">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-          </div>
-          <div class="pc-body">
-            <p class="pc-cat">Kitchen</p>
-            <h3 class="pc-name">Insulated Travel Tumblers (2-Pack)</h3>
-            <p class="pc-store">EcoCupMarket</p>
-            <div class="pc-meta">
-              <span class="pc-rating"><span class="stars">★★★★☆</span><b>4.1</b><em>(1.8K)</em></span>
-              <span class="pc-chip">Hot</span>
-            </div>
-            <div class="pc-price-row"><p class="pc-price">$32.99<span class="pc-equiv"><span class="pc-equiv-sep"></span><span class="pc-ngn">&#8358;49,485</span><span class="pc-pi">&#960;130,310.50</span></span></p></div>
-            <div class="pc-pills"><span class="pill-pi">Pi</span><span>PayPal</span><span>Paystack</span></div>
-          </div>
-        </article>
-<!-- 07 -->
-        <article class="product-card" data-cat="electronics" data-price="249.00" data-rating="4.9" data-name="airpods pro max headphones">
-          <span class="pc-badge pc-badge--orange">TOP RATED</span>
-          <button class="pc-heart" aria-label="Add to wishlist" aria-pressed="false">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
-          </button>
-          <div class="pc-media" style="background:linear-gradient(145deg,#E1E7F4,#A9B8D9)">
-            <img src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=500&q=80&auto=format&fit=crop" alt="AirPods Pro Max" loading="lazy" onerror="this.onerror=null;this.src='img/headphones.jpg'" />
-            <div class="pc-actions">
-              <button type="button" class="pc-add">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
-                Add to Cart
-              </button>
-              <button type="button" class="pc-view" aria-label="Quick view">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-          </div>
-          <div class="pc-body">
-            <p class="pc-cat">Electronics</p>
-            <h3 class="pc-name">AirPods Pro Max Headphones</h3>
-            <p class="pc-store">TechVault Store</p>
-            <div class="pc-meta">
-              <span class="pc-rating"><span class="stars">★★★★★</span><b>4.9</b><em>(4.7K)</em></span>
-              <span class="pc-chip">Free Ship</span>
-            </div>
-            <div class="pc-price-row"><p class="pc-price">$249.00 <span class="pc-old">$299.00</span><span class="pc-equiv"><span class="pc-equiv-sep"></span><span class="pc-ngn">&#8358;373,500</span><span class="pc-pi">&#960;983,550.00</span></span></p></div>
-            <div class="pc-pills"><span class="pill-pi">Pi</span><span>PayPal</span><span>Paystack</span></div>
-          </div>
-        </article>
-
-        <!-- 08 -->
-        <article class="product-card" data-cat="wearables" data-price="189.00" data-rating="4.4" data-name="smart watch series x">
-          <span class="pc-badge pc-badge--blue">FEATURED</span>
-          <button class="pc-heart" aria-label="Add to wishlist" aria-pressed="false">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
-          </button>
-          <div class="pc-media" style="background:linear-gradient(145deg,#EDE9FB,#C2B5ED)">
-            <img src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=500&q=80&auto=format&fit=crop" alt="Smart Watch Series X" loading="lazy" onerror="this.onerror=null;this.src='img/camera.jpg'" />
-            <div class="pc-actions">
-              <button type="button" class="pc-add">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
-                Add to Cart
-              </button>
-              <button type="button" class="pc-view" aria-label="Quick view">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-          </div>
-          <div class="pc-body">
-            <p class="pc-cat">Wearables</p>
-            <h3 class="pc-name">Smart Watch Series X</h3>
-            <p class="pc-store">FitLife Pro</p>
-            <div class="pc-meta">
-              <span class="pc-rating"><span class="stars">★★★★☆</span><b>4.4</b><em>(2.9K)</em></span>
-              <span class="pc-chip">Trending</span>
-            </div>
-            <div class="pc-price-row"><p class="pc-price">$189.00<span class="pc-equiv"><span class="pc-equiv-sep"></span><span class="pc-ngn">&#8358;283,500</span><span class="pc-pi">&#960;746,550.00</span></span></p></div>
-            <div class="pc-pills"><span class="pill-pi">Pi</span><span>PayPal</span><span>Paystack</span></div>
-          </div>
-        </article>
-<!-- 09 -->
-        <article class="product-card" data-cat="electronics" data-price="79.99" data-rating="4.5" data-name="mechanical rgb keyboard">
-          <span class="pc-badge pc-badge--green">NEW</span>
-          <button class="pc-heart" aria-label="Add to wishlist" aria-pressed="false">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
-          </button>
-          <div class="pc-media" style="background:linear-gradient(145deg,#E7E1F9,#B8A6E9)">
-            <img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&q=80&auto=format&fit=crop" alt="Mechanical RGB Keyboard" loading="lazy" onerror="this.onerror=null;this.src='img/headphones.jpg'" />
-            <div class="pc-actions">
-              <button type="button" class="pc-add">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
-                Add to Cart
-              </button>
-              <button type="button" class="pc-view" aria-label="Quick view">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-          </div>
-          <div class="pc-body">
-            <p class="pc-cat">Electronics</p>
-            <h3 class="pc-name">Mechanical RGB Keyboard</h3>
-            <p class="pc-store">KeyCraft Gear</p>
-            <div class="pc-meta">
-              <span class="pc-rating"><span class="stars">★★★★☆</span><b>4.5</b><em>(1.5K)</em></span>
-              <span class="pc-chip">Hot</span>
-            </div>
-            <div class="pc-price-row"><p class="pc-price">$79.99 <span class="pc-old">$109.99</span><span class="pc-equiv"><span class="pc-equiv-sep"></span><span class="pc-ngn">&#8358;119,985</span><span class="pc-pi">&#960;315,960.50</span></span></p></div>
-            <div class="pc-pills"><span class="pill-pi">Pi</span><span>PayPal</span><span>Paystack</span></div>
-          </div>
-        </article>
-
-        <!-- 10 -->
-        <article class="product-card" data-cat="audio" data-price="59.99" data-rating="4.8" data-name="wireless earbuds duo">
-          <span class="pc-badge pc-badge--purple">BEST SELLER</span>
-          <button class="pc-heart" aria-label="Add to wishlist" aria-pressed="false">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
-          </button>
-          <div class="pc-media" style="background:linear-gradient(145deg,#E6F3EE,#B9DCCD)">
-            <img src="https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500&q=80&auto=format&fit=crop" alt="Wireless Earbuds Duo" loading="lazy" onerror="this.onerror=null;this.src='img/headphones.jpg'" />
-            <div class="pc-actions">
-              <button type="button" class="pc-add">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
-                Add to Cart
-              </button>
-              <button type="button" class="pc-view" aria-label="Quick view">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-          </div>
-          <div class="pc-body">
-            <p class="pc-cat">Audio</p>
-            <h3 class="pc-name">Wireless Earbuds Duo</h3>
-            <p class="pc-store">SoundSphere Lab</p>
-            <div class="pc-meta">
-              <span class="pc-rating"><span class="stars">★★★★★</span><b>4.8</b><em>(8.3K)</em></span>
-              <span class="pc-chip">Free Ship</span>
-            </div>
-            <div class="pc-price-row"><p class="pc-price">$59.99<span class="pc-equiv"><span class="pc-equiv-sep"></span><span class="pc-ngn">&#8358;89,985</span><span class="pc-pi">&#960;236,960.50</span></span></p></div>
-            <div class="pc-pills"><span class="pill-pi">Pi</span><span>PayPal</span><span>Paystack</span></div>
-          </div>
-        </article>
-<!-- 11 -->
-        <article class="product-card" data-cat="audio" data-price="45.99" data-rating="4.2" data-name="portable bluetooth speaker">
-          <span class="pc-badge pc-badge--blue">FEATURED</span>
-          <button class="pc-heart" aria-label="Add to wishlist" aria-pressed="false">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
-          </button>
-          <div class="pc-media" style="background:linear-gradient(145deg,#F1EADA,#DDC9A3)">
-            <img src="https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500&q=80&auto=format&fit=crop" alt="Portable Bluetooth Speaker" loading="lazy" onerror="this.onerror=null;this.src='img/headphones.jpg'" />
-            <div class="pc-actions">
-              <button type="button" class="pc-add">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
-                Add to Cart
-              </button>
-              <button type="button" class="pc-view" aria-label="Quick view">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-          </div>
-          <div class="pc-body">
-            <p class="pc-cat">Audio</p>
-            <h3 class="pc-name">Portable Bluetooth Speaker</h3>
-            <p class="pc-store">BassDrop Audio</p>
-            <div class="pc-meta">
-              <span class="pc-rating"><span class="stars">★★★★☆</span><b>4.2</b><em>(2.1K)</em></span>
-              <span class="pc-chip">Trending</span>
-            </div>
-            <div class="pc-price-row"><p class="pc-price">$45.99 <span class="pc-old">$59.99</span><span class="pc-equiv"><span class="pc-equiv-sep"></span><span class="pc-ngn">&#8358;68,985</span><span class="pc-pi">&#960;181,660.50</span></span></p></div>
-            <div class="pc-pills"><span class="pill-pi">Pi</span><span>PayPal</span><span>Paystack</span></div>
-          </div>
-        </article>
-
-        <!-- 12 -->
-        <article class="product-card" data-cat="fashion" data-price="19.99" data-rating="3.9" data-name="classic canvas tote bag">
-          <span class="pc-badge pc-badge--green">NEW</span>
-          <button class="pc-heart" aria-label="Add to wishlist" aria-pressed="false">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
-          </button>
-          <div class="pc-media" style="background:linear-gradient(145deg,#F2ECDD,#DCCBA8)">
-            <img src="https://images.unsplash.com/photo-1559563458-527698bf5295?w=500&q=80&auto=format&fit=crop" alt="Classic Canvas Tote Bag" loading="lazy" onerror="this.onerror=null;this.src='img/backpack.jpg'" />
-            <div class="pc-actions">
-              <button type="button" class="pc-add">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
-                Add to Cart
-              </button>
-              <button type="button" class="pc-view" aria-label="Quick view">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-          </div>
-          <div class="pc-body">
-            <p class="pc-cat">Fashion</p>
-            <h3 class="pc-name">Classic Canvas Tote Bag</h3>
-            <p class="pc-store">UrbanEdge Goods</p>
-            <div class="pc-meta">
-              <span class="pc-rating"><span class="stars">★★★☆☆</span><b>3.9</b><em>(640)</em></span>
-              <span class="pc-chip">Low Price</span>
-            </div>
-            <div class="pc-price-row"><p class="pc-price">$19.99<span class="pc-equiv"><span class="pc-equiv-sep"></span><span class="pc-ngn">&#8358;29,985</span><span class="pc-pi">&#960;78,960.50</span></span></p></div>
-            <div class="pc-pills"><span class="pill-pi">Pi</span><span>PayPal</span><span>Paystack</span></div>
-          </div>
-        </article>
+        {% empty %}
+        <div style="grid-column:1/-1;text-align:center;padding:80px 20px;color:#5b6b84">
+          <h3 style="font-size:22px;margin-bottom:8px;color:#0F172A">No products yet</h3>
+          <p style="margin-bottom:18px">Live products from sellers appear here automatically.</p>
+          <a href="/dashboards/seller/products/add/" style="display:inline-flex;align-items:center;gap:8px;background:#1F64FF;color:#fff;padding:12px 22px;border-radius:999px;font-weight:700;text-decoration:none">+ Add a product</a>
+        </div>
+        {% endfor %}
 </div><!-- /shop-grid -->
 
       <div class="shop-empty" id="shopEmpty" hidden>
@@ -954,16 +596,170 @@
     })();
   </script>
 
+  <!-- WISHLIST AUTH MODAL -->
+  <div class="wl-modal-backdrop" id="wlModalBackdrop" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="wlModalTitle">
+    <div class="wl-modal">
+      <button class="wl-modal__close" id="wlModalClose" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+      </button>
+
+      <!-- heart icon -->
+      <div class="wl-modal__icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+      </div>
+
+      <h2 class="wl-modal__title" id="wlModalTitle">Save to Wishlist</h2>
+      <p class="wl-modal__sub">Sign in or create a free buyer account to save products and track them in your dashboard.</p>
+
+      <div class="wl-modal__actions">
+        <a href="/signin/?next=/shop/" class="wl-modal__btn wl-modal__btn--primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          Sign in
+        </a>
+        <a href="/signup/?role=buyer&next=/shop/" class="wl-modal__btn wl-modal__btn--secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+          Create buyer account
+        </a>
+      </div>
+
+      <p class="wl-modal__note">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11.2 14.2 15 10"/></svg>
+        Free forever &nbsp;·&nbsp; Escrow-protected &nbsp;·&nbsp; No spam
+      </p>
+    </div>
+  </div>
+
   <script>
-    /* ── Shop: wishlist hearts ── */
-    document.querySelectorAll('.pc-heart').forEach(function (h) {
-      h.addEventListener('click', function () {
-        var on = h.classList.toggle('is-wish');
-        h.setAttribute('aria-pressed', on ? 'true' : 'false');
+    /* ── Shop: wishlist hearts — AJAX backed for logged-in buyers ── */
+    (function () {
+      var CSRF = (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || '';
+      var TOGGLE_URL = '/dashboards/wishlist/toggle/';
+      var backdrop = document.getElementById('wlModalBackdrop');
+      var modalClose = document.getElementById('wlModalClose');
+
+      /* ── Modal helpers ── */
+      function openModal() {
+        backdrop.classList.add('is-open');
+        backdrop.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        /* trap focus on the first button inside the modal */
+        var firstBtn = backdrop.querySelector('a, button');
+        if (firstBtn) setTimeout(function () { firstBtn.focus(); }, 80);
+      }
+      function closeModal() {
+        backdrop.classList.remove('is-open');
+        backdrop.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      if (modalClose) modalClose.addEventListener('click', closeModal);
+      backdrop.addEventListener('click', function (e) {
+        if (e.target === backdrop) closeModal();
       });
-    });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeModal();
+      });
+
+      /* Build a URL-friendly slug from the product name */
+      function toSlug(str) {
+        return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      }
+
+      /* Extract the plain-text badge from a card (if any) */
+      function getBadge(card) {
+        var b = card.querySelector('.pc-badge');
+        return b ? b.textContent.trim() : '';
+      }
+
+      /* Extract the display price — first text node inside .pc-price */
+      function getPrice(card) {
+        var el = card.querySelector('.pc-price');
+        if (!el) return '';
+        for (var i = 0; i < el.childNodes.length; i++) {
+          if (el.childNodes[i].nodeType === 3) {
+            var t = el.childNodes[i].textContent.trim();
+            if (t) return t;
+          }
+        }
+        return el.textContent.trim().split('\n')[0].trim();
+      }
+
+      function getOldPrice(card) {
+        var el = card.querySelector('.pc-old');
+        return el ? el.textContent.trim() : '';
+      }
+
+      function getImageSrc(card) {
+        var img = card.querySelector('.pc-media img');
+        if (!img) return { url: '', stat: '' };
+        var src = img.getAttribute('src') || '';
+        if (src.startsWith('/static/')) return { url: '', stat: src };
+        return { url: src, stat: '' };
+      }
+
+      document.querySelectorAll('.pc-heart').forEach(function (h) {
+        var card = h.closest('.product-card');
+        if (!card) return;
+
+        var name = (card.querySelector('.pc-name') || {}).textContent || card.dataset.name || '';
+        var slug = toSlug(name) || toSlug(card.dataset.name || '');
+
+        h.addEventListener('click', function () {
+          var payload = {
+            slug: slug,
+            name: name.trim(),
+            store_name: (card.querySelector('.pc-store') || {}).textContent || '',
+            category: (card.querySelector('.pc-cat') || {}).textContent || '',
+            price: getPrice(card),
+            old_price: getOldPrice(card),
+            badge: getBadge(card),
+          };
+          var imgs = getImageSrc(card);
+          payload.image_url = imgs.url;
+          payload.image_static = imgs.stat;
+
+          fetch(TOGGLE_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': CSRF,
+              'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: JSON.stringify(payload),
+          })
+          .then(function (r) {
+            if (r.status === 403 || r.status === 401) {
+              /* Not a buyer / not authenticated — show modal */
+              openModal();
+              return null;
+            }
+            return r.json();
+          })
+          .then(function (data) {
+            if (!data) return;
+            var on = data.saved;
+            h.classList.toggle('is-wish', on);
+            h.setAttribute('aria-pressed', on ? 'true' : 'false');
+            h.classList.add('wish-pulse');
+            setTimeout(function () { h.classList.remove('wish-pulse'); }, 500);
+          })
+          .catch(function () {
+            /* Network fail or not logged in at all — show modal */
+            openModal();
+          });
+        });
+      });
+    })();
 
     /* ── Shop: add-to-cart (awesome bump on the navbar badge) ── */
+    document.querySelectorAll('.product-card').forEach(function (card) {
+      card.addEventListener('click', function (event) {
+        if (event.target.closest('button, a, input, label')) return;
+        if (card.dataset.detailUrl) window.location.href = card.dataset.detailUrl;
+      });
+      card.style.cursor = 'pointer';
+    });
+
     document.querySelectorAll('.pc-add').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var badge = document.querySelector('.cart-badge');

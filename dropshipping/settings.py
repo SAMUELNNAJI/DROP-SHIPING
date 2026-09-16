@@ -265,7 +265,7 @@ if not _email_backend:
     # failing a deploy because no mailbox has been configured yet.
     _email_backend = (
         'django.core.mail.backends.smtp.EmailBackend'
-        if os.environ.get('EMAIL_HOST')
+        if os.environ.get('ZEPTOMAIL_SMTP_PASSWORD') or os.environ.get('EMAIL_HOST')
         else 'django.core.mail.backends.console.EmailBackend'
     )
 
@@ -277,12 +277,17 @@ MAILERS = {
 
 if _email_backend.endswith('smtp.EmailBackend'):
     MAILERS['default']['OPTIONS'] = {
-        'host': os.environ.get('EMAIL_HOST', 'localhost'),
-        'port': int(os.environ.get('EMAIL_PORT', '587')),
-        'username': os.environ.get('EMAIL_HOST_USER', ''),
-        'password': os.environ.get('EMAIL_HOST_PASSWORD', ''),
-        'use_tls': env_bool('EMAIL_USE_TLS', default=True),
+        'host': os.environ.get('ZEPTOMAIL_SMTP_HOST', os.environ.get('EMAIL_HOST', 'smtp.zeptomail.com')),
+        'port': int(os.environ.get('ZEPTOMAIL_SMTP_PORT', os.environ.get('EMAIL_PORT', '587'))),
+        'username': os.environ.get('ZEPTOMAIL_SMTP_USERNAME', os.environ.get('EMAIL_HOST_USER', 'emailapikey')),
+        'password': os.environ.get('ZEPTOMAIL_SMTP_PASSWORD', os.environ.get('EMAIL_HOST_PASSWORD', '')),
+        'use_tls': env_bool('ZEPTOMAIL_SMTP_USE_TLS', default=True),
     }
+
+# Django's password-reset views use these standard settings.  For ZeptoMail,
+# set ZEPTOMAIL_SMTP_PASSWORD to the SMTP password from its SMTP/API page and
+# ZEPTOMAIL_FROM_EMAIL to an address in your verified sending domain.
+DEFAULT_FROM_EMAIL = os.environ.get('ZEPTOMAIL_FROM_EMAIL', os.environ.get('DEFAULT_FROM_EMAIL', ''))
 
 
 # Production hardening — applied whenever DEBUG is off (i.e. on Render).

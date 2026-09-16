@@ -1,5 +1,13 @@
 from django import forms
-from .models import SellerVerification
+from .models import BuyerAddress, SellerVerification
+
+
+class BuyerAddressForm(forms.ModelForm):
+    class Meta:
+        model = BuyerAddress
+        fields = ("label", "recipient_name", "phone", "line1", "line2", "city", "state", "postal_code", "country", "is_default")
+        widgets = {name: forms.TextInput(attrs={"class": "ff-input"}) for name in ("label", "recipient_name", "phone", "line1", "line2", "city", "state", "postal_code", "country")}
+        widgets["is_default"] = forms.CheckboxInput(attrs={"class": "ff-check"})
 
 
 class SellerVerificationForm(forms.ModelForm):

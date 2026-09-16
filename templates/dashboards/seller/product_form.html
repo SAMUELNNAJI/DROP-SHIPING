@@ -1,0 +1,431 @@
+{% load static %}
+<div class="dashboard-page pform-page" data-page-title="{% if product %}Edit Product{% else %}Add Product{% endif %}">
+
+  <!-- ── page hero ── -->
+  <div class="pform-hero">
+    <div class="pform-hero__left">
+      <a class="pform-back" href="/dashboards/seller/products/" data-dashboard-link>
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Back to catalog
+      </a>
+      <h2>{% if product %}Edit product{% else %}Add a new product{% endif %}</h2>
+      <p>Fill in the details below — they appear 1:1 on the live shop card for buyers.</p>
+    </div>
+    <div class="pform-hero__right">
+      <span class="pform-step pform-step--done">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        Store verified
+      </span>
+      <span class="pform-step">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8.5 12 3 3 8.5v7L12 21l9-5.5z"/><path d="m3 8.5 9 5.5 9-5.5M12 21v-7"/></svg>
+        {% if product %}Editing "{{ product.name|truncatechars:22 }}"{% else %}New product{% endif %}
+      </span>
+    </div>
+  </div>
+
+  <!-- ── main form ── -->
+  <form class="pform-grid" method="post" enctype="multipart/form-data"
+        action="{% if product %}/dashboards/seller/products/{{ product.pk }}/edit/{% else %}/dashboards/seller/products/add/{% endif %}">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="pform-error-banner">
+      <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+      {{ form.non_field_errors.0 }}
+    </div>
+    {% endif %}
+
+    <!-- ══════════ LEFT COLUMN ══════════ -->
+    <div class="pform-col pform-col--main">
+
+      <!-- card: basic info -->
+      <div class="pform-card">
+        <div class="pform-card__head">
+          <span class="pform-card__icon" style="--ci:#2456e6;--cs:#eaf0ff">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+          </span>
+          <div>
+            <h3>Basic info</h3>
+            <p>What the buyer sees in the product title and store tag.</p>
+          </div>
+        </div>
+        <div class="pform-card__body">
+          <div class="ff-field">
+            <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+            {{ form.name }}
+            {% if form.name.errors %}<span class="ff-err"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>{{ form.name.errors.0 }}</span>{% endif %}
+          </div>
+          <div class="ff-field">
+            <label for="{{ form.store_name.id_for_label }}">{{ form.store_name.label }}</label>
+            {{ form.store_name }}
+            {% if form.store_name.errors %}<span class="ff-err">{{ form.store_name.errors.0 }}</span>{% endif %}
+          </div>
+          <div class="ff-field">
+            <label for="{{ form.description.id_for_label }}">Description</label>
+            {{ form.description }}
+            <span class="ff-hint">Key features, materials, size, delivery notes — buyers see this in the quick-view drawer.</span>
+            {% if form.description.errors %}<span class="ff-err">{{ form.description.errors.0 }}</span>{% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- card: pricing & inventory -->
+      <div class="pform-card">
+        <div class="pform-card__head">
+          <span class="pform-card__icon" style="--ci:#0ca678;--cs:#e2f8f0">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M17 6.5c0-1.6-2.2-2.5-5-2.5S7 5.1 7 6.9c0 4.4 10 2 10 6.6 0 1.8-2.2 2.9-5 2.9s-5-1-5-2.9"/></svg>
+          </span>
+          <div>
+            <h3>Pricing &amp; inventory</h3>
+            <p>Set your selling price, optional compare-at price, and available stock.</p>
+          </div>
+        </div>
+        <div class="pform-card__body">
+          <div class="ff-grid">
+            <div class="ff-field">
+              <label for="{{ form.price.id_for_label }}">{{ form.price.label }} <span class="ff-req">*</span></label>
+              <div class="ff-prefix">
+                <span class="ff-prefix__sym">$</span>
+                {{ form.price }}
+              </div>
+              {% if form.price.errors %}<span class="ff-err">{{ form.price.errors.0 }}</span>{% endif %}
+            </div>
+            <div class="ff-field">
+              <label for="{{ form.old_price.id_for_label }}">{{ form.old_price.label }}</label>
+              <div class="ff-prefix">
+                <span class="ff-prefix__sym">$</span>
+                {{ form.old_price }}
+              </div>
+              <span class="ff-hint">Crossed-out price shown on the card — triggers the SALE badge automatically.</span>
+              {% if form.old_price.errors %}<span class="ff-err">{{ form.old_price.errors.0 }}</span>{% endif %}
+            </div>
+          </div>
+          <div class="ff-grid">
+            <div class="ff-field">
+              <label for="{{ form.stock.id_for_label }}">Stock qty <span class="ff-req">*</span></label>
+              {{ form.stock }}
+              {% if form.stock.errors %}<span class="ff-err">{{ form.stock.errors.0 }}</span>{% endif %}
+            </div>
+            <div class="ff-field">
+              <label for="{{ form.badge.id_for_label }}">{{ form.badge.label }}</label>
+              {{ form.badge }}
+              <span class="ff-hint">Leave on Auto to let DropHub pick the best badge.</span>
+              {% if form.badge.errors %}<span class="ff-err">{{ form.badge.errors.0 }}</span>{% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- card: product image -->
+      <div class="pform-card">
+        <div class="pform-card__head">
+          <span class="pform-card__icon" style="--ci:#7048e8;--cs:#ede9fb">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+          </span>
+          <div>
+            <h3>Product image</h3>
+            <p>Upload a photo or paste a URL — the image renders directly on the shop card.</p>
+          </div>
+        </div>
+        <div class="pform-card__body">
+
+          <!-- dropzone upload -->
+          <div class="ff-field">
+            <label>Upload a photo</label>
+            <div class="pform-dropzone" id="pfDropzone">
+              {{ form.image }}
+              <div class="pform-dropzone__content" id="pfDropContent">
+                <span class="pform-dropzone__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </span>
+                <span class="pform-dropzone__title">Drag &amp; drop or click to upload</span>
+                <span class="pform-dropzone__hint">JPG, PNG, WebP · max 10 MB</span>
+              </div>
+              <div class="pform-dropzone__chosen" id="pfChosen" hidden>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span id="pfChosenName">file.jpg</span>
+                <button type="button" class="pform-dropzone__clear" id="pfClear" aria-label="Remove file">×</button>
+              </div>
+            </div>
+            {% if form.image.errors %}<span class="ff-err">{{ form.image.errors.0 }}</span>{% endif %}
+          </div>
+
+          <!-- existing image preview (edit mode) -->
+          {% if product and product.image %}
+          <div class="pform-current-img">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+            <div>
+              <strong>Current photo</strong>
+              <span>Upload a new file above to replace it.</span>
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- divider -->
+          <div class="pform-or">
+            <span>or paste an image URL</span>
+          </div>
+
+          <!-- URL fallback -->
+          <div class="ff-field" style="margin-bottom:0">
+            <label for="{{ form.image_url.id_for_label }}">{{ form.image_url.label }}</label>
+            {{ form.image_url }}
+            <span class="ff-hint">Used when no file is uploaded — great for Unsplash or CDN links.</span>
+            {% if form.image_url.errors %}<span class="ff-err">{{ form.image_url.errors.0 }}</span>{% endif %}
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /left col -->
+
+    <!-- ══════════ RIGHT COLUMN ══════════ -->
+    <div class="pform-col pform-col--side">
+
+      <!-- card: visibility & category -->
+      <div class="pform-card">
+        <div class="pform-card__head">
+          <span class="pform-card__icon" style="--ci:#9a6200;--cs:#fff4dd">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          </span>
+          <div>
+            <h3>Visibility</h3>
+            <p>Control when buyers can see this product.</p>
+          </div>
+        </div>
+        <div class="pform-card__body">
+          <div class="ff-field">
+            <label for="{{ form.status.id_for_label }}">{{ form.status.label }}</label>
+            {{ form.status }}
+            <span class="ff-hint">Set to <strong>Live</strong> to publish immediately, or <strong>Draft</strong> to save and publish later.</span>
+            {% if form.status.errors %}<span class="ff-err">{{ form.status.errors.0 }}</span>{% endif %}
+          </div>
+          <div class="ff-field" style="margin-bottom:0">
+            <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+            {{ form.category }}
+            {% if form.category.errors %}<span class="ff-err">{{ form.category.errors.0 }}</span>{% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- card: publish actions -->
+      <div class="pform-card pform-card--actions">
+        <div class="pform-card__body" style="display:flex;flex-direction:column;gap:10px">
+          <button class="pform-submit" type="submit">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              {% if product %}<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+              {% else %}<path d="M21 8.5 12 3 3 8.5v7L12 21l9-5.5z"/><path d="m3 8.5 9 5.5 9-5.5M12 21v-7"/>{% endif %}
+            </svg>
+            {% if product %}Save changes{% else %}Publish product{% endif %}
+          </button>
+          <a class="pform-cancel" href="/dashboards/seller/products/" data-dashboard-link>
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+            Discard &amp; go back
+          </a>
+        </div>
+      </div>
+
+      <!-- tips card -->
+      <div class="pform-card pform-card--tips">
+        <div class="pform-card__head" style="border:0;padding-bottom:12px">
+          <span class="pform-card__icon" style="--ci:#e5484d;--cs:#ffecec">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+          </span>
+          <div><h3>Quick tips</h3></div>
+        </div>
+        <div class="pform-card__body" style="padding-top:0">
+          <div class="pform-tip">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Use a <b>square photo</b> — it fits the card perfectly.
+          </div>
+          <div class="pform-tip">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Add an <b>old price</b> to trigger the SALE badge &amp; show a discount.
+          </div>
+          <div class="pform-tip">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Stock ≤ 5 automatically flags <b>Low Stock</b> in your catalog.
+          </div>
+          <div class="pform-tip">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Buyers only see <b>Live</b> products — use Draft while you finish editing.
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /right col -->
+
+  </form>
+</div>
+
+<style>
+/* ═══ Product form page — scoped styles ═══ */
+.pform-page{max-width:none!important}
+
+/* hero */
+.pform-hero{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px;padding:28px 0 24px;border-bottom:1px solid var(--sbd2)}
+.pform-back{display:inline-flex;align-items:center;gap:7px;color:var(--sblue);font-size:12.5px;font-weight:800;text-decoration:none;margin-bottom:10px;letter-spacing:.02em}
+.pform-back .sic{width:14px;height:14px}
+.pform-hero__left h2{margin:0;font-size:26px;letter-spacing:-.04em}
+.pform-hero__left p{margin:6px 0 0;color:var(--sm);font-size:13.5px}
+.pform-hero__right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pform-step{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;padding:7px 12px;border-radius:20px;background:#eef2f8;color:#5b6b84;border:1px solid var(--sbd)}
+.pform-step .sic{width:14px;height:14px}
+.pform-step--done{background:var(--sgreenSoft);color:#0a7a57;border-color:#bfe9d8}
+
+/* 2-column layout */
+.pform-grid{display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start;width:100%}
+.pform-col{display:flex;flex-direction:column;gap:20px}
+
+/* error banner */
+.pform-error-banner{grid-column:1/-1;display:flex;align-items:center;gap:10px;padding:13px 16px;background:#fff1f1;border:1px solid #fbd0d0;border-radius:14px;color:#b4232a;font-size:13.5px;font-weight:700}
+.pform-error-banner .sic{width:18px;height:18px;flex-shrink:0}
+
+/* cards */
+.pform-card{background:#fff;border:1px solid var(--sbd);border-radius:var(--sr);box-shadow:var(--ssh);overflow:hidden}
+.pform-card--actions{background:linear-gradient(135deg,#f4f7ff,#eaf0ff);border-color:#d4e2ff}
+.pform-card--tips{background:linear-gradient(135deg,#fffbf0,#fff4dd);border-color:#f5d9a3}
+.pform-card__head{display:flex;align-items:flex-start;gap:13px;padding:18px 20px 14px;border-bottom:1px solid var(--sbd2)}
+.pform-card__icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--cs,#eaf0ff);color:var(--ci,#2456e6);flex-shrink:0}
+.pform-card__icon .sic{width:18px;height:18px}
+.pform-card__head h3{margin:0;font-size:14.5px;font-weight:800;letter-spacing:-.02em}
+.pform-card__head p{margin:3px 0 0;font-size:12px;color:var(--sm)}
+.pform-card__body{padding:20px}
+
+/* form fields */
+.ff-field{margin-bottom:16px}
+.ff-field:last-child,.ff-field[style*="margin-bottom:0"]{margin-bottom:0}
+.ff-field label{display:block;font-size:12.5px;font-weight:800;margin-bottom:7px;color:var(--st)}
+.ff-req{color:var(--sblue);font-size:13px}
+.ff-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ff-input{width:100%;min-height:46px;border:1px solid var(--sbd);border-radius:12px;padding:0 13px;font:inherit;font-size:13.5px;background:#fbfcfe;color:var(--st);outline:0;transition:border-color .2s,box-shadow .2s,background .2s;box-sizing:border-box}
+.ff-input:focus{border-color:var(--sblue);background:#fff;box-shadow:0 0 0 3.5px rgba(36,86,230,.10)}
+select.ff-input{cursor:pointer;padding-right:32px;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b7a90' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center}
+textarea.ff-input{min-height:110px;resize:vertical;padding:12px 13px}
+.ff-hint{display:block;margin-top:6px;font-size:12px;color:var(--sm);line-height:1.55}
+.ff-err{display:flex;align-items:center;gap:5px;margin-top:6px;font-size:12px;font-weight:700;color:#b4232a}
+.ff-err .sic{width:14px;height:14px;flex-shrink:0}
+
+/* price prefix */
+.ff-prefix{position:relative}
+.ff-prefix__sym{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-weight:800;font-size:14px;color:#5b6b84;pointer-events:none}
+.ff-prefix .ff-input{padding-left:30px}
+
+/* dropzone */
+.pform-dropzone{position:relative;border:2px dashed #c4d3f0;border-radius:16px;cursor:pointer;background:rgba(234,240,255,.35);transition:all .2s;overflow:hidden}
+.pform-dropzone:hover,.pform-dropzone:focus-within{border-color:var(--sblue);background:rgba(234,240,255,.65);box-shadow:0 0 0 4px rgba(36,86,230,.09)}
+.pform-dropzone input[type="file"]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:2}
+.pform-dropzone__content{display:flex;flex-direction:column;align-items:center;gap:8px;padding:30px 20px;pointer-events:none;text-align:center}
+.pform-dropzone__icon{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#2456e6,#4f8dff);display:grid;place-items:center;color:#fff;box-shadow:0 10px 22px rgba(36,86,230,.28);flex-shrink:0}
+.pform-dropzone__icon svg{width:22px;height:22px}
+.pform-dropzone__title{font-size:14px;font-weight:700;color:#1a41b4}
+.pform-dropzone__hint{font-size:12px;color:#8aa0c4}
+.pform-dropzone__chosen{display:flex;align-items:center;gap:10px;padding:16px 18px;background:#eaf0ff;pointer-events:none}
+.pform-dropzone__chosen svg{width:18px;height:18px;color:var(--sblue);flex-shrink:0}
+.pform-dropzone__chosen span{font-size:13px;font-weight:700;color:var(--sblue);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pform-dropzone__clear{pointer-events:auto;width:24px;height:24px;border-radius:50%;border:0;background:rgba(36,86,230,.15);color:var(--sblue);font-size:16px;line-height:1;cursor:pointer;display:grid;place-items:center;flex-shrink:0}
+.pform-dropzone__clear:hover{background:rgba(229,72,77,.2);color:#e5484d}
+
+/* current image preview */
+.pform-current-img{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--sbd);border-radius:12px;background:#f7f9fd;margin-top:14px}
+.pform-current-img img{width:60px;height:60px;border-radius:10px;object-fit:cover;flex-shrink:0;border:1px solid var(--sbd)}
+.pform-current-img strong{display:block;font-size:13px}
+.pform-current-img span{font-size:12px;color:var(--sm)}
+
+/* "or" divider */
+.pform-or{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--sm);font-size:12px;font-weight:700}
+.pform-or::before,.pform-or::after{content:"";flex:1;height:1px;background:var(--sbd2)}
+
+/* submit / cancel buttons */
+.pform-submit{width:100%;min-height:50px;display:flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:14px;background:linear-gradient(135deg,#1a41b4,#2456e6);color:#fff;font:inherit;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 12px 28px rgba(36,86,230,.30);transition:transform .15s,box-shadow .15s}
+.pform-submit:hover{transform:translateY(-2px);box-shadow:0 18px 36px rgba(36,86,230,.38)}
+.pform-submit:active{transform:none}
+.pform-submit .sic{width:18px;height:18px}
+.pform-cancel{width:100%;min-height:44px;display:flex;align-items:center;justify-content:center;gap:9px;border:1px solid var(--sbd);border-radius:14px;background:#fff;color:#5b6b84;font-size:13.5px;font-weight:700;text-decoration:none;transition:background .15s,color .15s}
+.pform-cancel:hover{background:#fff5f5;border-color:#fbd0d0;color:#b4232a}
+.pform-cancel .sic{width:15px;height:15px}
+
+/* tips */
+.pform-tip{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:1px solid #fbe9c3;font-size:13px;color:#5b4300}
+.pform-tip:last-child{border-bottom:0;padding-bottom:0}
+.pform-tip .sic{width:15px;height:15px;color:#9a6200;flex-shrink:0;margin-top:1px}
+
+/* responsive */
+@media(max-width:1100px){
+  .pform-grid{grid-template-columns:1fr 300px}
+}
+@media(max-width:860px){
+  .pform-grid{grid-template-columns:1fr}
+  .pform-col--side{order:-1}
+  .pform-card--actions,.pform-card--tips{display:none}
+  .pform-hero{padding:18px 0 16px}
+  .pform-hero__left h2{font-size:21px}
+  .pform-hero__right{display:none}
+}
+@media(max-width:600px){
+  .ff-grid{grid-template-columns:1fr}
+}
+</style>
+
+<!-- mobile floating submit bar -->
+<div class="pform-mobile-bar" id="pfMobileBar">
+  <a class="pform-mobile-bar__cancel" href="/dashboards/seller/products/" data-dashboard-link>Cancel</a>
+  <button class="pform-mobile-bar__save" type="submit" form="{{ form.name.html_name|slice:":0" }}pform_submit_trigger">
+    {% if product %}Save changes{% else %}Publish product{% endif %}
+  </button>
+</div>
+
+<style>
+/* mobile action bar — shown only on narrow screens */
+.pform-mobile-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:50;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-top:1px solid var(--sbd);gap:10px}
+@media(max-width:860px){.pform-mobile-bar{display:flex}}
+.pform-mobile-bar__save{flex:1;min-height:46px;border:0;border-radius:13px;background:linear-gradient(135deg,#1a41b4,#2456e6);color:#fff;font:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.pform-mobile-bar__cancel{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 16px;border:1px solid var(--sbd);border-radius:13px;background:#fff;color:#5b6b84;font-size:14px;font-weight:700;text-decoration:none}
+</style>
+
+<script>
+(function () {
+  /* ── Dropzone: show selected filename ── */
+  var input   = document.querySelector('#pfDropzone input[type="file"]');
+  var content = document.getElementById('pfDropContent');
+  var chosen  = document.getElementById('pfChosen');
+  var name    = document.getElementById('pfChosenName');
+  var clear   = document.getElementById('pfClear');
+
+  if (input) {
+    input.addEventListener('change', function () {
+      if (input.files && input.files.length) {
+        name.textContent = input.files[0].name;
+        content.hidden = true;
+        chosen.hidden  = false;
+      }
+    });
+  }
+  if (clear) {
+    clear.addEventListener('click', function () {
+      input.value = '';
+      content.hidden = false;
+      chosen.hidden  = true;
+    });
+  }
+
+  /* ── Wire the mobile bottom bar submit to the real form ── */
+  var mobileBtn = document.querySelector('.pform-mobile-bar__save');
+  var form = document.querySelector('.pform-grid');
+  if (mobileBtn && form) {
+    mobileBtn.removeAttribute('form');
+    mobileBtn.setAttribute('type', 'button');
+    mobileBtn.addEventListener('click', function () {
+      form.requestSubmit ? form.requestSubmit() : form.submit();
+    });
+  }
+
+  /* ── Drag-over visual state ── */
+  var zone = document.getElementById('pfDropzone');
+  if (zone) {
+    zone.addEventListener('dragover', function (e) { e.preventDefault(); zone.classList.add('pform-dropzone--over'); });
+    zone.addEventListener('dragleave', function () { zone.classList.remove('pform-dropzone--over'); });
+    zone.addEventListener('drop', function () { zone.classList.remove('pform-dropzone--over'); });
+  }
+})();
+</script>

@@ -421,6 +421,23 @@ textarea.ff-input{min-height:104px;resize:vertical}
 @media(max-width:1180px){.ff-grid,.vsteps,.balgrid,.payout-timeline{grid-template-columns:1fr 1fr}}
 @media(max-width:800px){.ff-grid,.vsteps,.balgrid,.payout-timeline{grid-template-columns:1fr}.payout-hero{padding:20px}.payout-hero__row h2{font-size:34px}.stop__logout span{display:none}}
 
+/* Give the verification summary a dedicated mobile grid: the status no longer
+   competes with the title and description for the same narrow row. */
+@media(max-width:800px){
+  .vhero{
+    display:grid;
+    grid-template-columns:56px minmax(0,1fr);
+    align-items:start;
+    gap:14px;
+  }
+  .vhero > div{min-width:0!important;}
+  .vhero .vstatus{
+    grid-column:1 / -1;
+    justify-self:start;
+    margin-left:0;
+  }
+}
+
 .payout-hero__status i{width:7px;height:7px;border-radius:50%;background:#052712;display:inline-block;animation:ssidePulse 1.9s ease-in-out infinite}
 .payout-hero__eyebrow .sic{width:14px;height:14px}
 .payout-chip .sic{width:14px;height:14px}

@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="/static/style.css" />
   <link rel="stylesheet" href="/static/shop.css" />
 </head>
-<body class="shop-page">
+<body class="shop-page" data-user-state="{{ user_state }}">
 
   <!-- GLASS NAVBAR -->
   <header class="navbar">
@@ -320,7 +320,7 @@
 {% for p in products %}
         <article class="product-card" data-detail-url="{% url 'product_detail' p.pk %}" data-cat="{{ p.category }}" data-price="{{ p.price|floatformat:2 }}" data-rating="{{ p.rating|floatformat:1 }}" data-name="{{ p.name|lower }}">
           {% if p.badge_label %}<span class="pc-badge {{ p.badge_class }}">{{ p.badge_label }}</span>{% endif %}
-          <button class="pc-heart" aria-label="Add to wishlist" aria-pressed="false">
+          <button class="pc-heart{% if p.slug in wishlist_slugs %} is-wish{% endif %}" aria-label="Add to wishlist" aria-pressed="{% if p.slug in wishlist_slugs %}true{% else %}false{% endif %}" data-slug="{{ p.slug }}">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
           </button>
           <div class="pc-media" style="background:linear-gradient(145deg,#EFF3FF,#C7D9FF)">
@@ -609,7 +609,7 @@
       </div>
 
       <h2 class="wl-modal__title" id="wlModalTitle">Save to Wishlist</h2>
-      <p class="wl-modal__sub">Sign in or create a free buyer account to save products and track them in your dashboard.</p>
+      <p class="wl-modal__sub" id="wlModalSub">Sign in or create a free buyer account to save products and track them in your dashboard.</p>
 
       <div class="wl-modal__actions">
         <a href="/signin/?next=/shop/" class="wl-modal__btn wl-modal__btn--primary">
@@ -697,14 +697,25 @@
         return { url: src, stat: '' };
       }
 
+      var USER_STATE = document.body.getAttribute('data-user-state') || 'guest';
+      var modalSub = document.getElementById('wlModalSub');
+      if (USER_STATE === 'auth' && modalSub) {
+        modalSub.textContent = "You're signed in with a seller/admin account — switch to a buyer account to save products.";
+      }
+
       document.querySelectorAll('.pc-heart').forEach(function (h) {
         var card = h.closest('.product-card');
         if (!card) return;
 
         var name = (card.querySelector('.pc-name') || {}).textContent || card.dataset.name || '';
-        var slug = toSlug(name) || toSlug(card.dataset.name || '');
+        var slug = card.dataset.slug || toSlug(name) || toSlug(card.dataset.name || '');
 
         h.addEventListener('click', function () {
+          /* Popup for guests and non-buyers (sellers/admins); buyers get AJAX */
+          if (USER_STATE !== 'buyer') {
+            openModal();
+            return;
+          }
           var payload = {
             slug: slug,
             name: name.trim(),

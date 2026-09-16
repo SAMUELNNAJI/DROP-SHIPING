@@ -139,6 +139,28 @@ def shop_page(request):
     qs, active = filter_shop_products(request)
     products = list(qs[:60])
     total_live = Product.objects.filter(status="live").count()
+
+    # Wishlist hearts: only buyers get working hearts; guests and non-buyers
+    # (sellers/admins) get the sign-in popup instead.  Server-rendered state
+    # keeps the two flows unambiguous.
+    if request.user.is_authenticated and getattr(request.user, "role", "") == "buyer":
+        from dashboards.models import WishlistItem
+
+        user_state = "buyer"
+        wishlist_slugs = list(
+            WishlistItem.objects.filter(user=request.user).values_list("product_slug", flat=True)
+        )
+    elif request.user.is_authenticated:
+        user_state = "auth"
+        wishlist_slugs = []
+    else:
+        user_state = "guest"
+        wishlist_slugs = []
+
+    from django.middleware.csrf import get_token
+
+    get_token(request)  # ensure the csrftoken cookie exists for heart POSTs
+
     context = {
         'page_title': 'Shop',
         'slug': 'shop',
@@ -148,6 +170,8 @@ def shop_page(request):
         'categories': Product.CATEGORY_CHOICES,
         'sorts': SHOP_SORTS,
         'active': active,
+        'user_state': user_state,
+        'wishlist_slugs': wishlist_slugs,
     }
     html = render_to_string('shop.html', context, request=request)
 

@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils.text import slugify
 
 
 class Product(models.Model):
@@ -150,6 +151,11 @@ class Product(models.Model):
         if self.image_url:
             return self.image_url
         return "/static/img/headphones.jpg"
+
+    @property
+    def slug(self):
+        """URL-friendly slug matching the wishlist heart's client-side slug."""
+        return slugify(self.name) or "product"
 
     @property
     def initials(self):

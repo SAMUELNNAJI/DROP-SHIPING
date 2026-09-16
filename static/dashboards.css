@@ -729,4 +729,12 @@ body.db-locked .dashboard-workspace {
   .dashboard-sidebar-close {
     display: grid;
   }
+
+  /* Keep the final sidebar action clear of the mobile viewport edge. */
+  body.dashboard-body--seller .sside,
+  body.dashboard-body--buyer .bside,
+  body.dashboard-body--admin .dashboard-sidebar {
+    box-sizing: border-box !important;
+    padding-bottom: calc(3rem + env(safe-area-inset-bottom)) !important;
+  }
 }

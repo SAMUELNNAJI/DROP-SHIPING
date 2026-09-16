@@ -34,12 +34,15 @@ urlpatterns = [
 
     # ── Buyer: order actions ──────────────────────────────────
     path("orders/<int:pk>/confirm/", views.order_buyer_confirm, name="order_buyer_confirm"),
+    path("orders/<int:pk>/not-delivered/", views.order_not_delivered, name="order_not_delivered"),
+    path("orders/<int:pk>/refund/", views.order_request_refund, name="order_request_refund"),
 
     # ── Order detail ──────────────────────────────────────────
     path("orders/<int:pk>/", views.order_detail, name="order_detail"),
 
     # ── Admin: order actions ──────────────────────────────────
     path("orders/<int:pk>/release-payout/", views.order_release_payout, name="order_release_payout"),
+    path("orders/<int:pk>/refund/approve/", views.order_admin_refund, name="order_admin_refund"),
 
     # ── Seller: payouts ───────────────────────────────────────
     path("seller/payouts/save-method/", views.seller_save_payout_method, name="seller_save_payout_method"),
@@ -55,6 +58,7 @@ urlpatterns = [
     # ── Admin: users ──────────────────────────────────────────
     path("admin/users/", views.admin_users_view, name="admin_users_view"),
     path("admin/users/<int:pk>/toggle-active/", views.admin_user_toggle_active, name="admin_user_toggle_active"),
+    path("admin/users/<int:pk>/delete/", views.admin_user_delete, name="admin_user_delete"),
 
     # ── Admin: products ───────────────────────────────────────
     path("admin/products/", views.admin_products_view, name="admin_products_view"),
@@ -71,6 +75,8 @@ urlpatterns = [
     path("cart/add/<int:product_pk>/", views.cart_add, name="cart_add"),
     path("cart/update/<int:product_pk>/", views.cart_update, name="cart_update"),
     path("cart/remove/<int:product_pk>/", views.cart_remove, name="cart_remove"),
+    path("checkout/payment/", views.checkout_payment, name="checkout_payment"),
+    path("checkout/complete/", views.checkout_complete, name="checkout_complete"),
 
     # ── Generic section loader (must stay last) ───────────────
     path("<str:role>/<str:section>/", views.dashboard_section, name="dashboard_section"),

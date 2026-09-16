@@ -87,6 +87,7 @@ class Order(models.Model):
     STATUS_DELIVERED  = "delivered"
     STATUS_CONFIRMED  = "confirmed"   # buyer (or auto) confirmed receipt
     STATUS_REFUNDED   = "refunded"
+    STATUS_DISPUTED   = "disputed"
     STATUS_CANCELLED  = "cancelled"
 
     STATUS_CHOICES = [
@@ -95,6 +96,7 @@ class Order(models.Model):
         (STATUS_DELIVERED,  "Delivered"),
         (STATUS_CONFIRMED,  "Confirmed"),
         (STATUS_REFUNDED,   "Refunded"),
+        (STATUS_DISPUTED,   "Delivery disputed"),
         (STATUS_CANCELLED,  "Cancelled"),
     ]
 
@@ -140,6 +142,9 @@ class Order(models.Model):
     shipping_name    = models.CharField(max_length=160, blank=True, default="")
     shipping_address = models.TextField(blank=True, default="")
     tracking_number  = models.CharField(max_length=100, blank=True, default="")
+    delivery_note    = models.TextField(blank=True, default="")
+    dispute_reason   = models.TextField(blank=True, default="")
+    disputed_at      = models.DateTimeField(null=True, blank=True)
 
     # ── Status & lifecycle ─────────────────────────────────────
     status = models.CharField(
@@ -193,15 +198,15 @@ class Order(models.Model):
         """True when buyer hasn't confirmed and 3 days have passed since delivered."""
         if self.status != self.STATUS_DELIVERED:
             return False
-        return (self.days_since_delivered or 0) >= 3
+        return timezone.now() >= self.delivered_at + timezone.timedelta(hours=48)
 
     @property
     def confirm_days_left(self):
-        """How many days the buyer has left to manually confirm (max 3)."""
+        """How many whole days remain in the 48-hour buyer confirmation window."""
         if self.status != self.STATUS_DELIVERED or not self.delivered_at:
             return None
-        remaining = 3 - (self.days_since_delivered or 0)
-        return max(0, remaining)
+        seconds = (self.delivered_at + timezone.timedelta(hours=48) - timezone.now()).total_seconds()
+        return max(0, int((seconds + 86399) // 86400))
 
     @property
     def status_label(self):
@@ -214,7 +219,8 @@ class Order(models.Model):
             "in_transit": "statusx--ship",
             "delivered":  "statusx--warn",
             "confirmed":  "statusx--done",
-            "refunded":   "statusx--draft",
+        "refunded":   "statusx--draft",
+        "disputed":   "statusx--draft",
             "cancelled":  "statusx--draft",
         }
         return mapping.get(self.status, "statusx--held")
@@ -222,6 +228,18 @@ class Order(models.Model):
     @property
     def payout_ready(self):
         return self.status == self.STATUS_CONFIRMED and not self.payout_released
+
+
+class OrderTrackingEvent(models.Model):
+    """Immutable delivery updates supplied by the seller for buyer tracking."""
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="tracking_events")
+    status = models.CharField(max_length=30)
+    message = models.CharField(max_length=280)
+    location = models.CharField(max_length=120, blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
 
 
 class SellerPayoutMethod(models.Model):

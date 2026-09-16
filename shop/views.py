@@ -2,7 +2,8 @@ import re
 
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render
-from django.db.models import Q
+from django.db.models import Case, IntegerField, Q, When
+from django.utils import timezone
 from django.template.loader import render_to_string
 
 from .models import Product
@@ -121,7 +122,15 @@ def filter_shop_products(request):
     elif sort == "newest":
         qs = qs.order_by("-created_at")
     else:
-        qs = qs.order_by("-sold", "-rating", "-created_at")
+        # A paid, unexpired admin-defined boost always leads the storefront.
+        # The remaining catalogue keeps the normal relevance ordering.
+        from dashboards.models import BoostOrder
+        boosted_ids = BoostOrder.objects.filter(
+            status=BoostOrder.STATUS_PAID, expires_at__gt=timezone.now()
+        ).values_list("product_id", flat=True)
+        qs = qs.annotate(
+            boost_rank=Case(When(pk__in=boosted_ids, then=0), default=1, output_field=IntegerField())
+        ).order_by("boost_rank", "-sold", "-rating", "-created_at")
 
     return qs, {
         "q": q,

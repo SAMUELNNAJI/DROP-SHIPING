@@ -211,7 +211,7 @@
       </div>
       {% else %}
       <div class="emptyx" style="padding:24px">
-        <div class="emptyx__art" style="font-size:22px">✅</div>
+        <div class="emptyx__art" style="color:#0ca678"><svg class="sic" style="width:30px;height:30px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg></div>
         <h4>All caught up!</h4>
         <p>No action needed right now.</p>
       </div>
@@ -242,7 +242,7 @@
           {% endfor %}
         {% else %}
           <div class="emptyx" style="padding:20px 0">
-            <div class="emptyx__art" style="font-size:22px">📦</div>
+            <div class="emptyx__art"><svg class="sic" style="width:28px;height:28px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="m3 8 9-5 9 5v8l-9 5-9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg></div>
             <h4>No products yet</h4>
             <p>Add your first product to start selling.</p>
             <a class="seller-top-btn" href="/dashboards/seller/products/add/">Add product</a>
@@ -251,7 +251,7 @@
 
         {% if low_stock %}
         <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--sbd2)">
-          <p style="font-size:12px;font-weight:800;color:var(--srose);margin:0 0 8px">⚠ Low stock</p>
+          <p style="font-size:12px;font-weight:800;color:var(--srose);margin:0 0 8px;display:flex;gap:5px;align-items:center"><svg class="sic" style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3 2.8 20h18.4z"/><path d="M12 9v4M12 17h.01"/></svg>Low stock</p>
           {% for p in low_stock %}
           <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;font-size:13px">
             <span>{{ p.name|truncatechars:26 }}</span>
@@ -286,7 +286,7 @@
       </div>
       {% else %}
       <div class="emptyx" style="padding:24px">
-        <div class="emptyx__art" style="font-size:22px">🛒</div>
+        <div class="emptyx__art" style="color:#2456e6"><svg class="sic" style="width:30px;height:30px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.3"/><circle cx="18" cy="20" r="1.3"/><path d="M2.5 4h2l2.3 11h10.5L20 7H6"/></svg></div>
         <h4>No orders yet</h4>
         <p>When buyers purchase your products, they appear here.</p>
       </div>

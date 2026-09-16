@@ -417,6 +417,52 @@ body.dashboard-body--seller .dashboard-workspace {
   width: 14px;
   height: 14px;
 }
+
+/* The seller navigation itself owns its scroll area; it must never be clipped
+   by the fixed app shell on desktop or mobile. */
+body.dashboard-body--seller .sside {
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 30px !important;
+}
+
+body.dashboard-body--seller .dashboard-main {
+  padding: 28px 28px 30px !important;
+}
+body.dashboard-body--seller .sside__brandcard { overflow: visible !important; }
+body.dashboard-body--seller .sside__brandrow { min-height: 48px; }
+body.dashboard-body--seller .sside__logo { width: 48px; height: 48px; overflow: visible; }
+body.dashboard-body--seller .sside__logo img { width: 42px; height: 42px; object-fit: contain; }
+
+/* Final seller layout guarantees: full brand lockup and a true content gutter. */
+body.dashboard-body--seller .dashboard-main {
+  padding: 28px 28px 30px !important;
+}
+body.dashboard-body--seller .sside__brandcard {
+  min-height: 0;
+  overflow: visible;
+}
+body.dashboard-body--seller .sside__brandrow {
+  min-height: 48px;
+}
+body.dashboard-body--seller .sside__logo {
+  width: 48px;
+  height: 48px;
+  overflow: visible;
+}
+body.dashboard-body--seller .sside__logo img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+@media (max-width: 800px) {
+  body.dashboard-body--seller .dashboard-main { padding: 16px 12px 30px !important; }
+}
+body.dashboard-body--seller .sside__nav { overflow: visible; flex: 0 0 auto; }
 @media (max-width: 1180px) {
   .sside {
     width: 248px;
@@ -2486,3 +2532,36 @@ body.dashboard-body--seller .sside {
     display: none;
   }
 }
+
+/* Keep the complete seller menu reachable on every viewport. This is placed
+   after the legacy height polish so it wins over its auto-height rule. */
+body.dashboard-body--seller .sside {
+  inset: 0 auto 0 0 !important;
+  height: 100dvh !important;
+  min-height: 0 !important;
+  max-height: 100dvh !important;
+  overflow-y: scroll !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 30px !important;
+}
+
+/* Final overrides must remain at the end of this stylesheet. */
+body.dashboard-body--seller .dashboard-main { padding: 28px 28px 30px !important; }
+body.dashboard-body--seller .sside__brandcard { overflow: visible !important; }
+body.dashboard-body--seller .sside__brandrow { min-height: 48px; }
+body.dashboard-body--seller .sside__logo { width: 48px; height: 48px; overflow: visible; }
+body.dashboard-body--seller .sside__logo img { width: 42px; height: 42px; object-fit: contain; }
+@media (max-width: 800px) { body.dashboard-body--seller .dashboard-main { padding: 16px 12px 30px !important; } }
+
+/* Prevent flex shrinking from stacking sidebar cards on top of one another. */
+body.dashboard-body--seller .sside > * { flex-shrink: 0; }
+body.dashboard-body--seller .sside__brandcard {
+  overflow: hidden !important;
+  min-height: 0 !important;
+}
+body.dashboard-body--seller .sside__brandrow { min-height: 44px; }
+body.dashboard-body--seller .sside__logo { width: 44px; height: 44px; overflow: hidden; }
+body.dashboard-body--seller .sside__logo img { width: 27px; height: 27px; object-fit: contain; }
+body.dashboard-body--seller .sside__user { margin-top: 14px; }

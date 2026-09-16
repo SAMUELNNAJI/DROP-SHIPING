@@ -70,7 +70,7 @@
                style="width:72px;height:72px;border-radius:12px;object-fit:cover;border:1px solid var(--bbd);flex-shrink:0"
                onerror="this.style.display='none'" />
           {% else %}
-          <div style="width:72px;height:72px;border-radius:12px;background:linear-gradient(135deg,#EFF3FF,#C7D9FF);display:grid;place-items:center;flex-shrink:0;font-size:24px">📦</div>
+          <div style="width:72px;height:72px;border-radius:12px;background:linear-gradient(135deg,#EFF3FF,#C7D9FF);display:grid;place-items:center;flex-shrink:0;color:#2456e6"><svg class="sic" style="width:28px;height:28px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="m3 8 9-5 9 5v8l-9 5-9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg></div>
           {% endif %}
           <div style="flex:1;min-width:0">
             <strong style="display:block;font-size:14px">{{ order.product_name }}</strong>
@@ -135,11 +135,13 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
             <div>
               <strong>Did your item arrive?</strong>
-              <span>Confirm receipt to release payment to the seller. If you don't confirm within 3 days it will be confirmed automatically.</span>
+              <span>Confirm receipt to release payment to the seller. If you don't confirm within 48 hours it will be confirmed automatically.</span>
             </div>
             <button class="buyer-confirm-btn" data-pk="{{ order.pk }}" data-url="{% url 'order_buyer_confirm' order.pk %}">
               Confirm delivery
             </button>
+            <form method="post" action="{% url 'order_not_delivered' order.pk %}">{% csrf_token %}<button class="buyer-confirm-btn" style="background:#fff;color:#b4232a;box-shadow:none" type="submit">Not delivered</button></form>
+            <form method="post" action="{% url 'order_request_refund' order.pk %}">{% csrf_token %}<button class="buyer-confirm-btn" style="background:transparent;border:1px solid rgba(255,255,255,.55);color:#fff;box-shadow:none" type="submit">Request refund</button></form>
           </div>
         </div>
         {% endif %}

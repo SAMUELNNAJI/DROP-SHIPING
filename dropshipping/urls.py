@@ -47,7 +47,7 @@ urlpatterns = [
     path('signin/', accounts_views.signin_view, name='signin'),
     path('signup/', accounts_views.signup_view, name='signup'),
     path('checkout/', dashboard_views.checkout_view, name='checkout'),
-    path('checkout-payment/', views.page, {'slug': 'checkout-payment'}, name='checkout-payment'),
+    path('checkout-payment/', dashboard_views.checkout_payment, name='checkout-payment'),
     path('checkout-success/', views.page, {'slug': 'checkout-success'}, name='checkout-success'),
     # Canonical nested aliases -> redirect to the flat URLs used across the site
     path('checkout/payment/', RedirectView.as_view(url='/checkout-payment/', permanent=False)),

@@ -29,7 +29,11 @@
         <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span class="nav-burger-box"><span class="nav-burger-line"></span><span class="nav-burger-line"></span><span class="nav-burger-line"></span></span></button>
       </div>
     </div>
-    <div class="mmenu" id="mobileMenu" aria-hidden="true"><div class="mmenu-backdrop" data-mmenu-close></div><aside class="mmenu-panel" role="dialog" aria-modal="true" aria-label="Menu">
+  </header>
+
+  <!-- Mobile menu lives OUTSIDE <header> so backdrop-filter on
+       .navbar.scrolled cannot trap position:fixed children inside it -->
+  <div class="mmenu" id="mobileMenu" aria-hidden="true"><div class="mmenu-backdrop" data-mmenu-close></div><aside class="mmenu-panel" role="dialog" aria-modal="true" aria-label="Menu">
       <div class="mmenu-head"><a href="/" class="logo" aria-label="DropHub"><img src="/static/Logo.png" alt="DropHub" class="logo-img"/></a><button class="mmenu-close" aria-label="Close menu" data-mmenu-close><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></button></div>
       <p class="mmenu-eyebrow">MENU</p><nav class="mmenu-nav">
         <a class="mmenu-link" href="/shop/" style="--i:0"><span class="mmenu-num">01</span> Shop<svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg></a>
@@ -39,4 +43,3 @@
         <a class="mmenu-link" href="/contact/" style="--i:4"><span class="mmenu-num">05</span> Contact<svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg></a>
       </nav><div class="mmenu-foot">{% if user.is_authenticated %}<a href="{% if user.is_superuser %}/dashboards/admin/{% elif user.role == 'seller' %}/dashboards/seller/{% else %}/dashboards/buyer/{% endif %}" class="mmenu-cta"><span>Dashboard</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></a>{% else %}<a href="/accounts/signup/" class="mmenu-cta"><span>Start Selling</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="m13 6 6 6-6 6"/></svg></a><a href="/accounts/signin/" class="mmenu-signin"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 19.6c.7-3.4 3.6-5.2 7-5.2s6.3 1.8 7 5.2"/></svg><span>Sign In</span></a>{% endif %}<p class="mmenu-assure"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4.2 4.2L19 6.6"/></svg> Escrow-protected · Pi, PayPal &amp; Paystack</p></div>
     </aside></div>
-  </header>

@@ -217,13 +217,14 @@
           Connect your Pi wallet to pay. Exchange rate: 1 Pi = $0.42
         </div>
 
-        <div class="ck-actions">
+        <form class="ck-actions" id="paymentForm" method="post" action="/dashboards/checkout/complete/">
+          {% csrf_token %}<input type="hidden" name="payment_method" id="paymentMethod" value="pi" />
           <a href="/checkout/" class="ck-btn-ghost">Back</a>
-          <a href="/checkout-success/" class="ck-btn-primary" id="payBtn">
+          <button type="submit" class="ck-btn-primary" id="payBtn">
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             Pay $626.23
-          </a>
-        </div>
+          </button>
+        </form>
       </section>
 
       <!-- ── Right · Order summary ── -->
@@ -452,6 +453,7 @@ document.addEventListener('DOMContentLoaded', function () {
       /* Sync the "Paying with …" strip in the order summary */
       strip.className = option.getAttribute('data-strip');
       text.textContent = 'Paying with ' + option.getAttribute('data-name');
+      document.getElementById('paymentMethod').value = option.classList.contains('ck-pay-option--paystack') ? 'paystack' : (option.classList.contains('ck-pay-option--paypal') ? 'paypal' : 'pi');
     }
 
     options.forEach(function (o) {
@@ -461,6 +463,15 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
   })();
+  document.getElementById('paymentForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    var form = this, button = document.getElementById('payBtn');
+    button.disabled = true; button.textContent = 'Securing payment…';
+    fetch(form.action, {method: 'POST', headers: {'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value, 'X-Requested-With': 'XMLHttpRequest'}, body: new FormData(form)})
+      .then(function (r) { return r.json(); })
+      .then(function (data) { if (data.ok) window.location.href = data.redirect; else { alert(data.error || 'Payment could not be completed.'); button.disabled = false; button.textContent = 'Pay securely'; } })
+      .catch(function () { alert('Please try again.'); button.disabled = false; button.textContent = 'Pay securely'; });
+  });
   </script>
 </body>
 </html>

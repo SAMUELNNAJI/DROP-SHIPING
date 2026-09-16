@@ -1,7 +1,7 @@
 """
 Management command: auto_confirm_orders
 =======================================
-Finds all orders with status=delivered where delivered_at is older than 3 days
+Finds all orders with status=delivered where delivered_at is older than 48 hours
 and the buyer has not manually confirmed, then marks them as confirmed.
 
 Usage:
@@ -21,10 +21,10 @@ from dashboards.models import Order
 
 
 class Command(BaseCommand):
-    help = "Auto-confirm delivered orders older than 3 days where buyer has not confirmed."
+    help = "Auto-confirm delivered orders older than 48 hours where buyer has not confirmed."
 
     def handle(self, *args, **options):
-        cutoff = timezone.now() - timezone.timedelta(days=3)
+        cutoff = timezone.now() - timezone.timedelta(hours=48)
         qs = Order.objects.filter(
             status=Order.STATUS_DELIVERED,
             delivered_at__lte=cutoff,

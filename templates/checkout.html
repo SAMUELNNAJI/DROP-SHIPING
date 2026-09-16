@@ -202,7 +202,7 @@
           </div>
         </div>
 
-        <a href="/checkout-payment/" class="ck-btn-primary">
+        <a href="/checkout-payment/" class="ck-btn-primary" {% if not cart_items %}aria-disabled="true"{% endif %}>
           Continue to Payment
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
         </a>

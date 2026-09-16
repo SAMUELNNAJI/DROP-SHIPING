@@ -118,6 +118,11 @@
                   Release Payout
                 </button>
               </form>
+              {% elif order.status == 'disputed' %}
+              <form method="post" action="{% url 'order_admin_refund' order.pk %}">
+                {% csrf_token %}
+                <button class="table-action table-action--soft" type="submit">Approve refund</button>
+              </form>
               {% elif order.payout_released %}
               <span class="muted" style="font-size:12px">
                 Paid {{ order.payout_released_at|date:"M j" }}
@@ -218,7 +223,7 @@
       .then(function (r) { return r.json(); })
       .then(function (data) {
         if (data.ok) {
-          form.innerHTML = '<span style="font-size:12px;color:#0a7a57;font-weight:700">✓ Paid</span>';
+          form.innerHTML = '<span style="font-size:12px;color:#0a7a57;font-weight:700">Paid</span>';
           var badge = document.getElementById('admin-status-' + pk);
           if (badge) { badge.style.opacity = '.6'; }
         }

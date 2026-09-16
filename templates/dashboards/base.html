@@ -163,9 +163,9 @@
             <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
             <i class="dot"></i>
           </button>
-          <button class="topbar-btn" data-open-product-modal>
+          <a class="topbar-btn" href="/dashboards/seller/products/add/">
             <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Add product
-          </button>
+          </a>
           <div class="topbar-avatar">{{ user.username|first|upper|default:"S" }}</div>
         </div>
         {% elif role == 'admin' %}
@@ -218,34 +218,6 @@
       var title = document.getElementById('dashboardPageTitle');
       var menu = document.getElementById('dashboardSidebar');
       var toggle = document.getElementById('dashboardMenuToggle');
-      function setActive(url) {
-        document.querySelectorAll('[data-dashboard-link]').forEach(function (link) {
-          link.classList.toggle('is-active', new URL(link.href, location.origin).pathname === url);
-        });
-      }
-      function loadPage(url, push) {
-        content.classList.add('is-loading');
-        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } }).then(function (response) {
-          if (!response.ok) throw new Error('Unable to load dashboard page');
-          return response.text();
-        }).then(function (html) {
-          content.innerHTML = html;
-          var nextTitle = content.querySelector('[data-page-title]');
-          if (nextTitle) { title.textContent = nextTitle.dataset.pageTitle; document.title = nextTitle.dataset.pageTitle + ' - DropHub'; }
-          if (push) history.pushState({ url: url }, '', url);
-          setActive(new URL(url, location.origin).pathname);
-          content.classList.remove('is-loading');
-          setMenu(false);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }).catch(function () { window.location.href = url; });
-      }
-      document.addEventListener('click', function (event) {
-        var link = event.target.closest('[data-dashboard-link]');
-        if (!link || link.target === '_blank') return;
-        event.preventDefault();
-        loadPage(link.href, true);
-      });
-      window.addEventListener('popstate', function () { loadPage(location.href, false); });
       var backdrop = document.getElementById('dbBackdrop');
       var sideClose = document.getElementById('dashboardSidebarClose');
 
@@ -267,6 +239,10 @@
       if (backdrop) backdrop.addEventListener('click', function () { setMenu(false); });
 
       document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenu(false); });
+      window.setTimeout(function () {
+        var alerts = document.getElementById('dashboardAlerts');
+        if (alerts) { alerts.style.transition = 'opacity .25s ease'; alerts.style.opacity = '0'; window.setTimeout(function () { alerts.remove(); }, 260); }
+      }, 10000);
       document.addEventListener('click', function (e) {
         var seg = e.target.closest('.segx button, .seg button');
         if (seg) { seg.parentElement.querySelectorAll('button').forEach(function(b){b.classList.remove('on')}); seg.classList.add('on'); }
@@ -295,6 +271,17 @@
           r.style.display = r.textContent.toLowerCase().indexOf(q) > -1 ? '' : 'none';
         });
       }
+      document.querySelectorAll('#sellerGlobalSearch, #adminGlobalSearch, #buyerGlobalSearch').forEach(function (input) {
+        input.addEventListener('keydown', function (event) {
+          if (event.key !== 'Enter') return;
+          event.preventDefault();
+          var query = input.value.trim();
+          if (!query) return;
+          var target = input.id === 'sellerGlobalSearch' ? '/dashboards/seller/products/?q=' :
+            input.id === 'adminGlobalSearch' ? '/dashboards/admin/orders/?q=' : '/dashboards/buyer/orders/?q=';
+          window.location.assign(target + encodeURIComponent(query));
+        });
+      });
       function showSellerToast(msg){
         var t = document.getElementById('sellerToast');
         if(!t){ t = document.createElement('div'); t.id='sellerToast'; t.className='stoast'; document.body.appendChild(t); }

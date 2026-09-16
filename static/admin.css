@@ -32,6 +32,8 @@ body.dashboard-body--admin .dashboard-main {
   flex: 1;
 }
 
+body.dashboard-body--admin .dashboard-main { padding-bottom: 30px !important; }
+
 /* ─── Reset legacy unscoped classes that dashboards.css defines
    without role-scoping, so they don't pollute admin pages.
    ─────────────────────────────────────────────────────────────── */

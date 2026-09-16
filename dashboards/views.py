@@ -1,8 +1,10 @@
 import json
+from decimal import Decimal
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator
+from django.db import transaction
 from django.db.models import Avg, Q, Sum
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -15,7 +17,7 @@ from shop.forms import ProductForm
 from shop.models import Product
 
 from .forms import BuyerAddressForm, BoostPlanForm, SellerPayoutMethodForm, SellerVerificationForm
-from .models import BuyerAddress, BoostOrder, BoostPlan, CartItem, Order, SellerPayout, SellerPayoutMethod, SellerVerification, WishlistItem
+from .models import BuyerAddress, BoostOrder, BoostPlan, CartItem, Order, OrderTrackingEvent, SellerPayout, SellerPayoutMethod, SellerVerification, WishlistItem
 
 
 def get_or_init_verification(user):
@@ -300,6 +302,10 @@ def _product_form_page(request, context, template="dashboards/seller/product_for
 def seller_product_add(request):
     if request.user.role != "seller":
         return redirect("dashboard")
+    verification = get_or_init_verification(request.user)
+    if verification.status != "verified":
+        messages.error(request, "Complete seller verification and wait for approval before publishing products.")
+        return redirect("dashboard_seller_verification")
     initial = {"status": "live", "store_name": request.user.username}
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES)
@@ -335,6 +341,9 @@ def seller_product_add(request):
 def seller_product_edit(request, pk):
     if request.user.role != "seller":
         return redirect("dashboard")
+    if get_or_init_verification(request.user).status != "verified":
+        messages.error(request, "Only verified sellers can publish or edit products.")
+        return redirect("dashboard_seller_verification")
     product = get_object_or_404(Product, pk=pk, seller=request.user)
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES, instance=product)
@@ -875,6 +884,7 @@ def order_mark_in_transit(request, pk):
         if tracking:
             order.tracking_number = tracking
         order.save()
+        OrderTrackingEvent.objects.create(order=order, status="in_transit", message="Your order has been shipped and is now in transit.")
         if request.headers.get("x-requested-with") == "XMLHttpRequest":
             return JsonResponse({"ok": True, "status": order.status, "label": order.status_label, "css": order.status_css})
         messages.success(request, f"Order #{order.order_number} marked as In Transit.")
@@ -889,10 +899,12 @@ def order_mark_delivered(request, pk):
     if order.status == Order.STATUS_IN_TRANSIT:
         order.status = Order.STATUS_DELIVERED
         order.delivered_at = timezone.now()
+        order.delivery_note = request.POST.get("delivery_note", "").strip()
         order.save()
+        OrderTrackingEvent.objects.create(order=order, status="delivered", message=order.delivery_note or "Seller marked this order as delivered.")
         if request.headers.get("x-requested-with") == "XMLHttpRequest":
             return JsonResponse({"ok": True, "status": order.status, "label": order.status_label, "css": order.status_css})
-        messages.success(request, f"Order #{order.order_number} marked as Delivered. Buyer has 3 days to confirm.")
+        messages.success(request, f"Order #{order.order_number} marked as delivered. Buyer has 48 hours to confirm.")
     return redirect("seller_orders")
 
 
@@ -913,6 +925,36 @@ def order_buyer_confirm(request, pk):
 
 
 @require_POST
+@login_required
+def order_not_delivered(request, pk):
+    """Buyer disputes an incorrectly claimed delivery; escrow remains held."""
+    order = get_object_or_404(Order, pk=pk, buyer=request.user)
+    if order.status == Order.STATUS_DELIVERED:
+        order.status = Order.STATUS_DISPUTED
+        order.dispute_reason = request.POST.get("reason", "Buyer reports the item was not delivered.").strip()
+        order.disputed_at = timezone.now()
+        order.save(update_fields=["status", "dispute_reason", "disputed_at", "updated_at"])
+        OrderTrackingEvent.objects.create(order=order, status="disputed", message="Buyer reported that the delivery was not received.")
+        messages.success(request, "Your delivery report has been sent to the admin team. Escrow remains protected.")
+    return redirect("dashboard_section", role="buyer", section="orders")
+
+
+@require_POST
+@login_required
+def order_request_refund(request, pk):
+    """Buyer requests a refund for an undelivered or disputed purchase."""
+    order = get_object_or_404(Order, pk=pk, buyer=request.user)
+    if order.status in (Order.STATUS_DELIVERED, Order.STATUS_DISPUTED, Order.STATUS_IN_TRANSIT):
+        order.status = Order.STATUS_DISPUTED
+        order.dispute_reason = request.POST.get("reason", "Buyer requested a refund because the item was not delivered.").strip()
+        order.disputed_at = timezone.now()
+        order.save(update_fields=["status", "dispute_reason", "disputed_at", "updated_at"])
+        OrderTrackingEvent.objects.create(order=order, status="refund_requested", message="Buyer requested a refund; admin review is required.")
+        messages.success(request, "Refund request submitted. An admin will review the protected payment.")
+    return redirect("dashboard_section", role="buyer", section="orders")
+
+
+@require_POST
 @staff_member_required
 def order_release_payout(request, pk):
     """Admin: release escrow payout for a confirmed order."""
@@ -924,6 +966,19 @@ def order_release_payout(request, pk):
         if request.headers.get("x-requested-with") == "XMLHttpRequest":
             return JsonResponse({"ok": True, "order_number": order.order_number})
         messages.success(request, f"Payout released for order #{order.order_number}.")
+    return redirect("dashboard_section", role="admin", section="orders")
+
+
+@require_POST
+@staff_member_required
+def order_admin_refund(request, pk):
+    """Admin resolves a delivery dispute by returning the escrowed payment."""
+    order = get_object_or_404(Order, pk=pk)
+    if order.status == Order.STATUS_DISPUTED and not order.payout_released:
+        order.status = Order.STATUS_REFUNDED
+        order.save(update_fields=["status", "updated_at"])
+        OrderTrackingEvent.objects.create(order=order, status="refunded", message="Admin approved the refund. Escrow payment will be returned to the buyer.")
+        messages.success(request, f"Refund approved for {order.order_number}.")
     return redirect("dashboard_section", role="admin", section="orders")
 
 
@@ -1113,6 +1168,20 @@ def admin_user_toggle_active(request, pk):
     target.is_active = not target.is_active
     target.save(update_fields=["is_active"])
     return JsonResponse({"ok": True, "is_active": target.is_active})
+
+
+@require_POST
+@staff_member_required
+def admin_user_delete(request, pk):
+    User = get_user_model()
+    target = get_object_or_404(User, pk=pk)
+    if target == request.user or target.is_staff:
+        return JsonResponse({"error": "This administrator cannot be deleted."}, status=400)
+    # Preserve financial history; account removal is a safe access revocation.
+    target.is_active = False
+    target.save(update_fields=["is_active"])
+    messages.success(request, f"{target.username}'s account has been suspended. Order records were retained.")
+    return JsonResponse({"ok": True, "is_active": False})
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -1371,6 +1440,60 @@ def checkout_view(request):
     if request.user.is_authenticated:
         ctx["addresses"] = BuyerAddress.objects.filter(user=request.user)
     return render(request, "checkout.html", ctx)
+
+
+@login_required
+def checkout_payment(request):
+    """Payment selection for a real DB-backed cart; provider keys stay in env."""
+    if request.user.role != "buyer":
+        messages.error(request, "Please use a buyer account to complete a purchase.")
+        return redirect("shop")
+    ctx = {"page_title": "Choose payment", "slug": "checkout-payment"}
+    ctx.update(cart_context(request))
+    if not ctx["cart_items"]:
+        messages.error(request, "Your cart is empty.")
+        return redirect("shop")
+    return render(request, "checkout-payment.html", ctx)
+
+
+@require_POST
+@login_required
+def checkout_complete(request):
+    """Create protected orders only after the selected payment provider succeeds.
+
+    Production payment webhooks should verify the provider signature before
+    calling this endpoint; no card or wallet credential is ever stored here.
+    """
+    if request.user.role != "buyer":
+        return JsonResponse({"error": "Buyer account required."}, status=403)
+    method = request.POST.get("payment_method", "").lower()
+    if method not in {"paystack", "paypal", "pi"}:
+        return JsonResponse({"error": "Choose Paystack, PayPal, or Pi."}, status=400)
+    items = list(CartItem.objects.filter(user=request.user).select_related("product", "product__seller"))
+    if not items:
+        return JsonResponse({"error": "Your cart is empty."}, status=400)
+    address = BuyerAddress.objects.filter(user=request.user, is_default=True).first() or BuyerAddress.objects.filter(user=request.user).first()
+    with transaction.atomic():
+        created = []
+        for item in items:
+            product = item.product
+            verification = getattr(product.seller, "seller_verification", None)
+            if product.status != "live" or product.stock < item.quantity or not product.seller.is_active or not verification or verification.status != "verified":
+                return JsonResponse({"error": f"{product.name} is no longer available from a verified seller."}, status=409)
+            order = Order.objects.create(
+                buyer=request.user, seller=product.seller, product=product,
+                product_name=product.name, product_image=product.image_src, store_name=product.get_store_display(),
+                unit_price=product.price, quantity=item.quantity, total_price=product.price * item.quantity,
+                payment_method=method, shipping_name=address.recipient_name if address else request.user.get_full_name(),
+                shipping_address=(f"{address.line1}, {address.city}, {address.country}" if address else ""),
+            )
+            product.stock -= item.quantity
+            product.sold += item.quantity
+            product.save(update_fields=["stock", "sold", "updated_at"])
+            OrderTrackingEvent.objects.create(order=order, status="pending", message="Payment secured in escrow. Seller is preparing your order.")
+            created.append(order.order_number)
+        CartItem.objects.filter(user=request.user).delete()
+    return JsonResponse({"ok": True, "orders": created, "redirect": "/dashboards/buyer/orders/"})
 
 
 # ═══════════════════════════════════════════════════════════════

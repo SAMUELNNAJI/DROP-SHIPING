@@ -211,7 +211,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Lagos'   # UTC+1 — Nigeria Standard Time
 
 USE_I18N = True
 

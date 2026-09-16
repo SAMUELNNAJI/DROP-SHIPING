@@ -2031,3 +2031,120 @@ body.dashboard-body--admin .dashboard-panel {
   .admin-search-input { min-width: 140px; width: 100%; }
   .admin-tab { font-size: 11.5px; padding: 0 11px; height: 32px; }
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   ADMIN MOBILE RESPONSIVENESS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Tablet (≤ 900px) */
+@media (max-width: 900px) {
+  .ametrics {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px;
+  }
+  .achart-row {
+    grid-template-columns: 1fr !important;
+  }
+  .aescrow {
+    grid-template-columns: 1fr !important;
+  }
+  body.dashboard-body--admin .dashboard-main {
+    padding: 16px 14px 40px !important;
+  }
+  .ahead {
+    padding: 18px 20px !important;
+  }
+  .ahead h2 {
+    font-size: 22px !important;
+  }
+  .ahead__actions {
+    width: 100%;
+    margin-left: 0 !important;
+  }
+  .ahead__actions .abtn {
+    flex: 1;
+    justify-content: center;
+  }
+  .admin-order-kpis {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+/* Phone (≤ 600px) */
+@media (max-width: 600px) {
+  .ametrics {
+    grid-template-columns: 1fr !important;
+  }
+  .admin-order-kpis {
+    grid-template-columns: 1fr !important;
+  }
+  .acard__val {
+    font-size: 24px !important;
+  }
+  body.dashboard-body--admin .dashboard-table {
+    min-width: 540px;
+  }
+  body.dashboard-body--admin .dashboard-topbar {
+    padding: 0 12px !important;
+    min-height: 64px !important;
+  }
+  .ahead {
+    padding: 16px !important;
+    border-radius: 16px !important;
+  }
+  .ahead h2 {
+    font-size: 20px !important;
+  }
+  .ahead__row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px !important;
+  }
+  .admin-order-toolbar {
+    padding: 12px 14px !important;
+  }
+  .featured-plans-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .admin-tab {
+    font-size: 11px !important;
+    padding: 0 10px !important;
+    height: 30px !important;
+  }
+}
+
+/* ── Admin sidebar: proper mobile drawer ── */
+@media (max-width: 800px) {
+  body.dashboard-body--admin .dashboard-sidebar {
+    position: fixed !important;
+    top: 0 !important; left: 0 !important;
+    bottom: 0 !important; right: auto !important;
+    width: 290px !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow-y: auto !important;
+    transform: translateX(-105%) !important;
+    transition: transform .26s ease !important;
+    border-radius: 0 20px 20px 0 !important;
+    z-index: 60 !important;
+    box-sizing: border-box;
+    padding-bottom: calc(2rem + env(safe-area-inset-bottom)) !important;
+  }
+  body.dashboard-body--admin .dashboard-sidebar.is-open {
+    transform: translateX(0) !important;
+  }
+  body.dashboard-body--admin .dashboard-workspace {
+    width: 100% !important;
+    margin-left: 0 !important;
+    height: 100dvh;
+    overflow-y: auto;
+  }
+  body.dashboard-body--admin .dashboard-sidebar::before {
+    pointer-events: none;
+  }
+  /* Show close button inside sidebar on mobile */
+  .dashboard-sidebar-close {
+    display: grid !important;
+  }
+}

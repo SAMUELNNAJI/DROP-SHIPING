@@ -144,10 +144,14 @@ def filter_shop_products(request):
 
 
 def shop_page(request):
-    """Dynamic shop: DB products (live) + shared categories + working search/filter/sort."""
+    """Dynamic shop: DB products (live) + shared categories + working search/filter/sort + pagination."""
+    from django.core.paginator import Paginator as _Paginator
     qs, active = filter_shop_products(request)
-    products = list(qs[:60])
     total_live = Product.objects.filter(status="live").count()
+
+    paginator = _Paginator(qs, 12)
+    page_obj  = paginator.get_page(request.GET.get("page"))
+    products  = list(page_obj.object_list)
 
     # Wishlist hearts: only buyers get working hearts; guests and non-buyers
     # (sellers/admins) get the sign-in popup instead.  Server-rendered state
@@ -176,6 +180,7 @@ def shop_page(request):
         'products': products,
         'product_count': len(products),
         'total_live': total_live,
+        'page_obj': page_obj,
         'categories': Product.CATEGORY_CHOICES,
         'sorts': SHOP_SORTS,
         'active': active,

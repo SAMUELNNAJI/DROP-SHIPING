@@ -1442,17 +1442,23 @@ def checkout_view(request):
     return render(request, "checkout.html", ctx)
 
 
-@login_required
 def checkout_payment(request):
-    """Payment selection for a real DB-backed cart; provider keys stay in env."""
-    if request.user.role != "buyer":
-        messages.error(request, "Please use a buyer account to complete a purchase.")
-        return redirect("shop")
+    """Payment selection — works for both authenticated buyers and guests.
+
+    Authenticated buyers: cart comes from DB (CartItem).
+    Guests: cart is read from localStorage by cart.js — the page renders
+    with empty server-side cart_items and JS fills in the order summary.
+    """
+    # Redirect sellers / admins who land here by mistake
+    if request.user.is_authenticated and not request.user.is_superuser:
+        if getattr(request.user, "role", "") not in ("buyer", ""):
+            messages.error(request, "Please use a buyer account to complete a purchase.")
+            return redirect("shop")
+
     ctx = {"page_title": "Choose payment", "slug": "checkout-payment"}
     ctx.update(cart_context(request))
-    if not ctx["cart_items"]:
-        messages.error(request, "Your cart is empty.")
-        return redirect("shop")
+
+    # For logged-in buyers with an empty DB cart let JS handle the guest flow
     return render(request, "checkout-payment.html", ctx)
 
 

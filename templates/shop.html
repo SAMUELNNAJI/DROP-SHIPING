@@ -366,19 +366,41 @@
       </div>
 
       <!-- PAGINATION -->
+      {% if page_obj.has_other_pages %}
       <nav class="shop-pagination" aria-label="Product pages">
-        <button type="button" class="spage spage-prev" aria-label="Previous page" disabled>
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if active.q %}&q={{ active.q|urlencode }}{% endif %}{% if active.category and active.category != 'all' %}&category={{ active.category }}{% endif %}{% if active.sort and active.sort != 'default' %}&sort={{ active.sort }}{% endif %}" class="spage spage-prev" aria-label="Previous page">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </a>
+        {% else %}
+        <button type="button" class="spage spage-prev" disabled aria-label="Previous page">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-        <button type="button" class="spage spage-num spage-active">1</button>
-        <button type="button" class="spage spage-num">2</button>
-        <button type="button" class="spage spage-num">3</button>
-        <span class="spage-dots">…</span>
-        <button type="button" class="spage spage-num">12</button>
-        <button type="button" class="spage spage-next" aria-label="Next page">
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+            <button type="button" class="spage spage-num spage-active" aria-current="page">{{ num }}</button>
+          {% elif num == 1 or num == page_obj.paginator.num_pages %}
+            <a href="?page={{ num }}{% if active.q %}&q={{ active.q|urlencode }}{% endif %}{% if active.category and active.category != 'all' %}&category={{ active.category }}{% endif %}{% if active.sort and active.sort != 'default' %}&sort={{ active.sort }}{% endif %}" class="spage spage-num">{{ num }}</a>
+          {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+            <a href="?page={{ num }}{% if active.q %}&q={{ active.q|urlencode }}{% endif %}{% if active.category and active.category != 'all' %}&category={{ active.category }}{% endif %}{% if active.sort and active.sort != 'default' %}&sort={{ active.sort }}{% endif %}" class="spage spage-num">{{ num }}</a>
+          {% elif num == page_obj.number|add:"-3" or num == page_obj.number|add:"3" %}
+            <span class="spage-dots">…</span>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if active.q %}&q={{ active.q|urlencode }}{% endif %}{% if active.category and active.category != 'all' %}&category={{ active.category }}{% endif %}{% if active.sort and active.sort != 'default' %}&sort={{ active.sort }}{% endif %}" class="spage spage-next" aria-label="Next page">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        {% else %}
+        <button type="button" class="spage spage-next" disabled aria-label="Next page">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
+        {% endif %}
       </nav>
+      {% endif %}
 
       <!-- TRUST STRIP -->
       <div class="shop-trust">

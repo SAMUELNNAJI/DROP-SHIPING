@@ -45,7 +45,7 @@
         <p class="sside__label">Manage</p>
         <a href="/dashboards/seller/" data-dashboard-link class="{% if section == 'overview' %}is-active{% endif %}"><span class="sside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><span>Overview</span></a>
         <a href="/dashboards/seller/products/" data-dashboard-link class="{% if section == 'products' %}is-active{% endif %}"><span class="sside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8.5 12.5 3.5 3 8.5v7l9.5 5 9.5-5z"/><path d="M3 8.5l9.5 5 9.5-5M12.5 13.5V20"/></svg></span><span>Products</span></a>
-        <a href="/dashboards/seller/orders/" data-dashboard-link class="{% if section == 'orders' %}is-active{% endif %}"><span class="sside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 8h13l-1 12.5h-11z"/><path d="M9 10.5V6a3 3 0 0 1 6 0v4.5"/></svg></span><span>Orders</span><em class="sside__badge">5</em></a>
+        <a href="/dashboards/seller/orders/" data-dashboard-link class="{% if section == 'orders' %}is-active{% endif %}"><span class="sside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 8h13l-1 12.5h-11z"/><path d="M9 10.5V6a3 3 0 0 1 6 0v4.5"/></svg></span><span>Orders</span>{% if order_counts.pending %}<em class="sside__badge">{{ order_counts.pending }}</em>{% endif %}</a>
         <p class="sside__label">Finance</p>
         <a href="/dashboards/seller/earnings/" data-dashboard-link class="{% if section == 'earnings' %}is-active{% endif %}"><span class="sside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 14l4-4 3 3 5-6"/></svg></span><span>Earnings</span></a>
         <a href="/dashboards/seller/payouts/" data-dashboard-link class="{% if section == 'payouts' %}is-active{% endif %}"><span class="sside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span><span>Payouts</span></a>
@@ -55,8 +55,8 @@
         <a href="/shop/"><span class="sside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg></span><span>View store</span></a>
       </nav>
       <div class="sside__setup">
-        <div class="sside__setuphead"><span class="sside__setupic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span><strong>Setup · 68% complete</strong></div>
-        <div class="sside__bar"><i style="width:68%"></i></div>
+        <div class="sside__setuphead"><span class="sside__setupic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span><strong>Setup · {% if verification and verification.status == "verified" %}100{% elif verification and verification.status == "pending" %}75{% elif verification and verification.status == "rejected" %}40{% else %}30{% endif %}% complete</strong></div>
+        <div class="sside__bar"><i style="width:{% if verification and verification.status == 'verified' %}100{% elif verification and verification.status == 'pending' %}75{% elif verification and verification.status == 'rejected' %}40{% elif verification %}68{% else %}30{% endif %}%"></i></div>
         <p>Verify your ID and payout account to unlock instant payouts.</p>
         <a href="/dashboards/seller/verification/" data-dashboard-link>Complete verification <span aria-hidden="true"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span></a>
       </div>
@@ -87,7 +87,7 @@
 
         <p class="anav-label">Marketplace</p>
         <a href="/dashboards/admin/" data-dashboard-link class="{% if section == 'overview' %}is-active{% endif %}"><span class="anav-icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span>Overview</a>
-        <a href="/dashboards/admin/orders/" data-dashboard-link class="{% if section == 'orders' %}is-active{% endif %}"><span class="anav-icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></span>Orders<span class="dash-nav-badge dash-nav-badge--soft">2</span></a>
+        <a href="/dashboards/admin/orders/" data-dashboard-link class="{% if section == 'orders' %}is-active{% endif %}"><span class="anav-icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></span>Orders{% if order_counts.payout_ready %}<span class="dash-nav-badge dash-nav-badge--soft">{{ order_counts.payout_ready }}</span>{% endif %}</a>
         <a href="/dashboards/admin/products/" data-dashboard-link class="{% if section == 'products' %}is-active{% endif %}"><span class="anav-icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8.5 12 3 3 8.5v7L12 21l9-5.5z"/><path d="m3 8.5 9 5.5 9-5.5M12 21v-7"/></svg></span>Products</a>
         <p class="anav-label">People &amp; money</p>
 
@@ -127,7 +127,7 @@
       <nav class="bside__nav" aria-label="Buyer navigation">
         <p class="bside__label">Shopping</p>
         <a href="/dashboards/buyer/" data-dashboard-link class="{% if section == 'overview' %}is-active{% endif %}"><span class="bside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span>Overview</a>
-        <a href="/dashboards/buyer/orders/" data-dashboard-link class="{% if section == 'orders' %}is-active{% endif %}"><span class="bside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></span>My Orders<span class="dash-nav-badge">0</span></a>
+        <a href="/dashboards/buyer/orders/" data-dashboard-link class="{% if section == 'orders' %}is-active{% endif %}"><span class="bside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></span>My Orders{% if order_counts.in_progress %}<span class="dash-nav-badge">{{ order_counts.in_progress }}</span>{% endif %}</a>
         <a href="/dashboards/buyer/wishlist/" data-dashboard-link class="{% if section == 'wishlist' %}is-active{% endif %}"><span class="bside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5S4.5 15.6 4.5 10.4A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 7.5 3.1c0 5.2-7.5 10.1-7.5 10.1z"/></svg></span>Wishlist</a>
         <p class="bside__label">Account</p>
         <a href="/dashboards/buyer/addresses/" data-dashboard-link class="{% if section == 'addresses' %}is-active{% endif %}"><span class="bside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="11" r="2.6"/></svg></span>Addresses</a>
@@ -150,63 +150,85 @@
 
     <div class="db-backdrop" id="dbBackdrop" aria-hidden="true"></div>
 
-    <div class="dashboard-workspace">
-      <header class="dashboard-topbar">
-        <div class="dashboard-topbar-title"><button class="dashboard-menu-toggle" id="dashboardMenuToggle" type="button" aria-label="Open dashboard menu" aria-controls="dashboardSidebar" aria-expanded="false"><svg class="sic db-toggle-icon--menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg><svg class="sic db-toggle-icon--close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button><div>{% if role == 'seller' %}<p class="stop__crumbs">{{ role|title }} Center<svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>{{ page_title }}</p>{% elif role == 'admin' %}<p class="stop__crumbs">Admin Console<svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>{{ page_title }}</p>{% endif %}<h1 id="dashboardPageTitle">{{ page_title }}</h1>{% if role == 'seller' %}<p class="stop__sub"><span>Welcome back, {{ user.username|default:"seller" }}</span><span class="stop__chip"><i></i>Store live</span></p>{% else %}<p>Sep 14, 2026 · DropHub {% if role == 'admin' %}Admin{% else %}{{ role|title }}{% endif %}</p>{% endif %}</div></div>
-        {% if role == 'seller' %}
-        <div class="dashboard-topbar-actions">
-          <label class="topbar-search">
-            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-            <input id="sellerGlobalSearch" type="search" placeholder="Search products, orders…" />
-          </label>
-          <button class="topbar-icon" id="sellerNotifBtn" aria-label="Notifications">
-            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
-            <i class="dot"></i>
+        <div class="dashboard-workspace">
+      <header class="dashboard-topbar dtop dtop--{{ role }}">
+
+        <!-- Left: hamburger + breadcrumb + title -->
+        <div class="dtop__left">
+          <button class="dtop__burger dashboard-menu-toggle" id="dashboardMenuToggle"
+                  type="button" aria-label="Open dashboard menu"
+                  aria-controls="dashboardSidebar" aria-expanded="false">
+            <svg class="sic db-toggle-icon--menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+            <svg class="sic db-toggle-icon--close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
           </button>
-          <a class="topbar-btn" href="/dashboards/seller/products/add/">
-            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Add product
-          </a>
-          <div class="topbar-avatar">{{ user.username|first|upper|default:"S" }}</div>
+
+          <div class="dtop__title-group">
+            {% if role == "seller" %}
+            <div class="dtop__crumb">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg>
+              Seller Center
+              <svg class="sic dtop__crumb-sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>
+              <span>{{ page_title }}</span>
+            </div>
+            {% elif role == "admin" %}
+            <div class="dtop__crumb">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8 20 7v6.4c0 4.9-3.4 8.4-8 9.8-4.6-1.4-8-4.9-8-9.8V7z"/></svg>
+              Admin Console
+              <svg class="sic dtop__crumb-sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>
+              <span>{{ page_title }}</span>
+            </div>
+            {% else %}
+            <div class="dtop__crumb">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-.7-.7a5.5 5.5 0 0 0-7.8 7.8L12 21l8.5-8.3a5.5 5.5 0 0 0 0-7.8z"/></svg>
+              Buyer Lounge
+              <svg class="sic dtop__crumb-sep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>
+              <span>{{ page_title }}</span>
+            </div>
+            {% endif %}
+            <h1 class="dtop__heading" id="dashboardPageTitle">{{ page_title }}</h1>
+            {% if role == "seller" %}
+            <div class="dtop__sub">
+              <span class="dtop__sub-welcome">Welcome back, <strong>{{ user.username|default:"seller" }}</strong></span>
+              <span class="dtop__live-chip"><i></i>Store live</span>
+            </div>
+            {% elif role == "admin" %}
+            <div class="dtop__sub">
+              <span class="dtop__sub-welcome">Platform control · <strong>{{ today|date:"M j, Y" }}</strong></span>
+              {% if pending_verifications %}<span class="dtop__alert-chip"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>{{ pending_verifications }} pending</span>{% endif %}
+            </div>
+            {% else %}
+            <div class="dtop__sub">
+              <span class="dtop__sub-welcome">{{ today|date:"l, M j" }} · Escrow protected</span>
+            </div>
+            {% endif %}
+          </div>
         </div>
-        {% elif role == 'admin' %}
-        <div class="dashboard-topbar-actions">
-          <label class="topbar-search">
-            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-            <input id="adminGlobalSearch" type="search" placeholder="Search orders, users, payouts…" />
-          </label>
-          <button class="topbar-icon" type="button" aria-label="Notifications">
-            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
-            <i class="dot"></i>
-          </button>
-          <form method="post" action="/accounts/signout/">
-            {% csrf_token %}
-            <button class="topbar-logout" type="submit" title="Log out">
-              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>
-            </button>
-          </form>
-          <span class="topbar-avatar">{{ user.username|first|upper|default:"A" }}</span>
+
+        <!-- Right: role-specific actions -->
+        {% if role == "seller" %}
+        <div class="dtop__right">
+          <label class="dtop__search" aria-label="Search"><svg class="sic dtop__search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="sellerGlobalSearch" type="search" placeholder="Search products, orders&#8230;" /></label>
+          <button class="dtop__icon-btn" id="sellerNotifBtn" aria-label="Notifications"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="dtop__notif-dot"></span></button>
+          <a class="dtop__cta-btn" href="/dashboards/seller/products/add/"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg><span>Add product</span></a>
+          <div class="dtop__avatar dtop__avatar--seller" title="{{ user.username }}">{{ user.username|first|upper|default:"S" }}</div>
+        </div>
+        {% elif role == "admin" %}
+        <div class="dtop__right">
+          <label class="dtop__search" aria-label="Search"><svg class="sic dtop__search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="adminGlobalSearch" type="search" placeholder="Search orders, users&#8230;" /></label>
+          <a href="/dashboards/admin/verifications/" class="dtop__icon-btn" data-dashboard-link aria-label="Verifications" style="position:relative"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>{% if pending_verifications %}<span class="dtop__notif-dot"></span>{% endif %}</a>
+          <form method="post" action="/accounts/signout/" style="display:contents">{% csrf_token %}<button class="dtop__logout-btn" type="submit" title="Sign out"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg></button></form>
+          <div class="dtop__avatar dtop__avatar--admin" title="{{ user.username }}">{{ user.username|first|upper|default:"A" }}</div>
         </div>
         {% else %}
-        <div class="dashboard-topbar-actions">
-          <label class="topbar-search">
-            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-            <input id="buyerGlobalSearch" type="search" placeholder="Search orders, products…" />
-          </label>
-          <a href="/dashboards/buyer/orders/" data-dashboard-link class="topbar-icon" aria-label="Orders">
-            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>
-          </a>
-          <a href="/help/" class="topbar-icon" aria-label="Help center">
-            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1 .9-1 1.6v.4"/><circle cx="12" cy="17.2" r=".9" fill="currentColor" stroke="none"/></svg>
-          </a>
-          <form method="post" action="/accounts/signout/">
-            {% csrf_token %}
-            <button class="topbar-logout" type="submit" title="Log out">
-              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
-            </button>
-          </form>
-          <a href="/dashboards/buyer/settings/" data-dashboard-link class="topbar-avatar" aria-label="Account settings">{{ user.username|first|upper|default:"B" }}</a>
+        <div class="dtop__right">
+          <label class="dtop__search" aria-label="Search"><svg class="sic dtop__search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="buyerGlobalSearch" type="search" placeholder="Search orders, products&#8230;" /></label>
+          <a href="/dashboards/buyer/orders/" data-dashboard-link class="dtop__icon-btn" aria-label="My orders"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></a>
+          <a href="/shop/" class="dtop__icon-btn" aria-label="Browse shop"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg></a>
+          <form method="post" action="/accounts/signout/" style="display:contents">{% csrf_token %}<button class="dtop__logout-btn" type="submit" title="Sign out"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></button></form>
+          <a href="/dashboards/buyer/settings/" data-dashboard-link class="dtop__avatar dtop__avatar--buyer" title="Account settings" aria-label="Account settings">{{ user.username|first|upper|default:"B" }}</a>
         </div>
         {% endif %}
+
       </header>
       {% include "partials/messages.html" %}
       <main class="dashboard-main" id="dashboardContent">{% include dashboard_template %}</main>

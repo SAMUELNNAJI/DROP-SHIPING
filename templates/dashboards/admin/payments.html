@@ -1,1 +1,113 @@
-<div class="dashboard-page" data-page-title="Payments"><div class="ahead"><div class="ahead__row"><span class="ahead__chip"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="3"/><path d="M2.5 10h19M6 14.5h4"/></svg>Settlement center</span></div><h2>Payments</h2><p>Track payment rails, transaction volume and escrow status.</p><div class="ahead__actions"><button class="abtn abtn--ghost" type="button"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Export CSV</button><button class="abtn abtn--primary" type="button"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Export payments</button></div></div><div class="payment-summary"><div><span><svg class="sic asplit__ic--pi" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg> Pi Network</span><strong>$84,302</strong><small>2,401 transactions</small></div><div><span><svg class="sic asplit__ic--pp" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg> PayPal</span><strong>$142,180</strong><small>5,820 transactions</small></div><div><span><svg class="sic asplit__ic--ps" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg> Paystack</span><strong>₦92.4M</strong><small>4,626 transactions</small></div></div><section class="dashboard-panel"><div class="panel-heading"><h3>Payment Log</h3></div><div class="dashboard-table-wrap"><table class="dashboard-table"><thead><tr><th>TRANSACTION</th><th>DATE</th><th>PROVIDER</th><th>AMOUNT</th><th>STATUS</th></tr></thead><tbody><tr><td><b>TXN-8821</b></td><td class="muted">Sep 12, 09:00</td><td>PayPal</td><td><b>$1,204.20</b></td><td><span class="pill pill-green">Settled</span></td></tr><tr><td><b>TXN-8790</b></td><td class="muted">Sep 05, 09:00</td><td>Paystack</td><td><b>₦1,480,000</b></td><td><span class="pill pill-green">Settled</span></td></tr><tr><td><b>TXN-8744</b></td><td class="muted">Aug 29, 14:30</td><td>Pi Network</td><td><b>$860.00</b></td><td><span class="pill pill-yellow">Processing</span></td></tr></tbody></table></div><div class="tablex-foot"><div class="pager-info">Showing 1 to 3 of 15 entries</div><div class="pagerx"><button disabled>&laquo;</button><button class="on">1</button><button>2</button><button>3</button><button>&raquo;</button></div></div></section></div>
+{% load static %}
+<div class="dashboard-page" data-page-title="Payments">
+
+  <div class="ahead">
+    <div class="ahead__row">
+      <span class="ahead__chip">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="3"/><path d="M2.5 10h19M6 14.5h4"/></svg>
+        Settlement center
+      </span>
+    </div>
+    <h2>Payments</h2>
+    <p>Track confirmed order payments across all payment rails.</p>
+  </div>
+
+  <!-- payment method summary -->
+  <div class="payment-summary" style="margin-top:18px">
+    <div>
+      <span>
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="#7048e8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Pi Network
+      </span>
+      <strong>${{ pi_total|floatformat:2 }}</strong>
+      <small>{{ payments|length }} shown · confirmed orders</small>
+    </div>
+    <div>
+      <span>
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="#2456e6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+        PayPal
+      </span>
+      <strong>${{ paypal_total|floatformat:2 }}</strong>
+      <small>International orders</small>
+    </div>
+    <div>
+      <span>
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="#0ea5c9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+        Paystack
+      </span>
+      <strong>${{ paystack_total|floatformat:2 }}</strong>
+      <small>Naira transactions</small>
+    </div>
+  </div>
+
+  <section class="dashboard-panel" style="margin-top:18px">
+    <div class="panel-heading" style="flex-wrap:wrap;gap:10px">
+      <h3>Payment log</h3>
+      <span class="panel-meta">{{ page_obj.paginator.count }} confirmed order{{ page_obj.paginator.count|pluralize }} · Total ${{ grand_total|floatformat:2 }}</span>
+    </div>
+
+    <!-- filter toolbar -->
+    <form class="admin-order-toolbar" method="get">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <a href="?method=all{% if search_q %}&q={{ search_q }}{% endif %}" class="admin-tab {% if method_filter == 'all' %}active{% endif %}">All</a>
+        <a href="?method=pi{% if search_q %}&q={{ search_q }}{% endif %}" class="admin-tab {% if method_filter == 'pi' %}active{% endif %}">Pi Network</a>
+        <a href="?method=paypal{% if search_q %}&q={{ search_q }}{% endif %}" class="admin-tab {% if method_filter == 'paypal' %}active{% endif %}">PayPal</a>
+        <a href="?method=paystack{% if search_q %}&q={{ search_q }}{% endif %}" class="admin-tab {% if method_filter == 'paystack' %}active{% endif %}">Paystack</a>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+        <input class="admin-search-input" name="q" value="{{ search_q }}" placeholder="Search order, buyer, product…" />
+        <input type="hidden" name="method" value="{{ method_filter }}">
+        <button class="abtn abtn--ghost" type="submit">Search</button>
+      </div>
+    </form>
+
+    <div class="dashboard-table-wrap">
+      <table class="dashboard-table dashboard-table--wide">
+        <thead>
+          <tr>
+            <th>ORDER</th>
+            <th>DATE</th>
+            <th>BUYER</th>
+            <th>SELLER</th>
+            <th>PRODUCT</th>
+            <th>AMOUNT</th>
+            <th>METHOD</th>
+            <th>STATUS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in payments %}
+          <tr>
+            <td class="table-link">#{{ order.order_number }}</td>
+            <td class="muted">{{ order.confirmed_at|date:"M j, Y" }}</td>
+            <td><b>{{ order.buyer.username }}</b></td>
+            <td class="muted">{{ order.store_name|default:order.seller.username }}</td>
+            <td class="muted">{{ order.product_name|truncatechars:26 }}</td>
+            <td><b>${{ order.total_price|floatformat:2 }}</b></td>
+            <td>
+              <span class="pill {% if order.payment_method == 'pi' %}pill-purple{% elif order.payment_method == 'paypal' %}pill-blue{% else %}pill-cyan{% endif %}">
+                {{ order.get_payment_method_display }}
+              </span>
+            </td>
+            <td>
+              {% if order.payout_released %}
+                <span class="pill pill-green">Paid out {{ order.payout_released_at|date:"M j" }}</span>
+              {% else %}
+                <span class="pill pill-yellow">Payout pending</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8" style="text-align:center;padding:40px;color:#9aa7bd">
+              No confirmed payments found{% if search_q %} for "{{ search_q }}"{% endif %}.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% include "partials/pagination.html" with page_obj=page_obj extra_params="&method="|add:method_filter|add:"&q="|add:search_q %}
+  </section>
+</div>

@@ -1,81 +1,222 @@
+{% load static %}
 <div class="dashboard-page" data-page-title="Seller Verifications">
-<div class="ahead">
-  <div class="ahead__row">
-    <span class="ahead__chip"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>Trust &amp; safety</span>
-    <span class="ahead__chip">{{ pending_count }} pending review</span>
+
+  <div class="ahead">
+    <div class="ahead__row">
+      <span class="ahead__chip">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        Trust &amp; safety
+      </span>
+      {% if pending_count %}
+      <span class="ahead__chip" style="background:rgba(232,150,12,.12);border-color:rgba(232,150,12,.3);color:#9a6200">
+        {{ pending_count }} pending review
+      </span>
+      {% endif %}
+    </div>
+    <h2>Seller Verifications</h2>
+    <p>Review identity documents submitted by sellers. Verified sellers unlock instant payouts.</p>
   </div>
-  <h2>Seller Verifications</h2>
-  <p>Approve or reject seller identity checks. Verified sellers unlock instant payouts.</p>
-</div>
 
-<div class="kpi-grid">
-  <div class="kpi" style="--ka:#e8930c;--ks:#fff4dd"><div class="kpi__top"><span class="kpi__label">Pending review</span></div><strong>{{ pending_count }}</strong></div>
-  <div class="kpi" style="--ka:#0ca678;--ks:#e2f8f0"><div class="kpi__top"><span class="kpi__label">Verified sellers</span></div><strong>{{ verified_count }}</strong></div>
-  <div class="kpi" style="--ka:#e5484d;--ks:#fdecec"><div class="kpi__top"><span class="kpi__label">Rejected</span></div><strong>{{ rejected_count }}</strong></div>
-</div>
+  <!-- KPI row -->
+  <div class="admin-order-kpis" style="margin:18px 0">
+    <div class="aokpi aokpi--amber">
+      <span>Pending review</span>
+      <b>{{ pending_count }}</b>
+    </div>
+    <div class="aokpi aokpi--green">
+      <span>Verified sellers</span>
+      <b>{{ verified_count }}</b>
+    </div>
+    <div class="aokpi" style="background:#fff1f1;border-color:#fecaca">
+      <span>Rejected</span>
+      <b style="color:#991b1b">{{ rejected_count }}</b>
+    </div>
+    <div class="aokpi">
+      <span>Total submissions</span>
+      <b>{{ pending_count|add:verified_count|add:rejected_count }}</b>
+    </div>
+  </div>
 
-{% if pending_list %}
-<section class="dashboard-panel" style="margin-top:16px">
-  <div class="panel-heading"><h3>Review queue</h3><span class="panel-meta">FIFO · oldest first</span></div>
-  <div class="dashboard-table-wrap"><table class="dashboard-table">
-    <thead><tr><th>SELLER</th><th>STORE</th><th>ID DOCUMENT</th><th>SUBMITTED</th><th>REVIEW</th></tr></thead>
-    <tbody>
-    {% for v in pending_list %}
-      <tr>
-        <td><b>{{ v.user.username }}</b><br /><small class="muted">{{ v.full_name }}</small></td>
-        <td class="muted">{{ v.store_name|default:"—" }}</td>
-        <td class="muted">{{ v.get_id_type_display }}{% if v.id_number %} · {{ v.id_number }}{% endif %}{% if v.document %} · <a href="{{ v.document.url }}" target="_blank" rel="noopener" style="color:#2456e6;font-weight:600">View file</a>{% else %} · <span style="color:#b42318">no file</span>{% endif %}</td>
-        <td class="muted">{{ v.submitted_at|date:"M d, Y H:i" }}</td>
-        <td>
-          <form method="post" action="/dashboards/admin/verifications/{{ v.pk }}/approve/" style="display:flex;flex-direction:column;gap:7px;min-width:230px">
-            {% csrf_token %}
-            <input type="text" name="reviewer_note" placeholder="Note (optional)" style="padding:7px 10px;border:1px solid #d8e0ec;border-radius:8px;font:inherit" />
-            <div style="display:flex;gap:7px">
-              <button class="table-action" type="submit" formaction="/dashboards/admin/verifications/{{ v.pk }}/approve/">Approve</button>
-              <button class="table-action table-action--danger" type="submit" formaction="/dashboards/admin/verifications/{{ v.pk }}/reject/">Reject</button>
-            </div>
-          </form>
-        </td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table></div>
-</section>
-{% else %}
-<section class="dashboard-panel" style="margin-top:16px">
-  <div class="panel-heading"><h3>Review queue</h3></div>
-  <div class="panel-body" style="padding:26px;text-align:center;color:#64748b">No sellers are waiting for review. 🎉</div>
-</section>
-{% endif %}
-
-<section class="dashboard-panel" style="margin-top:16px">
-  <div class="panel-heading"><h3>Recently reviewed</h3><span class="panel-meta">Last 50</span></div>
-  {% if reviewed_list %}
-  <div class="dashboard-table-wrap"><table class="dashboard-table">
-    <thead><tr><th>SELLER</th><th>STORE</th><th>STATUS</th><th>NOTE</th><th>UPDATED</th><th>ACTION</th></tr></thead>
-    <tbody>
-    {% for v in reviewed_list %}
-      <tr>
-        <td><b>{{ v.user.username }}</b></td>
-        <td class="muted">{{ v.store_name|default:"—" }}</td>
-        <td>
-          {% if v.status == 'verified' %}<span class="pill pill-green">Verified</span>
-          {% elif v.status == 'rejected' %}<span class="pill pill-rose">Rejected</span>
-          {% else %}<span class="pill pill-yellow">Unverified</span>{% endif %}
-        </td>
-        <td class="muted">{{ v.reviewer_note|default:"—"|truncatechars:60 }}</td>
-        <td class="muted">{{ v.submitted_at|date:"M d, Y H:i" }}</td>
-        <td>
-          <form method="post" action="/dashboards/admin/verifications/{{ v.pk }}/reset/">{% csrf_token %}
-            <button class="table-action table-action--soft" type="submit" formaction="/dashboards/admin/verifications/{{ v.pk }}/reset/">Reset</button>
-          </form>
-        </td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table></div>
+  <!-- ── Review queue ── -->
+  {% if pending_list %}
+  <section class="dashboard-panel" style="margin-bottom:18px">
+    <div class="panel-heading">
+      <h3>Review queue</h3>
+      <span class="panel-meta">{{ pending_count }} awaiting · FIFO order</span>
+    </div>
+    <div class="dashboard-table-wrap">
+      <table class="dashboard-table dashboard-table--wide">
+        <thead>
+          <tr>
+            <th>SELLER</th>
+            <th>STORE</th>
+            <th>ID TYPE</th>
+            <th>SUBMITTED</th>
+            <th>DOCUMENT</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for v in pending_list %}
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff;background:linear-gradient(135deg,#e8960c,#f3b942);flex-shrink:0">{{ v.user.username|first|upper }}</span>
+                <div>
+                  <b>{{ v.user.username }}</b><br>
+                  <small class="muted">{{ v.full_name }}</small>
+                </div>
+              </div>
+            </td>
+            <td class="muted">{{ v.store_name|default:"—" }}</td>
+            <td class="muted">{{ v.get_id_type_display }}</td>
+            <td class="muted">{{ v.submitted_at|date:"M j, Y · H:i" }}</td>
+            <td>
+              {% if v.document %}
+                <span class="pill pill-green" style="font-size:11px">File uploaded</span>
+              {% else %}
+                <span class="pill pill-yellow" style="font-size:11px">No file</span>
+              {% endif %}
+            </td>
+            <td>
+              <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center">
+                <!-- View full document -->
+                <a class="table-action table-action--soft"
+                   href="{% url 'admin_verification_detail' v.pk %}"
+                   data-dashboard-link>
+                  <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                  View
+                </a>
+                <!-- Approve -->
+                <form method="post" action="{% url 'admin_verification_action' v.pk 'approve' %}" style="display:inline">
+                  {% csrf_token %}
+                  <button class="table-action table-action--green" type="submit"
+                          onclick="return confirm('Approve {{ v.user.username }}?')">
+                    <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Approve
+                  </button>
+                </form>
+                <!-- Reject -->
+                <button class="table-action table-action--danger" type="button"
+                        onclick="openRejectModal({{ v.pk }}, '{{ v.user.username|escapejs }}')">
+                  <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  Reject
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
   {% else %}
-  <div class="panel-body" style="padding:26px;text-align:center;color:#64748b">No completed reviews yet.</div>
+  <section class="dashboard-panel" style="margin-bottom:18px">
+    <div class="panel-heading"><h3>Review queue</h3></div>
+    <div style="padding:40px;text-align:center;color:#93a0bd">
+      <div style="font-size:40px;margin-bottom:10px">🎉</div>
+      <p style="font-size:14px;font-weight:700">All caught up — no pending reviews.</p>
+    </div>
+  </section>
   {% endif %}
-</section>
+
+  <!-- ── Recently reviewed ── -->
+  <section class="dashboard-panel">
+    <div class="panel-heading">
+      <h3>Recently reviewed</h3>
+      <span class="panel-meta">Last 50</span>
+    </div>
+    {% if reviewed_list %}
+    <div class="dashboard-table-wrap">
+      <table class="dashboard-table dashboard-table--wide">
+        <thead>
+          <tr><th>SELLER</th><th>STORE</th><th>STATUS</th><th>NOTE</th><th>UPDATED</th><th>ACTIONS</th></tr>
+        </thead>
+        <tbody>
+          {% for v in reviewed_list %}
+          <tr>
+            <td><b>{{ v.user.username }}</b><br><small class="muted">{{ v.full_name }}</small></td>
+            <td class="muted">{{ v.store_name|default:"—" }}</td>
+            <td>
+              {% if v.status == "verified" %}
+                <span class="pill pill-green">Verified</span>
+              {% elif v.status == "rejected" %}
+                <span class="pill pill-red">Rejected</span>
+              {% else %}
+                <span class="pill pill-yellow">{{ v.get_status_display }}</span>
+              {% endif %}
+            </td>
+            <td class="muted" style="max-width:200px;white-space:normal;font-size:12.5px">{{ v.reviewer_note|default:"—"|truncatechars:60 }}</td>
+            <td class="muted">{{ v.submitted_at|date:"M j, Y" }}</td>
+            <td>
+              <div style="display:flex;gap:7px">
+                <a class="table-action table-action--soft"
+                   href="{% url 'admin_verification_detail' v.pk %}"
+                   data-dashboard-link>View</a>
+                <form method="post" action="{% url 'admin_verification_action' v.pk 'reset' %}">
+                  {% csrf_token %}
+                  <button class="table-action table-action--soft" type="submit"
+                          onclick="return confirm('Reset to unverified?')"
+                          style="color:#6b7a90">Reset</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div style="padding:32px;text-align:center;color:#93a0bd;font-size:13px">No reviewed verifications yet.</div>
+    {% endif %}
+  </section>
+
 </div>
+
+<!-- ── Reject modal (with note field) ── -->
+<div class="smodal" id="rejectModal" role="dialog" aria-modal="true">
+  <div class="smodal__box" style="max-width:440px">
+    <div class="smodal__head">
+      <span class="sside__setupic" style="background:#fff1f1;border-color:#fecaca;color:#b4232a">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </span>
+      <h3>Reject verification</h3>
+      <span style="margin-left:auto"></span>
+      <button class="mbtn" onclick="document.getElementById('rejectModal').classList.remove('open')">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <form method="post" id="rejectForm" action="">
+      {% csrf_token %}
+      <div class="smodal__body">
+        <p style="color:#5d6a85;font-size:13.5px;margin:0 0 14px">Rejecting <strong id="rejectUsername"></strong>. Add a note explaining what they need to fix.</p>
+        <div class="ff">
+          <label>Reviewer note</label>
+          <textarea name="reviewer_note" class="ff-input" placeholder="e.g. Please upload a clearer photo of your ID — the text was unreadable." style="min-height:90px;resize:vertical"></textarea>
+        </div>
+      </div>
+      <div class="smodal__foot">
+        <button class="btngs" type="button" onclick="document.getElementById('rejectModal').classList.remove('open')">Cancel</button>
+        <button class="btnps" type="submit" style="background:#e5484d">Reject seller</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function openRejectModal(pk, username) {
+  var modal = document.getElementById('rejectModal');
+  var form  = document.getElementById('rejectForm');
+  var name  = document.getElementById('rejectUsername');
+  form.action = '/dashboards/admin/verifications/' + pk + '/reject/';
+  name.textContent = username;
+  modal.classList.add('open');
+  setTimeout(function () {
+    var ta = modal.querySelector('textarea');
+    if (ta) ta.focus();
+  }, 80);
+}
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') document.getElementById('rejectModal').classList.remove('open');
+});
+</script>

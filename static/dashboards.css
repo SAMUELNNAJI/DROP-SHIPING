@@ -735,6 +735,13 @@ body.db-locked .dashboard-workspace {
   body.dashboard-body--buyer .bside,
   body.dashboard-body--admin .dashboard-sidebar {
     box-sizing: border-box !important;
-    padding-bottom: calc(3rem + env(safe-area-inset-bottom)) !important;
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* Extra scroll runway for the final dashboard-page control on tablets and phones. */
+@media (max-width: 1100px) {
+  body.dashboard-body .dashboard-main {
+    padding-bottom: calc(2rem + env(safe-area-inset-bottom)) !important;
   }
 }

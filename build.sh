@@ -14,4 +14,7 @@ python manage.py collectstatic --noinput
 echo "==> Applying database migrations"
 python manage.py migrate --noinput
 
+echo "==> Creating deployment superuser when configured"
+python manage.py bootstrap_superuser
+
 echo "==> Build finished"

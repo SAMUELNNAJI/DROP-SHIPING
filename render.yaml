@@ -39,3 +39,11 @@ services:
       # connections from Django.
       - key: DB_CONN_MAX_AGE
         value: "0"
+      # Set these three secret values in Render's Environment tab before the
+      # next deploy. The build creates (or repairs) this admin account.
+      - key: DJANGO_SUPERUSER_USERNAME
+        sync: false
+      - key: DJANGO_SUPERUSER_EMAIL
+        sync: false
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false

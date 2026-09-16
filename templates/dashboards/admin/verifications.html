@@ -1,0 +1,81 @@
+<div class="dashboard-page" data-page-title="Seller Verifications">
+<div class="ahead">
+  <div class="ahead__row">
+    <span class="ahead__chip"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>Trust &amp; safety</span>
+    <span class="ahead__chip">{{ pending_count }} pending review</span>
+  </div>
+  <h2>Seller Verifications</h2>
+  <p>Approve or reject seller identity checks. Verified sellers unlock instant payouts.</p>
+</div>
+
+<div class="kpi-grid">
+  <div class="kpi" style="--ka:#e8930c;--ks:#fff4dd"><div class="kpi__top"><span class="kpi__label">Pending review</span></div><strong>{{ pending_count }}</strong></div>
+  <div class="kpi" style="--ka:#0ca678;--ks:#e2f8f0"><div class="kpi__top"><span class="kpi__label">Verified sellers</span></div><strong>{{ verified_count }}</strong></div>
+  <div class="kpi" style="--ka:#e5484d;--ks:#fdecec"><div class="kpi__top"><span class="kpi__label">Rejected</span></div><strong>{{ rejected_count }}</strong></div>
+</div>
+
+{% if pending_list %}
+<section class="dashboard-panel" style="margin-top:16px">
+  <div class="panel-heading"><h3>Review queue</h3><span class="panel-meta">FIFO · oldest first</span></div>
+  <div class="dashboard-table-wrap"><table class="dashboard-table">
+    <thead><tr><th>SELLER</th><th>STORE</th><th>ID DOCUMENT</th><th>SUBMITTED</th><th>REVIEW</th></tr></thead>
+    <tbody>
+    {% for v in pending_list %}
+      <tr>
+        <td><b>{{ v.user.username }}</b><br /><small class="muted">{{ v.full_name }}</small></td>
+        <td class="muted">{{ v.store_name|default:"—" }}</td>
+        <td class="muted">{{ v.get_id_type_display }}{% if v.id_number %} · {{ v.id_number }}{% endif %}{% if v.document %} · <a href="{{ v.document.url }}" target="_blank" rel="noopener" style="color:#2456e6;font-weight:600">View file</a>{% else %} · <span style="color:#b42318">no file</span>{% endif %}</td>
+        <td class="muted">{{ v.submitted_at|date:"M d, Y H:i" }}</td>
+        <td>
+          <form method="post" action="/dashboards/admin/verifications/{{ v.pk }}/approve/" style="display:flex;flex-direction:column;gap:7px;min-width:230px">
+            {% csrf_token %}
+            <input type="text" name="reviewer_note" placeholder="Note (optional)" style="padding:7px 10px;border:1px solid #d8e0ec;border-radius:8px;font:inherit" />
+            <div style="display:flex;gap:7px">
+              <button class="table-action" type="submit" formaction="/dashboards/admin/verifications/{{ v.pk }}/approve/">Approve</button>
+              <button class="table-action table-action--danger" type="submit" formaction="/dashboards/admin/verifications/{{ v.pk }}/reject/">Reject</button>
+            </div>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</section>
+{% else %}
+<section class="dashboard-panel" style="margin-top:16px">
+  <div class="panel-heading"><h3>Review queue</h3></div>
+  <div class="panel-body" style="padding:26px;text-align:center;color:#64748b">No sellers are waiting for review. 🎉</div>
+</section>
+{% endif %}
+
+<section class="dashboard-panel" style="margin-top:16px">
+  <div class="panel-heading"><h3>Recently reviewed</h3><span class="panel-meta">Last 50</span></div>
+  {% if reviewed_list %}
+  <div class="dashboard-table-wrap"><table class="dashboard-table">
+    <thead><tr><th>SELLER</th><th>STORE</th><th>STATUS</th><th>NOTE</th><th>UPDATED</th><th>ACTION</th></tr></thead>
+    <tbody>
+    {% for v in reviewed_list %}
+      <tr>
+        <td><b>{{ v.user.username }}</b></td>
+        <td class="muted">{{ v.store_name|default:"—" }}</td>
+        <td>
+          {% if v.status == 'verified' %}<span class="pill pill-green">Verified</span>
+          {% elif v.status == 'rejected' %}<span class="pill pill-rose">Rejected</span>
+          {% else %}<span class="pill pill-yellow">Unverified</span>{% endif %}
+        </td>
+        <td class="muted">{{ v.reviewer_note|default:"—"|truncatechars:60 }}</td>
+        <td class="muted">{{ v.submitted_at|date:"M d, Y H:i" }}</td>
+        <td>
+          <form method="post" action="/dashboards/admin/verifications/{{ v.pk }}/reset/">{% csrf_token %}
+            <button class="table-action table-action--soft" type="submit" formaction="/dashboards/admin/verifications/{{ v.pk }}/reset/">Reset</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}
+  <div class="panel-body" style="padding:26px;text-align:center;color:#64748b">No completed reviews yet.</div>
+  {% endif %}
+</section>
+</div>

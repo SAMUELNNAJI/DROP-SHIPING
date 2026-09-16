@@ -14,8 +14,8 @@ from django.utils import timezone
 from shop.forms import ProductForm
 from shop.models import Product
 
-from .forms import BuyerAddressForm, SellerVerificationForm
-from .models import BuyerAddress, Order, SellerVerification, WishlistItem
+from .forms import BuyerAddressForm, SellerPayoutMethodForm, SellerVerificationForm
+from .models import BuyerAddress, Order, SellerPayout, SellerPayoutMethod, SellerVerification, WishlistItem
 
 
 def get_or_init_verification(user):
@@ -67,6 +67,7 @@ SECTION_TITLES = {
         "users": "Users",
         "featured": "Featured",
         "payments": "Payments",
+        "verifications": "Seller Verifications",
     },
     "seller": {
         "overview": "Seller Overview",
@@ -155,6 +156,9 @@ def dashboard_context(request, role, section):
         "wishlist_slugs": wishlist_slugs,
         "order_counts": order_counts,
         "today": timezone.localdate(),
+        "pending_verifications": (
+            SellerVerification.objects.filter(status="pending").count() if role == "admin" else 0
+        ),
     }
 
 
@@ -163,16 +167,20 @@ def seller_verification_view(request):
     if request.user.role != "seller":
         return redirect("dashboard")
     verification = get_or_init_verification(request.user)
+
     if request.method == "POST":
+        if verification.status == "verified":
+            messages.info(request, "Your account is already verified — no further action is needed.")
+            return redirect("dashboard_seller_verification")
         form = SellerVerificationForm(request.POST, request.FILES, instance=verification)
         if form.is_valid():
             obj = form.save(commit=False)
             obj.user = request.user
-            if request.FILES.get("document") or obj.document:
-                obj.status = "pending"
+            obj.status = "pending"
+            obj.reviewer_note = ""
             obj.save()
             messages.success(request, "Verification submitted — our team will review it within 24 hours.")
-            return redirect("dashboard_section", role="seller", section="overview")
+            return redirect("dashboard_seller_verification")
         messages.error(request, "Please fix the highlighted fields and try again.")
     else:
         form = SellerVerificationForm(instance=verification)
@@ -292,11 +300,16 @@ def seller_product_add(request):
         messages.error(request, "Please fix the highlighted fields and try again.")
     else:
         form = ProductForm(initial=initial)
+    try:
+        seller_verification = request.user.seller_verification
+    except Exception:
+        seller_verification = None
     context = dashboard_context(request, "seller", "products")
     context.update({
         "form": form,
         "product": None,
         "page_title": "Add Product",
+        "is_verified_seller": seller_verification is not None and seller_verification.status == "verified",
     })
     return _product_form_page(request, context)
 
@@ -322,6 +335,77 @@ def seller_product_edit(request, pk):
         "page_title": "Edit Product",
     })
     return _product_form_page(request, context)
+
+
+# --------------------------------------------------------------------------
+# Admin: seller verification review
+# --------------------------------------------------------------------------
+
+def _admin_verifications_context(request):
+    pending = SellerVerification.objects.filter(status="pending").select_related("user")
+    reviewed = SellerVerification.objects.exclude(status="pending").select_related("user").order_by("-submitted_at")[:50]
+    context = dashboard_context(request, "admin", "verifications")
+    context.update({
+        "page_title": "Seller Verifications",
+        "pending_list": pending,
+        "pending_count": pending.count(),
+        "reviewed_list": reviewed,
+        "verified_count": SellerVerification.objects.filter(status="verified").count(),
+        "rejected_count": SellerVerification.objects.filter(status="rejected").count(),
+        "dashboard_template": "dashboards/admin/verifications.html",
+    })
+    return context
+
+
+@login_required
+def admin_verifications_view(request):
+    if not request.user.is_staff:
+        return redirect("dashboard")
+    context = _admin_verifications_context(request)
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(request, "dashboards/admin/verifications.html", context)
+    return render(request, "dashboards/base.html", context)
+
+
+@require_POST
+@login_required
+def admin_verification_action(request, pk, action):
+    if not request.user.is_staff:
+        return redirect("dashboard")
+    verification = get_object_or_404(SellerVerification, pk=pk)
+    note = (request.POST.get("reviewer_note") or "").strip()
+
+    if action == "approve":
+        verification.status = "verified"
+        verification.reviewer_note = note
+        messages.success(
+            request,
+            "Approved %s — %s can now request instant payouts." % (
+                verification.store_name or verification.user.username,
+                verification.user.username,
+            ),
+        )
+    elif action == "reject":
+        verification.status = "rejected"
+        verification.reviewer_note = note or "Please upload a clearer document and resubmit."
+        messages.warning(
+            request,
+            "Rejected %s — the seller was asked to resubmit." % (
+                verification.store_name or verification.user.username,
+            ),
+        )
+    elif action == "reset":
+        verification.status = "unverified"
+        verification.reviewer_note = ""
+        messages.info(request, "Reset %s to unverified." % (
+            verification.store_name or verification.user.username,
+        ))
+    else:
+        messages.error(request, "Unknown action.")
+        return redirect("admin_verifications")
+
+    verification.save()
+    return redirect("admin_verifications")
 
 @login_required
 def buyer_addresses(request):
@@ -353,23 +437,117 @@ def dashboard_page(request, role, section):
     context = dashboard_context(request, role, section)
     template = f"dashboards/{role}/{section}.html"
 
+    # ── Seller: overview ──────────────────────────────────────
+    if role == "seller" and section == "overview":
+        seller = request.user
+        all_orders  = Order.objects.filter(seller=seller)
+        now         = timezone.now()
+        week_ago    = now - timezone.timedelta(days=7)
+        prev_week   = week_ago - timezone.timedelta(days=7)
+
+        # Revenue this week vs prev week (confirmed + payout-released orders)
+        rev_this  = all_orders.filter(status__in=[Order.STATUS_CONFIRMED], confirmed_at__gte=week_ago).aggregate(s=Sum("total_price"))["s"] or 0
+        rev_prev  = all_orders.filter(status__in=[Order.STATUS_CONFIRMED], confirmed_at__gte=prev_week, confirmed_at__lt=week_ago).aggregate(s=Sum("total_price"))["s"] or 0
+        rev_delta = float(rev_this - rev_prev)
+        rev_pct   = round((rev_delta / float(rev_prev) * 100), 1) if rev_prev else 0
+
+        # All-time totals
+        total_revenue = all_orders.filter(status=Order.STATUS_CONFIRMED).aggregate(s=Sum("total_price"))["s"] or 0
+        total_orders  = all_orders.count()
+        pending_ship  = all_orders.filter(status=Order.STATUS_PENDING).count()
+        in_transit    = all_orders.filter(status=Order.STATUS_IN_TRANSIT).count()
+
+        # Available balance = confirmed & payout NOT released
+        available_balance = all_orders.filter(status=Order.STATUS_CONFIRMED, payout_released=False).aggregate(s=Sum("total_price"))["s"] or 0
+        # In escrow = pending + in_transit
+        in_escrow = all_orders.filter(status__in=[Order.STATUS_PENDING, Order.STATUS_IN_TRANSIT, Order.STATUS_DELIVERED]).aggregate(s=Sum("total_price"))["s"] or 0
+
+        # Top products by confirmed orders
+        top_products = (
+            request.user.products
+            .filter(status="live")
+            .order_by("-sold")[:5]
+        )
+        # Low-stock products
+        low_stock = (
+            request.user.products
+            .filter(status="live", stock__lte=5)
+            .order_by("stock")[:3]
+        )
+        # Recent orders
+        recent_orders = all_orders.select_related("buyer").order_by("-created_at")[:5]
+
+        # Average order value
+        aov = all_orders.aggregate(a=Avg("total_price"))["a"] or 0
+
+        # Needs-attention tasks
+        tasks = []
+        if pending_ship:
+            tasks.append({"icon": "ship", "label": f"Ship {pending_ship} pending order{'s' if pending_ship != 1 else ''}", "sub": "Buyers are waiting — ship today to keep your rating up.", "badge": "urgent"})
+        low_stock_count = request.user.products.filter(status="live", stock__lte=5).count()
+        if low_stock_count:
+            tasks.append({"icon": "warn", "label": f"{low_stock_count} product{'s' if low_stock_count != 1 else ''} running low on stock", "sub": "Restock before they sell out.", "badge": "warn"})
+        if available_balance > 0:
+            tasks.append({"icon": "payout", "label": f"${available_balance:,.2f} ready for payout", "sub": "Go to Payouts to withdraw your earnings.", "badge": "new"})
+
+        context.update({
+            "rev_this": rev_this,
+            "rev_prev": rev_prev,
+            "rev_pct": rev_pct,
+            "total_revenue": total_revenue,
+            "total_orders": total_orders,
+            "pending_ship": pending_ship,
+            "in_transit": in_transit,
+            "available_balance": available_balance,
+            "in_escrow": in_escrow,
+            "aov": aov,
+            "top_products": top_products,
+            "low_stock": low_stock,
+            "recent_orders": recent_orders,
+            "overview_tasks": tasks,
+        })
+
+    # ── Seller: payouts ───────────────────────────────────────
+    if role == "seller" and section == "payouts":
+        seller = request.user
+        # Financial summary
+        confirmed_orders    = Order.objects.filter(seller=seller, status=Order.STATUS_CONFIRMED)
+        available_balance   = confirmed_orders.filter(payout_released=False).aggregate(s=Sum("total_price"))["s"] or 0
+        in_escrow           = Order.objects.filter(seller=seller, status__in=[Order.STATUS_PENDING, Order.STATUS_IN_TRANSIT, Order.STATUS_DELIVERED]).aggregate(s=Sum("total_price"))["s"] or 0
+        lifetime_paid       = SellerPayout.objects.filter(seller=seller, status=SellerPayout.STATUS_COMPLETED).aggregate(s=Sum("amount"))["s"] or 0
+        pending_payout      = SellerPayout.objects.filter(seller=seller, status__in=[SellerPayout.STATUS_PENDING, SellerPayout.STATUS_PROCESSING]).aggregate(s=Sum("amount"))["s"] or 0
+
+        payout_methods  = SellerPayoutMethod.objects.filter(user=seller)
+        default_method  = payout_methods.filter(is_default=True).first()
+        payout_history  = SellerPayout.objects.filter(seller=seller).select_related("payout_method").order_by("-created_at")[:20]
+        payout_form     = SellerPayoutMethodForm()
+
+        context.update({
+            "available_balance":  available_balance,
+            "in_escrow":          in_escrow,
+            "lifetime_paid":      lifetime_paid,
+            "pending_payout":     pending_payout,
+            "payout_methods":     payout_methods,
+            "default_method":     default_method,
+            "payout_history":     payout_history,
+            "payout_form":        payout_form,
+        })
+
+    # ── Seller: earnings ──────────────────────────────────────
     if role == "seller" and section == "earnings":
         products = list(request.user.products.filter(status="live").order_by("-sold", "-created_at"))
         gross_sales = sum((product.price * product.sold for product in products), start=0)
         marketplace_fee = gross_sales * 0.05
-        processing_fee = gross_sales * 0.029 + len([product for product in products if product.sold]) * 0.30
-        earning_products = [{"product": product, "gross": product.price * product.sold, "net": product.price * product.sold * 0.921} for product in products]
-        context.update({"earning_products": earning_products, "gross_sales": gross_sales, "marketplace_fee": marketplace_fee, "processing_fee": processing_fee, "net_earnings": gross_sales - marketplace_fee - processing_fee, "units_sold": sum(product.sold for product in products), "live_product_count": len(products)})
+        processing_fee = gross_sales * 0.029 + len([p for p in products if p.sold]) * 0.30
+        earning_products = [{"product": p, "gross": p.price * p.sold, "net": p.price * p.sold * 0.921} for p in products]
+        context.update({"earning_products": earning_products, "gross_sales": gross_sales, "marketplace_fee": marketplace_fee, "processing_fee": processing_fee, "net_earnings": gross_sales - marketplace_fee - processing_fee, "units_sold": sum(p.sold for p in products), "live_product_count": len(products)})
 
+    # ── Seller: orders (via generic section loader) ───────────
     if role == "seller" and section == "orders":
         qs = Order.objects.filter(seller=request.user).select_related("buyer", "product")
         q = (request.GET.get("q") or "").strip()
         if q:
-            qs = qs.filter(
-                Q(order_number__icontains=q) |
-                Q(product_name__icontains=q) |
-                Q(buyer__username__icontains=q)
-            )
+            qs = qs.filter(Q(order_number__icontains=q) | Q(product_name__icontains=q) | Q(buyer__username__icontains=q))
         status_filter = request.GET.get("status") or "all"
         if status_filter != "all":
             qs = qs.filter(status=status_filter)
@@ -377,39 +555,27 @@ def dashboard_page(request, role, section):
         page_obj = paginator.get_page(request.GET.get("page"))
         context.update({"orders": page_obj.object_list, "page_obj": page_obj, "search_q": q, "status_filter": status_filter})
 
+    # ── Buyer: orders ─────────────────────────────────────────
     if role == "buyer" and section == "orders":
         qs = Order.objects.filter(buyer=request.user).select_related("seller", "product")
-        orders_list = list(qs)
-        context.update({"orders": orders_list})
+        context.update({"orders": list(qs)})
 
+    # ── Buyer: wishlist ───────────────────────────────────────
     if role == "buyer" and section == "wishlist":
-        context["wishlist_items"] = (
-            WishlistItem.objects.filter(user=request.user)
-            if request.user.is_authenticated else []
-        )
+        context["wishlist_items"] = (WishlistItem.objects.filter(user=request.user) if request.user.is_authenticated else [])
 
+    # ── Admin: orders ─────────────────────────────────────────
     if role == "admin" and section == "orders":
         qs = Order.objects.all().select_related("buyer", "seller", "product").order_by("-created_at")
         q = (request.GET.get("q") or "").strip()
         if q:
-            qs = qs.filter(
-                Q(order_number__icontains=q) |
-                Q(product_name__icontains=q) |
-                Q(buyer__username__icontains=q) |
-                Q(seller__username__icontains=q)
-            )
+            qs = qs.filter(Q(order_number__icontains=q) | Q(product_name__icontains=q) | Q(buyer__username__icontains=q) | Q(seller__username__icontains=q))
         status_filter = request.GET.get("status") or "all"
         if status_filter != "all":
             qs = qs.filter(status=status_filter)
         paginator = Paginator(qs, 20)
         page_obj = paginator.get_page(request.GET.get("page"))
-        context.update({
-            "orders": page_obj.object_list,
-            "page_obj": page_obj,
-            "search_q": q,
-            "status_filter": status_filter,
-            "payout_ready_count": Order.objects.filter(status=Order.STATUS_CONFIRMED, payout_released=False).count(),
-        })
+        context.update({"orders": page_obj.object_list, "page_obj": page_obj, "search_q": q, "status_filter": status_filter, "payout_ready_count": Order.objects.filter(status=Order.STATUS_CONFIRMED, payout_released=False).count()})
 
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         return render(request, template, context)
@@ -494,6 +660,38 @@ def wishlist_remove(request, slug):
 #  ORDER ACTION VIEWS
 # ═══════════════════════════════════════════════════════════════
 
+@login_required
+def seller_orders_view(request):
+    """Dedicated seller orders page (also handles AJAX section load)."""
+    if request.user.role != "seller":
+        return redirect("dashboard")
+    context = dashboard_context(request, "seller", "orders")
+    qs = Order.objects.filter(seller=request.user).select_related("buyer", "product")
+    q = (request.GET.get("q") or "").strip()
+    if q:
+        qs = qs.filter(
+            Q(order_number__icontains=q) |
+            Q(product_name__icontains=q) |
+            Q(buyer__username__icontains=q)
+        )
+    status_filter = request.GET.get("status") or "all"
+    if status_filter != "all":
+        qs = qs.filter(status=status_filter)
+    paginator = Paginator(qs, 15)
+    page_obj = paginator.get_page(request.GET.get("page"))
+    context.update({
+        "orders": page_obj.object_list,
+        "page_obj": page_obj,
+        "search_q": q,
+        "status_filter": status_filter,
+    })
+    template = "dashboards/seller/orders.html"
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(request, template, context)
+    context["dashboard_template"] = template
+    return render(request, "dashboards/base.html", context)
+
+
 @require_POST
 @login_required
 def order_mark_in_transit(request, pk):
@@ -577,3 +775,115 @@ def order_detail(request, pk):
         return render(request, template, context)
     context["dashboard_template"] = template
     return render(request, "dashboards/base.html", context)
+
+
+# ═══════════════════════════════════════════════════════════════
+#  PAYOUT VIEWS
+# ═══════════════════════════════════════════════════════════════
+
+@require_POST
+@login_required
+def seller_save_payout_method(request):
+    """Save or update a seller's payout method (bank / Pi / PayPal)."""
+    if request.user.role != "seller":
+        return JsonResponse({"error": "Forbidden."}, status=403)
+
+    form = SellerPayoutMethodForm(request.POST)
+    if form.is_valid():
+        method = form.save(commit=False)
+        method.user = request.user
+        # If marked as default, unset all others
+        if method.is_default or not SellerPayoutMethod.objects.filter(user=request.user).exists():
+            SellerPayoutMethod.objects.filter(user=request.user).update(is_default=False)
+            method.is_default = True
+        method.save()
+        messages.success(request, "Payout method saved successfully.")
+    else:
+        for field, errs in form.errors.items():
+            messages.error(request, f"{field}: {errs[0]}")
+
+    return redirect("dashboard_section", role="seller", section="payouts")
+
+
+@require_POST
+@login_required
+def seller_delete_payout_method(request, pk):
+    """Delete one of the seller's payout methods."""
+    if request.user.role != "seller":
+        return JsonResponse({"error": "Forbidden."}, status=403)
+    method = get_object_or_404(SellerPayoutMethod, pk=pk, user=request.user)
+    method.delete()
+    # If no default left, promote the most recent one
+    remaining = SellerPayoutMethod.objects.filter(user=request.user)
+    if remaining.exists() and not remaining.filter(is_default=True).exists():
+        first = remaining.first()
+        first.is_default = True
+        first.save(update_fields=["is_default"])
+    messages.success(request, "Payout method removed.")
+    return redirect("dashboard_section", role="seller", section="payouts")
+
+
+@require_POST
+@login_required
+def seller_set_default_payout_method(request, pk):
+    """Set a payout method as the default."""
+    if request.user.role != "seller":
+        return JsonResponse({"error": "Forbidden."}, status=403)
+    method = get_object_or_404(SellerPayoutMethod, pk=pk, user=request.user)
+    SellerPayoutMethod.objects.filter(user=request.user).update(is_default=False)
+    method.is_default = True
+    method.save(update_fields=["is_default"])
+    messages.success(request, f"{method} set as default payout method.")
+    return redirect("dashboard_section", role="seller", section="payouts")
+
+
+@require_POST
+@login_required
+def seller_request_payout(request):
+    """Seller requests a manual payout of their available balance."""
+    if request.user.role != "seller":
+        return JsonResponse({"error": "Forbidden."}, status=403)
+
+    # Calculate available balance
+    available = Order.objects.filter(
+        seller=request.user,
+        status=Order.STATUS_CONFIRMED,
+        payout_released=False,
+    ).aggregate(s=Sum("total_price"))["s"] or 0
+
+    if available <= 0:
+        messages.warning(request, "You have no available balance to withdraw.")
+        return redirect("dashboard_section", role="seller", section="payouts")
+
+    minimum = 10  # $10 minimum payout
+    if float(available) < minimum:
+        messages.warning(request, f"Minimum payout is ${minimum:.2f}. Your balance is ${available:.2f}.")
+        return redirect("dashboard_section", role="seller", section="payouts")
+
+    # Check for already-pending payout
+    if SellerPayout.objects.filter(seller=request.user, status__in=[SellerPayout.STATUS_PENDING, SellerPayout.STATUS_PROCESSING]).exists():
+        messages.info(request, "You already have a payout in progress. Please wait for it to complete.")
+        return redirect("dashboard_section", role="seller", section="payouts")
+
+    default_method = SellerPayoutMethod.objects.filter(user=request.user, is_default=True).first()
+    if not default_method:
+        messages.error(request, "Please add a payout method before requesting a withdrawal.")
+        return redirect("dashboard_section", role="seller", section="payouts")
+
+    payout = SellerPayout.objects.create(
+        seller=request.user,
+        payout_method=default_method,
+        amount=available,
+        currency="USD",
+        status=SellerPayout.STATUS_PENDING,
+        note="Seller-initiated withdrawal",
+    )
+    # Mark those confirmed orders as payout_released
+    Order.objects.filter(
+        seller=request.user,
+        status=Order.STATUS_CONFIRMED,
+        payout_released=False,
+    ).update(payout_released=True, payout_released_at=timezone.now())
+
+    messages.success(request, f"Payout of ${available:,.2f} requested (ref: {payout.reference}). Estimated arrival: 1–2 business days.")
+    return redirect("dashboard_section", role="seller", section="payouts")

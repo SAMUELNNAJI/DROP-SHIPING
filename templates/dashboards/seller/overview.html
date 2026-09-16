@@ -1,24 +1,297 @@
+{% load static %}
 <div class="dashboard-page" data-page-title="Seller Overview">
-<div class="seller-hero">
-<div class="seller-hero-main"><span class="seller-hero-eyebrow"><span class="live-dot"></span>Live · Seller Center</span><h2>Good morning, {{ user.username|default:"Seller" }} — your store is gaining momentum.</h2><p>Revenue is up 18% this week. 2 orders need shipping today and one product is running low on stock.</p><div class="seller-hero-actions"><a class="seller-btn-light" href="/dashboards/seller/products/add/"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Add product</a><a class="seller-btn-outline" href="/dashboards/seller/orders/" data-dashboard-link>Review 5 open orders →</a></div><div class="seller-hero-stats"><div><strong>$4,820</strong><span>Revenue · 7 days</span></div><div><strong>96.4%</strong><span>On-time ship</span></div><div><strong>4.8 <svg class="sic" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6l2.9 5.9 6.5 1-4.7 4.6 1.1 6.5L12 17.5l-5.8 3.1 1.1-6.5L2.6 9.5l6.5-1z"/></svg></strong><span>Store rating</span></div></div></div>
-<div class="seller-hero-side"><h4>Setup checklist</h4><p>Finish these to unlock instant payouts.</p><div class="checklist"><div class="checklist__item"><span class="check-dot done"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><div>Store profile complete<small>Logo, banner + policies</small></div></div><div class="checklist__item"><span class="check-dot done"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><div>First products live<small>Catalog is visible</small></div><a class="go" href="/dashboards/seller/products/" data-dashboard-link>View</a></div><div class="checklist__item"><span class="check-dot todo"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div>Verify ID + payout account<small>Takes ~2 minutes</small></div><a class="go" href="/dashboards/seller/payouts/" data-dashboard-link>Finish</a></div></div></div>
-</div>
-<!--OV2-->
-<div class="kpi-grid">
-<div class="kpi" style="--ka:#2456e6;--ks:#eaf0ff"><div class="kpi__top"><span class="kpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg></span><span class="kpi__label">Total revenue</span><span class="kpi__delta"><svg class="sic" viewBox="0 0 24 24" fill="currentColor" style="width:.75em;height:.75em"><path d="M12 5l7 13H5z"/></svg> 18.2%</span></div><strong>$12,480</strong><p class="kpi__sub">vs $10,560 last month</p><div class="kpi__spark"><svg viewBox="0 0 120 36" preserveAspectRatio="none"><path d="M2 28 L18 24 L34 26 L50 18 L66 20 L82 12 L98 14 L118 4" fill="none" stroke="#2456e6" stroke-width="2.5" stroke-linecap="round"/><path d="M2 28 L18 24 L34 26 L50 18 L66 20 L82 12 L98 14 L118 4 V36 H2 Z" fill="rgba(36,86,230,.12)"/></svg></div></div>
-<div class="kpi" style="--ka:#0ca678;--ks:#e2f8f0"><div class="kpi__top"><span class="kpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14v18l-2.3-1.6-2.4 1.6-2.3-1.6-2.4 1.6L7.3 19.4 5 21z"/><path d="M9 8h6M9 12h6"/></svg></span><span class="kpi__label">Orders</span><span class="kpi__delta"><svg class="sic" viewBox="0 0 24 24" fill="currentColor" style="width:.75em;height:.75em"><path d="M12 5l7 13H5z"/></svg> 12.0%</span></div><strong>184</strong><p class="kpi__sub">5 need action today</p><div class="kpi__spark"><svg viewBox="0 0 120 36" preserveAspectRatio="none"><path d="M2 26 L20 22 L38 24 L56 16 L74 18 L92 10 L118 8" fill="none" stroke="#0ca678" stroke-width="2.5" stroke-linecap="round"/><path d="M2 26 L20 22 L38 24 L56 16 L74 18 L92 10 L118 8 V36 H2 Z" fill="rgba(12,166,120,.12)"/></svg></div></div>
-<div class="kpi" style="--ka:#7048e8;--ks:#efe9ff"><div class="kpi__top"><span class="kpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></span><span class="kpi__label">Conversion</span><span class="kpi__delta"><svg class="sic" viewBox="0 0 24 24" fill="currentColor" style="width:.75em;height:.75em"><path d="M12 5l7 13H5z"/></svg> 2.4%</span></div><strong>3.8%</strong><p class="kpi__sub">1,240 store visits</p><div class="kpi__spark"><svg viewBox="0 0 120 36" preserveAspectRatio="none"><path d="M2 30 L22 26 L42 22 L62 24 L82 16 L102 14 L118 6" fill="none" stroke="#7048e8" stroke-width="2.5" stroke-linecap="round"/><path d="M2 30 L22 26 L42 22 L62 24 L82 16 L102 14 L118 6 V36 H2 Z" fill="rgba(112,72,232,.12)"/></svg></div></div>
-<div class="kpi" style="--ka:#e8930c;--ks:#fff4dd"><div class="kpi__top"><span class="kpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/><path d="M3 3h2l2.5 12h10L21 7H7"/></svg></span><span class="kpi__label">Avg order value</span><span class="kpi__delta down"><svg class="sic" viewBox="0 0 24 24" fill="currentColor" style="width:.75em;height:.75em"><path d="M12 19l-7-13h14z"/></svg> 1.1%</span></div><strong>$67.80</strong><p class="kpi__sub">Bundle to lift AOV</p><div class="kpi__spark"><svg viewBox="0 0 120 36" preserveAspectRatio="none"><path d="M2 14 L24 18 L44 16 L64 22 L84 20 L104 26 L118 24" fill="none" stroke="#e8930c" stroke-width="2.5" stroke-linecap="round"/><path d="M2 14 L24 18 L44 16 L64 22 L84 20 L104 26 L118 24 V36 H2 Z" fill="rgba(232,147,12,.14)"/></svg></div></div>
-</div>
-<!--OV3-->
-<div class="sgrid2">
-<div class="scard"><div class="scard__head"><div><h3>Revenue performance</h3><p>Last 7 days vs previous period</p></div><div class="spacer"><div class="segx"><button class="on" type="button">7D</button><button type="button">30D</button><button type="button">90D</button></div></div></div><div class="scard__body"><div class="barsx"><div class="barx"><i style="height:42%"></i><span>Mon</span></div><div class="barx"><i style="height:58%"></i><span>Tue</span></div><div class="barx"><i style="height:48%"></i><span>Wed</span></div><div class="barx"><i style="height:72%"></i><span>Thu</span></div><div class="barx"><i style="height:64%"></i><span>Fri</span></div><div class="barx hot"><i style="height:96%"></i><span>Sat</span></div><div class="barx"><i style="height:80%"></i><span>Sun</span></div></div><div class="legendx"><span><i class="dotx" style="background:#2456e6"></i>Revenue <b>$4,820</b></span><span><i class="dotx" style="background:#c4cfdf"></i>Prev <b>$4,080</b></span><span style="margin-left:auto">Peak Sat · <b>$982</b></span></div></div></div>
-<div class="scard"><div class="scard__head"><div><h3>Needs attention</h3><p>3 tasks before payout delay</p></div><div class="spacer"><span class="chipx chipx--warn">3 open</span></div></div><div class="taskx-list"><div class="taskx"><span class="taskx__ic" style="background:#eaf0ff"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="5" width="14" height="11" rx="1"/><path d="M15 9h4l4 4v3h-8z"/><circle cx="6" cy="18.5" r="1.8"/><circle cx="17.5" cy="18.5" r="1.8"/></svg></span><div><b>Ship 2 orders today</b><p>#DH-2041 · #DH-2042 — print labels</p></div><time>2h left</time></div><div class="taskx"><span class="taskx__ic" style="background:#ffecec"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><div><b>Low stock: Ceramic Mug</b><p>Only 4 left — restock soon</p></div><time>Stock</time></div><div class="taskx"><span class="taskx__ic" style="background:#e2f8f0"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg></span><div><b>$860 ready for payout</b><p>Settles tomorrow — confirm bank</p></div><time>New</time></div></div></div>
-</div>
-<!--OV4-->
-<div class="scard" style="margin-bottom:14px"><div class="scard__head"><div><h3>Fulfillment pipeline</h3><p>Where every order stands</p></div><div class="spacer"><a class="scard__link" href="/dashboards/seller/orders/" data-dashboard-link>Open orders →</a></div></div><div class="scard__body"><div class="pipex"><div class="pipex__step"><span>New</span><b>5</b><em class="emB">Print labels</em></div><div class="pipex__step"><span>Packed</span><b>8</b><em class="emA">Ready pickup</em></div><div class="pipex__step"><span>In transit</span><b>21</b><em class="emV">Tracked</em></div><div class="pipex__step"><span>Delivered</span><b>150</b><em class="emG">Settled</em></div></div></div></div>
-<div class="sgrid2b">
-<div class="scard"><div class="scard__head"><div><h3>Top products</h3><p>By revenue this week</p></div><div class="spacer"><a class="scard__link" href="/dashboards/seller/products/" data-dashboard-link>Manage →</a></div></div><div class="scard__body"><div class="toppx"><span class="toppx__rank">1</span><div class="toppx__meta"><strong>Wireless Headphones Pro</strong><span>42 sold · 4.9 <svg class="sic" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6l2.9 5.9 6.5 1-4.7 4.6 1.1 6.5L12 17.5l-5.8 3.1 1.1-6.5L2.6 9.5l6.5-1z"/></svg></span></div><b>$2,940</b></div><div class="toppx"><span class="toppx__rank">2</span><div class="toppx__meta"><strong>Ergonomic Chair Lite</strong><span>18 sold · 4.7 <svg class="sic" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6l2.9 5.9 6.5 1-4.7 4.6 1.1 6.5L12 17.5l-5.8 3.1 1.1-6.5L2.6 9.5l6.5-1z"/></svg></span></div><b>$1,620</b></div><div class="toppx"><span class="toppx__rank">3</span><div class="toppx__meta"><strong>Smart Camera 4K</strong><span>11 sold · 4.8 <svg class="sic" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6l2.9 5.9 6.5 1-4.7 4.6 1.1 6.5L12 17.5l-5.8 3.1 1.1-6.5L2.6 9.5l6.5-1z"/></svg></span></div><b>$989</b></div></div></div>
-<div class="scard"><div class="scard__head"><div><h3>Recent orders</h3><p>Latest buyer activity</p></div><div class="spacer"><a class="scard__link" href="/dashboards/seller/orders/" data-dashboard-link>View all →</a></div></div><div class="taskx-list"><div class="taskx"><span class="taskx__ic" style="background:#eaf0ff"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14v18l-2.3-1.6-2.4 1.6-2.3-1.6-2.4 1.6L7.3 19.4 5 21z"/><path d="M9 8h6M9 12h6"/></svg></span><div><b>#DH-2042 · Amara O. — $349.99</b><p>Sony WH-1000XM5 · Escrow held</p></div><time>12m</time></div><div class="taskx"><span class="taskx__ic" style="background:#e2f8f0"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></svg></span><div><b>#DH-2041 · Emeka N. — ₦204,420</b><p>Leather Backpack · Shipped</p></div><time>1h</time></div><div class="taskx"><span class="taskx__ic" style="background:#efe9ff"><svg class="sic" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6l2.9 5.9 6.5 1-4.7 4.6 1.1 6.5L12 17.5l-5.8 3.1 1.1-6.5L2.6 9.5l6.5-1z"/></svg></span><div><b>New 5-star review</b><p>"Fast delivery, original!" — Fatima</p></div><time>3h</time></div></div></div>
-</div>
+
+  <!-- ── hero ── -->
+  <div class="seller-hero">
+    <div class="seller-hero-main">
+      <span class="seller-hero-eyebrow"><span class="live-dot"></span>Live · Seller Center</span>
+      <h2>
+        {% if rev_pct > 0 %}Your store is gaining momentum,{% elif rev_pct < 0 %}Stay on track,{% else %}Welcome back,{% endif %}
+        {{ user.username|default:"Seller" }}.
+      </h2>
+      <p>
+        {% if total_orders == 0 %}
+          No orders yet — your products are live and ready for buyers.
+        {% elif pending_ship %}
+          You have <strong>{{ pending_ship }} order{{ pending_ship|pluralize }}</strong> waiting to be shipped today.
+        {% else %}
+          All orders are on track. Keep it up!
+        {% endif %}
+      </p>
+      <div class="seller-hero-actions">
+        <a class="seller-btn-light" href="/dashboards/seller/products/add/">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Add product
+        </a>
+        <a class="seller-btn-outline" href="/dashboards/seller/orders/" data-dashboard-link>
+          Review {{ order_counts.pending|default:"0" }} open order{{ order_counts.pending|default:"0"|pluralize }} →
+        </a>
+      </div>
+      <div class="seller-hero-stats">
+        <div>
+          <strong>${{ available_balance|floatformat:2 }}</strong>
+          <span>Available balance</span>
+        </div>
+        <div>
+          <strong>{{ order_counts.in_transit|default:"0" }}</strong>
+          <span>In transit</span>
+        </div>
+        <div>
+          <strong>{{ user.products.count }}</strong>
+          <span>Live products</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- setup checklist -->
+    <div class="seller-hero-side">
+      <h4>Setup checklist</h4>
+      <p>Finish these to unlock instant payouts.</p>
+      <div class="checklist">
+        <div class="checklist__item">
+          <span class="check-dot done">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </span>
+          <div>Store profile complete<small>Logged in and active</small></div>
+        </div>
+        <div class="checklist__item">
+          {% if user.products.count > 0 %}
+          <span class="check-dot done">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </span>
+          {% else %}
+          <span class="check-dot todo">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </span>
+          {% endif %}
+          <div>First product live<small>Catalog is visible to buyers</small></div>
+          <a class="go" href="/dashboards/seller/products/" data-dashboard-link>{% if user.products.count > 0 %}View{% else %}Add{% endif %}</a>
+        </div>
+        <div class="checklist__item">
+          {% if verification and verification.status == 'verified' %}
+          <span class="check-dot done">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </span>
+          {% else %}
+          <span class="check-dot todo">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </span>
+          {% endif %}
+          <div>
+            Verify ID + payout account
+            <small>
+              {% if verification %}{{ verification.get_status_display }}{% else %}Not started{% endif %}
+            </small>
+          </div>
+          <a class="go" href="/dashboards/seller/verification/">{% if verification and verification.status == 'verified' %}Done{% else %}Finish{% endif %}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── KPI cards ── -->
+  <div class="kpi-grid">
+    <div class="kpi" style="--ka:#2456e6;--ks:#eaf0ff">
+      <div class="kpi__top">
+        <span class="kpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg></span>
+        <span class="kpi__label">Total revenue</span>
+        {% if rev_pct > 0 %}<span class="kpi__delta">▲ {{ rev_pct }}%</span>
+        {% elif rev_pct < 0 %}<span class="kpi__delta down">▼ {{ rev_pct|cut:"-" }}%</span>
+        {% endif %}
+      </div>
+      <strong>${{ total_revenue|floatformat:2 }}</strong>
+      <p class="kpi__sub">From confirmed orders</p>
+    </div>
+
+    <div class="kpi" style="--ka:#0ca678;--ks:#e2f8f0">
+      <div class="kpi__top">
+        <span class="kpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></span>
+        <span class="kpi__label">Total orders</span>
+      </div>
+      <strong>{{ total_orders }}</strong>
+      <p class="kpi__sub">{{ order_counts.pending|default:"0" }} pending · {{ order_counts.in_transit|default:"0" }} in transit</p>
+    </div>
+
+    <div class="kpi" style="--ka:#7048e8;--ks:#efe9ff">
+      <div class="kpi__top">
+        <span class="kpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M17 6.5c0-1.6-2.2-2.5-5-2.5S7 5.1 7 6.9c0 4.4 10 2 10 6.6 0 1.8-2.2 2.9-5 2.9s-5-1-5-2.9"/></svg></span>
+        <span class="kpi__label">Available balance</span>
+      </div>
+      <strong>${{ available_balance|floatformat:2 }}</strong>
+      <p class="kpi__sub">Ready to withdraw</p>
+    </div>
+
+    <div class="kpi" style="--ka:#e8930c;--ks:#fff4dd">
+      <div class="kpi__top">
+        <span class="kpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/><path d="M3 3h2l2.5 12h10L21 7H7"/></svg></span>
+        <span class="kpi__label">Avg order value</span>
+      </div>
+      <strong>${{ aov|floatformat:2 }}</strong>
+      <p class="kpi__sub">In escrow: ${{ in_escrow|floatformat:2 }}</p>
+    </div>
+  </div>
+
+  <!-- ── two-col: pipeline + needs attention ── -->
+  <div class="sgrid2">
+
+    <!-- fulfillment pipeline -->
+    <div class="scard">
+      <div class="scard__head">
+        <div>
+          <h3>Fulfillment pipeline</h3>
+          <p>Where every order stands right now</p>
+        </div>
+        <div class="spacer">
+          <a class="scard__link" href="/dashboards/seller/orders/" data-dashboard-link>Open orders →</a>
+        </div>
+      </div>
+      <div class="scard__body">
+        <div class="pipex">
+          <div class="pipex__step">
+            <span>Pending</span>
+            <b>{{ order_counts.pending|default:"0" }}</b>
+            <em class="emB">Awaiting ship</em>
+          </div>
+          <div class="pipex__step">
+            <span>In Transit</span>
+            <b>{{ order_counts.in_transit|default:"0" }}</b>
+            <em class="emV">Tracked</em>
+          </div>
+          <div class="pipex__step">
+            <span>Delivered</span>
+            <b>{{ order_counts.delivered|default:"0" }}</b>
+            <em class="emA">Awaiting confirm</em>
+          </div>
+          <div class="pipex__step">
+            <span>Confirmed</span>
+            <b>{{ order_counts.confirmed|default:"0" }}</b>
+            <em class="emG">Payout ready</em>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- needs attention -->
+    <div class="scard">
+      <div class="scard__head">
+        <div>
+          <h3>Needs attention</h3>
+          <p>Action items for your store</p>
+        </div>
+        {% if overview_tasks %}
+        <div class="spacer"><span class="chipx chipx--warn">{{ overview_tasks|length }} open</span></div>
+        {% endif %}
+      </div>
+      {% if overview_tasks %}
+      <div class="taskx-list">
+        {% for task in overview_tasks %}
+        <div class="taskx">
+          <span class="taskx__ic" style="background:{% if task.badge == 'urgent' %}#eaf0ff{% elif task.badge == 'warn' %}#ffecec{% else %}#e2f8f0{% endif %}">
+            {% if task.icon == 'ship' %}
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v9a2 2 0 0 1-2 2h-1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+            {% elif task.icon == 'warn' %}
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+            {% else %}
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M17 6.5c0-1.6-2.2-2.5-5-2.5S7 5.1 7 6.9c0 4.4 10 2 10 6.6 0 1.8-2.2 2.9-5 2.9s-5-1-5-2.9"/></svg>
+            {% endif %}
+          </span>
+          <div>
+            <b>{{ task.label }}</b>
+            <p>{{ task.sub }}</p>
+          </div>
+          {% if task.icon == 'ship' %}
+          <time><a href="/dashboards/seller/orders/" data-dashboard-link style="color:var(--sblue);font-weight:800;font-size:12px">View →</a></time>
+          {% elif task.icon == 'warn' %}
+          <time><a href="/dashboards/seller/products/" data-dashboard-link style="color:var(--srose);font-weight:800;font-size:12px">Fix →</a></time>
+          {% else %}
+          <time><a href="/dashboards/seller/payouts/" data-dashboard-link style="color:var(--sgreen);font-weight:800;font-size:12px">Withdraw</a></time>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="emptyx" style="padding:24px">
+        <div class="emptyx__art" style="font-size:22px">✅</div>
+        <h4>All caught up!</h4>
+        <p>No action needed right now.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ── two-col: top products + recent orders ── -->
+  <div class="sgrid2b">
+
+    <!-- top products -->
+    <div class="scard">
+      <div class="scard__head">
+        <div><h3>Top products</h3><p>By units sold</p></div>
+        <div class="spacer"><a class="scard__link" href="/dashboards/seller/products/" data-dashboard-link>Manage →</a></div>
+      </div>
+      <div class="scard__body">
+        {% if top_products %}
+          {% for product in top_products %}
+          <div class="toppx">
+            <span class="toppx__rank">{{ forloop.counter }}</span>
+            <div class="toppx__meta">
+              <strong>{{ product.name|truncatechars:30 }}</strong>
+              <span>{{ product.sold }} sold · {{ product.stars }} {{ product.rating|floatformat:1 }}</span>
+            </div>
+            <b>${{ product.price }}</b>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="emptyx" style="padding:20px 0">
+            <div class="emptyx__art" style="font-size:22px">📦</div>
+            <h4>No products yet</h4>
+            <p>Add your first product to start selling.</p>
+            <a class="seller-top-btn" href="/dashboards/seller/products/add/">Add product</a>
+          </div>
+        {% endif %}
+
+        {% if low_stock %}
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--sbd2)">
+          <p style="font-size:12px;font-weight:800;color:var(--srose);margin:0 0 8px">⚠ Low stock</p>
+          {% for p in low_stock %}
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;font-size:13px">
+            <span>{{ p.name|truncatechars:26 }}</span>
+            <span class="chipx chipx--warn">{{ p.stock }} left</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- recent orders -->
+    <div class="scard">
+      <div class="scard__head">
+        <div><h3>Recent orders</h3><p>Latest buyer activity</p></div>
+        <div class="spacer"><a class="scard__link" href="/dashboards/seller/orders/" data-dashboard-link>View all →</a></div>
+      </div>
+      {% if recent_orders %}
+      <div class="taskx-list">
+        {% for order in recent_orders %}
+        <div class="taskx">
+          <span class="taskx__ic" style="background:{% if order.status == 'confirmed' %}#e2f8f0{% elif order.status == 'in_transit' %}#eaf0ff{% elif order.status == 'delivered' %}#fff4dd{% else %}#f7f9fd{% endif %}">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>
+          </span>
+          <div>
+            <b>#{{ order.order_number }} · {{ order.buyer.username }} — ${{ order.total_price }}</b>
+            <p>{{ order.product_name|truncatechars:32 }} · <span class="statusx {{ order.status_css }}" style="font-size:11px;padding:2px 7px">{{ order.status_label }}</span></p>
+          </div>
+          <time style="font-size:11.5px;color:var(--sf);white-space:nowrap">{{ order.created_at|timesince }} ago</time>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="emptyx" style="padding:24px">
+        <div class="emptyx__art" style="font-size:22px">🛒</div>
+        <h4>No orders yet</h4>
+        <p>When buyers purchase your products, they appear here.</p>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
 </div>

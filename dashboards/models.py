@@ -224,6 +224,102 @@ class Order(models.Model):
         return self.status == self.STATUS_CONFIRMED and not self.payout_released
 
 
+class SellerPayoutMethod(models.Model):
+    """A bank account or wallet the seller wants to receive payouts into."""
+
+    METHOD_BANK   = "bank"
+    METHOD_PI     = "pi"
+    METHOD_PAYPAL = "paypal"
+
+    METHOD_CHOICES = [
+        (METHOD_BANK,   "Bank Transfer"),
+        (METHOD_PI,     "Pi Wallet"),
+        (METHOD_PAYPAL, "PayPal"),
+    ]
+
+    CURRENCY_CHOICES = [
+        ("NGN", "NGN — Nigerian Naira"),
+        ("USD", "USD — US Dollar"),
+        ("GBP", "GBP — British Pound"),
+    ]
+
+    user        = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="payout_methods")
+    method      = models.CharField(max_length=10, choices=METHOD_CHOICES, default=METHOD_BANK)
+    # Bank fields
+    bank_name   = models.CharField(max_length=120, blank=True, default="")
+    account_number = models.CharField(max_length=30, blank=True, default="")
+    account_name   = models.CharField(max_length=120, blank=True, default="")
+    currency    = models.CharField(max_length=5, choices=CURRENCY_CHOICES, default="NGN")
+    # Pi / PayPal
+    wallet_address = models.CharField(max_length=200, blank=True, default="")
+    is_default  = models.BooleanField(default=False)
+    created_at  = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-is_default", "-created_at"]
+
+    def __str__(self):
+        if self.method == self.METHOD_BANK:
+            return f"{self.bank_name} ••{self.account_number[-4:] if self.account_number else '****'}"
+        return f"{self.get_method_display()} — {self.wallet_address or self.user.username}"
+
+    @property
+    def masked_account(self):
+        if self.account_number and len(self.account_number) >= 4:
+            return "••" + self.account_number[-4:]
+        return "••••"
+
+
+class SellerPayout(models.Model):
+    """A payout request / release record for a seller."""
+
+    STATUS_PENDING    = "pending"
+    STATUS_PROCESSING = "processing"
+    STATUS_COMPLETED  = "completed"
+    STATUS_FAILED     = "failed"
+
+    STATUS_CHOICES = [
+        (STATUS_PENDING,    "Pending"),
+        (STATUS_PROCESSING, "Processing"),
+        (STATUS_COMPLETED,  "Completed"),
+        (STATUS_FAILED,     "Failed"),
+    ]
+
+    seller         = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="payouts")
+    payout_method  = models.ForeignKey(SellerPayoutMethod, on_delete=models.SET_NULL, null=True, blank=True)
+    amount         = models.DecimalField(max_digits=12, decimal_places=2)
+    currency       = models.CharField(max_length=5, default="USD")
+    status         = models.CharField(max_length=12, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    reference      = models.CharField(max_length=30, unique=True, blank=True)
+    note           = models.TextField(blank=True, default="")
+    # The orders whose released funds make up this payout (many-to-many via the Order FK)
+    created_at     = models.DateTimeField(auto_now_add=True)
+    processed_at   = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def save(self, *args, **kwargs):
+        if not self.reference:
+            super().save(*args, **kwargs)
+            self.reference = "PO-%05d" % self.pk
+            SellerPayout.objects.filter(pk=self.pk).update(reference=self.reference)
+        else:
+            super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.reference} — ${self.amount} ({self.get_status_display()})"
+
+    @property
+    def status_css(self):
+        return {
+            "pending":    "statusx--held",
+            "processing": "statusx--ship",
+            "completed":  "statusx--done",
+            "failed":     "statusx--draft",
+        }.get(self.status, "statusx--held")
+
+
 class SellerVerification(models.Model):
     STATUS_CHOICES = [
         ("unverified", "Unverified"),

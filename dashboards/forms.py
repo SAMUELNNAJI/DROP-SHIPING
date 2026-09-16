@@ -1,5 +1,29 @@
 from django import forms
-from .models import BuyerAddress, SellerVerification
+from .models import BuyerAddress, SellerPayoutMethod, SellerVerification
+
+
+class SellerPayoutMethodForm(forms.ModelForm):
+    class Meta:
+        model = SellerPayoutMethod
+        fields = ("method", "bank_name", "account_number", "account_name", "currency", "wallet_address", "is_default")
+        widgets = {
+            "method":          forms.Select(attrs={"class": "ff-input", "id": "pmMethod"}),
+            "bank_name":       forms.TextInput(attrs={"class": "ff-input", "placeholder": "e.g. Guaranty Trust Bank"}),
+            "account_number":  forms.TextInput(attrs={"class": "ff-input", "placeholder": "0123456789"}),
+            "account_name":    forms.TextInput(attrs={"class": "ff-input", "placeholder": "Account holder name"}),
+            "currency":        forms.Select(attrs={"class": "ff-input"}),
+            "wallet_address":  forms.TextInput(attrs={"class": "ff-input", "placeholder": "Pi username or PayPal email"}),
+            "is_default":      forms.CheckboxInput(attrs={"class": "ff-check"}),
+        }
+        labels = {
+            "method":         "Payment method",
+            "bank_name":      "Bank name",
+            "account_number": "Account number",
+            "account_name":   "Account name",
+            "currency":       "Currency",
+            "wallet_address": "Pi username / PayPal email",
+            "is_default":     "Set as default payout method",
+        }
 
 
 class BuyerAddressForm(forms.ModelForm):

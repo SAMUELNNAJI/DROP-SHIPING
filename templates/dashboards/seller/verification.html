@@ -42,6 +42,16 @@
   </div>
   {% endif %}
 
+  {% if verification.status == 'verified' %}
+  <section class="scard sglass" style="max-width:720px;margin-bottom:16px">
+    <div class="scard__body" style="text-align:center;padding:40px 24px">
+      <span class="vstatus vstatus--ok" style="margin-bottom:14px"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="m8.2 12.3 2.5 2.5 5.1-5.3"/></svg>Verified seller</span>
+      <h3 style="font-size:20px;margin-bottom:6px">Your account is verified 🎉</h3>
+      <p style="color:#6b7a90;max-width:420px;margin:0 auto 14px">Your identity and payout details were approved. Instant payouts are unlocked and your storefront shows the verified badge.</p>
+      <a class="seller-top-btn" href="/dashboards/seller/products/add/" style="text-decoration:none">Add another product</a>
+    </div>
+  </section>
+  {% else %}
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="sgrid2" style="align-items:start">
@@ -154,4 +164,5 @@
     </div>
     </div>
   </form>
+  {% endif %}
 </div>

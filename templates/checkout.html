@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +8,9 @@
   <meta name="description" content="Review your DropHub order before paying. Every order is escrow-protected — pay with Pi Network, PayPal or Naira." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" /></noscript>
   <link rel="icon" type="image/png" href="/static/Logo.png" />
   <link rel="stylesheet" href="/static/style.css" />
   <link rel="stylesheet" href="/static/auth.css" />
@@ -167,25 +170,29 @@
           <h2 class="ck-card-title">Review Your Order</h2>
         </div>
 
-        <div class="ck-item">
-          <img class="ck-item-img" src="/static/img/headphones.jpg" alt="Sony WH-1000XM5 Headphones" />
-          <div class="ck-item-info">
-            <p class="ck-item-name">Sony WH-1000XM5 Headphones</p>
-            <p class="ck-item-store">by TechVault Store</p>
-            <p class="ck-item-qty">Qty: 1</p>
+        {% if cart_items %}
+          {% for item in cart_items %}
+          <div class="ck-item">
+            <img class="ck-item-img" src="{{ item.product.image_src }}" alt="{{ item.product.name }}"
+                 onerror="this.src='/static/img/headphones.jpg'" />
+            <div class="ck-item-info">
+              <p class="ck-item-name">{{ item.product.name }}</p>
+              <p class="ck-item-store">by {{ item.product.get_store_display }}</p>
+              <p class="ck-item-qty">Qty: {{ item.quantity }}</p>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+              <span class="ck-item-price ck-mono">${{ item.line_total|floatformat:2 }}</span>
+              <form method="post" action="/dashboards/cart/remove/{{ item.product.pk }}/">
+                {% csrf_token %}
+                <button type="submit" style="font-size:11px;color:#b4232a;background:none;border:0;cursor:pointer;font-weight:700">Remove</button>
+              </form>
+            </div>
           </div>
-          <span class="ck-item-price ck-mono">$349.99</span>
-        </div>
-
-        <div class="ck-item">
-          <img class="ck-item-img" src="/static/img/backpack.jpg" alt="Minimalist Leather Backpack" />
-          <div class="ck-item-info">
-            <p class="ck-item-name">Minimalist Leather Backpack</p>
-            <p class="ck-item-store">by UrbanEdge Goods</p>
-            <p class="ck-item-qty">Qty: 2</p>
-          </div>
-          <span class="ck-item-price ck-mono">$258.00</span>
-        </div>
+          {% endfor %}
+        {% else %}
+          <!-- Guest: cart.js renders localStorage items -->
+          <div class="cart-items" id="ckGuestItems" style="padding:0"></div>
+        {% endif %}
 
         <div class="ck-note">
           <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
@@ -208,34 +215,42 @@
           <h2 class="ck-card-title">Order Summary</h2>
         </div>
 
-        <div class="ck-sum-item">
-          <img class="ck-sum-img" src="/static/img/headphones.jpg" alt="Sony WH-1000XM5 Headphones" />
-          <div class="ck-sum-info">
-            <p class="ck-sum-name">Sony WH-1000XM5 Headphones</p>
-            <p class="ck-sum-qty">×1</p>
+        {% if cart_items %}
+          {% for item in cart_items %}
+          <div class="ck-sum-item">
+            <img class="ck-sum-img" src="{{ item.product.image_src }}" alt="{{ item.product.name }}"
+                 onerror="this.src='/static/img/headphones.jpg'" />
+            <div class="ck-sum-info">
+              <p class="ck-sum-name">{{ item.product.name|truncatechars:30 }}</p>
+              <p class="ck-sum-qty">×{{ item.quantity }}</p>
+            </div>
+            <span class="ck-sum-price ck-mono">${{ item.line_total|floatformat:2 }}</span>
           </div>
-          <span class="ck-sum-price ck-mono">$349.99</span>
-        </div>
-
-        <div class="ck-sum-item">
-          <img class="ck-sum-img" src="/static/img/backpack.jpg" alt="Minimalist Leather Backpack" />
-          <div class="ck-sum-info">
-            <p class="ck-sum-name">Minimalist Leather Backpack</p>
-            <p class="ck-sum-qty">×2</p>
+          {% endfor %}
+          <div class="ck-sum-rows">
+            <div class="ck-sum-row"><span>Subtotal</span><span class="ck-mono">${{ cart_subtotal|floatformat:2 }}</span></div>
+            {% with escrow_fee=cart_subtotal|floatformat:2 %}
+            <div class="ck-sum-row"><span>Escrow fee (2%)</span><span class="ck-mono" id="escrowFee">—</span></div>
+            <div class="ck-sum-row"><span>Platform fee (1%)</span><span class="ck-mono" id="platformFee">—</span></div>
+            {% endwith %}
           </div>
-          <span class="ck-sum-price ck-mono">$258.00</span>
-        </div>
-
-        <div class="ck-sum-rows">
-          <div class="ck-sum-row"><span>Subtotal</span><span class="ck-mono">$607.99</span></div>
-          <div class="ck-sum-row"><span>Escrow Fee (2%)</span><span class="ck-mono">$12.16</span></div>
-          <div class="ck-sum-row"><span>Platform Fee (1%)</span><span class="ck-mono">$6.08</span></div>
-        </div>
-
-        <div class="ck-sum-total">
-          <span class="ck-sum-total-label">Total</span>
-          <span class="ck-sum-total-val ck-mono">$626.23</span>
-        </div>
+          <div class="ck-sum-total">
+            <span class="ck-sum-total-label">Total</span>
+            <span class="ck-sum-total-val ck-mono" id="ckTotal">${{ cart_subtotal|floatformat:2 }}</span>
+          </div>
+        {% else %}
+          <!-- Guest: totals driven by cart.js -->
+          <div id="ckGuestSummary" style="padding:8px 0"></div>
+          <div class="ck-sum-rows">
+            <div class="ck-sum-row"><span>Subtotal</span><span class="ck-mono cart-subtotal-val">$0.00</span></div>
+            <div class="ck-sum-row"><span>Escrow fee (2%)</span><span class="ck-mono" id="escrowFee">$0.00</span></div>
+            <div class="ck-sum-row"><span>Platform fee (1%)</span><span class="ck-mono" id="platformFee">$0.00</span></div>
+          </div>
+          <div class="ck-sum-total">
+            <span class="ck-sum-total-label">Total</span>
+            <span class="ck-sum-total-val ck-mono" id="ckTotal">$0.00</span>
+          </div>
+        {% endif %}
 
         <div class="ck-sum-box">
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
@@ -403,5 +418,66 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <script src="/static/cart.js"></script>
+<script>
+/* ── Checkout: compute fees from server subtotal or cart.js subtotal ── */
+(function () {
+  function calcFees(subtotal) {
+    var escrow   = subtotal * 0.02;
+    var platform = subtotal * 0.01;
+    var total    = subtotal + escrow + platform;
+    var ef = document.getElementById('escrowFee');
+    var pf = document.getElementById('platformFee');
+    var ct = document.getElementById('ckTotal');
+    if (ef) ef.textContent = '$' + escrow.toFixed(2);
+    if (pf) pf.textContent = '$' + platform.toFixed(2);
+    if (ct) ct.textContent = '$' + total.toFixed(2);
+  }
+
+  /* Server-rendered subtotal (logged-in buyer) */
+  var serverSubtotal = parseFloat('{{ cart_subtotal|default:"0" }}');
+  if (serverSubtotal > 0) { calcFees(serverSubtotal); return; }
+
+  /* Guest: read from cart.js after it renders */
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.DropHubCart) {
+      var cart = window.DropHubCart.getCart();
+      var sub  = cart.reduce(function (s, i) { return s + i.price * i.qty; }, 0);
+      calcFees(sub);
+
+      /* Also render guest items in left panel */
+      var guestItems = document.getElementById('ckGuestItems');
+      if (guestItems) {
+        var html = '';
+        cart.forEach(function (item) {
+          html += '<div class="ck-item"><img class="ck-item-img" src="' + item.img + '" onerror="this.src=\'/static/img/headphones.jpg\'" />'
+                + '<div class="ck-item-info"><p class="ck-item-name">' + item.name + '</p>'
+                + '<p class="ck-item-store">by ' + item.store + '</p>'
+                + '<p class="ck-item-qty">Qty: ' + item.qty + '</p></div>'
+                + '<span class="ck-item-price ck-mono">$' + (item.price * item.qty).toFixed(2) + '</span></div>';
+        });
+        guestItems.innerHTML = html || '<p style="padding:20px;color:#9ca3af;text-align:center">Your cart is empty</p>';
+      }
+
+      /* Guest summary sidebar */
+      var guestSummary = document.getElementById('ckGuestSummary');
+      if (guestSummary) {
+        var sHtml = '';
+        cart.forEach(function (item) {
+          sHtml += '<div class="ck-sum-item"><img class="ck-sum-img" src="' + item.img + '" onerror="this.src=\'/static/img/headphones.jpg\'" />'
+                 + '<div class="ck-sum-info"><p class="ck-sum-name">' + item.name.substring(0,28) + '</p>'
+                 + '<p class="ck-sum-qty">×' + item.qty + '</p></div>'
+                 + '<span class="ck-sum-price ck-mono">$' + (item.price * item.qty).toFixed(2) + '</span></div>';
+        });
+        guestSummary.innerHTML = sHtml;
+
+        /* update subtotal label */
+        document.querySelectorAll('.cart-subtotal-val').forEach(function (el) {
+          el.textContent = '$' + sub.toFixed(2);
+        });
+      }
+    }
+  });
+})();
+</script>
 </body>
 </html>

@@ -239,6 +239,36 @@ STORAGES = {
 
 AUTH_USER_MODEL = 'accounts.User'
 
+# ── Performance: in-memory cache (local) / Redis (production) ──────────────
+# On Render, set REDIS_URL to a Redis instance URL to get a shared cache.
+# Locally (and on free Render tiers without Redis) we use LocMemCache, which
+# still helps by throttling expensive recurring operations per-process.
+_redis_url = os.environ.get('REDIS_URL', '').strip()
+if _redis_url:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': _redis_url,
+            'TIMEOUT': 300,
+            'OPTIONS': {'socket_connect_timeout': 2, 'socket_timeout': 2},
+        }
+    }
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'drophub-local',
+        }
+    }
+
+# Use the cache for session storage — faster than a DB read on every request.
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+
+# Keep DB connections alive between requests (speeds up SQLite + Postgres).
+if not DATABASE_URL:
+    # Local SQLite — reuse the same connection per thread
+    DATABASES['default']['CONN_MAX_AGE'] = None  # persistent
+
 # Uploaded files (e.g. seller verification documents).
 # MEDIA_ROOT can be pointed at a Render persistent disk mount (for example
 # /var/data/media) so uploads survive deploys; otherwise it lives on the

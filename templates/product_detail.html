@@ -1,2 +1,319 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{ product.name }} — DropHub</title><link rel="stylesheet" href="/static/style.css"><link rel="stylesheet" href="/static/shop.css"><style>.product-detail{max-width:1120px;margin:100px auto 60px;padding:0 24px;display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.9fr);gap:48px}.product-detail__image{width:100%;aspect-ratio:1;object-fit:cover;border-radius:24px;background:#edf2ff}.product-detail__cat{color:#1f64ff;font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:12px}.product-detail h1{font-size:clamp(28px,4vw,46px);margin:10px 0}.product-detail__price{font-size:30px;font-weight:800;margin:18px 0}.product-detail__description{color:#5b6473;line-height:1.7}.product-detail__buy{display:inline-flex;margin-top:24px;padding:14px 24px;border-radius:10px;background:#1f64ff;color:#fff;text-decoration:none;font-weight:800}@media(max-width:700px){.product-detail{grid-template-columns:1fr;margin-top:72px;gap:25px}}</style></head><body><header class="navbar"><div class="nav-inner"><a class="logo" href="/"><img src="/static/Logo.png" alt="DropHub" class="logo-img"></a><nav class="nav-links"><a href="/shop/">Shop</a></nav></div></header><main class="product-detail"><section><img class="product-detail__image" src="{{ product.image_src }}" alt="{{ product.name }}"></section><section><p class="product-detail__cat">{{ product.category_label }}</p><h1>{{ product.name }}</h1><p class="pc-store">Sold by {{ product.get_store_display }}</p><p class="pc-rating"><span class="stars">★★★★★</span> <b>{{ product.rating|floatformat:1 }}</b> ({{ product.reviews_count }} reviews)</p><p class="product-detail__price">${{ product.price|floatformat:2 }}{% if product.old_price %} <span class="pc-old">${{ product.old_price|floatformat:2 }}</span>{% endif %}</p><p class="product-detail__description">{{ product.description|default:"No additional product description has been provided yet."|linebreaksbr }}</p><p>{% if product.stock %}{{ product.stock }} in stock{% else %}Currently out of stock{% endif %}</p>{% if product.stock %}<a class="product-detail__buy" href="/checkout/">Add to cart</a>{% endif %}</section></main></body></html>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ product.name }} — DropHub</title>
+  <meta name="description" content="{{ product.description|default:product.name|truncatechars:160 }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" /></noscript>
+  <link rel="icon" type="image/png" href="/static/Logo.png" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/shop.css" />
+</head>
+<body class="shop-page">
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-inner">
+      <a href="/" class="logo" aria-label="DropHub">
+        <img src="/static/Logo.png" alt="DropHub" class="logo-img" />
+      </a>
+      <nav class="nav-links">
+        <a href="/shop/" class="is-active">Shop</a>
+        <a href="/#safe">How It Works</a>
+        <a href="/about/">About</a>
+        <a href="/contact/">Contact</a>
+      </nav>
+      <div class="nav-actions">
+        <div class="cart-wrap">
+          <button class="nav-cart" id="cartToggle" aria-label="Open cart" aria-expanded="false" aria-controls="cartDropdown">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F0F0F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><circle cx="18" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><path d="M2.5 3.5h2l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.2L20.5 7H6"/></svg>
+            <span class="cart-badge">0</span>
+          </button>
+          <div class="cart-dropdown" id="cartDropdown" aria-hidden="true">
+            <div class="cart-head">
+              <div class="cart-title">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.7"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+                <span>Your Cart</span>
+                <span class="cart-count-pill">0 ITEMS</span>
+              </div>
+              <button class="cart-close" id="cartClose" aria-label="Close cart">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+              </button>
+            </div>
+            <div class="cart-items" id="cartItems"></div>
+            <div class="cart-foot">
+              <div class="cart-subtotal"><span>Subtotal</span><strong>$0.00</strong></div>
+              <div class="cart-actions">
+                <a href="/shop/" class="cart-btn-ghost">← Continue Shopping</a>
+                <a href="/checkout/" class="cart-btn-checkout">Checkout →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a href="/signin/" class="nav-signin">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#7B8798" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.8" r="3.6"/><path d="M4.8 19.8c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
+          <span>Sign In</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- BREADCRUMB -->
+  <div class="pd-breadcrumb">
+    <div class="pd-breadcrumb__inner">
+      <a href="/">Home</a>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      <a href="/shop/">Shop</a>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      <a href="/shop/?category={{ product.category }}">{{ product.category_label }}</a>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      <span>{{ product.name|truncatechars:36 }}</span>
+    </div>
+  </div>
+
+  <!-- MAIN PRODUCT SECTION -->
+  <main class="pd-main">
+    <div class="pd-inner">
+
+      <!-- LEFT: image gallery -->
+      <div class="pd-gallery">
+        <div class="pd-gallery__main">
+          <img src="{{ product.image_src }}" alt="{{ product.name }}" id="pdMainImg"
+               onerror="this.src='/static/img/headphones.jpg'" />
+          {% if product.badge_label %}
+          <span class="pd-badge">{{ product.badge_label }}</span>
+          {% endif %}
+          {% if product.is_low_stock %}
+          <span class="pd-badge pd-badge--amber">Low Stock</span>
+          {% endif %}
+        </div>
+        <div class="pd-gallery__trust">
+          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11.2 14.2 15 10"/></svg>Escrow protected</span>
+          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Fast shipping</span>
+          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>7-day returns</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: product info -->
+      <div class="pd-info">
+        <p class="pd-category">{{ product.category_label }}</p>
+
+        <h1 class="pd-title">{{ product.name }}</h1>
+
+        <div class="pd-meta-row">
+          <div class="pd-rating">
+            <span class="pd-stars">{{ product.stars }}</span>
+            <b>{{ product.rating|floatformat:1 }}</b>
+            <span class="pd-rev-count">({{ product.reviews_display }} reviews)</span>
+          </div>
+          <span class="pd-sold">{{ product.sold }} sold</span>
+        </div>
+
+        <p class="pd-store">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg>
+          Sold by <strong>{{ product.get_store_display }}</strong>
+        </p>
+
+        <!-- price block -->
+        <div class="pd-price-block">
+          <span class="pd-price">${{ product.price|floatformat:2 }}</span>
+          {% if product.old_price %}
+          <span class="pd-old">${{ product.old_price|floatformat:2 }}</span>
+          <span class="pd-discount-badge">Save {{ product.discount_pct }}%</span>
+          {% endif %}
+        </div>
+
+        <!-- currency equivalents -->
+        <div class="pd-equiv">
+          <span>≈ {{ product.price_ngn }}</span>
+          <span class="pd-equiv-sep">·</span>
+          <span>{{ product.price_pi }}</span>
+        </div>
+
+        <!-- stock indicator -->
+        <div class="pd-stock {% if not product.stock %}pd-stock--out{% elif product.is_low_stock %}pd-stock--low{% else %}pd-stock--ok{% endif %}">
+          <span class="pd-stock__dot"></span>
+          {% if not product.stock %}Out of stock
+          {% elif product.is_low_stock %}Only {{ product.stock }} left
+          {% else %}In stock ({{ product.stock }} available)
+          {% endif %}
+        </div>
+
+        <!-- add to cart -->
+        {% if product.stock %}
+        <div class="pd-cart-row">
+          <div class="pd-qty">
+            <button type="button" class="pd-qty__btn" id="pdQtyMinus" aria-label="Decrease">−</button>
+            <span id="pdQtyVal">1</span>
+            <button type="button" class="pd-qty__btn" id="pdQtyPlus" aria-label="Increase">+</button>
+          </div>
+          <button type="button" class="pd-add-btn" id="pdAddBtn"
+                  data-product-pk="{{ product.pk }}"
+                  data-id="{{ product.slug }}"
+                  data-name="{{ product.name|escapejs }}"
+                  data-price="{{ product.price }}"
+                  data-store="{{ product.get_store_display|escapejs }}"
+                  data-img="{{ product.image_src }}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+            Add to cart
+          </button>
+          <a href="/checkout/" class="pd-buy-btn">Buy now</a>
+        </div>
+        {% else %}
+        <button type="button" class="pd-add-btn" disabled style="opacity:.5;cursor:not-allowed">Out of stock</button>
+        {% endif %}
+
+        <!-- payment chips -->
+        <div class="pd-pay-chips">
+          <span class="pd-pay-chip pd-pay-chip--pi">π Pi</span>
+          <span class="pd-pay-chip pd-pay-chip--paypal">PayPal</span>
+          <span class="pd-pay-chip pd-pay-chip--ps">₦ Paystack</span>
+        </div>
+
+        <!-- description -->
+        {% if product.description %}
+        <div class="pd-desc-section">
+          <button class="pd-desc-toggle" id="pdDescToggle" type="button" aria-expanded="false">
+            Product description
+            <svg class="pd-desc-toggle__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="pd-desc-body" id="pdDescBody" hidden>
+            <p>{{ product.description|linebreaksbr }}</p>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- escrow note -->
+        <div class="pd-escrow-note">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2456e6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11.2 14.2 15 10"/></svg>
+          <span>Your payment is held in escrow until you confirm delivery. 7-day inspection window guaranteed.</span>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <style>
+  /* ── Breadcrumb ── */
+  .pd-breadcrumb{background:#f8f9fc;border-bottom:1px solid #e8edf5;padding:0}
+  .pd-breadcrumb__inner{max-width:1240px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:6px;font-size:12.5px;color:#6b7a90;flex-wrap:wrap}
+  .pd-breadcrumb__inner a{color:#6b7a90;text-decoration:none;font-weight:600}
+  .pd-breadcrumb__inner a:hover{color:#2456e6}
+  .pd-breadcrumb__inner span{color:#0f1e33;font-weight:700}
+
+  /* ── Main layout ── */
+  .pd-main{max-width:1240px;margin:0 auto;padding:40px 24px 80px}
+  .pd-inner{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;align-items:start}
+
+  /* ── Gallery ── */
+  .pd-gallery__main{position:relative;border-radius:24px;overflow:hidden;background:#f0f4ff;aspect-ratio:1}
+  .pd-gallery__main img{width:100%;height:100%;object-fit:cover;display:block}
+  .pd-badge{position:absolute;top:14px;left:14px;font-size:10px;font-weight:800;letter-spacing:.08em;padding:5px 10px;border-radius:20px;background:#2456e6;color:#fff;text-transform:uppercase}
+  .pd-badge--amber{background:#f59e0b}
+  .pd-gallery__trust{display:flex;gap:18px;margin-top:14px;flex-wrap:wrap}
+  .pd-gallery__trust span{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#374151}
+
+  /* ── Info panel ── */
+  .pd-category{margin:0 0 6px;font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#2456e6}
+  .pd-title{margin:0 0 12px;font-size:clamp(22px,3.5vw,34px);font-weight:800;letter-spacing:-.03em;line-height:1.15;color:#0f1e33}
+  .pd-meta-row{display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap}
+  .pd-rating{display:flex;align-items:center;gap:6px;font-size:14px}
+  .pd-stars{font-size:15px;color:#f59e0b;letter-spacing:1px}
+  .pd-rating b{font-weight:800;color:#0f1e33}
+  .pd-rev-count{color:#6b7a90;font-size:13px}
+  .pd-sold{font-size:12.5px;font-weight:700;color:#6b7a90;padding:4px 10px;border-radius:20px;background:#f3f4f6}
+  .pd-store{display:flex;align-items:center;gap:6px;margin:0 0 18px;font-size:13.5px;color:#6b7a90}
+  .pd-store strong{color:#0f1e33}
+  .pd-price-block{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
+  .pd-price{font-size:36px;font-weight:800;letter-spacing:-.04em;color:#0f1e33}
+  .pd-old{font-size:18px;font-weight:500;color:#9ca3af;text-decoration:line-through}
+  .pd-discount-badge{font-size:12px;font-weight:800;padding:4px 10px;border-radius:20px;background:#dcfce7;color:#166534}
+  .pd-equiv{font-size:12.5px;color:#9ca3af;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+  .pd-equiv-sep{color:#d1d5db}
+  .pd-stock{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;padding:7px 13px;border-radius:20px;margin-bottom:22px}
+  .pd-stock__dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .pd-stock--ok{background:#dcfce7;color:#166534}.pd-stock--ok .pd-stock__dot{background:#22c55e}
+  .pd-stock--low{background:#fff3cd;color:#92400e}.pd-stock--low .pd-stock__dot{background:#f59e0b}
+  .pd-stock--out{background:#fee2e2;color:#991b1b}.pd-stock--out .pd-stock__dot{background:#ef4444}
+  .pd-cart-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+  .pd-qty{display:flex;align-items:center;gap:0;border:1px solid #e4eaf3;border-radius:12px;overflow:hidden;height:48px}
+  .pd-qty__btn{width:42px;height:100%;border:0;background:#f8fafc;font-size:20px;font-weight:300;cursor:pointer;color:#374151;transition:background .15s}
+  .pd-qty__btn:hover{background:#e8edf5}
+  #pdQtyVal{min-width:36px;text-align:center;font-size:15px;font-weight:700;color:#0f1e33}
+  .pd-add-btn{flex:1;min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:9px;border:0;border-radius:14px;background:linear-gradient(135deg,#1a41b4,#2456e6);color:#fff;font:inherit;font-size:14.5px;font-weight:800;cursor:pointer;box-shadow:0 10px 24px rgba(36,86,230,.28);transition:transform .15s,box-shadow .15s;text-decoration:none;white-space:nowrap}
+  .pd-add-btn:hover{transform:translateY(-2px);box-shadow:0 16px 32px rgba(36,86,230,.38)}
+  .pd-add-btn.added{background:linear-gradient(135deg,#0a7a57,#0ca678)}
+  .pd-buy-btn{min-height:48px;padding:0 20px;display:inline-flex;align-items:center;justify-content:center;border:2px solid #2456e6;border-radius:14px;color:#2456e6;font-size:14.5px;font-weight:800;text-decoration:none;white-space:nowrap;transition:background .15s,color .15s}
+  .pd-buy-btn:hover{background:#2456e6;color:#fff}
+  .pd-pay-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+  .pd-pay-chip{font-size:12px;font-weight:800;padding:5px 11px;border-radius:20px;border:1px solid}
+  .pd-pay-chip--pi{background:#ede9fb;color:#5b36d6;border-color:#c4b5fd}
+  .pd-pay-chip--paypal{background:#e8f0fe;color:#1a56db;border-color:#bfdbfe}
+  .pd-pay-chip--ps{background:#dcfce7;color:#166534;border-color:#bbf7d0}
+  .pd-desc-section{border:1px solid #e4eaf3;border-radius:14px;overflow:hidden;margin-bottom:16px}
+  .pd-desc-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#f8fafc;border:0;font:inherit;font-size:14px;font-weight:800;color:#0f1e33;cursor:pointer;text-align:left}
+  .pd-desc-toggle__arrow{transition:transform .25s;flex-shrink:0}
+  .pd-desc-toggle[aria-expanded="true"] .pd-desc-toggle__arrow{transform:rotate(180deg)}
+  .pd-desc-body{padding:16px;font-size:13.5px;color:#374151;line-height:1.7}
+  .pd-escrow-note{display:flex;align-items:flex-start;gap:10px;padding:14px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;font-size:13px;color:#1e40af;line-height:1.55}
+
+  @media(max-width:900px){.pd-inner{grid-template-columns:1fr;gap:28px}.pd-main{padding:24px 16px 60px}}
+  </style>
+
+  <script>
+  /* ── Qty counter ── */
+  (function () {
+    var val  = document.getElementById('pdQtyVal');
+    var plus = document.getElementById('pdQtyPlus');
+    var minus = document.getElementById('pdQtyMinus');
+    var count = 1;
+    var maxStock = {{ product.stock|default:1 }};
+    if (plus) plus.addEventListener('click', function () { if (count < maxStock) { count++; val.textContent = count; } });
+    if (minus) minus.addEventListener('click', function () { if (count > 1) { count--; val.textContent = count; } });
+  })();
+
+  /* ── Description accordion ── */
+  (function () {
+    var btn  = document.getElementById('pdDescToggle');
+    var body = document.getElementById('pdDescBody');
+    if (!btn || !body) return;
+    btn.addEventListener('click', function () {
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', !open);
+      body.hidden = open;
+    });
+  })();
+
+  /* ── Add to cart ── */
+  (function () {
+    var btn = document.getElementById('pdAddBtn');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var qty = parseInt(document.getElementById('pdQtyVal').textContent) || 1;
+      window.DropHubCart && window.DropHubCart.addToCart({
+        id:    btn.dataset.id,
+        name:  btn.dataset.name,
+        price: parseFloat(btn.dataset.price),
+        store: btn.dataset.store,
+        img:   btn.dataset.img,
+        qty:   qty,
+      });
+      btn.classList.add('added');
+      btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Added!';
+      setTimeout(function () {
+        btn.classList.remove('added');
+        btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg> Add to cart';
+      }, 1800);
+    });
+  })();
+  </script>
+
+  <script src="/static/cart.js"></script>
+</body>
+</html>

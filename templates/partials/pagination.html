@@ -1,0 +1,42 @@
+{% if page_obj.has_other_pages %}
+<div class="dh-pagination">
+  <div class="dh-pagination__info">
+    Showing {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ page_obj.paginator.count }}
+  </div>
+  <nav class="dh-pagination__nav" aria-label="Page navigation">
+
+    {% if page_obj.has_previous %}
+    <a class="dh-pg dh-pg--arrow" href="?page={{ page_obj.previous_page_number }}{{ extra_params }}" aria-label="Previous page">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </a>
+    {% else %}
+    <span class="dh-pg dh-pg--arrow dh-pg--disabled" aria-disabled="true">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </span>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+        <span class="dh-pg dh-pg--active" aria-current="page">{{ num }}</span>
+      {% elif num == 1 or num == page_obj.paginator.num_pages %}
+        <a class="dh-pg" href="?page={{ num }}{{ extra_params }}">{{ num }}</a>
+      {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+        <a class="dh-pg" href="?page={{ num }}{{ extra_params }}">{{ num }}</a>
+      {% elif num == page_obj.number|add:"-3" or num == page_obj.number|add:"3" %}
+        <span class="dh-pg dh-pg--ellipsis">…</span>
+      {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <a class="dh-pg dh-pg--arrow" href="?page={{ page_obj.next_page_number }}{{ extra_params }}" aria-label="Next page">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    {% else %}
+    <span class="dh-pg dh-pg--arrow dh-pg--disabled" aria-disabled="true">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </span>
+    {% endif %}
+
+  </nav>
+</div>
+{% endif %}

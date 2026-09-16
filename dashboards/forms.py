@@ -1,5 +1,25 @@
 from django import forms
-from .models import BuyerAddress, SellerPayoutMethod, SellerVerification
+from .models import BuyerAddress, BoostPlan, SellerPayoutMethod, SellerVerification
+
+
+class BoostPlanForm(forms.ModelForm):
+    class Meta:
+        model  = BoostPlan
+        fields = ("name", "price", "duration_days", "description", "is_active")
+        widgets = {
+            "name":          forms.TextInput(attrs={"class": "ff-input", "placeholder": "e.g. Pro Feature"}),
+            "price":         forms.NumberInput(attrs={"class": "ff-input", "placeholder": "29.99", "step": "0.01", "min": "0"}),
+            "duration_days": forms.NumberInput(attrs={"class": "ff-input", "placeholder": "7", "min": "1"}),
+            "description":   forms.TextInput(attrs={"class": "ff-input", "placeholder": "Short benefit line (~8,000 extra views)"}),
+            "is_active":     forms.CheckboxInput(attrs={"class": "ff-check"}),
+        }
+        labels = {
+            "name":          "Plan name",
+            "price":         "Price (USD)",
+            "duration_days": "Duration (days)",
+            "description":   "Short description",
+            "is_active":     "Active (visible to sellers)",
+        }
 
 
 class SellerPayoutMethodForm(forms.ModelForm):

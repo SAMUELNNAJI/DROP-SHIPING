@@ -14,8 +14,8 @@ from django.utils import timezone
 from shop.forms import ProductForm
 from shop.models import Product
 
-from .forms import BuyerAddressForm, SellerPayoutMethodForm, SellerVerificationForm
-from .models import BuyerAddress, Order, SellerPayout, SellerPayoutMethod, SellerVerification, WishlistItem
+from .forms import BuyerAddressForm, BoostPlanForm, SellerPayoutMethodForm, SellerVerificationForm
+from .models import BuyerAddress, BoostOrder, BoostPlan, CartItem, Order, SellerPayout, SellerPayoutMethod, SellerVerification, WishlistItem
 
 
 def get_or_init_verification(user):
@@ -90,7 +90,16 @@ SECTION_TITLES = {
 
 
 def _run_auto_confirm():
-    """Auto-confirm any delivered orders older than 3 days. Called on every dashboard page load."""
+    """Auto-confirm delivered orders older than 3 days.
+
+    Throttled to run at most once every 30 minutes via the cache to avoid
+    a DB write on every single dashboard page load.
+    """
+    from django.core.cache import cache
+    LOCK_KEY = "auto_confirm_last_run"
+    if cache.get(LOCK_KEY):
+        return  # Already ran recently — skip
+    cache.set(LOCK_KEY, True, timeout=1800)  # 30 minutes
     cutoff = timezone.now() - timezone.timedelta(days=3)
     Order.objects.filter(
         status=Order.STATUS_DELIVERED,
@@ -209,6 +218,12 @@ def dashboard_section(request, role, section):
         return buyer_addresses(request)
     if role == "buyer" and section == "settings":
         return buyer_settings(request)
+    if role == "admin" and section == "users":
+        return admin_users_view(request)
+    if role == "admin" and section == "products":
+        return admin_products_view(request)
+    if role == "admin" and section == "featured":
+        return admin_featured_view(request)
     return dashboard_page(request, role, section)
 
 
@@ -680,6 +695,59 @@ def dashboard_page(request, role, section):
         page_obj = paginator.get_page(request.GET.get("page"))
         context.update({"orders": page_obj.object_list, "page_obj": page_obj, "search_q": q, "status_filter": status_filter, "payout_ready_count": Order.objects.filter(status=Order.STATUS_CONFIRMED, payout_released=False).count()})
 
+    # ── Admin: overview ───────────────────────────────────────
+    if role == "admin" and section == "overview":
+        total_revenue = Order.objects.filter(status=Order.STATUS_CONFIRMED).aggregate(s=Sum("total_price"))["s"] or 0
+        pending_escrow = Order.objects.filter(status__in=[Order.STATUS_PENDING, Order.STATUS_IN_TRANSIT, Order.STATUS_DELIVERED]).aggregate(s=Sum("total_price"))["s"] or 0
+        total_confirmed_orders = Order.objects.filter(status=Order.STATUS_CONFIRMED).count()
+        recent_orders = Order.objects.select_related("buyer", "seller").order_by("-created_at")[:8]
+        # Payment method split
+        pi_revenue = Order.objects.filter(status=Order.STATUS_CONFIRMED, payment_method="pi").aggregate(s=Sum("total_price"))["s"] or 0
+        paypal_revenue = Order.objects.filter(status=Order.STATUS_CONFIRMED, payment_method="paypal").aggregate(s=Sum("total_price"))["s"] or 0
+        paystack_revenue = Order.objects.filter(status=Order.STATUS_CONFIRMED, payment_method="paystack").aggregate(s=Sum("total_price"))["s"] or 0
+        total_for_pct = float(pi_revenue + paypal_revenue + paystack_revenue) or 1
+        pending_verifications = SellerVerification.objects.filter(status="pending").count()
+        payout_ready = Order.objects.filter(status=Order.STATUS_CONFIRMED, payout_released=False).count()
+        context.update({
+            "total_revenue": total_revenue,
+            "pending_escrow": pending_escrow,
+            "total_confirmed_orders": total_confirmed_orders,
+            "recent_orders": recent_orders,
+            "pi_revenue": pi_revenue,
+            "paypal_revenue": paypal_revenue,
+            "paystack_revenue": paystack_revenue,
+            "pi_pct": round(float(pi_revenue) / total_for_pct * 100),
+            "paypal_pct": round(float(paypal_revenue) / total_for_pct * 100),
+            "paystack_pct": round(float(paystack_revenue) / total_for_pct * 100),
+            "payout_ready": payout_ready,
+            "pending_verifications": pending_verifications,
+        })
+
+    # ── Admin: payments ───────────────────────────────────────
+    if role == "admin" and section == "payments":
+        pay_qs = Order.objects.filter(status=Order.STATUS_CONFIRMED).order_by("-confirmed_at")
+        q = (request.GET.get("q") or "").strip()
+        if q:
+            pay_qs = pay_qs.filter(Q(order_number__icontains=q) | Q(buyer__username__icontains=q) | Q(product_name__icontains=q))
+        method_f = request.GET.get("method") or "all"
+        if method_f != "all":
+            pay_qs = pay_qs.filter(payment_method=method_f)
+        paginatorp = Paginator(pay_qs, 20)
+        page_obj_p = paginatorp.get_page(request.GET.get("page"))
+        pi_total     = Order.objects.filter(status=Order.STATUS_CONFIRMED, payment_method="pi").aggregate(s=Sum("total_price"))["s"] or 0
+        paypal_total = Order.objects.filter(status=Order.STATUS_CONFIRMED, payment_method="paypal").aggregate(s=Sum("total_price"))["s"] or 0
+        paystack_total = Order.objects.filter(status=Order.STATUS_CONFIRMED, payment_method="paystack").aggregate(s=Sum("total_price"))["s"] or 0
+        context.update({
+            "payments": page_obj_p.object_list,
+            "page_obj": page_obj_p,
+            "search_q": q,
+            "method_filter": method_f,
+            "pi_total": pi_total,
+            "paypal_total": paypal_total,
+            "paystack_total": paystack_total,
+            "grand_total": pi_total + paypal_total + paystack_total,
+        })
+
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         return render(request, template, context)
     context["dashboard_template"] = template
@@ -990,3 +1058,335 @@ def seller_request_payout(request):
 
     messages.success(request, f"Payout of ${available:,.2f} requested (ref: {payout.reference}). Estimated arrival: 1–2 business days.")
     return redirect("dashboard_section", role="seller", section="payouts")
+
+
+# ═══════════════════════════════════════════════════════════════
+#  ADMIN: USERS
+# ═══════════════════════════════════════════════════════════════
+
+@staff_member_required
+def admin_users_view(request):
+    User = get_user_model()
+    qs   = User.objects.all().order_by("-date_joined")
+
+    q = (request.GET.get("q") or "").strip()
+    if q:
+        qs = qs.filter(
+            Q(username__icontains=q) | Q(email__icontains=q) |
+            Q(first_name__icontains=q) | Q(last_name__icontains=q)
+        )
+
+    role_filter = request.GET.get("role") or "all"
+    if role_filter == "buyer":
+        qs = qs.filter(role="buyer")
+    elif role_filter == "seller":
+        qs = qs.filter(role="seller")
+    elif role_filter == "admin":
+        qs = qs.filter(is_staff=True)
+
+    paginator = Paginator(qs, 20)
+    page_obj  = paginator.get_page(request.GET.get("page"))
+
+    context = dashboard_context(request, "admin", "users")
+    context.update({
+        "users_list":   page_obj.object_list,
+        "page_obj":     page_obj,
+        "search_q":     q,
+        "role_filter":  role_filter,
+        "buyers_count":  User.objects.filter(role="buyer").count(),
+        "sellers_count": User.objects.filter(role="seller").count(),
+        "admins_count":  User.objects.filter(is_staff=True).count(),
+        "dashboard_template": "dashboards/admin/users.html",
+    })
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(request, "dashboards/admin/users.html", context)
+    return render(request, "dashboards/base.html", context)
+
+
+@require_POST
+@staff_member_required
+def admin_user_toggle_active(request, pk):
+    User   = get_user_model()
+    target = get_object_or_404(User, pk=pk)
+    if target == request.user:
+        return JsonResponse({"error": "Cannot deactivate yourself."}, status=400)
+    target.is_active = not target.is_active
+    target.save(update_fields=["is_active"])
+    return JsonResponse({"ok": True, "is_active": target.is_active})
+
+
+# ═══════════════════════════════════════════════════════════════
+#  ADMIN: PRODUCTS
+# ═══════════════════════════════════════════════════════════════
+
+@staff_member_required
+def admin_products_view(request):
+    qs = Product.objects.all().select_related("seller").order_by("-created_at")
+
+    q = (request.GET.get("q") or "").strip()
+    if q:
+        qs = qs.filter(
+            Q(name__icontains=q) | Q(store_name__icontains=q) |
+            Q(seller__username__icontains=q)
+        )
+
+    cat_filter = request.GET.get("category") or "all"
+    if cat_filter != "all":
+        qs = qs.filter(category=cat_filter)
+
+    status_filter = request.GET.get("status") or "all"
+    if status_filter == "live":
+        qs = qs.filter(status="live")
+    elif status_filter == "draft":
+        qs = qs.filter(status="draft")
+
+    paginator = Paginator(qs, 20)
+    page_obj  = paginator.get_page(request.GET.get("page"))
+
+    context = dashboard_context(request, "admin", "products")
+    context.update({
+        "products":      page_obj.object_list,
+        "page_obj":      page_obj,
+        "search_q":      q,
+        "cat_filter":    cat_filter,
+        "status_filter": status_filter,
+        "categories":    Product.CATEGORY_CHOICES,
+        "total_live":    Product.objects.filter(status="live").count(),
+        "total_draft":   Product.objects.filter(status="draft").count(),
+        "dashboard_template": "dashboards/admin/products.html",
+    })
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(request, "dashboards/admin/products.html", context)
+    return render(request, "dashboards/base.html", context)
+
+
+@require_POST
+@staff_member_required
+def admin_product_toggle_status(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    product.status = "draft" if product.status == "live" else "live"
+    product.save(update_fields=["status"])
+    return JsonResponse({"ok": True, "status": product.status})
+
+
+@require_POST
+@staff_member_required
+def admin_product_delete(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    product.delete()
+    messages.success(request, f'"{product.name}" has been deleted.')
+    return redirect("admin_products_view")
+
+
+# ═══════════════════════════════════════════════════════════════
+#  ADMIN: FEATURED / BOOST PLANS
+# ═══════════════════════════════════════════════════════════════
+
+@staff_member_required
+def admin_featured_view(request):
+    boost_plans = BoostPlan.objects.all()
+
+    q = (request.GET.get("q") or "").strip()
+    boosts_qs = BoostOrder.objects.select_related("seller", "product", "plan").order_by("-created_at")
+    if q:
+        boosts_qs = boosts_qs.filter(
+            Q(product__name__icontains=q) | Q(seller__username__icontains=q) | Q(plan_name__icontains=q)
+        )
+    status_f = request.GET.get("status") or "all"
+    if status_f != "all":
+        boosts_qs = boosts_qs.filter(status=status_f)
+
+    paginator = Paginator(boosts_qs, 15)
+    page_obj  = paginator.get_page(request.GET.get("page"))
+
+    form = BoostPlanForm()
+    context = dashboard_context(request, "admin", "featured")
+    context.update({
+        "boost_plans":   boost_plans,
+        "boost_orders":  page_obj.object_list,
+        "page_obj":      page_obj,
+        "search_q":      q,
+        "status_filter": status_f,
+        "boost_form":    form,
+        "active_count":  BoostOrder.objects.filter(status=BoostOrder.STATUS_PAID).count(),
+        "dashboard_template": "dashboards/admin/featured.html",
+    })
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(request, "dashboards/admin/featured.html", context)
+    return render(request, "dashboards/base.html", context)
+
+
+@require_POST
+@staff_member_required
+def admin_boost_plan_create(request):
+    form = BoostPlanForm(request.POST)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Boost plan created.")
+    else:
+        for errs in form.errors.values():
+            messages.error(request, errs[0])
+    return redirect("admin_featured_view")
+
+
+@require_POST
+@staff_member_required
+def admin_boost_plan_delete(request, pk):
+    plan = get_object_or_404(BoostPlan, pk=pk)
+    plan.is_active = False
+    plan.save(update_fields=["is_active"])
+    messages.success(request, f'"{plan.name}" deactivated.')
+    return redirect("admin_featured_view")
+
+
+@require_POST
+@staff_member_required
+def admin_boost_order_remove(request, pk):
+    bo = get_object_or_404(BoostOrder, pk=pk)
+    bo.status = BoostOrder.STATUS_EXPIRED
+    bo.save(update_fields=["status"])
+    messages.success(request, f"Boost {bo.reference} expired.")
+    return redirect("admin_featured_view")
+
+
+# ═══════════════════════════════════════════════════════════════
+#  SELLER: BOOST CHECKOUT
+# ═══════════════════════════════════════════════════════════════
+
+@login_required
+def seller_boost_checkout(request, product_pk):
+    """Seller picks a boost plan and pays for it."""
+    if request.user.role != "seller":
+        return redirect("dashboard")
+    product = get_object_or_404(Product, pk=product_pk, seller=request.user)
+    plans   = BoostPlan.objects.filter(is_active=True)
+
+    if request.method == "POST":
+        plan_pk        = request.POST.get("plan")
+        payment_method = request.POST.get("payment_method", "paypal")
+        plan = get_object_or_404(BoostPlan, pk=plan_pk, is_active=True)
+
+        boost = BoostOrder.objects.create(
+            seller         = request.user,
+            product        = product,
+            plan           = plan,
+            plan_name      = plan.name,
+            amount         = plan.price,
+            duration_days  = plan.duration_days,
+            status         = BoostOrder.STATUS_PAID,   # demo: instant activation
+            payment_method = payment_method,
+            paid_at        = timezone.now(),
+            expires_at     = timezone.now() + timezone.timedelta(days=plan.duration_days),
+        )
+        messages.success(
+            request,
+            f'"{product.name}" is now boosted with {plan.name} for {plan.duration_days} days!'
+        )
+        return redirect("seller_products")
+
+    context = dashboard_context(request, "seller", "products")
+    context.update({
+        "product":    product,
+        "plans":      plans,
+        "page_title": f"Boost: {product.name}",
+        "dashboard_template": "boost_checkout.html",
+    })
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(request, "boost_checkout.html", context)
+    return render(request, "dashboards/base.html", context)
+
+
+# ═══════════════════════════════════════════════════════════════
+#  CART API  (DB-backed for logged-in buyers)
+# ═══════════════════════════════════════════════════════════════
+
+@require_POST
+@login_required
+def cart_add(request, product_pk):
+    """Add or increment a product in the DB cart."""
+    product = get_object_or_404(Product, pk=product_pk, status="live")
+    qty     = max(1, int(request.POST.get("quantity", 1)))
+
+    item, created = CartItem.objects.get_or_create(
+        user=request.user, product=product,
+        defaults={"quantity": qty},
+    )
+    if not created:
+        item.quantity += qty
+        item.save(update_fields=["quantity"])
+
+    total_qty = CartItem.objects.filter(user=request.user).aggregate(s=Sum("quantity"))["s"] or 0
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return JsonResponse({"ok": True, "cart_count": total_qty})
+    return redirect(request.META.get("HTTP_REFERER", "/shop/"))
+
+
+@require_POST
+@login_required
+def cart_update(request, product_pk):
+    """Set exact quantity; 0 removes the item."""
+    item    = get_object_or_404(CartItem, user=request.user, product_id=product_pk)
+    qty     = int(request.POST.get("quantity", 1))
+    if qty <= 0:
+        item.delete()
+    else:
+        item.quantity = qty
+        item.save(update_fields=["quantity"])
+    total_qty = CartItem.objects.filter(user=request.user).aggregate(s=Sum("quantity"))["s"] or 0
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return JsonResponse({"ok": True, "cart_count": total_qty})
+    return redirect("/checkout/")
+
+
+@require_POST
+@login_required
+def cart_remove(request, product_pk):
+    CartItem.objects.filter(user=request.user, product_id=product_pk).delete()
+    total_qty = CartItem.objects.filter(user=request.user).aggregate(s=Sum("quantity"))["s"] or 0
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return JsonResponse({"ok": True, "cart_count": total_qty})
+    return redirect("/checkout/")
+
+
+def cart_context(request):
+    """Return cart items + totals for a logged-in buyer (used in checkout view)."""
+    if request.user.is_authenticated:
+        items = CartItem.objects.filter(user=request.user).select_related("product")
+        subtotal = sum(it.line_total for it in items)
+        count    = sum(it.quantity for it in items)
+    else:
+        items    = []
+        subtotal = 0
+        count    = 0
+    return {"cart_items": items, "cart_subtotal": subtotal, "cart_count": count}
+
+
+def checkout_view(request):
+    """Checkout page — injects real DB cart for logged-in buyers."""
+    from django.middleware.csrf import get_token
+    get_token(request)
+    ctx = {"page_title": "Checkout", "slug": "checkout"}
+    ctx.update(cart_context(request))
+    # saved addresses for logged-in buyers
+    if request.user.is_authenticated:
+        ctx["addresses"] = BuyerAddress.objects.filter(user=request.user)
+    return render(request, "checkout.html", ctx)
+
+
+# ═══════════════════════════════════════════════════════════════
+#  ADMIN: VERIFICATION DETAIL
+# ═══════════════════════════════════════════════════════════════
+
+@staff_member_required
+def admin_verification_detail(request, pk):
+    """Show full verification document for a specific seller — admin only."""
+    verification = get_object_or_404(SellerVerification.objects.select_related("user"), pk=pk)
+    context = dashboard_context(request, "admin", "verifications")
+    context.update({
+        "page_title": f"Verification — {verification.user.username}",
+        "verification": verification,
+        "dashboard_template": "dashboards/admin/verification_detail.html",
+    })
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(request, "dashboards/admin/verification_detail.html", context)
+    return render(request, "dashboards/base.html", context)

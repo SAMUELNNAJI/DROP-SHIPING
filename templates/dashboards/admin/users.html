@@ -1,1 +1,159 @@
-<div class="dashboard-page" data-page-title="Users"><div class="ahead"><div class="ahead__row"><span class="ahead__chip"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 20c.6-3.2 3.3-5 6.2-5s5.6 1.8 6.2 5"/><path d="M16.4 5.6a3 3 0 0 1 0 5.6M18 20c-.2-1.7-.9-3.1-1.9-4.1"/></svg>People and access</span></div><h2>Users</h2><p>Manage buyer and seller access across DropHub.</p><div class="ahead__actions"><button class="abtn abtn--ghost" type="button"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Export CSV</button><button class="abtn abtn--primary" type="button"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Download list</button></div></div><section class="dashboard-panel"><div class="panel-heading"><h3>User Management</h3><span class="panel-meta">{{ total_users }} Total Users</span></div><div class="dashboard-table-wrap"><table class="dashboard-table"><thead><tr><th>USER</th><th>EMAIL</th><th>ROLE</th><th>JOINED</th><th>STATUS</th><th>ACTIONS</th></tr></thead><tbody><tr><td><b>Amara Okafor</b></td><td class="muted">amara@email.com</td><td><span class="pill pill-blue">Buyer</span></td><td class="muted">Aug 12, 2026</td><td><span class="pill pill-green">Active</span></td><td><button class="table-action table-action--soft">View</button></td></tr><tr><td><b>Emeka Nwosu</b></td><td class="muted">emeka@techvault.ng</td><td><span class="pill pill-purple">Seller</span></td><td class="muted">Jul 3, 2026</td><td><span class="pill pill-green">Active</span></td><td><button class="table-action table-action--soft">View</button></td></tr></tbody></table></div><div class="tablex-foot"><div class="pager-info">Showing 1 to 2 of {{ total_users }} entries</div><div class="pagerx"><button disabled>&laquo;</button><button class="on">1</button><button>2</button><button>&raquo;</button></div></div></section></div>
+{% load static %}
+<div class="dashboard-page" data-page-title="Users">
+
+  <div class="ahead">
+    <div class="ahead__row">
+      <span class="ahead__chip">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 20c.6-3.2 3.3-5 6.2-5s5.6 1.8 6.2 5"/><path d="M16.4 5.6a3 3 0 0 1 0 5.6M18 20c-.2-1.7-.9-3.1-1.9-4.1"/></svg>
+        People &amp; access
+      </span>
+    </div>
+    <h2>Users</h2>
+    <p>Manage buyer and seller access across DropHub.</p>
+
+    <!-- KPI tiles -->
+    <div class="admin-order-kpis" style="margin-top:16px">
+      <div class="aokpi">
+        <span>Total users</span>
+        <b>{{ total_users }}</b>
+      </div>
+      <div class="aokpi aokpi--blue">
+        <span>Buyers</span>
+        <b>{{ buyers_count }}</b>
+      </div>
+      <div class="aokpi aokpi--green">
+        <span>Sellers</span>
+        <b>{{ sellers_count }}</b>
+      </div>
+      <div class="aokpi" style="background:#f3efff;border-color:#c4b5fd">
+        <span>Admins</span>
+        <b style="color:#7048e8">{{ admins_count }}</b>
+      </div>
+    </div>
+  </div>
+
+  <section class="dashboard-panel" style="margin-top:18px">
+    <div class="panel-heading" style="flex-wrap:wrap;gap:10px">
+      <h3>User management</h3>
+      <span class="panel-meta">{{ page_obj.paginator.count }} user{{ page_obj.paginator.count|pluralize }}</span>
+    </div>
+
+    <!-- search + filter -->
+    <form class="admin-order-toolbar" method="get">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <a href="?role=all{% if search_q %}&q={{ search_q }}{% endif %}" class="admin-tab {% if role_filter == 'all' %}active{% endif %}">All</a>
+        <a href="?role=buyer{% if search_q %}&q={{ search_q }}{% endif %}" class="admin-tab {% if role_filter == 'buyer' %}active{% endif %}">Buyers</a>
+        <a href="?role=seller{% if search_q %}&q={{ search_q }}{% endif %}" class="admin-tab {% if role_filter == 'seller' %}active{% endif %}">Sellers</a>
+        <a href="?role=admin{% if search_q %}&q={{ search_q }}{% endif %}" class="admin-tab {% if role_filter == 'admin' %}active{% endif %}">Admins</a>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+        <input class="admin-search-input" name="q" value="{{ search_q }}" placeholder="Search name, email, username…" />
+        <input type="hidden" name="role" value="{{ role_filter }}">
+        <button class="abtn abtn--ghost" type="submit">Search</button>
+      </div>
+    </form>
+
+    <div class="dashboard-table-wrap">
+      <table class="dashboard-table dashboard-table--wide">
+        <thead>
+          <tr>
+            <th>USER</th>
+            <th>EMAIL</th>
+            <th>ROLE</th>
+            <th>JOINED</th>
+            <th>ORDERS</th>
+            <th>STATUS</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users_list %}
+          <tr id="user-row-{{ u.pk }}">
+            <td>
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff;background:linear-gradient(135deg,{% if u.role == 'seller' %}#2456e6,#4f8dff{% elif u.is_staff %}#7048e8,#a78bfa{% else %}#0a7a57,#0ca678{% endif %});flex-shrink:0">{{ u.username|first|upper }}</span>
+                <div>
+                  <b>{{ u.get_full_name|default:u.username }}</b>
+                  <br><small class="muted">@{{ u.username }}</small>
+                </div>
+              </div>
+            </td>
+            <td class="muted">{{ u.email|default:"—" }}</td>
+            <td>
+              {% if u.is_staff %}
+                <span class="pill" style="background:#ede9fb;color:#5b36d6">Admin</span>
+              {% elif u.role == "seller" %}
+                <span class="pill pill-blue">Seller</span>
+              {% else %}
+                <span class="pill pill-green">Buyer</span>
+              {% endif %}
+            </td>
+            <td class="muted">{{ u.date_joined|date:"M j, Y" }}</td>
+            <td class="muted">
+              {% if u.role == "buyer" %}{{ u.orders.count }} order{{ u.orders.count|pluralize }}
+              {% elif u.role == "seller" %}{{ u.sales.count }} sale{{ u.sales.count|pluralize }}
+              {% else %}—{% endif %}
+            </td>
+            <td>
+              <span class="pill {% if u.is_active %}pill-green{% else %}pill-red{% endif %}" id="status-pill-{{ u.pk }}">
+                {% if u.is_active %}Active{% else %}Disabled{% endif %}
+              </span>
+            </td>
+            <td>
+              <div style="display:flex;gap:7px;flex-wrap:wrap">
+                {% if not u.is_staff %}
+                <button class="table-action table-action--soft user-toggle-btn"
+                        data-pk="{{ u.pk }}"
+                        data-url="{% url 'admin_user_toggle_active' u.pk %}"
+                        id="toggle-btn-{{ u.pk }}">
+                  {% if u.is_active %}Disable{% else %}Enable{% endif %}
+                </button>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" style="text-align:center;padding:40px;color:#9aa7bd">
+              No users found{% if search_q %} for "{{ search_q }}"{% endif %}.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- pagination -->
+    {% include "partials/pagination.html" with page_obj=page_obj extra_params="&role="|add:role_filter|add:"&q="|add:search_q %}
+  </section>
+
+</div>
+
+<script>
+(function () {
+  var CSRF = (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || '';
+  document.querySelectorAll('.user-toggle-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      fetch(btn.dataset.url, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': CSRF, 'X-Requested-With': 'XMLHttpRequest',
+                   'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'csrfmiddlewaretoken=' + CSRF,
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.ok) {
+          var pill = document.getElementById('status-pill-' + btn.dataset.pk);
+          if (data.is_active) {
+            pill.className = 'pill pill-green'; pill.textContent = 'Active';
+            btn.textContent = 'Disable';
+          } else {
+            pill.className = 'pill pill-red'; pill.textContent = 'Disabled';
+            btn.textContent = 'Enable';
+          }
+        }
+      });
+    });
+  });
+})();
+</script>

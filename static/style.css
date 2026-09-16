@@ -2,6 +2,18 @@
    DROPB.IT – HOMEPAGE CLONE
    ═══════════════════════════════════════════════════ */
 
+/* ── Font stack: system font is used immediately while Google Fonts
+   loads asynchronously — no FOIT (flash of invisible text).
+   Once Plus Jakarta Sans arrives, the browser swaps it in.        ── */
+@font-face {
+  font-family: 'Plus Jakarta Sans Fallback';
+  src: local('Arial'), local('-apple-system'), local('BlinkMacSystemFont');
+  ascent-override: 96%;
+  descent-override: 23%;
+  line-gap-override: 0%;
+  size-adjust: 103%;
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 /* Never allow sideways page scroll — a single overflowing rail or pill

@@ -4,6 +4,113 @@
    Scoped to body.dashboard-body--admin
    ══════════════════════════════════════════════════════════════ */
 
+/* ─── CRITICAL: Reset legacy dashboards.css layout for admin ───
+   dashboards.css sets .dashboard-sidebar to 328px and
+   .dashboard-workspace to calc(100% - 328px).
+   These rules run after that file and must definitively win.
+   ─────────────────────────────────────────────────────────────── */
+body.dashboard-body--admin .dashboard-sidebar {
+  width: 284px !important;
+}
+body.dashboard-body--admin .dashboard-workspace {
+  width: calc(100% - 284px) !important;
+  margin-left: 284px !important;
+}
+body.dashboard-body--admin .dashboard-app {
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+body.dashboard-body--admin .dashboard-workspace {
+  height: 100dvh;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+body.dashboard-body--admin .dashboard-main {
+  min-height: 0;
+  flex: 1;
+}
+
+/* ─── Reset legacy unscoped classes that dashboards.css defines
+   without role-scoping, so they don't pollute admin pages.
+   ─────────────────────────────────────────────────────────────── */
+
+/* Legacy .dashboard-panel in dashboards.css uses old white bg — override */
+body.dashboard-body--admin .dashboard-panel {
+  background: var(--aglass) !important;
+  border: 1px solid var(--aborder2) !important;
+  box-shadow: var(--ashadow) !important;
+  border-radius: 20px !important;
+  backdrop-filter: blur(16px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
+}
+
+/* Legacy .panel-heading has old white styling */
+body.dashboard-body--admin .panel-heading {
+  padding: 20px 22px 14px !important;
+  border-bottom: 1px solid rgba(28, 48, 86, .08) !important;
+  min-height: 0 !important;
+  background: transparent !important;
+}
+body.dashboard-body--admin .panel-heading h3 {
+  color: var(--atext) !important;
+  font-size: 16.5px !important;
+  font-weight: 800 !important;
+}
+
+/* Legacy .pill has 21px height and light styling — override for admin */
+body.dashboard-body--admin .pill {
+  border: 1px solid transparent;
+}
+
+/* Legacy .table-action has teal bg — admin.css handles its own */
+body.dashboard-body--admin .table-action {
+  padding: 7px 14px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+/* Legacy .feature-plans/.payment-summary — override for admin */
+body.dashboard-body--admin .feature-plans,
+body.dashboard-body--admin .payment-summary {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+/* ─── Responsive: admin sidebar drawer on mobile ────────────── */
+@media (max-width: 800px) {
+  body.dashboard-body--admin .dashboard-sidebar {
+    width: 290px !important;
+    transform: translateX(-100%);
+    transition: transform 0.26s ease;
+    bottom: 0 !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow-y: auto;
+  }
+  body.dashboard-body--admin .dashboard-sidebar.is-open {
+    transform: translateX(0) !important;
+  }
+  body.dashboard-body--admin .dashboard-workspace {
+    width: 100% !important;
+    margin-left: 0 !important;
+    height: 100dvh !important;
+    overflow-y: auto;
+  }
+}
+@media (max-width: 1180px) {
+  body.dashboard-body--admin .dashboard-sidebar {
+    width: 264px !important;
+  }
+  body.dashboard-body--admin .dashboard-workspace {
+    width: calc(100% - 264px) !important;
+    margin-left: 264px !important;
+  }
+}
+
 /* ── Admin shell: aurora-lit canvas ─────────────────────────── */
 :root {
   --aglass: rgba(255, 255, 255, 0.62);
@@ -940,7 +1047,6 @@ body.dashboard-body--admin .dashboard-main {
   align-items: center;
   gap: 12px;
   margin-bottom: 16px;
-  flex-wrap: wrap;
 }
 .apanel__head h3 {
   margin: 0;
@@ -1737,15 +1843,189 @@ body.dashboard-body--admin .feature-plans small {
   }
 }
 
-/* ═══ mobile card headers: stack title above actions (no tight 1-row squeeze) ═══ */
-@media (max-width: 800px) {
-  body.dashboard-body--admin .apanel__head {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  body.dashboard-body--admin .apanel__head .apanel__badge,
-  body.dashboard-body--admin .apanel__head .alinks {
-    margin-left: 0;
-    align-self: flex-start;
-  }
+
+/* ═══════════════════════════════════════════════════════════════
+   ADMIN SHARED PAGE UTILITIES
+   (Used across users, products, featured, orders pages)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── KPI tiles strip ── */
+.admin-order-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.aokpi {
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(28, 48, 86, 0.09);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--ashadow);
+}
+.aokpi span {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--amuted);
+  margin-bottom: 6px;
+}
+.aokpi b {
+  display: block;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -.04em;
+  color: var(--atext);
+  line-height: 1;
+}
+.aokpi--blue  { background: rgba(234, 240, 255, .72); border-color: rgba(36, 86, 230, .18); }
+.aokpi--blue b  { color: #2456e6; }
+.aokpi--green { background: rgba(226, 248, 240, .72); border-color: rgba(12, 166, 120, .2); }
+.aokpi--green b { color: #0a7a57; }
+.aokpi--amber { background: rgba(255, 244, 221, .72); border-color: rgba(232, 150, 12, .22); }
+.aokpi--amber b { color: #9a6200; }
+.aokpi--purple { background: rgba(237, 233, 251, .72); border-color: rgba(112, 72, 232, .2); }
+.aokpi--purple b { color: #5b36d6; }
+
+/* ── Alert banner (e.g. payout ready) ── */
+.ahead__alert {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(255, 244, 221, .8), rgba(255, 233, 179, .6));
+  border: 1px solid rgba(232, 150, 12, .3);
+  backdrop-filter: blur(10px);
+  font-size: 13.5px;
+  color: #6c4a00;
+}
+.ahead__alert strong { display: block; font-weight: 800; }
+.ahead__alert span   { font-size: 12.5px; color: #9a6200; }
+.ahead__alert .sic   { width: 22px; height: 22px; color: #9a6200; flex-shrink: 0; }
+
+/* ── Toolbar (search + filter row inside a panel) ── */
+.admin-order-toolbar {
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(28, 48, 86, .08);
+  background: rgba(248, 250, 255, .5);
+}
+
+/* ── Status/role filter tab pills ── */
+.admin-tab {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--amuted);
+  background: rgba(255, 255, 255, .72);
+  border: 1px solid rgba(28, 48, 86, .1);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background .15s, color .15s, border-color .15s, box-shadow .15s;
+}
+.admin-tab:hover {
+  background: rgba(36, 86, 230, .08);
+  border-color: rgba(36, 86, 230, .28);
+  color: #2456e6;
+}
+.admin-tab.active {
+  background: linear-gradient(135deg, #1a41b4, #2456e6);
+  color: #fff;
+  border-color: #2456e6;
+  box-shadow: 0 6px 16px rgba(36, 86, 230, .24);
+}
+
+/* ── Search input ── */
+.admin-search-input {
+  height: 40px;
+  border: 1px solid rgba(28, 48, 86, .12);
+  border-radius: 11px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 13px;
+  background: rgba(255, 255, 255, .82);
+  color: var(--atext);
+  outline: 0;
+  transition: border-color .18s, box-shadow .18s, background .18s;
+  min-width: 200px;
+}
+.admin-search-input:focus {
+  border-color: rgba(36, 86, 230, .5);
+  box-shadow: 0 0 0 3px rgba(36, 86, 230, .1);
+  background: #fff;
+}
+select.admin-search-input { cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%235d6a85' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+/* ── Pill colours for admin tables ── */
+body.dashboard-body--admin .pill-red {
+  color: #991b1b;
+  background: rgba(239, 68, 68, .1);
+  border-color: rgba(239, 68, 68, .24);
+}
+
+/* ── Boost order status pill colours ── */
+.pill-orange {
+  color: #92400e;
+  background: rgba(251, 191, 36, .14);
+  border-color: rgba(251, 191, 36, .3);
+}
+
+/* ── table-action--green (release payout) ── */
+body.dashboard-body--admin .table-action--green {
+  border-color: rgba(12, 166, 120, .3);
+  background: rgba(12, 166, 120, .09);
+  color: #0a7a57;
+}
+body.dashboard-body--admin .table-action--green:hover {
+  background: #0ca678;
+  color: #fff;
+}
+
+/* ── pagerx-btn link style ── */
+.pagerx-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid rgba(28, 48, 86, .12);
+  background: rgba(255, 255, 255, .8);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--atext);
+  text-decoration: none;
+  transition: background .14s, color .14s, border-color .14s;
+}
+.pagerx-btn:hover {
+  background: rgba(36, 86, 230, .09);
+  border-color: rgba(36, 86, 230, .3);
+  color: #2456e6;
+}
+
+/* ── Dashboard panel inside admin pages (users, products, featured) ── */
+body.dashboard-body--admin .dashboard-panel {
+  margin-top: 0;
+}
+
+/* ── Responsive: collapse KPI grid on small screens ── */
+@media (max-width: 1100px) {
+  .admin-order-kpis { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .admin-order-kpis { grid-template-columns: 1fr; }
+  .admin-search-input { min-width: 140px; width: 100%; }
+  .admin-tab { font-size: 11.5px; padding: 0 11px; height: 32px; }
 }

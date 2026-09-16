@@ -350,3 +350,121 @@ class SellerVerification(models.Model):
     def __str__(self):
         return "%s — %s" % (self.store_name, self.get_status_display())
 
+
+
+class BoostPlan(models.Model):
+    """A boost offer type defined by the admin (e.g. "Pro Feature", $29.99 / 7 days)."""
+
+    name = models.CharField(max_length=60, unique=True)
+    duration_days = models.PositiveIntegerField(default=7)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.CharField(max_length=200, blank=True, default="")
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["price"]
+
+    def __str__(self):
+        return "%s — $%s / %dd" % (self.name, self.price, self.duration_days)
+
+
+class BoostOrder(models.Model):
+    """A seller's purchase of a boost plan for one product."""
+
+    STATUS_PENDING = "pending"
+    STATUS_PAID = "paid"
+    STATUS_EXPIRED = "expired"
+
+    STATUS_CHOICES = [
+        (STATUS_PENDING, "Awaiting payment"),
+        (STATUS_PAID, "Active"),
+        (STATUS_EXPIRED, "Expired"),
+    ]
+
+    PAYMENT_CHOICES = [
+        ("pi", "Pi Network"),
+        ("paypal", "PayPal"),
+        ("paystack", "Paystack"),
+    ]
+
+    seller = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="boost_orders",
+    )
+    product = models.ForeignKey(
+        "shop.Product",
+        on_delete=models.CASCADE,
+        related_name="boost_orders",
+    )
+    plan = models.ForeignKey(BoostPlan, on_delete=models.PROTECT, related_name="orders")
+
+    # Snapshot so the record survives plan edits
+    plan_name = models.CharField(max_length=60)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    duration_days = models.PositiveIntegerField(default=7)
+
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    payment_method = models.CharField(max_length=10, choices=PAYMENT_CHOICES, default="paypal")
+    reference = models.CharField(max_length=20, unique=True, blank=True)
+
+    paid_at = models.DateTimeField(null=True, blank=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def save(self, *args, **kwargs):
+        if not self.reference:
+            super().save(*args, **kwargs)
+            self.reference = "BH-%05d" % self.pk
+            BoostOrder.objects.filter(pk=self.pk).update(reference=self.reference)
+        else:
+            super().save(*args, **kwargs)
+
+    def __str__(self):
+        return "%s — %s (%s)" % (self.reference, self.plan_name, self.get_status_display())
+
+    @property
+    def is_running(self):
+        return self.status == self.STATUS_PAID and self.expires_at and self.expires_at > timezone.now()
+
+    @property
+    def days_left(self):
+        if not self.is_running:
+            return 0
+        return max(0, (self.expires_at - timezone.now()).days)
+
+
+class CartItem(models.Model):
+    """A buyer's shopping-cart line."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="cart_items",
+    )
+    product = models.ForeignKey(
+        "shop.Product",
+        on_delete=models.CASCADE,
+        related_name="cart_items",
+    )
+    quantity = models.PositiveIntegerField(default=1)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "product")
+        ordering = ["-added_at"]
+
+    def __str__(self):
+        return "%s × %s" % (self.quantity, self.product.name)
+
+    @property
+    def line_total(self):
+        try:
+            return float(self.product.price) * self.quantity
+        except (TypeError, ValueError):
+            return 0
+

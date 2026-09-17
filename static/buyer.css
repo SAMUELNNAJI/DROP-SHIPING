@@ -2264,6 +2264,8 @@ body.dashboard-body--buyer .bside {
 }
 .bside__close-btn .sic { width: 16px; height: 16px; }
 .bside__close-btn:hover { background: rgba(185,138,47,.20); color: var(--bt, #1c2333); }
+.bside__close-btn{border:1px solid rgba(185,138,47,.40)!important;border-radius:10px!important;box-shadow:0 4px 12px rgba(56,42,16,.10)}
+.bside__close-btn:focus-visible{outline:3px solid rgba(185,138,47,.38);outline-offset:2px}
 
 @media (max-width: 800px) {
   .bside__close-btn { display: grid !important; }

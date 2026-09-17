@@ -17,6 +17,8 @@
 </head>
 <body class="auth-page">
 
+  {% include "auth/header.html" %}
+  {% comment %}
   <!-- ══════════════════════════════════
        NAVBAR
   ══════════════════════════════════ -->
@@ -137,6 +139,7 @@
     </aside>
   </div>
 
+  {% endcomment %}
   <!-- ══════════════════════════════════
        MAIN — Step 2 · Payment
   ══════════════════════════════════ -->
@@ -442,7 +445,29 @@ document.addEventListener('DOMContentLoaded', function () {
     var options = document.querySelectorAll('.ck-pay-option');
     var strip   = document.getElementById('payingStrip');
     var text    = document.getElementById('payingText');
+    var info    = document.getElementById('paymentInfo');
     if (!options.length || !strip || !text) return;
+
+    /* These display rates are estimates only. The server remains the source
+       of truth when the selected payment provider creates the charge. */
+    var rates = { usd: 1, ngn: 1600, pi: 0.5 };
+    function formatAmount(usd, currency) {
+      var amount = usd * rates[currency];
+      if (currency === 'ngn') {
+        return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 2 }).format(amount);
+      }
+      if (currency === 'pi') return 'π ' + amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+    }
+    function updateAmounts(currency) {
+      document.querySelectorAll('.ck-currency[data-usd]').forEach(function (element) {
+        element.textContent = formatAmount(parseFloat(element.getAttribute('data-usd')), currency);
+      });
+      if (info) {
+        var labels = { pi: 'Pi (π)', usd: 'US dollars (USD)', ngn: 'Nigerian Naira (NGN)' };
+        info.textContent = 'All amounts are shown in ' + labels[currency] + '. The final provider amount is confirmed before payment.';
+      }
+    }
 
     function select(option) {
       options.forEach(function (o) {
@@ -453,7 +478,9 @@ document.addEventListener('DOMContentLoaded', function () {
       /* Sync the "Paying with …" strip in the order summary */
       strip.className = option.getAttribute('data-strip');
       text.textContent = 'Paying with ' + option.getAttribute('data-name');
-      document.getElementById('paymentMethod').value = option.classList.contains('ck-pay-option--paystack') ? 'paystack' : (option.classList.contains('ck-pay-option--paypal') ? 'paypal' : 'pi');
+      var method = option.classList.contains('ck-pay-option--paystack') ? 'paystack' : (option.classList.contains('ck-pay-option--paypal') ? 'paypal' : 'pi');
+      document.getElementById('paymentMethod').value = method;
+      updateAmounts(option.getAttribute('data-currency'));
     }
 
     options.forEach(function (o) {
@@ -462,6 +489,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(o); }
       });
     });
+    updateAmounts(document.querySelector('.ck-pay-option.is-selected').getAttribute('data-currency'));
   })();
   document.getElementById('paymentForm').addEventListener('submit', function (event) {
     event.preventDefault();

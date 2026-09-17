@@ -2168,6 +2168,8 @@ body.dashboard-body--admin .dashboard-panel {
 }
 .admin-close-btn .sic { width: 16px; height: 16px; display: block; }
 .admin-close-btn:hover { background: rgba(255,255,255,.18); color: #fff; }
+.admin-close-btn{border:1px solid rgba(255,255,255,.28)!important;border-radius:10px!important;box-shadow:0 4px 12px rgba(4,20,48,.16)}
+.admin-close-btn:focus-visible{outline:3px solid rgba(255,255,255,.55);outline-offset:2px}
 
 @media (max-width: 800px) {
   .admin-close-btn { display: grid !important; }

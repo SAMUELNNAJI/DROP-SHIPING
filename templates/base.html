@@ -19,6 +19,8 @@
 <div class="hero-wrapper">
   <div class="hero-stars" aria-hidden="true"></div>
 
+  {% include "auth/header.html" %}
+  {% comment %}
   <header class="navbar">
     <div class="nav-inner">
       <a href="/" class="logo" aria-label="DropHub — Shop Global · We Drop It For You">
@@ -107,6 +109,7 @@
       </aside>
     </div>
   </header>
+  {% endcomment %}
   {% block body %}{% endblock %}
 </div>
 

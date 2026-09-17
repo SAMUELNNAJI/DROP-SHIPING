@@ -21,7 +21,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 20px 24px 28px;
+  padding: calc(var(--header-h) + 20px) 24px 28px;
 }
 
 /* ══════════════════════════════════
@@ -500,7 +500,7 @@
   .ck-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
 }
 @media (max-width: 900px) {
-  .ck-main { justify-content: flex-start; min-height: 0; padding: 18px 16px 56px; }
+  .ck-main { justify-content: flex-start; min-height: 0; padding: calc(var(--header-h) + 12px) 16px 56px; }
   .ck-stepper { margin: 4px auto 20px; }
   .ck-step { width: 96px; gap: 6px; }
   .ck-step-circle { width: 34px; height: 34px; font-size: 14px; }
@@ -529,7 +529,7 @@
   .ck-radio { margin-left: auto; }
 }
 @media (max-width: 420px) {
-  .ck-main { padding: 14px 12px 48px; }
+  .ck-main { padding: calc(var(--header-h) + 8px) 12px 48px; }
   .ck-step { width: 84px; }
   .ck-step-line { width: 40px; }
   .ck-step-label { font-size: 10.5px; }

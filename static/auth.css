@@ -24,6 +24,14 @@
   background-attachment: fixed;
 }
 
+/* Auth content is rendered inside the shared base hero wrapper.  That wrapper
+   normally reserves header space for homepage content; remove that extra
+   reservation here so the form is not pushed down twice. */
+.auth-page .hero-wrapper {
+  padding-top: 0;
+  min-height: 0;
+}
+
 /* subtle grid texture band that fades out toward the content */
 .auth-page::before {
   content: "";
@@ -1066,8 +1074,10 @@
     display: none;
   }
   .auth-page .nav-actions {
-    gap: 0;
+    /* Match the comfortable control spacing from the home mobile header. */
+    gap: 10px;
   }
+  .auth-page .nav-burger { margin-left: 0; }
   .auth-page .nav-burger {
     display: inline-flex;
   }

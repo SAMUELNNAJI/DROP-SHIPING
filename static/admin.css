@@ -2182,6 +2182,29 @@ body.dashboard-body--admin .dashboard-brand {
 }
 
 
+
+/* ═══════════════════════════════════════════════════════════════
+   MODAL OVERLAY — .smodal
+   seller.css owns this for seller pages; admin.css must define it
+   independently since admin pages never load seller.css.
+   Hidden by default — JS adds .open to show.
+   ═══════════════════════════════════════════════════════════════ */
+.smodal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(13, 27, 51, 0.58);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+.smodal.open {
+  display: flex;
+}
+
 /* ═══════════════════════════════════════════════════════════════
    BOOST PLAN MODAL — .bpmodal
    Used in: templates/dashboards/admin/featured.html

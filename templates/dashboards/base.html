@@ -53,6 +53,7 @@
         <a href="/dashboards/seller/verification/" class="{% if section == 'verification' %}is-active{% endif %}"><span class="sside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span><span>Verification</span>{% if verification and verification.status == 'verified' %}<em class="sside__badge sside__badge--ok">Done</em>{% elif verification and verification.status == 'pending' %}<em class="sside__badge">Review</em>{% else %}<em class="sside__badge sside__badge--warn">68%</em>{% endif %}</a>
         <p class="sside__label">Storefront</p>
         <a href="/shop/"><span class="sside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg></span><span>View store</span></a>
+        <a href="/" target="_blank" rel="noopener"><span class="sside__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14 21 3"/></svg></span><span>View website</span></a>
       </nav>
       <div class="sside__setup">
         <div class="sside__setuphead"><span class="sside__setupic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span><strong>Setup · {% if verification and verification.status == "verified" %}100{% elif verification and verification.status == "pending" %}75{% elif verification and verification.status == "rejected" %}40{% else %}30{% endif %}% complete</strong></div>
@@ -97,6 +98,8 @@
         <a href="/dashboards/admin/verifications/" data-dashboard-link class="{% if section == 'verifications' %}is-active{% endif %}"><span class="anav-icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>Verifications{% if pending_verifications %}<span class="dash-nav-badge">{{ pending_verifications }}</span>{% endif %}</a>
         <p class="anav-label">Content</p>
         <a href="/dashboards/admin/posts/" data-dashboard-link class="{% if section == 'posts' %}is-active{% endif %}"><span class="anav-icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>Blog Posts</a>
+        <p class="anav-label">Website</p>
+        <a href="/" target="_blank" rel="noopener"><span class="anav-icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14 21 3"/></svg></span>View website</a>
       </nav>
       <div class="aside-statcard">
 
@@ -145,6 +148,10 @@
         <a href="/contact/">Message support</a>
       </div>
       <div class="bside__logout">
+        <a href="/" target="_blank" rel="noopener" class="bside__view-site">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14 21 3"/></svg>
+          View website
+        </a>
         <form method="post" action="/accounts/signout/">{% csrf_token %}<button type="submit"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg> Log out</button></form>
       </div>
     </aside>

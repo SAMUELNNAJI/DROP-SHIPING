@@ -650,6 +650,9 @@
   .auth-main {
     padding: var(--header-h) 12px 40px;
   }
+  /* Extra tightening on very small phones */
+  .auth-page .nav-inner { padding: 0 8px; }
+  .auth-page .logo-img  { height: 32px; }
   .auth-card {
     border-radius: 22px;
     max-width: 100%;
@@ -1065,21 +1068,29 @@
     display: none !important;
   }
   .auth-main {
-    /* The shared base header is fixed; keep only a compact breathing room. */
     padding-top: calc(var(--header-h) + 6px);
   }
-  /* On auth pages at mobile, hide text-heavy nav items.
-     The burger drawer covers all navigation.
-     The cart icon and burger MUST remain visible. */
+  /* Tighten nav-inner so logo + cart + burger never overflow the navbar */
+  .auth-page .nav-inner {
+    padding: 0 12px;
+    gap: 0;
+  }
+  /* Hide text-heavy items — burger drawer covers all navigation */
   .auth-page .nav-links  { display: none; }
   .auth-page .nav-signin { display: none; }
   .auth-page .btn-sell   { display: none; }
   /* Keep cart wrap always accessible */
   .auth-page .cart-wrap  { display: flex; }
-  /* Burger is already shown by style.css at <=1100px; prevent any override */
+  /* Burger stays visible; push it right with a small left gap */
   .auth-page .nav-burger { display: inline-flex !important; margin-left: 0; }
-  /* Tighten the actions row: logo + cart + burger sit comfortably */
-  .auth-page .nav-actions { gap: 8px; }
+  /* Keep actions compact: only cart icon + burger remain */
+  .auth-page .nav-actions {
+    gap: 6px;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  /* Logo must not grow — stays at natural width */
+  .auth-page .logo { flex-shrink: 0; min-width: 0; }
   .auth-card {
     max-width: 100%;
     border-radius: 20px;

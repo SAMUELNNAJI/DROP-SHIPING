@@ -1,4 +1,4 @@
-/* ═══════════════════════════════════════════════════
+﻿/* ═══════════════════════════════════════════════════
    DROPB.IT – HOMEPAGE CLONE
    ═══════════════════════════════════════════════════ */
 
@@ -432,15 +432,28 @@ body { padding-top: 0; }
 .cart-btn-checkout:hover { background: #184FE0; }
 .cart-btn-ghost svg, .cart-btn-checkout svg { flex-shrink: 0; }
 @media (max-width: 600px) {
-  .cart-dropdown { position: fixed; top: var(--header-h); left: 12px; right: 12px; width: auto; }
-  /* stack the two actions full-width so they never squeeze on phones */
-  .cart-actions { flex-direction: column; }
-  .cart-foot { padding:18px 16px 16px; }
-  .cart-subtotal span { font-size:17px; }
-  .cart-subtotal strong { font-size:30px; }
-  .cart-escrow { padding:14px 16px; font-size:14px; }
+  .cart-dropdown {
+    position: fixed;
+    top: var(--header-h);
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-height: calc(100dvh - var(--header-h) - 16px);
+  }
+  .cart-actions { flex-direction: row; gap: 8px; }
+  .cart-foot { padding: 12px 14px 14px; }
+  .cart-subtotal { margin-bottom: 10px; }
+  .cart-subtotal span { font-size: 14px; }
+  .cart-subtotal strong { font-size: 22px; }
+  .cart-escrow { padding: 10px 12px; font-size: 12px; margin-bottom: 10px; }
   .cart-btn-ghost,
-  .cart-btn-checkout { flex:none; min-height:54px; width:100%; padding:14px 12px; font-size:16px; }
+  .cart-btn-checkout {
+    flex: 1;
+    min-height: 40px;
+    padding: 9px 10px;
+    font-size: 13px;
+    border-radius: 12px;
+  }
 }
 
 /* "Start Selling" bright royal-blue pill */

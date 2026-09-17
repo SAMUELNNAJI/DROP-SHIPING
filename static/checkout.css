@@ -224,20 +224,20 @@
   gap: 3px;
 }
 .ck-totals-usd {
-  font-size: 26px;
+  font-size: 20px;
   font-weight: 800;
   color: #071c3f;
   letter-spacing: -.03em;
   line-height: 1.1;
 }
 .ck-totals-ngn {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #0891b2;
   letter-spacing: -.01em;
 }
 .ck-totals-pi {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #8b5cf6;
   letter-spacing: -.01em;

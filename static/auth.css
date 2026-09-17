@@ -1056,7 +1056,8 @@
     display: none !important;
   }
   .auth-main {
-        padding-top: calc(var(--header-h) + 16px);
+    /* The shared base header is fixed; keep only a compact breathing room. */
+    padding-top: calc(var(--header-h) + 6px);
   }
   .auth-page .nav-links,
   .auth-page .nav-signin,

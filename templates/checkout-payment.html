@@ -11,9 +11,9 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" /></noscript>
   <link rel="icon" type="image/png" href="/static/Logo.png" />
-  <link rel="stylesheet" href="/static/style.css" />
-  <link rel="stylesheet" href="/static/auth.css" />
-  <link rel="stylesheet" href="/static/checkout.css?v=2" />
+  <link rel="stylesheet" href="/static/style.css?v=3" />
+  <link rel="stylesheet" href="/static/auth.css?v=3" />
+  <link rel="stylesheet" href="/static/checkout.css?v=4" />
 </head>
 <body class="auth-page">
 
@@ -493,12 +493,88 @@ document.addEventListener('DOMContentLoaded', function () {
   })();
   document.getElementById('paymentForm').addEventListener('submit', function (event) {
     event.preventDefault();
-    var form = this, button = document.getElementById('payBtn');
-    button.disabled = true; button.textContent = 'Securing payment…';
-    fetch(form.action, {method: 'POST', headers: {'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value, 'X-Requested-With': 'XMLHttpRequest'}, body: new FormData(form)})
+    var form   = this;
+    var button = document.getElementById('payBtn');
+    var csrf   = form.querySelector('[name=csrfmiddlewaretoken]').value;
+    button.disabled = true;
+    button.textContent = 'Securing payment\u2026';
+
+    /* ── Step 1: sync any localStorage cart items to the server DB ──
+       This covers the common case where the buyer browsed as a guest,
+       added items via cart.js (localStorage), then signed in.  If the
+       server already has DB cart items (cart_count > 0 from context)
+       we skip the sync to avoid double-counting. */
+    var serverCartCount = parseInt('{{ cart_count|default:"0" }}', 10);
+
+    function doSubmit() {
+      fetch(form.action, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrf,
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: new FormData(form)
+      })
       .then(function (r) { return r.json(); })
-      .then(function (data) { if (data.ok) window.location.href = data.redirect; else { alert(data.error || 'Payment could not be completed.'); button.disabled = false; button.textContent = 'Pay securely'; } })
-      .catch(function () { alert('Please try again.'); button.disabled = false; button.textContent = 'Pay securely'; });
+      .then(function (data) {
+        if (data.ok) {
+          window.location.href = data.redirect;
+        } else {
+          alert(data.error || 'Payment could not be completed.');
+          button.disabled = false;
+          button.textContent = 'Pay securely';
+        }
+      })
+      .catch(function () {
+        alert('Please try again.');
+        button.disabled = false;
+        button.textContent = 'Pay securely';
+      });
+    }
+
+    if (serverCartCount > 0) {
+      /* DB cart already populated — go straight to order creation */
+      doSubmit();
+    } else {
+      /* Try to push localStorage items to the server first */
+      var localItems = [];
+      if (window.DropHubCart) {
+        localItems = window.DropHubCart.getCart().map(function (i) {
+          return { product_pk: i.pk || i.id || i.product_pk, quantity: i.qty || i.quantity || 1 };
+        }).filter(function (i) { return i.product_pk; });
+      }
+
+      if (!localItems.length) {
+        /* Nothing in localStorage either — let the server return the proper error */
+        doSubmit();
+        return;
+      }
+
+      fetch('/dashboards/cart/sync/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrf,
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(localItems)
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (syncData) {
+        if (syncData.ok && syncData.count > 0) {
+          /* Items are now in the DB — proceed to order creation */
+          doSubmit();
+        } else {
+          alert(syncData.error || 'Could not sync your cart. Please add items from the shop and try again.');
+          button.disabled = false;
+          button.textContent = 'Pay securely';
+        }
+      })
+      .catch(function () {
+        /* Sync failed — try the submit anyway; server will give a clear message */
+        doSubmit();
+      });
+    }
   });
   </script>
 </body>

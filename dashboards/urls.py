@@ -79,6 +79,7 @@ urlpatterns = [
     path("cart/add/<int:product_pk>/", views.cart_add, name="cart_add"),
     path("cart/update/<int:product_pk>/", views.cart_update, name="cart_update"),
     path("cart/remove/<int:product_pk>/", views.cart_remove, name="cart_remove"),
+    path("cart/sync/", views.cart_sync, name="cart_sync"),
     path("checkout/payment/", views.checkout_payment, name="checkout_payment"),
     path("checkout/complete/", views.checkout_complete, name="checkout_complete"),
 

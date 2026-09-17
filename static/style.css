@@ -17,10 +17,14 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 /* Never allow sideways page scroll — a single overflowing rail or pill
-   must not shove whole sections off the right edge on mobile */
-html, body { overflow-x: clip; }
+   must not shove whole sections off the right edge on mobile.
+   IMPORTANT: keep the guard on <html> ONLY. Putting overflow-x: hidden
+   on BOTH html and body makes mobile browsers treat <body> as the
+   scroll container and the page stops scrolling vertically (it gets
+   "stuck where it is" on phones). */
+html { overflow-x: clip; }
 @supports not (overflow: clip) {
-  html, body { overflow-x: hidden; }
+  html { overflow-x: hidden; }
 }
 img, svg, video { max-width: 100%; }
 
@@ -50,7 +54,6 @@ body {
   background: #fff;
   line-height: 1.6;
   font-size: 15px;
-  overflow-x: hidden;
 }
 
 a { text-decoration: none; color: inherit; }

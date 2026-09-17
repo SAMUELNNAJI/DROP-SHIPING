@@ -11,6 +11,18 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Checkout is a document page, not an app viewport.  Keep the browser's
+   root scroll container active on touch devices; the exception preserves the
+   intentional lock while the mobile navigation drawer is open. */
+@media (max-width: 900px) {
+  body.auth-page:not(.mmenu-locked) {
+    min-height: 100%;
+    overflow-y: auto;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 /* ── Main area ── scrollable always; centred visually via padding when short ── */
 .ck-main {
   position: relative;

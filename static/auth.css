@@ -21,7 +21,8 @@
       transparent 55%
     ),
     linear-gradient(160deg, #e6eefb 0%, #d6e2f7 48%, #ccdcf4 100%);
-  background-attachment: fixed;
+  /* no background-attachment: fixed — it breaks/janks vertical scrolling
+     on Android Chrome and iOS (page gets stuck on mobile) */
 }
 
 /* Auth content is rendered inside the shared base hero wrapper.  That wrapper

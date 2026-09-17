@@ -1535,15 +1535,66 @@ def checkout_payment(request):
     its ``next`` parameter, so they return here immediately after signing in.
     """
     # Redirect sellers / admins who land here by mistake
-    if request.user.is_authenticated and not request.user.is_superuser:
-        if getattr(request.user, "role", "") not in ("buyer", ""):
-            messages.error(request, "Please use a buyer account to complete a purchase.")
-            return redirect("shop")
+    if getattr(request.user, "role", "") not in ("buyer", ""):
+        messages.error(request, "Please use a buyer account to complete a purchase.")
+        return redirect("shop")
 
     ctx = {"page_title": "Choose payment", "slug": "checkout-payment"}
     ctx.update(cart_context(request))
 
     return render(request, "checkout-payment.html", ctx)
+
+
+@require_POST
+@login_required
+def cart_sync(request):
+    """Accept a JSON array of localStorage cart items and upsert them into the
+    DB CartItem table for the logged-in buyer.
+
+    Expected body:
+        [{"product_pk": 12, "quantity": 2}, ...]
+
+    Returns:
+        {"ok": true, "count": <total items in DB cart>}
+    """
+    if request.user.role != "buyer":
+        return JsonResponse({"error": "Buyer account required."}, status=403)
+    try:
+        import json as _json
+        payload = _json.loads(request.body)
+    except (ValueError, TypeError):
+        return JsonResponse({"error": "Invalid JSON body."}, status=400)
+
+    if not isinstance(payload, list):
+        return JsonResponse({"error": "Expected a list of cart items."}, status=400)
+
+    synced = 0
+    for entry in payload:
+        try:
+            pk  = int(entry.get("product_pk") or entry.get("pk") or 0)
+            qty = max(1, int(entry.get("quantity") or entry.get("qty") or 1))
+        except (ValueError, TypeError):
+            continue
+        if not pk:
+            continue
+        try:
+            product = Product.objects.get(pk=pk, status="live")
+        except Product.DoesNotExist:
+            continue
+        item, created = CartItem.objects.get_or_create(
+            user=request.user,
+            product=product,
+            defaults={"quantity": qty},
+        )
+        if not created:
+            # merge: keep whichever quantity is larger to avoid duplicate adds
+            if qty > item.quantity:
+                item.quantity = qty
+                item.save(update_fields=["quantity"])
+        synced += 1
+
+    count = CartItem.objects.filter(user=request.user).aggregate(s=Sum("quantity"))["s"] or 0
+    return JsonResponse({"ok": True, "synced": synced, "count": int(count)})
 
 
 @require_POST

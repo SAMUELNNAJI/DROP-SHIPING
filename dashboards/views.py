@@ -187,10 +187,24 @@ def seller_verification_view(request):
         if form.is_valid():
             obj = form.save(commit=False)
             obj.user = request.user
-            obj.status = "pending"
-            obj.reviewer_note = ""
-            obj.save()
-            messages.success(request, "Verification submitted — our team will review it within 24 hours.")
+            # Auto-verify immediately when a document is uploaded.
+            # Admin can still reject from the verifications dashboard.
+            if obj.document or verification.document:
+                obj.status = "verified"
+                obj.reviewer_note = ""
+                obj.save()
+                messages.success(
+                    request,
+                    "Your account is now verified — you can publish products and request payouts."
+                )
+            else:
+                obj.status = "pending"
+                obj.reviewer_note = ""
+                obj.save()
+                messages.success(
+                    request,
+                    "Details saved. Upload your ID document to complete verification instantly."
+                )
             return redirect("dashboard_seller_verification")
         messages.error(request, "Please fix the highlighted fields and try again.")
     else:
@@ -304,7 +318,7 @@ def seller_product_add(request):
         return redirect("dashboard")
     verification = get_or_init_verification(request.user)
     if verification.status != "verified":
-        messages.error(request, "Complete seller verification and wait for approval before publishing products.")
+        messages.error(request, "Complete seller verification by uploading your ID document before publishing products.")
         return redirect("dashboard_seller_verification")
     initial = {"status": "live", "store_name": request.user.username}
     if request.method == "POST":
@@ -342,7 +356,7 @@ def seller_product_edit(request, pk):
     if request.user.role != "seller":
         return redirect("dashboard")
     if get_or_init_verification(request.user).status != "verified":
-        messages.error(request, "Only verified sellers can publish or edit products.")
+        messages.error(request, "Only verified sellers can publish or edit products. Upload your ID document to get verified instantly.")
         return redirect("dashboard_seller_verification")
     product = get_object_or_404(Product, pk=pk, seller=request.user)
     if request.method == "POST":
@@ -368,13 +382,19 @@ def seller_product_edit(request, pk):
 # --------------------------------------------------------------------------
 
 def _admin_verifications_context(request):
+    # With auto-verification, sellers go straight to "verified".
+    # The review queue shows recently verified sellers so admin can reject if needed.
+    # "pending" is kept for legacy/edge cases (submitted without a document).
     pending = SellerVerification.objects.filter(status="pending").select_related("user")
-    reviewed = SellerVerification.objects.exclude(status="pending").select_related("user").order_by("-submitted_at")[:50]
+    auto_verified = SellerVerification.objects.filter(status="verified").select_related("user").order_by("-submitted_at")[:50]
+    reviewed = SellerVerification.objects.filter(status__in=["rejected", "unverified"]).select_related("user").order_by("-submitted_at")[:50]
     context = dashboard_context(request, "admin", "verifications")
     context.update({
         "page_title": "Seller Verifications",
         "pending_list": pending,
         "pending_count": pending.count(),
+        "auto_verified_list": auto_verified,
+        "auto_verified_count": auto_verified.count(),
         "reviewed_list": reviewed,
         "verified_count": SellerVerification.objects.filter(status="verified").count(),
         "rejected_count": SellerVerification.objects.filter(status="rejected").count(),

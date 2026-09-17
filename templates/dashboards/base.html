@@ -95,6 +95,8 @@
         <a href="/dashboards/admin/featured/" data-dashboard-link class="{% if section == 'featured' %}is-active{% endif %}"><span class="anav-icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.6 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9-5.3-2.9-5.3 2.9 1.1-5.9L3.5 9.8l5.9-.8z"/></svg></span>Featured</a>
         <a href="/dashboards/admin/payments/" data-dashboard-link class="{% if section == 'payments' %}is-active{% endif %}"><span class="anav-icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="3"/><path d="M2.5 10h19M6 14.5h4"/></svg></span>Payments</a>
         <a href="/dashboards/admin/verifications/" data-dashboard-link class="{% if section == 'verifications' %}is-active{% endif %}"><span class="anav-icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>Verifications{% if pending_verifications %}<span class="dash-nav-badge">{{ pending_verifications }}</span>{% endif %}</a>
+        <p class="anav-label">Content</p>
+        <a href="/dashboards/admin/posts/" data-dashboard-link class="{% if section == 'posts' %}is-active{% endif %}"><span class="anav-icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>Blog Posts</a>
       </nav>
       <div class="aside-statcard">
 
@@ -208,7 +210,91 @@
         {% if role == "seller" %}
         <div class="dtop__right">
           <label class="dtop__search" aria-label="Search"><svg class="sic dtop__search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="sellerGlobalSearch" type="search" placeholder="Search products, orders&#8230;" /></label>
-          <button class="dtop__icon-btn" id="sellerNotifBtn" aria-label="Notifications"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="dtop__notif-dot"></span></button>
+
+          <!-- Notification bell -->
+          <div class="dtop__notif-wrap" id="sellerNotifWrap">
+            <button class="dtop__icon-btn" id="sellerNotifBtn" aria-label="Notifications" aria-haspopup="true" aria-expanded="false">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+              {% if order_counts.pending or order_counts.delivered %}<span class="dtop__notif-dot"></span>{% endif %}
+            </button>
+            <!-- Dropdown panel -->
+            <div class="notif-panel" id="sellerNotifPanel" role="dialog" aria-label="Notifications">
+              <div class="notif-panel__head">
+                <span class="notif-panel__title">Notifications</span>
+                {% if order_counts.pending or order_counts.delivered %}
+                <span class="notif-panel__badge">{{ order_counts.pending|add:order_counts.delivered }}</span>
+                {% endif %}
+              </div>
+              <div class="notif-panel__body">
+                {% if order_counts.pending %}
+                <a class="notif-item notif-item--urgent" href="/dashboards/seller/orders/?status=pending" data-dashboard-link>
+                  <span class="notif-item__icon notif-item__icon--red">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 8h13l-1 12.5h-11z"/><path d="M9 10.5V6a3 3 0 0 1 6 0v4.5"/></svg>
+                  </span>
+                  <div class="notif-item__body">
+                    <strong>{{ order_counts.pending }} order{{ order_counts.pending|pluralize }} to ship</strong>
+                    <span>Buyers are waiting — ship today to keep your rating up.</span>
+                  </div>
+                  <span class="notif-item__arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>
+                  </span>
+                </a>
+                {% endif %}
+                {% if order_counts.delivered %}
+                <a class="notif-item notif-item--warn" href="/dashboards/seller/orders/?status=delivered" data-dashboard-link>
+                  <span class="notif-item__icon notif-item__icon--amber">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>
+                  </span>
+                  <div class="notif-item__body">
+                    <strong>{{ order_counts.delivered }} order{{ order_counts.delivered|pluralize }} awaiting confirmation</strong>
+                    <span>Buyer has 48 hrs to confirm — auto-confirms after.</span>
+                  </div>
+                  <span class="notif-item__arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>
+                  </span>
+                </a>
+                {% endif %}
+                {% if order_counts.in_transit %}
+                <a class="notif-item" href="/dashboards/seller/orders/?status=in_transit" data-dashboard-link>
+                  <span class="notif-item__icon notif-item__icon--blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1.5"/><path d="M16 8h4l3 5v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                  </span>
+                  <div class="notif-item__body">
+                    <strong>{{ order_counts.in_transit }} shipment{{ order_counts.in_transit|pluralize }} in transit</strong>
+                    <span>Track deliveries and mark as delivered when arrived.</span>
+                  </div>
+                  <span class="notif-item__arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>
+                  </span>
+                </a>
+                {% endif %}
+                {% if verification and verification.status != 'verified' %}
+                <a class="notif-item notif-item--info" href="/dashboards/seller/verification/" data-dashboard-link>
+                  <span class="notif-item__icon notif-item__icon--purple">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                  </span>
+                  <div class="notif-item__body">
+                    <strong>Complete your verification</strong>
+                    <span>Upload your ID to unlock instant payouts and your verified badge.</span>
+                  </div>
+                  <span class="notif-item__arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>
+                  </span>
+                </a>
+                {% endif %}
+                {% if not order_counts.pending and not order_counts.delivered and not order_counts.in_transit and verification.status == 'verified' %}
+                <div class="notif-panel__empty">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+                  <span>You're all caught up!</span>
+                </div>
+                {% endif %}
+              </div>
+              <div class="notif-panel__foot">
+                <a href="/dashboards/seller/orders/" data-dashboard-link>View all orders</a>
+              </div>
+            </div>
+          </div>
+
           <a class="dtop__cta-btn" href="/dashboards/seller/products/add/"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg><span>Add product</span></a>
           <div class="dtop__avatar dtop__avatar--seller" title="{{ user.username }}">{{ user.username|first|upper|default:"S" }}</div>
         </div>
@@ -269,7 +355,23 @@
         var seg = e.target.closest('.segx button, .seg button');
         if (seg) { seg.parentElement.querySelectorAll('button').forEach(function(b){b.classList.remove('on')}); seg.classList.add('on'); }
         var nb = e.target.closest('#sellerNotifBtn');
-        if (nb) { showSellerToast('3 updates: 2 orders to ship · 1 low-stock alert · payout tomorrow'); }
+        if (nb) {
+          var panel = document.getElementById('sellerNotifPanel');
+          var wrap  = document.getElementById('sellerNotifWrap');
+          if (panel) {
+            var open = panel.classList.toggle('open');
+            nb.setAttribute('aria-expanded', open ? 'true' : 'false');
+          }
+        }
+        // close notif panel on outside click
+        if (!e.target.closest('#sellerNotifWrap')) {
+          var p = document.getElementById('sellerNotifPanel');
+          var b = document.getElementById('sellerNotifBtn');
+          if (p && p.classList.contains('open')) {
+            p.classList.remove('open');
+            if (b) b.setAttribute('aria-expanded', 'false');
+          }
+        }
         var pm = e.target.closest('[data-open-product-modal]');
         if (pm) { var m = document.getElementById('sellerProductModal'); if (m) m.classList.add('open'); }
         var po = e.target.closest('[data-open-payout-modal]');

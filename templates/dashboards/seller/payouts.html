@@ -188,73 +188,102 @@
   </div>
 </div>
 
-<!-- ── Add payout method modal ── -->
-<div class="smodal" id="addMethodModal" role="dialog" aria-modal="true">
-  <div class="smodal__box" style="max-width:500px">
-    <div class="smodal__head">
-      <span class="sside__setupic" style="background:#eaf0ff;border-color:#d4e2ff;color:#2456e6">
-        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22h18M5 10v12M9.5 10v12M14.5 10v12M19 10v12M12 3 3 10h18z"/></svg>
-      </span>
-      <h3>Add payout method</h3>
-      <span style="margin-left:auto"></span>
-      <button class="mbtn" id="closeAddMethodModal">
-        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+<!-- ── Add payout method modal — redesigned ── -->
+<div class="smodal" id="addMethodModal" role="dialog" aria-modal="true" aria-labelledby="pmModalTitle">
+  <div class="smodal__box pmmodal" style="max-width:500px">
+
+    <div class="pmmodal__stripe"></div>
+
+    <div class="pmmodal__head">
+      <div class="pmmodal__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
+      </div>
+      <div class="pmmodal__titles">
+        <h3 id="pmModalTitle">Add payout method</h3>
+        <p>Where you'd like to receive your earnings.</p>
+      </div>
+      <button class="pmmodal__close" id="closeAddMethodModal" type="button" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
       </button>
     </div>
 
     <form method="post" action="{% url 'seller_save_payout_method' %}">
       {% csrf_token %}
-      <div class="smodal__body">
-        <!-- method selector -->
-        <div class="ff">
-          <label>{{ payout_form.method.label }}</label>
-          {{ payout_form.method }}
-        </div>
 
-        <!-- bank fields -->
-        <div id="bankFields">
-          <div class="ff-row">
-            <div class="ff">
+      <!-- Method tab switcher (visual — synced to hidden select) -->
+      <div class="pmmodal__tabs" role="group" aria-label="Payment method">
+        <button type="button" class="pmmodal__tab is-active" data-method="bank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22h18M5 10v12M9.5 10v12M14.5 10v12M19 10v12M12 3 3 10h18z"/></svg>
+          Bank
+        </button>
+        <button type="button" class="pmmodal__tab" data-method="paypal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+          PayPal
+        </button>
+        <button type="button" class="pmmodal__tab" data-method="pi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 8h3.8a2.2 2.2 0 0 1 0 4.4H9.5V8zM9.5 12.4V16"/></svg>
+          Pi Wallet
+        </button>
+      </div>
+      <!-- Hidden real select (submitted with form) -->
+      <div style="display:none">{{ payout_form.method }}</div>
+
+      <div class="pmmodal__body">
+
+        <!-- Bank fields -->
+        <div id="pmBankFields">
+          <div class="pm-row">
+            <div class="pm-field">
               <label>{{ payout_form.bank_name.label }}</label>
               {{ payout_form.bank_name }}
             </div>
-            <div class="ff">
+            <div class="pm-field">
               <label>{{ payout_form.currency.label }}</label>
               {{ payout_form.currency }}
             </div>
           </div>
-          <div class="ff-row">
-            <div class="ff">
+          <div class="pm-row" style="margin-top:14px">
+            <div class="pm-field">
               <label>{{ payout_form.account_number.label }}</label>
               {{ payout_form.account_number }}
             </div>
-            <div class="ff">
+            <div class="pm-field">
               <label>{{ payout_form.account_name.label }}</label>
               {{ payout_form.account_name }}
             </div>
           </div>
         </div>
 
-        <!-- wallet fields (Pi / PayPal) -->
-        <div id="walletFields" style="display:none">
-          <div class="ff">
+        <!-- Wallet fields (Pi / PayPal) -->
+        <div id="pmWalletFields" style="display:none">
+          <div class="pm-field">
             <label>{{ payout_form.wallet_address.label }}</label>
             {{ payout_form.wallet_address }}
           </div>
         </div>
 
-        <!-- default checkbox -->
-        <div class="ff" style="display:flex;align-items:center;gap:10px;margin-top:4px">
+        <!-- Default checkbox -->
+        <label class="pm-check-row" for="{{ payout_form.is_default.id_for_label }}">
           {{ payout_form.is_default }}
-          <label for="{{ payout_form.is_default.id_for_label }}" style="margin:0;font-weight:600;font-size:13.5px">
-            {{ payout_form.is_default.label }}
-          </label>
-        </div>
+          <span>
+            <strong>{{ payout_form.is_default.label }}</strong>
+            <em>Payouts will automatically go to this account.</em>
+          </span>
+        </label>
+
       </div>
 
-      <div class="smodal__foot">
-        <button class="btngs" type="button" id="closeAddMethodModal2">Cancel</button>
-        <button class="btnps" type="submit">Save method</button>
+      <div class="pmmodal__trust">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Account details are encrypted and never shown to buyers.
+      </div>
+
+      <div class="pmmodal__foot">
+        <button class="pmmodal__btn-cancel" type="button" id="closeAddMethodModal2">Cancel</button>
+        <button class="pmmodal__btn-save" type="submit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>
+          Save method
+        </button>
       </div>
     </form>
   </div>
@@ -264,7 +293,7 @@
 (function () {
   var modal = document.getElementById('addMethodModal');
 
-  function openModal() { modal.classList.add('open'); }
+  function openModal()  { modal.classList.add('open'); }
   function closeModal() { modal.classList.remove('open'); }
 
   ['openAddMethodBtn', 'openAddMethodBtn2'].forEach(function (id) {
@@ -278,24 +307,28 @@
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
   modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
 
-  /* Show/hide bank vs wallet fields based on method selection */
+  /* ── Method tab switcher ── */
+  var tabs        = modal.querySelectorAll('.pmmodal__tab');
   var methodSel   = document.getElementById('pmMethod');
-  var bankFields  = document.getElementById('bankFields');
-  var walletFields = document.getElementById('walletFields');
+  var bankFields  = document.getElementById('pmBankFields');
+  var walletFields = document.getElementById('pmWalletFields');
 
-  function updateFields() {
-    var val = methodSel ? methodSel.value : 'bank';
-    if (val === 'bank') {
-      bankFields.style.display  = '';
-      walletFields.style.display = 'none';
-    } else {
-      bankFields.style.display  = 'none';
-      walletFields.style.display = '';
-    }
+  function applyMethod(val) {
+    tabs.forEach(function (t) { t.classList.toggle('is-active', t.dataset.method === val); });
+    if (methodSel) methodSel.value = val;
+    var isWallet = val === 'pi' || val === 'paypal';
+    if (bankFields)   bankFields.style.display   = isWallet ? 'none' : '';
+    if (walletFields) walletFields.style.display  = isWallet ? ''     : 'none';
   }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () { applyMethod(tab.dataset.method); });
+  });
+
+  /* sync if Django renders the select with a value */
   if (methodSel) {
-    methodSel.addEventListener('change', updateFields);
-    updateFields();
+    methodSel.addEventListener('change', function () { applyMethod(methodSel.value); });
+    applyMethod(methodSel.value || 'bank');
   }
 })();
 </script>

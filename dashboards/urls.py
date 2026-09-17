@@ -54,6 +54,10 @@ urlpatterns = [
     path("admin/verifications/", views.admin_verifications_view, name="admin_verifications"),
     path("admin/verifications/<int:pk>/<str:action>/", views.admin_verification_action, name="admin_verification_action"),
     path("admin/verifications/<int:pk>/detail/", views.admin_verification_detail, name="admin_verification_detail"),
+    path("admin/posts/", views.admin_posts, name="admin_posts"),
+    path("admin/posts/create/", views.admin_post_create, name="admin_post_create"),
+    path("admin/posts/<int:pk>/edit/", views.admin_post_edit, name="admin_post_edit"),
+    path("admin/posts/<int:pk>/delete/", views.admin_post_delete, name="admin_post_delete"),
 
     # ── Admin: users ──────────────────────────────────────────
     path("admin/users/", views.admin_users_view, name="admin_users_view"),

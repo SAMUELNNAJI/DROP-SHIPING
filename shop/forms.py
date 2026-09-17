@@ -1,6 +1,20 @@
 from django import forms
 
-from .models import Product
+from .models import BlogPost, Product
+
+
+class BlogPostForm(forms.ModelForm):
+    class Meta:
+        model = BlogPost
+        fields = ("title", "slug", "category", "tag_label", "excerpt", "body", "image_url", "image", "author_name", "author_role", "read_minutes", "is_featured", "is_published", "published_at")
+        widgets = {
+            "title": forms.TextInput(attrs={"class": "ff-input"}), "slug": forms.TextInput(attrs={"class": "ff-input"}),
+            "category": forms.Select(attrs={"class": "ff-input"}), "tag_label": forms.TextInput(attrs={"class": "ff-input"}),
+            "excerpt": forms.Textarea(attrs={"class": "ff-input", "rows": 3}), "body": forms.Textarea(attrs={"class": "ff-input", "rows": 10}),
+            "image_url": forms.URLInput(attrs={"class": "ff-input"}), "image": forms.ClearableFileInput(attrs={"class": "ff-input"}),
+            "author_name": forms.TextInput(attrs={"class": "ff-input"}), "author_role": forms.TextInput(attrs={"class": "ff-input"}),
+            "read_minutes": forms.NumberInput(attrs={"class": "ff-input", "min": 1}), "published_at": forms.DateTimeInput(attrs={"class": "ff-input", "type": "datetime-local"}),
+        }
 
 
 class ProductForm(forms.ModelForm):

@@ -1,0 +1,252 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Blog Posts">
+
+  <!-- ── Header ── -->
+  <div class="ahead">
+    <div class="ahead__row">
+      <span class="ahead__chip">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Content management
+      </span>
+    </div>
+    <h2>Blog Posts</h2>
+    <p>Create, edit and publish articles that appear on the public blog page.</p>
+    <div class="admin-order-kpis" style="margin-top:16px">
+      <div class="aokpi aokpi--green"><span>Published</span><b>{{ published_count }}</b></div>
+      <div class="aokpi aokpi--amber"><span>Featured</span><b>{{ featured_count }}</b></div>
+      <div class="aokpi"><span>Total posts</span><b>{{ total_posts }}</b></div>
+    </div>
+  </div>
+
+  <!-- ── Create / Edit form ── -->
+  <section class="dashboard-panel" style="margin:18px 0">
+    <div class="panel-heading">
+      <h3>{% if editing_post %}Edit: {{ editing_post.title|truncatechars:50 }}{% else %}New blog post{% endif %}</h3>
+      {% if editing_post %}
+      <a href="{% url 'admin_posts' %}" class="abtn abtn--ghost" style="font-size:13px">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m19 12H5M12 5l-7 7 7 7"/></svg>
+        Cancel edit
+      </a>
+      {% endif %}
+    </div>
+    <div style="padding:22px">
+      <form method="post"
+            enctype="multipart/form-data"
+            action="{% if editing_post %}{% url 'admin_post_edit' editing_post.pk %}{% else %}{% url 'admin_post_create' %}{% endif %}">
+        {% csrf_token %}
+
+        <!-- Row 1: title + slug -->
+        <div class="posts-form-row">
+          <div class="posts-field posts-field--wide">
+            <label>Post title <span class="posts-req">*</span></label>
+            {{ post_form.title }}
+            {% if post_form.title.errors %}<p class="posts-err">{{ post_form.title.errors.0 }}</p>{% endif %}
+          </div>
+          <div class="posts-field">
+            <label>Slug <small class="posts-hint">(auto-generated if blank)</small></label>
+            {{ post_form.slug }}
+          </div>
+        </div>
+
+        <!-- Row 2: category + tag + read time -->
+        <div class="posts-form-row" style="margin-top:14px">
+          <div class="posts-field">
+            <label>Category</label>
+            {{ post_form.category }}
+          </div>
+          <div class="posts-field">
+            <label>Tag label <small class="posts-hint">e.g. PI COMMERCE</small></label>
+            {{ post_form.tag_label }}
+          </div>
+          <div class="posts-field posts-field--sm">
+            <label>Read (min)</label>
+            {{ post_form.read_minutes }}
+          </div>
+        </div>
+
+        <!-- Row 3: excerpt -->
+        <div class="posts-field" style="margin-top:14px">
+          <label>Excerpt <small class="posts-hint">Short summary shown on the blog card</small></label>
+          {{ post_form.excerpt }}
+          {% if post_form.excerpt.errors %}<p class="posts-err">{{ post_form.excerpt.errors.0 }}</p>{% endif %}
+        </div>
+
+        <!-- Row 4: body -->
+        <div class="posts-field" style="margin-top:14px">
+          <label>Body content <small class="posts-hint">HTML supported</small></label>
+          {{ post_form.body }}
+          {% if post_form.body.errors %}<p class="posts-err">{{ post_form.body.errors.0 }}</p>{% endif %}
+        </div>
+
+        <!-- Row 5: images -->
+        <div class="posts-form-row" style="margin-top:14px">
+          <div class="posts-field">
+            <label>Cover image URL <small class="posts-hint">Unsplash or CDN link</small></label>
+            {{ post_form.image_url }}
+          </div>
+          <div class="posts-field">
+            <label>Upload image <small class="posts-hint">Overrides URL</small></label>
+            {{ post_form.image }}
+            {% if editing_post and editing_post.image %}
+              <div style="margin-top:8px;font-size:12px;color:#5d6a85">Current: <a href="{{ editing_post.image.url }}" target="_blank" style="color:#2456e6">View</a></div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Row 6: author -->
+        <div class="posts-form-row" style="margin-top:14px">
+          <div class="posts-field">
+            <label>Author name</label>
+            {{ post_form.author_name }}
+          </div>
+          <div class="posts-field">
+            <label>Author role</label>
+            {{ post_form.author_role }}
+          </div>
+        </div>
+
+        <!-- Row 7: publish controls -->
+        <div class="posts-form-row posts-form-row--checks" style="margin-top:14px">
+          <div class="posts-field posts-field--sm">
+            <label>Publish date</label>
+            {{ post_form.published_at }}
+          </div>
+          <label class="posts-check-row">
+            {{ post_form.is_published }}
+            <span><strong>Published</strong><em>Visible on the public blog</em></span>
+          </label>
+          <label class="posts-check-row">
+            {{ post_form.is_featured }}
+            <span><strong>Featured spotlight</strong><em>Shown as the hero article</em></span>
+          </label>
+        </div>
+
+        <div style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end">
+          <button type="submit" class="abtn abtn--primary">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>
+            {% if editing_post %}Update post{% else %}Create post{% endif %}
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ── Posts table ── -->
+  <section class="dashboard-panel">
+    <div class="panel-heading">
+      <h3>All posts</h3>
+      <span class="panel-meta">{{ total_posts }} total</span>
+    </div>
+    <div class="dashboard-table-wrap">
+      <table class="dashboard-table dashboard-table--wide">
+        <thead>
+          <tr>
+            <th>TITLE</th>
+            <th>CATEGORY</th>
+            <th>AUTHOR</th>
+            <th>DATE</th>
+            <th>STATUS</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for post in posts %}
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div class="posts-thumb" style="background-image:url('{{ post.cover_src }}')"></div>
+                <div>
+                  <b>{{ post.title|truncatechars:55 }}</b>
+                  {% if post.is_featured %}<span class="pill pill-yellow" style="font-size:10px;padding:2px 7px;margin-left:4px">Featured</span>{% endif %}
+                  <br><small class="muted">{{ post.slug }}</small>
+                </div>
+              </div>
+            </td>
+            <td><span class="pill pill-blue" style="font-size:11px">{{ post.category_display }}</span></td>
+            <td class="muted">{{ post.author_name }}</td>
+            <td class="muted">{{ post.published_display }}</td>
+            <td>
+              {% if post.is_published %}
+                <span class="pill pill-green">Live</span>
+              {% else %}
+                <span class="pill pill-yellow">Draft</span>
+              {% endif %}
+            </td>
+            <td>
+              <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center">
+                <a class="table-action table-action--soft"
+                   href="/blog/{{ post.slug }}/"
+                   target="_blank" rel="noopener">
+                  <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14 21 3"/></svg>
+                  View
+                </a>
+                <a class="table-action table-action--soft"
+                   href="{% url 'admin_post_edit' post.pk %}"
+                   data-dashboard-link>
+                  <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  Edit
+                </a>
+                <form method="post" action="{% url 'admin_post_delete' post.pk %}"
+                      onsubmit="return confirm('Delete {{ post.title|escapejs }}?')">
+                  {% csrf_token %}
+                  <button type="submit" class="table-action table-action--danger">
+                    <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                    Delete
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="6" style="text-align:center;padding:40px;color:#9aa7bd">No blog posts yet — create your first one above.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<style>
+/* ── Admin blog posts form ── */
+.posts-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.posts-form-row--checks { grid-template-columns: auto 1fr 1fr; align-items: end; }
+.posts-field { display: flex; flex-direction: column; gap: 5px; }
+.posts-field--wide { grid-column: span 2; }
+.posts-field--sm { max-width: 120px; }
+.posts-field label { font-size: 12.5px; font-weight: 800; color: var(--atext,#16223c); }
+.posts-hint { font-weight: 500; color: #93a0bd; font-size: 11.5px; }
+.posts-req { color: #e5484d; }
+.posts-err { margin: 3px 0 0; font-size: 12px; color: #e5484d; }
+.posts-field .ff-input,
+.posts-field input:not([type=checkbox]),
+.posts-field select,
+.posts-field textarea {
+  width: 100%; min-height: 44px; border: 1.5px solid rgba(28,48,86,.13);
+  border-radius: 11px; padding: 0 13px; font: inherit; font-size: 13.5px;
+  background: rgba(248,250,255,.9); color: var(--atext,#16223c);
+  outline: none; transition: border-color .18s, box-shadow .18s; box-sizing: border-box;
+}
+.posts-field .ff-input:focus,
+.posts-field input:not([type=checkbox]):focus,
+.posts-field select:focus,
+.posts-field textarea:focus {
+  border-color: rgba(36,86,230,.5); box-shadow: 0 0 0 3px rgba(36,86,230,.1); background: #fff;
+}
+.posts-field textarea { min-height: 120px; resize: vertical; padding: 10px 13px; }
+.posts-check-row {
+  display: flex; align-items: flex-start; gap: 11px; padding: 10px 14px;
+  border-radius: 12px; background: rgba(248,250,255,.7); border: 1.5px solid rgba(28,48,86,.1);
+  cursor: pointer;
+}
+.posts-check-row input[type=checkbox] { width: 17px; height: 17px; margin-top: 2px; flex-shrink: 0; accent-color: #2456e6; }
+.posts-check-row strong { display: block; font-size: 13px; color: var(--atext,#16223c); }
+.posts-check-row em { display: block; font-size: 12px; color: #93a0bd; font-style: normal; margin-top: 2px; }
+.posts-thumb {
+  width: 48px; height: 48px; border-radius: 10px; flex-shrink: 0;
+  background-size: cover; background-position: center; background-color: #eaf0ff;
+}
+@media (max-width: 700px) {
+  .posts-form-row, .posts-form-row--checks { grid-template-columns: 1fr; }
+  .posts-field--wide { grid-column: span 1; }
+}
+</style>

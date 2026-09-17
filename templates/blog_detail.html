@@ -1,0 +1,466 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ post.title }} — DropHub Blog</title>
+  <meta name="description" content="{{ post.excerpt|truncatechars:160 }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" /></noscript>
+  <link rel="icon" type="image/png" href="/static/Logo.png" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/pages.css" />
+</head>
+<body class="ip">
+
+<!-- ── Navbar ── -->
+<header class="navbar" id="siteNavbar">
+  <div class="nav-inner">
+    <a href="/" class="logo" aria-label="DropHub">
+      <img src="/static/Logo.png" alt="DropHub" class="logo-img" />
+    </a>
+    <nav class="nav-links">
+      <a href="/shop/">Shop</a>
+      <a href="/#safe" class="scroll-link">How It Works</a>
+      <a href="/about/">About</a>
+      <a href="/blog/" class="active" aria-current="page">Blog</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      {% if user.is_authenticated %}
+        <a href="{% if user.is_superuser %}/dashboards/admin/{% elif user.role == 'seller' %}/dashboards/seller/{% else %}/dashboards/buyer/{% endif %}" class="btn-sell">
+          <span>Dashboard</span>
+          <svg class="btn-sell-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        </a>
+      {% else %}
+        <a href="/signin/" class="nav-signin">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#7B8798" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.8" r="3.6"/><path d="M4.8 19.8c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
+          <span>Sign In</span>
+        </a>
+        <a href="/signin/#signup" class="btn-sell"><span>Start Selling</span>
+          <svg class="btn-sell-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+      {% endif %}
+      <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+        <span class="nav-burger-box"><span class="nav-burger-line"></span><span class="nav-burger-line"></span><span class="nav-burger-line"></span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ── Hero cover ── -->
+<div class="bdet-hero" style="background-image:url('{{ post.cover_src }}')">
+  <div class="bdet-hero__overlay"></div>
+  <div class="bdet-hero__inner">
+    <a href="/blog/" class="bdet-back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 12H5M12 5l-7 7 7 7"/></svg>
+      All articles
+    </a>
+    <div class="bdet-hero__tags">
+      <span class="bdet-tag">{{ post.tag_label|default:post.category_display }}</span>
+    </div>
+    <h1 class="bdet-hero__title">{{ post.title }}</h1>
+    <p class="bdet-hero__excerpt">{{ post.excerpt }}</p>
+    <div class="bdet-hero__meta">
+      {% if post.author_avatar_url %}
+      <img src="{{ post.author_avatar_url }}" alt="{{ post.author_name }}" class="bdet-avatar" />
+      {% endif %}
+      <div>
+        <strong class="bdet-author-name">{{ post.author_name }}</strong>
+        <span class="bdet-author-role">
+          {% if post.author_role %}{{ post.author_role }} &middot; {% endif %}
+          {{ post.published_display }}{% if post.read_minutes %} &middot; {{ post.read_minutes }} min read{% endif %}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Article body + sidebar ── -->
+<div class="bdet-layout">
+
+  <!-- article -->
+  <article class="bdet-article">
+    <div class="bdet-body">
+      {% if post.body %}
+        {{ post.body|safe }}
+      {% else %}
+        <p style="color:#6b7a90;font-style:italic">Full article content coming soon.</p>
+      {% endif %}
+    </div>
+
+    <!-- tags / share row -->
+    <div class="bdet-footer-row">
+      <span class="bdet-cat-pill">{{ post.category_display }}</span>
+      <div class="bdet-share">
+        <span>Share:</span>
+        <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ post.title|urlencode }}" target="_blank" rel="noopener" class="bdet-share-btn" aria-label="Share on X">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/shareArticle?url={{ request.build_absolute_uri }}&title={{ post.title|urlencode }}" target="_blank" rel="noopener" class="bdet-share-btn" aria-label="Share on LinkedIn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+      </div>
+    </div>
+  </article>
+
+  <!-- sidebar -->
+  <aside class="bdet-sidebar">
+
+    <!-- author card -->
+    <div class="bdet-sidebar-card">
+      <div class="bdet-sidebar-card__head">
+        {% if post.author_avatar_url %}
+        <img src="{{ post.author_avatar_url }}" alt="{{ post.author_name }}" class="bdet-sidebar-avatar" />
+        {% endif %}
+        <div>
+          <strong>{{ post.author_name }}</strong>
+          <small>{{ post.author_role }}</small>
+        </div>
+      </div>
+      <p class="bdet-sidebar-card__bio">Expert writer at DropHub covering marketplace strategy, cross-border commerce, and Pi Network payments.</p>
+    </div>
+
+    <!-- related posts -->
+    {% if related_posts %}
+    <div class="bdet-sidebar-card">
+      <h4 class="bdet-sidebar-card__title">Related articles</h4>
+      <div class="bdet-related-list">
+        {% for rp in related_posts %}
+        <a href="/blog/{{ rp.slug }}/" class="bdet-related-item">
+          <div class="bdet-related-thumb" style="background-image:url('{{ rp.cover_src }}')"></div>
+          <div>
+            <strong>{{ rp.title|truncatechars:60 }}</strong>
+            <small>{{ rp.published_display }} &middot; {{ rp.read_minutes }} min</small>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- CTA card -->
+    <div class="bdet-sidebar-card bdet-sidebar-card--cta">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+      <h4>Start selling today</h4>
+      <p>Join thousands of verified sellers earning with escrow protection and Pi payments.</p>
+      <a href="/signin/#signup" class="bdet-cta-btn">Create free store</a>
+    </div>
+
+  </aside>
+</div>
+
+<style>
+/* ── Blog detail page ── */
+.bdet-hero {
+  position: relative;
+  min-height: 480px;
+  display: flex;
+  align-items: flex-end;
+  background-size: cover;
+  background-position: center;
+  padding-top: 80px;
+}
+.bdet-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(8,14,36,.35) 0%, rgba(8,14,36,.88) 100%);
+}
+.bdet-hero__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 24px 56px;
+  width: 100%;
+}
+.bdet-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255,255,255,.75);
+  text-decoration: none;
+  margin-bottom: 20px;
+  transition: color .15s;
+}
+.bdet-back:hover { color: #fff; }
+.bdet-hero__tags { margin-bottom: 14px; }
+.bdet-tag {
+  display: inline-block;
+  padding: 5px 13px;
+  border-radius: 20px;
+  background: rgba(31,100,255,.7);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+.bdet-hero__title {
+  font-size: clamp(26px, 4vw, 46px);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.15;
+  letter-spacing: -.03em;
+  margin: 0 0 14px;
+}
+.bdet-hero__excerpt {
+  font-size: 16px;
+  color: rgba(255,255,255,.8);
+  line-height: 1.65;
+  max-width: 680px;
+  margin: 0 0 24px;
+}
+.bdet-hero__meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.bdet-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,.4);
+  flex-shrink: 0;
+}
+.bdet-author-name {
+  display: block;
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+}
+.bdet-author-role {
+  display: block;
+  font-size: 12.5px;
+  color: rgba(255,255,255,.65);
+}
+
+/* ── Layout ── */
+.bdet-layout {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 56px 24px 80px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 48px;
+  align-items: start;
+}
+
+/* ── Article body ── */
+.bdet-article {}
+.bdet-body {
+  background: #fff;
+  border: 1px solid #e8edf5;
+  border-radius: 20px;
+  padding: 40px 44px;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #374151;
+  box-shadow: 0 4px 24px rgba(15,30,54,.06);
+}
+.bdet-body h2, .bdet-body h3 {
+  color: #0f172a;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  margin: 32px 0 12px;
+  line-height: 1.25;
+}
+.bdet-body h2 { font-size: 24px; }
+.bdet-body h3 { font-size: 20px; }
+.bdet-body p { margin: 0 0 18px; }
+.bdet-body ul, .bdet-body ol { padding-left: 22px; margin: 0 0 18px; }
+.bdet-body li { margin-bottom: 8px; }
+.bdet-body strong { color: #0f172a; }
+.bdet-body a { color: #1f64ff; font-weight: 700; }
+.bdet-body blockquote {
+  border-left: 4px solid #1f64ff;
+  margin: 24px 0;
+  padding: 14px 20px;
+  background: #f0f6ff;
+  border-radius: 0 12px 12px 0;
+  font-style: italic;
+  color: #374151;
+}
+.bdet-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid #e8edf5;
+  flex-wrap: wrap;
+}
+.bdet-cat-pill {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 20px;
+  background: #eef4ff;
+  color: #1f64ff;
+  font-size: 12px;
+  font-weight: 800;
+}
+.bdet-share {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #6b7a90;
+}
+.bdet-share-btn {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #f4f7fd;
+  color: #374151;
+  text-decoration: none;
+  transition: background .15s, color .15s;
+}
+.bdet-share-btn:hover { background: #1f64ff; color: #fff; }
+
+/* ── Sidebar ── */
+.bdet-sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 90px; }
+.bdet-sidebar-card {
+  background: #fff;
+  border: 1px solid #e8edf5;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 2px 12px rgba(15,30,54,.05);
+}
+.bdet-sidebar-card__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.bdet-sidebar-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.bdet-sidebar-card__head strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.bdet-sidebar-card__head small {
+  display: block;
+  font-size: 12px;
+  color: #6b7a90;
+  margin-top: 2px;
+}
+.bdet-sidebar-card__bio {
+  font-size: 13px;
+  color: #6b7a90;
+  line-height: 1.6;
+  margin: 0;
+}
+.bdet-sidebar-card__title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 14px;
+}
+.bdet-related-list { display: flex; flex-direction: column; gap: 12px; }
+.bdet-related-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity .15s;
+}
+.bdet-related-item:hover { opacity: .8; }
+.bdet-related-thumb {
+  width: 56px;
+  height: 48px;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  background-color: #eef4ff;
+  flex-shrink: 0;
+}
+.bdet-related-item strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.35;
+}
+.bdet-related-item small {
+  display: block;
+  font-size: 11.5px;
+  color: #6b7a90;
+  margin-top: 3px;
+}
+.bdet-sidebar-card--cta {
+  background: linear-gradient(135deg, #1a41b4, #2456e6);
+  border-color: transparent;
+  text-align: center;
+  padding: 28px 22px;
+}
+.bdet-sidebar-card--cta svg { margin-bottom: 12px; }
+.bdet-sidebar-card--cta h4 {
+  font-size: 17px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 8px;
+}
+.bdet-sidebar-card--cta p {
+  font-size: 13px;
+  color: rgba(255,255,255,.8);
+  margin: 0 0 16px;
+  line-height: 1.55;
+}
+.bdet-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 24px;
+  border-radius: 12px;
+  background: #fff;
+  color: #1a41b4;
+  font-size: 13.5px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: transform .15s, box-shadow .15s;
+  box-shadow: 0 4px 14px rgba(0,0,0,.15);
+}
+.bdet-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,.18); }
+
+@media (max-width: 900px) {
+  .bdet-layout { grid-template-columns: 1fr; gap: 28px; }
+  .bdet-body { padding: 24px 20px; }
+  .bdet-sidebar { position: static; }
+}
+@media (max-width: 600px) {
+  .bdet-hero { min-height: 360px; }
+  .bdet-hero__inner { padding: 28px 16px 40px; }
+}
+</style>
+
+<script>
+(function () {
+  var nav = document.getElementById('siteNavbar');
+  if (!nav) return;
+  function onScroll() { nav.classList.toggle('scrolled', window.scrollY > 12); }
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+})();
+</script>
+</body>
+</html>

@@ -3053,3 +3053,16 @@ body.ip .hero-wrapper > .hero-stars {
     padding-right: 0;
   }
 }
+
+/* ── Blog card "Read →" link (DB-driven loop) ── */
+.blog-read-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #1f64ff;
+  text-decoration: none;
+  transition: gap .15s;
+}
+.blog-read-link:hover { gap: 9px; }

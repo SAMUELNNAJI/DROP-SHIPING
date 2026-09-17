@@ -224,83 +224,63 @@
   <div class="blog-pad">
 
     <!-- Spotlight Featured Article Banner -->
+    {% if featured_post %}
     <article class="blog-featured" id="featuredArticle">
       <div class="blog-featured-media">
-        <div class="blog-featured-bg" style="background-image: url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=900&q=80&auto=format&fit=crop');"></div>
+        <div class="blog-featured-bg" style="background-image: url('{{ featured_post.cover_src }}');"></div>
         <div class="blog-featured-overlay"></div>
-        <span class="blog-featured-badge-top">SPOTLIGHT PLAYBOOK</span>
+        <span class="blog-featured-badge-top">{{ featured_post.tag_label|default:"SPOTLIGHT" }}</span>
       </div>
-
       <div class="blog-featured-content">
         <div class="blog-featured-tags">
-          <span class="ip-tag">PLAYBOOK</span>
-          <span class="ip-tag" style="background: rgba(124,58,237,.1); color: #7C3AED;">PI NETWORK</span>
+          <span class="ip-tag">{{ featured_post.category_display }}</span>
         </div>
-
-        <h3>How 3 sellers hit $10K/month with Pi Network checkouts</h3>
-        <p>Meet the Lagos, Nairobi and Manila storefronts that dropped traditional card friction for instant Pi settlement — and watched their checkout completion rate surge by 22%.</p>
-
+        <h3>{{ featured_post.title }}</h3>
+        <p>{{ featured_post.excerpt }}</p>
         <div class="blog-featured-author">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80&auto=format&fit=crop" alt="Elena Rostova" class="blog-author-avatar" />
+          {% if featured_post.author_avatar_url %}
+          <img src="{{ featured_post.author_avatar_url }}" alt="{{ featured_post.author_name }}" class="blog-author-avatar" />
+          {% endif %}
           <div class="blog-author-info">
-            <span class="blog-author-name">Elena Rostova</span>
-            <span class="blog-author-role">Head of Seller Growth &middot; May 12, 2026 &middot; 8 min read</span>
+            <span class="blog-author-name">{{ featured_post.author_name }}</span>
+            <span class="blog-author-role">{{ featured_post.author_role }} &middot; {{ featured_post.published_display }} &middot; {{ featured_post.read_minutes }} min read</span>
           </div>
         </div>
-
         <div class="blog-featured-actions">
-          <button type="button" class="btn-primary read-modal-btn" 
-                  data-title="How 3 sellers hit $10K/month with Pi Network checkouts"
-                  data-tag="SPOTLIGHT PLAYBOOK"
-                  data-author="Elena Rostova"
-                  data-date="May 12, 2026 &middot; 8 min read"
-                  data-img="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=900&q=80&auto=format&fit=crop"
-                  data-content="Traditional payment gateways often impose severe high-risk holds and cross-border currency conversion fees of up to 4.5%. For independent dropshippers targeting emerging markets in Southeast Asia and Africa, this friction kills conversion rates before orders even finalize.<br/><br/>By adopting DropHub's native Pi Network wallet integration alongside built-in escrow, three merchant storefronts eliminated payment decline anxiety. Orders settle in real-time, holding funds safely in buyer protection escrow until tracking confirms delivery.<br/><br/><strong>Key Takeaways:</strong><ul><li>Zero cross-border processing markup fees on Pi settlements</li><li>Instant buyer trust via automated release escrow</li><li>Average customer retention increased by 34% in Q1</li></ul>">
-            Read Spotlight Story &rarr;
-          </button>
-          
-          <button type="button" class="blog-like-btn" data-likes="342">
+          <a href="/blog/{{ featured_post.slug }}/" class="btn-primary">Read Spotlight Story &rarr;</a>
+          <button type="button" class="blog-like-btn" data-likes="{{ featured_post.likes }}">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-            <span class="like-count">342</span>
+            <span class="like-count">{{ featured_post.likes }}</span>
           </button>
         </div>
       </div>
     </article>
+    {% endif %}
 
-    <!-- Controls Toolbar (Categories & View Toggle) -->
+    <!-- Controls Toolbar -->
     <div class="blog-controls">
       <nav class="blog-cat-pills" id="categoryPills" aria-label="Filter by topic">
         <button class="blog-cat-pill active" data-category="all">
-          All Articles <span class="blog-cat-count" id="countAll">12</span>
+          All Articles <span class="blog-cat-count" id="countAll">{{ posts|length }}</span>
         </button>
-        <button class="blog-cat-pill" data-category="playbook">
-          Seller Playbooks <span class="blog-cat-count">4</span>
-        </button>
-        <button class="blog-cat-pill" data-category="pi-commerce">
-          Pi Commerce <span class="blog-cat-count">3</span>
-        </button>
-        <button class="blog-cat-pill" data-category="escrow-trust">
-          Escrow &amp; Trust <span class="blog-cat-count">2</span>
-        </button>
-        <button class="blog-cat-pill" data-category="news">
-          Marketplace News <span class="blog-cat-count">1</span>
-        </button>
-        <button class="blog-cat-pill" data-category="case-study">
-          Case Studies <span class="blog-cat-count">2</span>
-        </button>
+        <button class="blog-cat-pill" data-category="playbook">Seller Playbooks</button>
+        <button class="blog-cat-pill" data-category="pi-commerce">Pi Commerce</button>
+        <button class="blog-cat-pill" data-category="escrow-trust">Escrow &amp; Trust</button>
+        <button class="blog-cat-pill" data-category="news">Marketplace News</button>
+        <button class="blog-cat-pill" data-category="case-study">Case Studies</button>
       </nav>
-
       <div class="blog-view-tools">
-        <span class="blog-count-summary" id="showingCount">Showing 6 of 12 articles</span>
+        <span class="blog-count-summary" id="showingCount">Showing {{ posts|length }} articles</span>
         <div class="blog-view-toggle">
-          <button type="button" class="blog-view-btn active" id="btnGridView" aria-label="Grid View" title="Grid View">
+          <button type="button" class="blog-view-btn active" id="btnGridView" aria-label="Grid View">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
           </button>
-          <button type="button" class="blog-view-btn" id="btnListView" aria-label="List View" title="List View">
+          <button type="button" class="blog-view-btn" id="btnListView" aria-label="List View">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
           </button>
         </div>
       </div>
+
     </div>
 
     <!-- Layout Container: Article Grid + Sidebar -->
@@ -310,353 +290,38 @@
       <div style="display: flex; flex-direction: column;">
         <div class="blog-grid" id="articleGrid">
 
-          <!-- Article 1 -->
-          <article class="blog-card" data-category="pi-commerce" data-title="pi network wallets: the 2026 playbook for sellers">
+          {% for post in posts %}
+          <article class="blog-card" data-category="{{ post.category }}" data-title="{{ post.title|lower|escapejs }}">
             <div class="blog-card-image">
-              <div class="blog-card-image-bg" style="background-image:url('https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=600&q=80&auto=format&fit=crop')"></div>
+              <div class="blog-card-image-bg" style="background-image:url('{{ post.cover_src }}')"></div>
               <div class="blog-card-image-overlay"></div>
-              <span class="blog-card-tag">PI COMMERCE</span>
+              <span class="blog-card-tag">{{ post.tag_label|default:post.category_display }}</span>
               <button type="button" class="blog-card-bookmark-btn" title="Bookmark article" aria-label="Bookmark">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
               </button>
             </div>
             <div class="blog-card-body">
               <div class="blog-card-meta">
-                <span>May 2, 2026</span> &middot; <span>6 min read</span>
+                <span>{{ post.published_display }}</span> &middot; <span>{{ post.read_minutes }} min read</span>
               </div>
-              <h4>Pi Network wallets: the 2026 playbook for sellers</h4>
-              <p>Fees, speed, and why checkout abandonment halves when you accept Pi Network natively in your online storefront.</p>
+              <h4>{{ post.title }}</h4>
+              <p>{{ post.excerpt }}</p>
               <div class="blog-card-footer">
                 <div class="blog-card-author-sm">
-                  <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80&auto=format&fit=crop" alt="Marcus Vance" class="blog-author-avatar-sm" />
-                  <span class="blog-author-name-sm">Marcus Vance</span>
+                  {% if post.author_avatar_url %}
+                  <img src="{{ post.author_avatar_url }}" alt="{{ post.author_name }}" class="blog-author-avatar-sm" />
+                  {% endif %}
+                  <span class="blog-author-name-sm">{{ post.author_name }}</span>
                 </div>
-                <button type="button" class="blog-like-btn" data-likes="142">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                  <span class="like-count">142</span>
-                </button>
+                <a href="/blog/{{ post.slug }}/" class="blog-read-link">
+                  Read &rarr;
+                </a>
               </div>
             </div>
           </article>
-
-          <!-- Article 2 -->
-          <article class="blog-card" data-category="escrow-trust" data-title="escrow in plain english: protecting every purchase">
-            <div class="blog-card-image">
-              <div class="blog-card-image-bg" style="background-image:url('https://images.unsplash.com/photo-1450133064473-71024230f91b?w=600&q=80&auto=format&fit=crop')"></div>
-              <div class="blog-card-image-overlay"></div>
-              <span class="blog-card-tag">ESCROW &amp; TRUST</span>
-              <button type="button" class="blog-card-bookmark-btn" title="Bookmark article" aria-label="Bookmark">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-              </button>
-            </div>
-            <div class="blog-card-body">
-              <div class="blog-card-meta">
-                <span>Apr 21, 2026</span> &middot; <span>5 min read</span>
-              </div>
-              <h4>Escrow in plain English: protecting every purchase</h4>
-              <p>The step-by-step financial path from customer payment to verified seller payout — demystified for first-time buyers.</p>
-              <div class="blog-card-footer">
-                <div class="blog-card-author-sm">
-                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80&auto=format&fit=crop" alt="Sarah Jenkins" class="blog-author-avatar-sm" />
-                  <span class="blog-author-name-sm">Sarah Jenkins</span>
-                </div>
-                <button type="button" class="blog-like-btn" data-likes="98">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                  <span class="like-count">98</span>
-                </button>
-              </div>
-            </div>
-          </article>
-
-          <!-- Article 3 -->
-          <article class="blog-card" data-category="news" data-title="drophub is now live in 26 new countries">
-            <div class="blog-card-image">
-              <div class="blog-card-image-bg" style="background-image:url('https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=600&q=80&auto=format&fit=crop')"></div>
-              <div class="blog-card-image-overlay"></div>
-              <span class="blog-card-tag">NEWS</span>
-              <button type="button" class="blog-card-bookmark-btn" title="Bookmark article" aria-label="Bookmark">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-              </button>
-            </div>
-            <div class="blog-card-body">
-              <div class="blog-card-meta">
-                <span>Apr 8, 2026</span> &middot; <span>3 min read</span>
-              </div>
-              <h4>DropHub is now live in 26 new global markets</h4>
-              <p>New regional currency gateways, local fulfillment hubs across Asia &amp; Africa, and 12-language customer support.</p>
-              <div class="blog-card-footer">
-                <div class="blog-card-author-sm">
-                  <img src="/static/Logo.png" alt="DropHub Team" class="blog-author-avatar-sm" />
-                  <span class="blog-author-name-sm">DropHub Team</span>
-                </div>
-                <button type="button" class="blog-like-btn" data-likes="215">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                  <span class="like-count">215</span>
-                </button>
-              </div>
-            </div>
-          </article>
-
-          <!-- Article 4 -->
-          <article class="blog-card" data-category="playbook" data-title="what the most-loved products of q1 have in common">
-            <div class="blog-card-image">
-              <div class="blog-card-image-bg" style="background-image:url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80&auto=format&fit=crop')"></div>
-              <div class="blog-card-image-overlay"></div>
-              <span class="blog-card-tag">PLAYBOOK</span>
-              <button type="button" class="blog-card-bookmark-btn" title="Bookmark article" aria-label="Bookmark">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-              </button>
-            </div>
-            <div class="blog-card-body">
-              <div class="blog-card-meta">
-                <span>Mar 14, 2026</span> &middot; <span>4 min read</span>
-              </div>
-              <h4>What the most-loved products of Q1 have in common</h4>
-              <p>We crunched order data across 240,000 marketplace orders so you don't have to guess your next winning inventory item.</p>
-              <div class="blog-card-footer">
-                <div class="blog-card-author-sm">
-                  <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80&auto=format&fit=crop" alt="David Kim" class="blog-author-avatar-sm" />
-                  <span class="blog-author-name-sm">David Kim</span>
-                </div>
-                <button type="button" class="blog-like-btn" data-likes="184">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                  <span class="like-count">184</span>
-                </button>
-              </div>
-            </div>
-          </article>
-
-          <!-- Article 5 -->
-          <article class="blog-card" data-category="playbook" data-title="handling returns without killing your margin">
-            <div class="blog-card-image">
-              <div class="blog-card-image-bg" style="background-image:url('https://images.unsplash.com/photo-1553729459-afe8f2e2882d?w=600&q=80&auto=format&fit=crop')"></div>
-              <div class="blog-card-image-overlay"></div>
-              <span class="blog-card-tag">PLAYBOOK</span>
-              <button type="button" class="blog-card-bookmark-btn" title="Bookmark article" aria-label="Bookmark">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-              </button>
-            </div>
-            <div class="blog-card-body">
-              <div class="blog-card-meta">
-                <span>Feb 28, 2026</span> &middot; <span>9 min read</span>
-              </div>
-              <h4>Handling returns without killing your margin</h4>
-              <p>Insurance tactics, restocking rules, and the escrow playbook for painless, dispute-free cross-border refunds.</p>
-              <div class="blog-card-footer">
-                <div class="blog-card-author-sm">
-                  <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=80&q=80&auto=format&fit=crop" alt="Amara Okafor" class="blog-author-avatar-sm" />
-                  <span class="blog-author-name-sm">Amara Okafor</span>
-                </div>
-                <button type="button" class="blog-like-btn" data-likes="76">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                  <span class="like-count">76</span>
-                </button>
-              </div>
-            </div>
-          </article>
-
-          <!-- Article 6 -->
-          <article class="blog-card" data-category="case-study" data-title="scaling tiktok shop & drophub: the dual funnel strategy">
-            <div class="blog-card-image">
-              <div class="blog-card-image-bg" style="background-image:url('https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=80&auto=format&fit=crop')"></div>
-              <div class="blog-card-image-overlay"></div>
-              <span class="blog-card-tag">CASE STUDY</span>
-              <button type="button" class="blog-card-bookmark-btn" title="Bookmark article" aria-label="Bookmark">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-              </button>
-            </div>
-            <div class="blog-card-body">
-              <div class="blog-card-meta">
-                <span>Feb 15, 2026</span> &middot; <span>7 min read</span>
-              </div>
-              <h4>Scaling TikTok Shop &amp; DropHub: the dual funnel strategy</h4>
-              <p>How organic social proof on short-form video drives high-intent traffic straight into zero-fee escrow storefronts.</p>
-              <div class="blog-card-footer">
-                <div class="blog-card-author-sm">
-                  <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80&auto=format&fit=crop" alt="Lucas Rivera" class="blog-author-avatar-sm" />
-                  <span class="blog-author-name-sm">Lucas Rivera</span>
-                </div>
-                <button type="button" class="blog-like-btn" data-likes="310">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                  <span class="like-count">310</span>
-                </button>
-              </div>
-            </div>
-          </article>
-
-          <!-- Article 7 -->
-          <article class="blog-card" data-category="playbook" data-title="negotiating supplier moqs like a top 1% dropshipper">
-            <div class="blog-card-image">
-              <div class="blog-card-image-bg" style="background-image:url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&q=80&auto=format&fit=crop')"></div>
-              <div class="blog-card-image-overlay"></div>
-              <span class="blog-card-tag">PLAYBOOK</span>
-              <button type="button" class="blog-card-bookmark-btn" title="Bookmark article" aria-label="Bookmark">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-              </button>
-            </div>
-            <div class="blog-card-body">
-              <div class="blog-card-meta">
-                <span>Jan 29, 2026</span> &middot; <span>6 min read</span>
-              </div>
-              <h4>Negotiating supplier MOQs like a top 1% dropshipper</h4>
-              <p>Scripts, negotiation frameworks, and leverage tactics to cut minimum order quantities by 70% with overseas factories.</p>
-              <div class="blog-card-footer">
-                <div class="blog-card-author-sm">
-                  <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&q=80&auto=format&fit=crop" alt="Elena Rostova" class="blog-author-avatar-sm" />
-                  <span class="blog-author-name-sm">Elena Rostova</span>
-                </div>
-                <button type="button" class="blog-like-btn" data-likes="129">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                  <span class="like-count">129</span>
-                </button>
-              </div>
-            </div>
-          </article>
-
-          <!-- Article 8 -->
-          <article class="blog-card" data-category="pi-commerce" data-title="cryptocurrency in e-commerce: why 2026 is the tipping point">
-            <div class="blog-card-image">
-              <div class="blog-card-image-bg" style="background-image:url('https://images.unsplash.com/photo-1621416894569-0f39ed31d247?w=600&q=80&auto=format&fit=crop')"></div>
-              <div class="blog-card-image-overlay"></div>
-              <span class="blog-card-tag">PI COMMERCE</span>
-              <button type="button" class="blog-card-bookmark-btn" title="Bookmark article" aria-label="Bookmark">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-              </button>
-            </div>
-            <div class="blog-card-body">
-              <div class="blog-card-meta">
-                <span>Jan 12, 2026</span> &middot; <span>8 min read</span>
-              </div>
-              <h4>Cryptocurrency in e-commerce: why 2026 is the tipping point</h4>
-              <p>An in-depth analysis of borderless micro-transactions and how Web3 settlement is dramatically lowering merchant barrier to entry.</p>
-              <div class="blog-card-footer">
-                <div class="blog-card-author-sm">
-                  <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80&auto=format&fit=crop" alt="Marcus Vance" class="blog-author-avatar-sm" />
-                  <span class="blog-author-name-sm">Marcus Vance</span>
-                </div>
-                <button type="button" class="blog-like-btn" data-likes="195">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                  <span class="like-count">195</span>
-                </button>
-              </div>
-            </div>
-          </article>
-
-          <!-- Article 9 -->
-          <article class="blog-card" data-category="case-study" data-title="building a sustainable brand beyond generic dropshipping">
-            <div class="blog-card-image">
-              <div class="blog-card-image-bg" style="background-image:url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&q=80&auto=format&fit=crop')"></div>
-              <div class="blog-card-image-overlay"></div>
-              <span class="blog-card-tag">CASE STUDY</span>
-              <button type="button" class="blog-card-bookmark-btn" title="Bookmark article" aria-label="Bookmark">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-              </button>
-            </div>
-            <div class="blog-card-body">
-              <div class="blog-card-meta">
-                <span>Jan 3, 2026</span> &middot; <span>10 min read</span>
-              </div>
-              <h4>Building a sustainable brand beyond generic dropshipping</h4>
-              <p>Custom packaging, memorable unboxing experiences, and building customer loyalty that turns one-time shoppers into repeat fans.</p>
-              <div class="blog-card-footer">
-                <div class="blog-card-author-sm">
-                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80&auto=format&fit=crop" alt="Sarah Jenkins" class="blog-author-avatar-sm" />
-                  <span class="blog-author-name-sm">Sarah Jenkins</span>
-                </div>
-                <button type="button" class="blog-like-btn" data-likes="240">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                  <span class="like-count">240</span>
-                </button>
-              </div>
-            </div>
-          </article>
-
-          <!-- Article 10 -->
-          <article class="blog-card" data-category="escrow-trust" data-title="zero dispute resolution: automated buyer protection">
-            <div class="blog-card-image">
-              <div class="blog-card-image-bg" style="background-image:url('https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&q=80&auto=format&fit=crop')"></div>
-              <div class="blog-card-image-overlay"></div>
-              <span class="blog-card-tag">ESCROW &amp; TRUST</span>
-              <button type="button" class="blog-card-bookmark-btn" title="Bookmark article" aria-label="Bookmark">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-              </button>
-            </div>
-            <div class="blog-card-body">
-              <div class="blog-card-meta">
-                <span>Dec 18, 2025</span> &middot; <span>5 min read</span>
-              </div>
-              <h4>Zero dispute resolution: automated buyer protection</h4>
-              <p>How automated carrier tracking releases escrow funds seamlessly without manual seller intervention or buyer friction.</p>
-              <div class="blog-card-footer">
-                <div class="blog-card-author-sm">
-                  <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=80&q=80&auto=format&fit=crop" alt="Amara Okafor" class="blog-author-avatar-sm" />
-                  <span class="blog-author-name-sm">Amara Okafor</span>
-                </div>
-                <button type="button" class="blog-like-btn" data-likes="167">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                  <span class="like-count">167</span>
-                </button>
-              </div>
-            </div>
-          </article>
-
-          <!-- Article 11 -->
-          <article class="blog-card" data-category="pi-commerce" data-title="pi payment checkout SDK: 5-minute integration guide">
-            <div class="blog-card-image">
-              <div class="blog-card-image-bg" style="background-image:url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80&auto=format&fit=crop')"></div>
-              <div class="blog-card-image-overlay"></div>
-              <span class="blog-card-tag">PI COMMERCE</span>
-              <button type="button" class="blog-card-bookmark-btn" title="Bookmark article" aria-label="Bookmark">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-              </button>
-            </div>
-            <div class="blog-card-body">
-              <div class="blog-card-meta">
-                <span>Dec 04, 2025</span> &middot; <span>4 min read</span>
-              </div>
-              <h4>Pi payment checkout SDK: 5-minute integration guide</h4>
-              <p>Step-by-step developer tutorial for embedding DropHub's Pi payment gateway into custom WooCommerce &amp; Shopify stores.</p>
-              <div class="blog-card-footer">
-                <div class="blog-card-author-sm">
-                  <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80&auto=format&fit=crop" alt="Marcus Vance" class="blog-author-avatar-sm" />
-                  <span class="blog-author-name-sm">Marcus Vance</span>
-                </div>
-                <button type="button" class="blog-like-btn" data-likes="289">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                  <span class="like-count">289</span>
-                </button>
-              </div>
-            </div>
-          </article>
-
-          <!-- Article 12 -->
-          <article class="blog-card" data-category="playbook" data-title="mastering cross-border logistics & customs clearance">
-            <div class="blog-card-image">
-              <div class="blog-card-image-bg" style="background-image:url('https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&q=80&auto=format&fit=crop')"></div>
-              <div class="blog-card-image-overlay"></div>
-              <span class="blog-card-tag">PLAYBOOK</span>
-              <button type="button" class="blog-card-bookmark-btn" title="Bookmark article" aria-label="Bookmark">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-              </button>
-            </div>
-            <div class="blog-card-body">
-              <div class="blog-card-meta">
-                <span>Nov 22, 2025</span> &middot; <span>8 min read</span>
-              </div>
-              <h4>Mastering cross-border logistics &amp; customs clearance</h4>
-              <p>How top merchants handle duties, tax IDs (IOSS/VAT), and 5-day express shipping routes from hubs in Manila and Lagos.</p>
-              <div class="blog-card-footer">
-                <div class="blog-card-author-sm">
-                  <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&q=80&auto=format&fit=crop" alt="Elena Rostova" class="blog-author-avatar-sm" />
-                  <span class="blog-author-name-sm">Elena Rostova</span>
-                </div>
-                <button type="button" class="blog-like-btn" data-likes="156">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                  <span class="like-count">156</span>
-                </button>
-              </div>
-            </div>
-          </article>
+          {% empty %}
+          <p style="color:#6b7a90;grid-column:1/-1;text-align:center;padding:40px">No articles published yet.</p>
+          {% endfor %}
 
         </div><!-- /articleGrid -->
 

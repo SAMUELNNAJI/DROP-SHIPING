@@ -13,8 +13,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.http import require_POST
 from django.utils import timezone
 
-from shop.forms import ProductForm
-from shop.models import Product
+from shop.forms import BlogPostForm, ProductForm
+from shop.models import BlogPost, Product
 
 from .forms import BuyerAddressForm, BoostPlanForm, SellerPayoutMethodForm, SellerVerificationForm
 from .models import BuyerAddress, BoostOrder, BoostPlan, CartItem, Order, OrderTrackingEvent, SellerPayout, SellerPayoutMethod, SellerVerification, WishlistItem
@@ -70,6 +70,7 @@ SECTION_TITLES = {
         "featured": "Featured",
         "payments": "Payments",
         "verifications": "Seller Verifications",
+        "posts": "Blog Posts",
     },
     "seller": {
         "overview": "Seller Overview",
@@ -89,6 +90,68 @@ SECTION_TITLES = {
         "verification": "Seller Verification",
     },
 }
+
+
+@staff_member_required
+def admin_posts(request):
+    posts = BlogPost.objects.all().order_by("-created_at")
+    context = dashboard_context(request, "admin", "posts")
+    context.update({
+        "posts": posts,
+        "post_form": BlogPostForm(),
+        "dashboard_template": "dashboards/admin/posts.html",
+        "total_posts": posts.count(),
+        "published_count": posts.filter(is_published=True).count(),
+        "featured_count": posts.filter(is_featured=True).count(),
+    })
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(request, "dashboards/admin/posts.html", context)
+    return render(request, "dashboards/base.html", context)
+
+
+@staff_member_required
+@require_POST
+def admin_post_create(request):
+    form = BlogPostForm(request.POST, request.FILES)
+    if form.is_valid():
+        form.save(); messages.success(request, "Blog post created.")
+    else: messages.error(request, "Please correct the post form.")
+    return redirect("admin_posts")
+
+
+@staff_member_required
+def admin_post_edit(request, pk):
+    post = get_object_or_404(BlogPost, pk=pk)
+    if request.method == "POST":
+        form = BlogPostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Blog post updated.")
+            return redirect("admin_posts")
+        messages.error(request, "Please fix the highlighted fields.")
+    else:
+        form = BlogPostForm(instance=post)
+    all_posts = BlogPost.objects.all().order_by("-created_at")
+    context = dashboard_context(request, "admin", "posts")
+    context.update({
+        "posts": all_posts,
+        "post_form": form,
+        "editing_post": post,
+        "dashboard_template": "dashboards/admin/posts.html",
+        "total_posts": all_posts.count(),
+        "published_count": all_posts.filter(is_published=True).count(),
+        "featured_count": all_posts.filter(is_featured=True).count(),
+    })
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(request, "dashboards/admin/posts.html", context)
+    return render(request, "dashboards/base.html", context)
+
+
+@staff_member_required
+@require_POST
+def admin_post_delete(request, pk):
+    get_object_or_404(BlogPost, pk=pk).delete(); messages.success(request, "Blog post deleted.")
+    return redirect("admin_posts")
 
 
 def _run_auto_confirm():
@@ -240,6 +303,8 @@ def dashboard_section(request, role, section):
         return admin_products_view(request)
     if role == "admin" and section == "featured":
         return admin_featured_view(request)
+    if role == "admin" and section == "posts":
+        return admin_posts(request)
     return dashboard_page(request, role, section)
 
 

@@ -190,3 +190,81 @@ class Product(models.Model):
             return getattr(seller, "username", "Store")
         return "Store"
 
+
+
+class BlogPost(models.Model):
+    """A blog/news article created by admin staff."""
+
+    CATEGORY_CHOICES = [
+        ("playbook",     "Seller Playbooks"),
+        ("pi-commerce",  "Pi Commerce"),
+        ("escrow-trust", "Escrow & Trust"),
+        ("news",         "Marketplace News"),
+        ("case-study",   "Case Studies"),
+    ]
+
+    title        = models.CharField(max_length=220)
+    slug         = models.SlugField(max_length=240, unique=True, blank=True)
+    category     = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default="news")
+    tag_label    = models.CharField(max_length=60, blank=True, default="",
+                                    help_text="Short tag shown on the card, e.g. 'PI COMMERCE'")
+    excerpt      = models.TextField(blank=True, default="")
+    body         = models.TextField(blank=True, default="",
+                                    help_text="HTML or plain text. Displayed on the detail page.")
+    image_url    = models.URLField(blank=True, default="",
+                                   help_text="Unsplash/external cover image URL")
+    image        = models.ImageField(upload_to="blog/", blank=True, null=True,
+                                     help_text="Uploaded cover image (overrides image_url)")
+    author_name  = models.CharField(max_length=120, default="DropHub Team")
+    author_role  = models.CharField(max_length=160, blank=True, default="",
+                                    help_text="e.g. 'Head of Seller Growth'")
+    author_avatar_url = models.URLField(blank=True, default="")
+    read_minutes = models.PositiveSmallIntegerField(default=5)
+    likes        = models.PositiveIntegerField(default=0)
+    is_featured  = models.BooleanField(default=False,
+                                        help_text="Show as the spotlight featured article")
+    is_published = models.BooleanField(default=True)
+    published_at = models.DateTimeField(null=True, blank=True)
+    created_at   = models.DateTimeField(auto_now_add=True)
+    updated_at   = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-published_at", "-created_at"]
+
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base = slugify(self.title) or "post"
+            slug = base
+            n = 1
+            while BlogPost.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = "%s-%d" % (base, n)
+                n += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
+
+    @property
+    def cover_src(self):
+        try:
+            if self.image and getattr(self.image, "url", None):
+                return self.image.url
+        except (ValueError, AttributeError):
+            pass
+        return self.image_url or "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=900&q=80&auto=format&fit=crop"
+
+    @property
+    def published_display(self):
+        from django.utils.formats import date_format
+        dt = self.published_at or self.created_at
+        if not dt:
+            return ""
+        try:
+            return date_format(dt, "M j, Y")
+        except Exception:
+            return str(dt)[:10]
+
+    @property
+    def category_display(self):
+        return dict(self.CATEGORY_CHOICES).get(self.category, self.category.title())

@@ -6,7 +6,7 @@ from django.db.models import Case, IntegerField, Q, When
 from django.utils import timezone
 from django.template.loader import render_to_string
 
-from .models import Product
+from .models import BlogPost, Product
 
 
 SHOP_SORTS = (
@@ -40,6 +40,8 @@ def page(request, slug):
     """Generic view for static store pages.  The shop page is handled separately."""
     if slug == "shop":
         return shop_page(request)
+    if slug == "blog":
+        return blog_view(request)
 
     if slug not in PAGES:
         raise Http404(f'Unknown page: {slug}')
@@ -221,4 +223,16 @@ def product_detail(request, pk):
     if product.status != "live" and (not request.user.is_authenticated or request.user != product.seller):
         raise Http404("Product not found")
     return render(request, "product_detail.html", {"product": product, "page_title": product.name})
+
+
+def blog_view(request):
+    posts = BlogPost.objects.filter(is_published=True)
+    featured = posts.filter(is_featured=True).first() or posts.first()
+    return render(request, "blog.html", {"page_title": "Blog", "featured_post": featured, "posts": posts.exclude(pk=getattr(featured, "pk", None))})
+
+
+def blog_detail(request, slug):
+    post = get_object_or_404(BlogPost.objects.filter(is_published=True), slug=slug)
+    related = BlogPost.objects.filter(is_published=True, category=post.category).exclude(pk=post.pk)[:3]
+    return render(request, "blog_detail.html", {"post": post, "related_posts": related, "page_title": post.title})
 

@@ -1088,7 +1088,8 @@
   .auth-page .nav-burger { display: inline-flex !important; margin-left: 0; }
   /* Keep actions compact: only cart icon + burger remain */
   .auth-page .nav-actions {
-    gap: 6px;
+    /* Match the visual separation of the homepage cart and menu controls. */
+    gap: 14px;
     margin-left: auto;
     flex-shrink: 0;
   }
@@ -1106,7 +1107,7 @@
 }
 @media (max-width: 360px) {
   .auth-page .nav-inner { padding-left: 8px; padding-right: 8px; }
-  .auth-page .nav-actions { gap: 2px; }
+  .auth-page .nav-actions { gap: 8px; }
   .auth-page .nav-cart, .auth-page .nav-burger { width: 40px; height: 40px; }
   .auth-page .logo { max-width: calc(100vw - 94px); }
   .auth-page .logo-img { height: 30px; }

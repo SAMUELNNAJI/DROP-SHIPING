@@ -564,5 +564,51 @@
 </script>
 
 <script src="/static/cart.js"></script>
+
+<script>
+/* ── Mobile menu ── */
+(function () {
+  var burger = document.getElementById('navBurger');
+  var menu   = document.getElementById('mobileMenu');
+  if (!burger || !menu) return;
+  var lastFocus = null;
+  function openMenu() {
+    lastFocus = document.activeElement;
+    menu.classList.add('mmenu--open');
+    menu.setAttribute('aria-hidden', 'false');
+    burger.classList.add('is-active');
+    burger.setAttribute('aria-expanded', 'true');
+    burger.setAttribute('aria-label', 'Close menu');
+    document.body.classList.add('mmenu-locked');
+    setTimeout(function () { var f = menu.querySelector('.mmenu-link'); if (f) f.focus(); }, 420);
+  }
+  function closeMenu() {
+    if (!menu.classList.contains('mmenu--open')) return;
+    menu.classList.remove('mmenu--open');
+    menu.setAttribute('aria-hidden', 'true');
+    burger.classList.remove('is-active');
+    burger.setAttribute('aria-expanded', 'false');
+    burger.setAttribute('aria-label', 'Open menu');
+    document.body.classList.remove('mmenu-locked');
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  burger.addEventListener('click', function () {
+    if (menu.classList.contains('mmenu--open')) closeMenu(); else openMenu();
+  });
+  menu.querySelectorAll('[data-mmenu-close]').forEach(function (el) { el.addEventListener('click', closeMenu); });
+  menu.querySelectorAll('.mmenu-link, .mmenu-cta, .mmenu-signin').forEach(function (a) { a.addEventListener('click', closeMenu); });
+  document.addEventListener('keydown', function (e) {
+    if (!menu.classList.contains('mmenu--open')) return;
+    if (e.key === 'Escape') { closeMenu(); return; }
+    if (e.key !== 'Tab') return;
+    var focusable = menu.querySelectorAll('a, button');
+    if (!focusable.length) return;
+    var first = focusable[0], last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+  window.addEventListener('resize', function () { if (window.innerWidth > 1100) closeMenu(); });
+})();
+</script>
 </body>
 </html>

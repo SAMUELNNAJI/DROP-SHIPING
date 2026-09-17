@@ -1,4 +1,4 @@
-/* ═══════════════════════════════════════════════════
+﻿/* ═══════════════════════════════════════════════════
    AUTH.CSS — DropHub Sign-In / Sign-Up styles
    Depends on: style.css (shared navbar, buttons, cart)
    ═══════════════════════════════════════════════════ */
@@ -1068,33 +1068,18 @@
     /* The shared base header is fixed; keep only a compact breathing room. */
     padding-top: calc(var(--header-h) + 6px);
   }
-  .auth-page .nav-links,
-  .auth-page .nav-signin,
-  .auth-page .btn-sell,
-  .auth-page .auth-cart {
-    display: none;
-  }
-  .auth-page .nav-actions {
-    /* Match the comfortable control spacing from the home mobile header. */
-    gap: 10px;
-  }
-  .auth-page .nav-burger { margin-left: 0; }
-  .auth-page .nav-burger {
-    display: inline-flex;
-  }
-  .auth-page.auth-nav-open .nav-links {
-    display: flex;
-    position: fixed;
-    inset: 68px 0 auto 0;
-    z-index: 450;
-    flex-direction: column;
-    padding: 16px 24px;
-    background: #fff;
-    box-shadow: 0 12px 24px rgba(15, 28, 77, 0.12);
-  }
-  .auth-page.auth-nav-open .nav-links a {
-    padding: 12px 0;
-  }
+  /* On auth pages at mobile, hide text-heavy nav items.
+     The burger drawer covers all navigation.
+     The cart icon and burger MUST remain visible. */
+  .auth-page .nav-links  { display: none; }
+  .auth-page .nav-signin { display: none; }
+  .auth-page .btn-sell   { display: none; }
+  /* Keep cart wrap always accessible */
+  .auth-page .cart-wrap  { display: flex; }
+  /* Burger is already shown by style.css at <=1100px; prevent any override */
+  .auth-page .nav-burger { display: inline-flex !important; margin-left: 0; }
+  /* Tighten the actions row: logo + cart + burger sit comfortably */
+  .auth-page .nav-actions { gap: 8px; }
   .auth-card {
     max-width: 100%;
     border-radius: 20px;

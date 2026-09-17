@@ -1632,9 +1632,46 @@ def checkout_complete(request):
             product.sold += item.quantity
             product.save(update_fields=["stock", "sold", "updated_at"])
             OrderTrackingEvent.objects.create(order=order, status="pending", message="Payment secured in escrow. Seller is preparing your order.")
-            created.append(order.order_number)
+            created.append(order.pk)
         CartItem.objects.filter(user=request.user).delete()
-    return JsonResponse({"ok": True, "orders": created, "redirect": "/dashboards/buyer/orders/"})
+
+    # Stash order PKs + payment method in the session so the success page can
+    # render real order data without exposing PKs in the URL.
+    request.session["last_order_pks"] = created
+    request.session["last_order_payment_method"] = method
+
+    order_numbers = list(
+        Order.objects.filter(pk__in=created).values_list("order_number", flat=True)
+    )
+    return JsonResponse({"ok": True, "orders": order_numbers, "redirect": "/checkout-success/"})
+
+
+@login_required
+def checkout_success_view(request):
+    """Order confirmation page — shows real order data from the session."""
+    pks    = request.session.pop("last_order_pks", [])
+    method = request.session.pop("last_order_payment_method", "")
+
+    orders = (
+        list(Order.objects.filter(pk__in=pks, buyer=request.user))
+        if pks else []
+    )
+
+    subtotal = sum(o.total_price for o in orders)
+    escrow   = subtotal * Decimal("0.02")
+    platform = subtotal * Decimal("0.01")
+    total    = subtotal + escrow + platform
+
+    ctx = {
+        "page_title":            "Order Confirmed",
+        "orders":                orders,
+        "payment_method":        method or (orders[0].payment_method if orders else ""),
+        "order_subtotal":        subtotal,
+        "order_escrow_fee":      escrow,
+        "order_platform_fee":    platform,
+        "order_total":           total,
+    }
+    return render(request, "checkout-success.html", ctx)
 
 
 # ═══════════════════════════════════════════════════════════════

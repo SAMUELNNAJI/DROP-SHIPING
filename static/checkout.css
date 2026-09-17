@@ -197,6 +197,69 @@
 /* ══════════════════════════════════
    ORDER SUMMARY SIDEBAR
    ══════════════════════════════════ */
+
+/* ── Redesigned totals block ── */
+.ck-totals-block {
+  border-top: 1px solid #e9eef7;
+  margin-top: 8px;
+  padding-top: 14px;
+}
+.ck-totals-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+}
+.ck-totals-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  padding-top: 6px;          /* aligns with the large USD number */
+}
+.ck-totals-values {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+.ck-totals-usd {
+  font-size: 26px;
+  font-weight: 800;
+  color: #071c3f;
+  letter-spacing: -.03em;
+  line-height: 1.1;
+}
+.ck-totals-ngn {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0891b2;
+  letter-spacing: -.01em;
+}
+.ck-totals-pi {
+  font-size: 13px;
+  font-weight: 600;
+  color: #8b5cf6;
+  letter-spacing: -.01em;
+}
+.ck-totals-fees {
+  border-top: 1px solid #e9eef7;
+  padding-top: 10px;
+}
+.ck-totals-fee-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12.5px;
+  color: #8a94a6;
+  padding: 3px 0;
+}
+.ck-totals-fee-row .ck-mono {
+  font-size: 12.5px;
+  color: #64748b;
+  font-weight: 600;
+}
+
 .ck-sum-item {
   display: flex;
   align-items: center;

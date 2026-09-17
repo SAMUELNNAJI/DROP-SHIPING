@@ -242,6 +242,22 @@
 .bp-check-row input[type="checkbox"]{width:17px;height:17px;margin-top:2px;flex-shrink:0;accent-color:#2456e6;cursor:pointer}
 .bp-check-row strong{display:block;font-size:13.5px;color:var(--atext,#16223c)}
 .bp-check-row em{display:block;font-size:12px;color:var(--afaint,#93a0bd);font-style:normal;margin-top:2px}
+@media(max-width:700px){
+  .featured-plans-grid{grid-template-columns:1fr}
+  .featured-plan-card{padding:16px}
+  .featured-plan-card__foot{gap:10px;align-items:flex-start;flex-direction:column}
+  .featured-plan-card__foot form,.featured-plan-card__foot button{width:100%}
+  .panel-heading .abtn{width:100%;justify-content:center}
+  .admin-order-toolbar>div:last-child{width:100%}
+  .admin-order-toolbar .admin-search-input{flex:1;min-width:0}
+  .smodal{padding:12px;align-items:flex-end}
+  .smodal__box{width:100%!important;max-width:none!important;max-height:calc(100dvh - 24px);overflow:auto;border-radius:18px 18px 14px 14px}
+  .smodal__head{padding:16px}
+  .smodal__body{padding:16px!important}
+  .smodal__foot{padding:14px 16px;position:sticky;bottom:0;background:#fff}
+  .bp-row{grid-template-columns:1fr;gap:14px}
+  .smodal__foot button{flex:1;justify-content:center}
+}
 </style>
 
 <script>
@@ -259,6 +275,8 @@
 })();
 </script>
 
+{% comment %}
+<!-- Legacy duplicate markup retained in source history only. -->
   <div class="ahead">
     <div class="ahead__row">
       <span class="ahead__chip">
@@ -484,3 +502,4 @@
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') modal.classList.remove('open'); });
 })();
 </script>
+{% endcomment %}

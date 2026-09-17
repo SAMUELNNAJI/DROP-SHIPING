@@ -200,14 +200,15 @@
           </div>
 
           <!-- Reject form (hidden by default) -->
-          <div id="vdRejectForm" style="display:none;margin-top:14px">
+          <div id="vdRejectForm" class="vd-reject-form" hidden>
             <form method="post" action="{% url 'admin_verification_action' verification.pk 'reject' %}">
               {% csrf_token %}
-              <div class="ff" style="margin-bottom:10px">
-                <label style="display:block;font-size:12.5px;font-weight:800;margin-bottom:6px">Rejection reason</label>
-                <textarea name="reviewer_note" class="ff-input" rows="3" placeholder="Explain what needs to be corrected…"></textarea>
+              <div class="vd-reject-form__heading"><span class="vd-reject-form__icon" aria-hidden="true">!</span><div><strong>Request a correction</strong><small>Give the seller clear next steps for resubmission.</small></div></div>
+              <div class="vd-reject-form__field">
+                <label for="vd-rejection-note">Rejection reason</label>
+                <textarea id="vd-rejection-note" name="reviewer_note" rows="4" required placeholder="For example: Please upload a clear photo of the full ID document."></textarea>
               </div>
-              <button class="btnps" type="submit" style="background:#e5484d;width:100%">Send rejection</button>
+              <div class="vd-reject-form__actions"><button class="abtn abtn--ghost vd-reject-cancel" type="button">Cancel</button><button class="btnps vd-reject-submit" type="submit">Send rejection</button></div>
             </form>
           </div>
           {% elif verification.status != "pending" %}
@@ -252,11 +253,13 @@
 .vd-status-badge--bad{background:#fff1f1;color:#b4232a}
 .vd-status-badge--wait{background:#fff4dd;color:#9a6200}
 .vd-status-badge--new{background:#eaf0ff;color:#1a41b4}
+.vd-reject-form{margin-top:16px;padding:16px;border:1px solid rgba(229,72,77,.25);border-radius:14px;background:linear-gradient(145deg,#fff8f8,#fff)}.vd-reject-form__heading{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;color:#7f1d1d}.vd-reject-form__heading strong{display:block;font-size:14px}.vd-reject-form__heading small{display:block;margin-top:3px;color:#8c5a5d;font-size:12px;line-height:1.45}.vd-reject-form__icon{display:grid;place-items:center;width:23px;height:23px;flex:0 0 23px;border-radius:50%;background:#fee2e2;color:#b4232a;font-weight:800}.vd-reject-form__field label{display:block;margin-bottom:6px;color:#5f2227;font-size:12px;font-weight:800}.vd-reject-form textarea{display:block;box-sizing:border-box;width:100%;min-height:100px;padding:11px 12px;resize:vertical;border:1px solid #f1b8bc;border-radius:10px;background:#fff;color:#16223c;font:inherit;font-size:13px;line-height:1.5;outline:0}.vd-reject-form textarea:focus{border-color:#e5484d;box-shadow:0 0 0 3px rgba(229,72,77,.12)}.vd-reject-form__actions{display:flex;justify-content:flex-end;gap:9px;margin-top:12px}.vd-reject-submit{background:#d9363e!important}.vd-reject-submit:hover{background:#b4232a!important}
 @media(max-width:900px){
   .vd-header__actions{margin-left:0;width:100%}
   .vd-fields{grid-template-columns:1fr}
   [style*="grid-template-columns:1.4fr"]{grid-template-columns:1fr!important}
 }
+@media(max-width:520px){.vd-reject-form{padding:14px}.vd-reject-form__actions{flex-direction:column-reverse}.vd-reject-form__actions button{width:100%;justify-content:center}.vd-doc-preview{align-items:flex-start;flex-wrap:wrap}.vd-doc-preview__btn{margin-left:0;width:100%;justify-content:center}.vd-header__actions .abtn{flex:1;justify-content:center}}
 </style>
 
 <script>
@@ -267,8 +270,8 @@
 
   function toggleReject() {
     if (!form) return;
-    var open = form.style.display !== 'none';
-    form.style.display = open ? 'none' : 'block';
+    var open = !form.hidden;
+    form.hidden = open;
     if (!open) {
       var ta = form.querySelector('textarea');
       if (ta) ta.focus();
@@ -277,5 +280,6 @@
 
   if (btn1) btn1.addEventListener('click', toggleReject);
   if (btn2) btn2.addEventListener('click', toggleReject);
+  form && form.querySelector('.vd-reject-cancel').addEventListener('click', toggleReject);
 })();
 </script>

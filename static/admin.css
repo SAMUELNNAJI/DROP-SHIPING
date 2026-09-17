@@ -2148,3 +2148,33 @@ body.dashboard-body--admin .dashboard-panel {
     display: grid !important;
   }
 }
+
+
+/* ═══════════════════════════════════════════════════
+   ADMIN SIDEBAR — mobile close button in brand row
+   ═══════════════════════════════════════════════════ */
+.admin-close-btn {
+  display: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.75);
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .15s, color .15s;
+}
+.admin-close-btn .sic { width: 16px; height: 16px; display: block; }
+.admin-close-btn:hover { background: rgba(255,255,255,.18); color: #fff; }
+
+@media (max-width: 800px) {
+  .admin-close-btn { display: grid !important; }
+}
+
+/* Admin brand row: flex so close btn sits opposite logo */
+body.dashboard-body--admin .dashboard-brand {
+  display: flex !important;
+  align-items: center;
+}

@@ -1436,3 +1436,7 @@ body.dashboard-body--buyer .dashboard-workspace {
   .dtop__right > *:not(.dtop__avatar):not(.dtop__logout-btn) { display: none; }
   .dtop__cta-btn { display: grid; }
 }
+
+
+/* Old standalone sidebar-close — no longer rendered in base.html, kept for safety */
+.dashboard-sidebar-close { display: none !important; }

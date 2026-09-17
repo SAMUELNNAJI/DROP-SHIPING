@@ -22,12 +22,12 @@
   <div class="dashboard-app">
     {% if role == 'seller' %}
     <aside class="sside" id="dashboardSidebar">
-      <button class="dashboard-sidebar-close" id="dashboardSidebarClose" type="button" aria-label="Close dashboard menu"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
       <div class="sside__brandcard">
         <div class="sside__brandrow">
           <a class="sside__logo" href="/dashboards/seller/" data-dashboard-link aria-label="DropHub Seller Center"><img src="/static/Logo.png" alt="DropHub" /></a>
           <span class="sside__brandtext"><b>DropHub</b><small>Seller Center</small></span>
           <span class="sside__live"><i></i>Live</span>
+          <button class="sside__close-btn" id="dashboardSidebarClose" type="button" aria-label="Close sidebar"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
         </div>
         <div class="sside__brandstats">
           <div class="sside__brandstat"><b>{{ user.username|default:"Seller"|truncatechars:10 }}</b><small>Store</small></div>
@@ -68,10 +68,10 @@
     </aside>
     {% elif role == 'admin' %}
     <aside class="dashboard-sidebar" id="dashboardSidebar">
-      <button class="dashboard-sidebar-close" id="dashboardSidebarClose" type="button" aria-label="Close dashboard menu"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
       <a class="dashboard-brand" href="/dashboards/admin/" data-dashboard-link>
         <img src="/static/Logo.png" alt="DropHub" />
         <span><b>DropHub</b><small>ADMIN CONSOLE</small></span>
+        <button class="admin-close-btn" id="dashboardSidebarClose" type="button" aria-label="Close sidebar" style="margin-left:auto"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
       </a>
       <div class="aside-console">
 
@@ -114,11 +114,11 @@
     </aside>
     {% else %}
     <aside class="bside" id="dashboardSidebar">
-      <button class="dashboard-sidebar-close" id="dashboardSidebarClose" type="button" aria-label="Close dashboard menu"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
       <a class="bside__brand" href="/dashboards/buyer/">
         <span class="bside__logo"><img src="/static/Logo.png" alt="DropHub" /></span>
         <span class="bside__brandtext"><b>DropHub</b><small>Buyer Lounge</small></span>
         <span class="bside__pill"><i></i>Member</span>
+        <button class="bside__close-btn" id="dashboardSidebarClose" type="button" aria-label="Close sidebar"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
       </a>
       <div class="bside__member">
         <span class="bside__avatar">{{ user.username|first|upper|default:"B" }}</span>

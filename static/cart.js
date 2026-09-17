@@ -8,44 +8,30 @@
 
   var STORAGE_KEY = 'drophub_cart_v2';
 
-  var DEFAULT_ITEMS = [
-    {
-      id: 'prod_headphones',
-      name: 'Wireless Noise-Cancelling Headphones',
-      store: 'TechVault Store',
-      price: 89.99,
-      img: '/static/img/headphones.jpg',
-      qty: 1
-    },
-    {
-      id: 'prod_wallet',
-      name: 'Minimalist Leather Wallet',
-      store: 'UrbanEdge Goods',
-      price: 34.99,
-      img: '/static/img/backpack.jpg',
-      qty: 2
-    },
-    {
-      id: 'prod_tracker',
-      name: 'Smart Fitness Tracker Band',
-      store: 'FitLife Pro',
-      price: 54.99,
-      img: '/static/img/chair.jpg',
-      qty: 1
-    }
-  ];
+  /* A new visitor begins with an empty cart. */
+  var DEFAULT_ITEMS = [];
 
   function getCart() {
     try {
       var data = localStorage.getItem(STORAGE_KEY);
       if (!data) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_ITEMS));
-        return DEFAULT_ITEMS.slice();
+        return [];
       }
       var parsed = JSON.parse(data);
-      return Array.isArray(parsed) ? parsed : DEFAULT_ITEMS.slice();
+      if (!Array.isArray(parsed)) return [];
+
+      /* Clear the sample cart that older versions seeded automatically. */
+      var legacyIds = ['prod_headphones', 'prod_wallet', 'prod_tracker'];
+      if (parsed.length && parsed.every(function (item) {
+        return legacyIds.indexOf(item.id) !== -1;
+      })) {
+        localStorage.setItem(STORAGE_KEY, '[]');
+        return [];
+      }
+      return parsed;
     } catch (e) {
-      return DEFAULT_ITEMS.slice();
+      return [];
     }
   }
 

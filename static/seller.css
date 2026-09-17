@@ -2565,3 +2565,30 @@ body.dashboard-body--seller .sside__brandrow { min-height: 44px; }
 body.dashboard-body--seller .sside__logo { width: 44px; height: 44px; overflow: hidden; }
 body.dashboard-body--seller .sside__logo img { width: 27px; height: 27px; object-fit: contain; }
 body.dashboard-body--seller .sside__user { margin-top: 14px; }
+
+
+/* ═══════════════════════════════════════════════════
+   SELLER SIDEBAR — mobile close button in brand row
+   ═══════════════════════════════════════════════════ */
+.sside__close-btn {
+  display: none;            /* hidden on desktop */
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.10);
+  color: rgba(255,255,255,.8);
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: auto;        /* push to opposite side from logo */
+  transition: background .15s, color .15s;
+}
+.sside__close-btn .sic { width: 16px; height: 16px; }
+.sside__close-btn:hover { background: rgba(255,255,255,.20); color: #fff; }
+
+@media (max-width: 800px) {
+  .sside__close-btn { display: grid !important; }
+  /* Remove the auto-margin from the Live chip so close btn takes the far-right spot */
+  .sside__live { margin-left: 0 !important; }
+}

@@ -2243,3 +2243,30 @@ body.dashboard-body--buyer .bside {
     display: none;
   }
 }
+
+
+/* ═══════════════════════════════════════════════════
+   BUYER SIDEBAR — mobile close button in brand row
+   ═══════════════════════════════════════════════════ */
+.bside__close-btn {
+  display: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(185,138,47,.30);
+  background: rgba(185,138,47,.10);
+  color: var(--bgold2, #8a6420);
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: auto;
+  transition: background .15s, color .15s;
+}
+.bside__close-btn .sic { width: 16px; height: 16px; }
+.bside__close-btn:hover { background: rgba(185,138,47,.20); color: var(--bt, #1c2333); }
+
+@media (max-width: 800px) {
+  .bside__close-btn { display: grid !important; }
+  /* Remove auto-margin from pill so close btn gets the far-right */
+  .bside__pill { margin-left: 0 !important; }
+}

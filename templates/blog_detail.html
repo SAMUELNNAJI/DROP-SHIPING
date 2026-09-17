@@ -66,13 +66,13 @@
     <h1 class="bdet-hero__title">{{ post.title }}</h1>
     <p class="bdet-hero__excerpt">{{ post.excerpt }}</p>
     <div class="bdet-hero__meta">
-      {% if post.author_avatar_url %}
-      <img src="{{ post.author_avatar_url }}" alt="{{ post.author_name }}" class="bdet-avatar" />
-      {% endif %}
+      <span class="bdet-avatar-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </span>
       <div>
-        <strong class="bdet-author-name">{{ post.author_name }}</strong>
+        <strong class="bdet-author-name">Admin</strong>
         <span class="bdet-author-role">
-          {% if post.author_role %}{{ post.author_role }} &middot; {% endif %}
+          DropHub Team &middot;
           {{ post.published_display }}{% if post.read_minutes %} &middot; {{ post.read_minutes }} min read{% endif %}
         </span>
       </div>
@@ -114,15 +114,15 @@
     <!-- author card -->
     <div class="bdet-sidebar-card">
       <div class="bdet-sidebar-card__head">
-        {% if post.author_avatar_url %}
-        <img src="{{ post.author_avatar_url }}" alt="{{ post.author_name }}" class="bdet-sidebar-avatar" />
-        {% endif %}
+        <span class="bdet-sidebar-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </span>
         <div>
-          <strong>{{ post.author_name }}</strong>
-          <small>{{ post.author_role }}</small>
+          <strong>Admin</strong>
+          <small>DropHub Team</small>
         </div>
       </div>
-      <p class="bdet-sidebar-card__bio">Expert writer at DropHub covering marketplace strategy, cross-border commerce, and Pi Network payments.</p>
+      <p class="bdet-sidebar-card__bio">Official DropHub content — covering marketplace strategy, cross-border commerce, and Pi Network payments.</p>
     </div>
 
     <!-- related posts -->

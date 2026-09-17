@@ -3066,3 +3066,73 @@ body.ip .hero-wrapper > .hero-stars {
   transition: gap .15s;
 }
 .blog-read-link:hover { gap: 9px; }
+
+/* ── Blog author icon (replaces photo avatar everywhere) ── */
+
+/* Featured spotlight author icon */
+.blog-author-icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  display: grid;
+  place-items: center;
+  color: #fff;
+}
+.blog-author-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Article card small author icon */
+.blog-author-icon-sm {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #eef2ff;
+  border: 1px solid rgba(31, 100, 255, 0.15);
+  display: grid;
+  place-items: center;
+  color: #1f64ff;
+}
+.blog-author-icon-sm svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* Blog detail hero author icon */
+.bdet-avatar-icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  display: grid;
+  place-items: center;
+  color: #fff;
+}
+.bdet-avatar-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Blog detail sidebar author icon */
+.bdet-sidebar-icon {
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #eef4ff;
+  border: 1.5px solid rgba(31, 100, 255, 0.15);
+  display: grid;
+  place-items: center;
+  color: #1f64ff;
+}
+.bdet-sidebar-icon svg {
+  width: 22px;
+  height: 22px;
+}

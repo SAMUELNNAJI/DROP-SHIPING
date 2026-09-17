@@ -238,12 +238,12 @@
         <h3>{{ featured_post.title }}</h3>
         <p>{{ featured_post.excerpt }}</p>
         <div class="blog-featured-author">
-          {% if featured_post.author_avatar_url %}
-          <img src="{{ featured_post.author_avatar_url }}" alt="{{ featured_post.author_name }}" class="blog-author-avatar" />
-          {% endif %}
+          <span class="blog-author-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          </span>
           <div class="blog-author-info">
-            <span class="blog-author-name">{{ featured_post.author_name }}</span>
-            <span class="blog-author-role">{{ featured_post.author_role }} &middot; {{ featured_post.published_display }} &middot; {{ featured_post.read_minutes }} min read</span>
+            <span class="blog-author-name">Admin</span>
+            <span class="blog-author-role">DropHub Team &middot; {{ featured_post.published_display }} &middot; {{ featured_post.read_minutes }} min read</span>
           </div>
         </div>
         <div class="blog-featured-actions">
@@ -308,10 +308,10 @@
               <p>{{ post.excerpt }}</p>
               <div class="blog-card-footer">
                 <div class="blog-card-author-sm">
-                  {% if post.author_avatar_url %}
-                  <img src="{{ post.author_avatar_url }}" alt="{{ post.author_name }}" class="blog-author-avatar-sm" />
-                  {% endif %}
-                  <span class="blog-author-name-sm">{{ post.author_name }}</span>
+                  <span class="blog-author-icon-sm">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                  </span>
+                  <span class="blog-author-name-sm">Admin</span>
                 </div>
                 <a href="/blog/{{ post.slug }}/" class="blog-read-link">
                   Read &rarr;

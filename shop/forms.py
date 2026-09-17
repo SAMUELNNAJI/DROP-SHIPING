@@ -18,6 +18,10 @@ class BlogPostForm(forms.ModelForm):
 
 
 class ProductForm(forms.ModelForm):
+    PRICE_CURRENCIES = (("USD", "USD — US Dollar"), ("NGN", "NGN — Nigerian Naira"), ("PI", "Pi Network"))
+    price_currency = forms.ChoiceField(choices=PRICE_CURRENCIES, initial="USD", required=True,
+                                       widget=forms.Select(attrs={"class": "ff-input", "id": "id_price_currency"}),
+                                       label="Currency")
     class Meta:
         model = Product
         fields = (
@@ -54,6 +58,15 @@ class ProductForm(forms.ModelForm):
     def clean(self):
         cleaned = super().clean()
         price = cleaned.get("price")
+        currency = cleaned.get("price_currency", "USD")
+        # Product.price remains USD everywhere else in the marketplace.
+        # These rates match the existing Product.price_ngn / price_pi helpers.
+        if price is not None and currency == "NGN":
+            price = price / 1500
+            cleaned["price"] = price
+        elif price is not None and currency == "PI":
+            price = price / 20000
+            cleaned["price"] = price
         old = cleaned.get("old_price")
         image = cleaned.get("image")
         image_url = (cleaned.get("image_url") or "").strip()

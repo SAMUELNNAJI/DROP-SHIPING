@@ -90,9 +90,13 @@
         <div class="pform-card__body">
           <div class="ff-grid">
             <div class="ff-field">
-              <label for="{{ form.price.id_for_label }}">{{ form.price.label }} <span class="ff-req">*</span></label>
+              <label for="{{ form.price_currency.id_for_label }}">{{ form.price_currency.label }}</label>
+              {{ form.price_currency }}
+            </div>
+            <div class="ff-field">
+              <label for="{{ form.price.id_for_label }}">Price <span class="ff-req">*</span></label>
               <div class="ff-prefix">
-                <span class="ff-prefix__sym">$</span>
+                <span class="ff-prefix__sym" id="priceCurrencySymbol">$</span>
                 {{ form.price }}
               </div>
               {% if form.price.errors %}<span class="ff-err">{{ form.price.errors.0 }}</span>{% endif %}
@@ -107,6 +111,12 @@
               {% if form.old_price.errors %}<span class="ff-err">{{ form.old_price.errors.0 }}</span>{% endif %}
             </div>
           </div>
+          <div class="pform-currency-preview" id="priceConversionPreview" aria-live="polite">
+            <span>USD <strong id="previewUsd">$0.00</strong></span>
+            <span>NGN <strong id="previewNgn">₦0</strong></span>
+            <span>Pi <strong id="previewPi">π0.00</strong></span>
+          </div>
+          <span class="ff-hint">Choose the currency you want to enter. DropHub saves a USD equivalent and shows buyers all payment amounts.</span>
           <div class="ff-grid">
             <div class="ff-field">
               <label for="{{ form.stock.id_for_label }}">Stock qty <span class="ff-req">*</span></label>
@@ -317,6 +327,9 @@ textarea.ff-input{min-height:110px;resize:vertical;padding:12px 13px}
 .ff-prefix{position:relative}
 .ff-prefix__sym{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-weight:800;font-size:14px;color:#5b6b84;pointer-events:none}
 .ff-prefix .ff-input{padding-left:30px}
+.pform-currency-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:2px}
+.pform-currency-preview span{padding:9px;border-radius:10px;background:#f4f7ff;color:#65728a;font-size:11px;font-weight:700}
+.pform-currency-preview strong{display:block;margin-top:2px;color:#173b94;font-size:13px}
 
 /* dropzone */
 .pform-dropzone{position:relative;border:2px dashed #c4d3f0;border-radius:16px;cursor:pointer;background:rgba(234,240,255,.35);transition:all .2s;overflow:hidden}
@@ -434,5 +447,21 @@ textarea.ff-input{min-height:110px;resize:vertical;padding:12px 13px}
     zone.addEventListener('dragleave', function () { zone.classList.remove('pform-dropzone--over'); });
     zone.addEventListener('drop', function () { zone.classList.remove('pform-dropzone--over'); });
   }
+
+  /* ── Currency-aware product pricing. The server converts the entered
+     amount to the USD value used by the Product model on save. ── */
+  var currency = document.getElementById('id_price_currency');
+  var price = document.getElementById('id_price');
+  var symbol = document.getElementById('priceCurrencySymbol');
+  function updateCurrencyPreview() {
+    if (!currency || !price) return;
+    var amount = Number(price.value) || 0;
+    var usd = currency.value === 'NGN' ? amount / 1500 : currency.value === 'PI' ? amount / 20000 : amount;
+    if (symbol) symbol.textContent = currency.value === 'NGN' ? '₦' : currency.value === 'PI' ? 'π' : '$';
+    document.getElementById('previewUsd').textContent = '$' + usd.toFixed(2);
+    document.getElementById('previewNgn').textContent = '₦' + (usd * 1500).toLocaleString(undefined, {maximumFractionDigits: 0});
+    document.getElementById('previewPi').textContent = 'π' + (usd * 20000).toLocaleString(undefined, {maximumFractionDigits: 2});
+  }
+  if (currency && price) { currency.addEventListener('change', updateCurrencyPreview); price.addEventListener('input', updateCurrencyPreview); updateCurrencyPreview(); }
 })();
 </script>

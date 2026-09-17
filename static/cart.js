@@ -10,6 +10,15 @@
 
   /* A new visitor begins with an empty cart. */
   var DEFAULT_ITEMS = [];
+  var NGN_PER_USD = 1500;
+  var PI_PER_USD = 20000;
+
+  function currencyLines(usd, compact) {
+    var ngn = Math.round(usd * NGN_PER_USD).toLocaleString();
+    var pi = (usd * PI_PER_USD).toLocaleString(undefined, { maximumFractionDigits: 2 });
+    if (compact) return '<small class="cart-currency-lines">₦' + ngn + ' · π' + pi + '</small>';
+    return '<span class="cart-currency-lines">₦' + ngn + '<br>π' + pi + '</span>';
+  }
 
   function getCart() {
     try {
@@ -146,7 +155,7 @@
 
     /* Update Subtotal Text */
     document.querySelectorAll('.cart-subtotal strong').forEach(function (el) {
-      el.textContent = '$' + subtotal.toFixed(2);
+      el.innerHTML = '$' + subtotal.toFixed(2) + currencyLines(subtotal, false);
     });
 
     /* Render Item List inside Cart Dropdown */
@@ -182,7 +191,7 @@
                   '<span>' + item.qty + '</span>' +
                   '<button type="button" class="btn-qty-plus" data-id="' + item.id + '" aria-label="Increase quantity">+</button>' +
                 '</div>' +
-                '<span class="cart-price">$' + itemTotal + '</span>' +
+                '<span class="cart-price">$' + itemTotal + currencyLines(item.price * item.qty, true) + '</span>' +
               '</div>' +
             '</div>' +
             '<button type="button" class="cart-trash btn-cart-remove" data-id="' + item.id + '" aria-label="Remove item">✕</button>' +

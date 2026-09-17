@@ -403,12 +403,12 @@ body { padding-top: 0; }
 .cart-price { font-size: 14px; font-weight: 800; color: #1F64FF; }
 .cart-trash { border: none; background: none; color: #A5B1C2; cursor: pointer; align-self: flex-start; padding: 2px; }
 .cart-trash:hover { color: #E11D48; }
-.cart-foot { flex-shrink: 0; padding: 12px 16px 16px; background: rgba(255,255,255,.75); border-top: 1px solid rgba(15,28,77,.07); }
-.cart-subtotal { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-.cart-subtotal span { color: #66788F; font-size: 14px; }
-.cart-subtotal strong { font-size: 20px; font-weight: 800; color: #0A172E; }
-.cart-escrow { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #1F64FF; border: 1px solid #D8E5FF; border-radius: 12px; padding: 9px 12px; margin-bottom: 12px; background: #F6FAFF; }
-.cart-actions { display: flex; gap: 10px; }
+.cart-foot { flex-shrink:0; padding:18px 16px 16px; background:#fff; border-top:1px solid rgba(15,28,77,.07); }
+.cart-subtotal { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.cart-subtotal span { color:#64748b; font-size:16px; font-weight:500; }
+.cart-subtotal strong { font-size:28px; line-height:1; font-weight:800; letter-spacing:-.04em; color:#0A172E; }
+.cart-escrow { display:block; margin:0 0 14px; padding:13px 14px; font-size:13px; font-weight:500; line-height:1.45; color:#2563d9; border:1.5px solid #d7e4fb; border-radius:16px; background:#f6f9ff; }
+.cart-actions { display:flex; gap:10px; }
 .cart-btn-ghost,
 .cart-btn-checkout {
   flex: 1;
@@ -417,21 +417,25 @@ body { padding-top: 0; }
   justify-content: center;
   gap: 8px;
   white-space: nowrap;
-  padding: 12px 10px;
-  border-radius: 12px;
+  padding: 14px 12px;
+  border-radius: 16px;
   font-size: 14px;
 }
-.cart-btn-ghost { border: 1.5px solid #E2E8F5; color: #5B6B82; font-weight: 600; transition: border-color .2s, color .2s, background .2s; }
+.cart-btn-ghost { border:1.5px solid #dfe7f4; color:#5d6d85; font-weight:700; transition:border-color .2s,color .2s,background .2s; }
 .cart-btn-ghost:hover { border-color: #C4D3EF; color: #0A172E; background: #F6F9FF; }
-.cart-btn-checkout { background: #1F64FF; color: #fff; font-weight: 700; transition: background .2s; }
+.cart-btn-checkout { background:#2563eb; color:#fff; font-weight:800; box-shadow:0 8px 18px rgba(37,99,235,.20); transition:background .2s,transform .2s; }
 .cart-btn-checkout:hover { background: #184FE0; }
 .cart-btn-ghost svg, .cart-btn-checkout svg { flex-shrink: 0; }
 @media (max-width: 600px) {
   .cart-dropdown { position: fixed; top: var(--header-h); left: 12px; right: 12px; width: auto; }
   /* stack the two actions full-width so they never squeeze on phones */
   .cart-actions { flex-direction: column; }
+  .cart-foot { padding:18px 16px 16px; }
+  .cart-subtotal span { font-size:17px; }
+  .cart-subtotal strong { font-size:30px; }
+  .cart-escrow { padding:14px 16px; font-size:14px; }
   .cart-btn-ghost,
-  .cart-btn-checkout { padding: 13px 10px; }
+  .cart-btn-checkout { flex:none; min-height:54px; width:100%; padding:14px 12px; font-size:16px; }
 }
 
 /* "Start Selling" bright royal-blue pill */

@@ -9,9 +9,22 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from .forms import SignUpForm, SignInForm
 
 
+def _safe_next_url(request):
+    """Return a same-site post-auth destination, or an empty string."""
+    next_url = request.POST.get('next') or request.GET.get('next') or ''
+    if next_url and url_has_allowed_host_and_scheme(
+        next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+    ):
+        return next_url
+    return ''
+
+
 def signup_view(request):
     """Register a new user as buyer or seller."""
+    next_url = _safe_next_url(request)
     if request.user.is_authenticated:
+        if next_url:
+            return redirect(next_url)
         return redirect('dashboard')
 
     if request.method == 'POST':
@@ -20,6 +33,8 @@ def signup_view(request):
             user = form.save()
             login(request, user)
             messages.success(request, f"Welcome to DropHub, {user.username}!")
+            if next_url:
+                return redirect(next_url)
             # Redirect to the appropriate dashboard based on role
             target = 'dashboard_seller' if user.role == 'seller' else 'dashboard_buyer'
             return redirect(target)
@@ -29,6 +44,7 @@ def signup_view(request):
         'form': form,
         'page_title': 'Create Account',
         'auth_mode': 'signup',
+        'next': next_url,
     })
 
 
@@ -37,7 +53,7 @@ def signin_view(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
 
-    next_url = request.POST.get('next') or request.GET.get('next') or ''
+    next_url = _safe_next_url(request)
     if request.method == 'POST':
         form = SignInForm(request, data=request.POST)
         if form.is_valid():

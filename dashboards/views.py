@@ -1442,12 +1442,12 @@ def checkout_view(request):
     return render(request, "checkout.html", ctx)
 
 
+@login_required
 def checkout_payment(request):
-    """Payment selection — works for both authenticated buyers and guests.
+    """Payment selection for authenticated buyers only.
 
-    Authenticated buyers: cart comes from DB (CartItem).
-    Guests: cart is read from localStorage by cart.js — the page renders
-    with empty server-side cart_items and JS fills in the order summary.
+    ``login_required`` redirects guests to the sign-in page with this URL in
+    its ``next`` parameter, so they return here immediately after signing in.
     """
     # Redirect sellers / admins who land here by mistake
     if request.user.is_authenticated and not request.user.is_superuser:
@@ -1458,7 +1458,6 @@ def checkout_payment(request):
     ctx = {"page_title": "Choose payment", "slug": "checkout-payment"}
     ctx.update(cart_context(request))
 
-    # For logged-in buyers with an empty DB cart let JS handle the guest flow
     return render(request, "checkout-payment.html", ctx)
 
 

@@ -1,0 +1,277 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Orders">
+
+  <!-- ── pipeline KPI bar ── -->
+  <div class="pipex" style="margin-bottom:16px">
+    <div class="pipex__step">
+      <span>Pending</span>
+      <b>{{ order_counts.pending|default:"0" }}</b>
+      <em class="emB">Awaiting ship</em>
+    </div>
+    <div class="pipex__step">
+      <span>In Transit</span>
+      <b>{{ order_counts.in_transit|default:"0" }}</b>
+      <em class="emV">Tracked</em>
+    </div>
+    <div class="pipex__step">
+      <span>Delivered</span>
+      <b>{{ order_counts.delivered|default:"0" }}</b>
+      <em class="emA">Awaiting confirm</em>
+    </div>
+    <div class="pipex__step">
+      <span>Confirmed</span>
+      <b>{{ order_counts.confirmed|default:"0" }}</b>
+      <em class="emG">Payout pending</em>
+    </div>
+  </div>
+
+  <!-- ── toolbar ── -->
+  <div class="scard" style="margin-bottom:14px">
+    <div class="scard__body">
+      <form class="toolbarx" method="get" action="">
+        <!-- status tabs -->
+        <div class="segx" id="orderTabs">
+          <button type="submit" name="status" value="all"    class="{% if status_filter == 'all' %}on{% endif %}">All</button>
+          <button type="submit" name="status" value="pending"    class="{% if status_filter == 'pending' %}on{% endif %}">Pending</button>
+          <button type="submit" name="status" value="in_transit" class="{% if status_filter == 'in_transit' %}on{% endif %}">In Transit</button>
+          <button type="submit" name="status" value="delivered"  class="{% if status_filter == 'delivered' %}on{% endif %}">Delivered</button>
+          <button type="submit" name="status" value="confirmed"  class="{% if status_filter == 'confirmed' %}on{% endif %}">Confirmed</button>
+        </div>
+        <label class="searchboxx">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input name="q" value="{{ search_q }}" placeholder="Search order, buyer, product…" />
+        </label>
+        <button class="seller-top-btn seller-top-btn--ghost" type="submit">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          Filter
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── order table ── -->
+  <div class="scard">
+    <div class="scard__head">
+      <div>
+        <h3>Order queue</h3>
+        <p>
+          {% if orders %}{{ page_obj.paginator.count }} order{{ page_obj.paginator.count|pluralize }}{% else %}No orders yet{% endif %}
+          {% if status_filter != 'all' %}&nbsp;· filtered by <strong>{{ status_filter|title }}</strong>{% endif %}
+        </p>
+      </div>
+      {% if order_counts.pending %}
+      <div class="spacer">
+        <span class="chipx chipx--warn">{{ order_counts.pending }} pending ship</span>
+      </div>
+      {% endif %}
+    </div>
+
+    {% if orders %}
+    <div class="tablex-wrap">
+      <table class="stable">
+        <thead>
+          <tr>
+            <th>Order</th>
+            <th>Buyer</th>
+            <th>Product</th>
+            <th>Total</th>
+            <th>Payment</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+          <tr id="order-row-{{ order.pk }}">
+            <td>
+              <b style="color:var(--sblue);">#{{ order.order_number }}</b><br>
+              <small style="color:#9aa7bd">{{ order.created_at|date:"M j, Y · H:i" }}</small>
+            </td>
+            <td>
+              <b>{{ order.buyer.get_full_name|default:order.buyer.username }}</b><br>
+              <small style="color:#6b7a90">{{ order.buyer.email }}</small>
+            </td>
+            <td>
+              <b>{{ order.product_name|truncatechars:28 }}</b><br>
+              {% if order.tracking_number %}<small style="color:#6b7a90">Track: {{ order.tracking_number }}</small>{% endif %}
+            </td>
+            <td><b>${{ order.total_price }}</b></td>
+            <td><span class="chipx">{{ order.get_payment_method_display }}</span></td>
+            <td>
+              <span class="statusx {{ order.status_css }}" id="status-badge-{{ order.pk }}">
+                {{ order.status_label }}
+              </span>
+              {% if order.status == 'delivered' %}
+              <br><small style="color:#9a6200;font-size:11px">
+                Buyer has {{ order.confirm_days_left }} day{{ order.confirm_days_left|pluralize }} to confirm
+              </small>
+              {% endif %}
+            </td>
+            <td>
+              <div style="display:flex;gap:7px;flex-wrap:wrap;">
+                {% if order.status == 'pending' %}
+                  <!-- Mark In Transit -->
+                  <button class="mbtn mbtn--p order-action-btn"
+                          data-action="{% url 'order_mark_in_transit' order.pk %}"
+                          data-label="Mark In Transit"
+                          data-pk="{{ order.pk }}"
+                          data-confirm="Mark order #{{ order.order_number }} as shipped / in transit?">
+                    <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v9a2 2 0 0 1-2 2h-1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+                    Ship
+                  </button>
+                {% elif order.status == 'in_transit' %}
+                  <!-- Mark Delivered -->
+                  <button class="mbtn mbtn--p order-action-btn"
+                          data-action="{% url 'order_mark_delivered' order.pk %}"
+                          data-label="Mark Delivered"
+                          data-pk="{{ order.pk }}"
+                          data-confirm="Mark order #{{ order.order_number }} as delivered? The buyer will be notified to confirm receipt.">
+                    <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.6 12.4 2.4 2.4 4.5-4.9"/></svg>
+                    Delivered
+                  </button>
+                {% elif order.status == 'delivered' %}
+                  <span class="chipx chipx--warn">Awaiting buyer</span>
+                {% elif order.status == 'confirmed' %}
+                  <span class="chipx" style="background:var(--sgreenSoft);color:#0a7a57;border-color:#bfe9d8">
+                    {% if order.payout_released %}Payout sent{% else %}Confirmed — payout pending{% endif %}
+                  </span>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="tablex-foot">
+      <div class="pager-info">Showing {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ page_obj.paginator.count }}</div>
+      <div class="pagerx">
+        {% if page_obj.has_previous %}
+        <a class="pagerx-btn" href="?page={{ page_obj.previous_page_number }}&status={{ status_filter }}&q={{ search_q }}">&laquo;</a>
+        {% else %}<button disabled>&laquo;</button>{% endif %}
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+            <button class="on">{{ num }}</button>
+          {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+            <a class="pagerx-btn" href="?page={{ num }}&status={{ status_filter }}&q={{ search_q }}">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <a class="pagerx-btn" href="?page={{ page_obj.next_page_number }}&status={{ status_filter }}&q={{ search_q }}">&raquo;</a>
+        {% else %}<button disabled>&raquo;</button>{% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="emptyx">
+      <div class="emptyx__art"><svg class="sic" style="width:32px;height:32px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="m3 8 9-5 9 5v8l-9 5-9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg></div>
+      <h4>No orders yet</h4>
+      <p>Orders will appear here once buyers purchase your products.</p>
+      <a class="seller-top-btn" href="/shop/">View storefront</a>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<!-- ── Tracking number modal ── -->
+<div class="smodal" id="trackingModal" role="dialog" aria-modal="true">
+  <div class="smodal__box" style="max-width:440px">
+    <div class="smodal__head">
+      <span class="sside__setupic" style="background:#eaf0ff;border-color:#d4e2ff;color:#2456e6">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v9a2 2 0 0 1-2 2h-1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+      </span>
+      <h3>Ship Order</h3>
+      <span style="margin-left:auto"></span>
+      <button class="mbtn" id="trackingModalClose">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="smodal__body">
+      <p style="color:var(--sm);font-size:13px;margin:0 0 14px">Optionally add a tracking number so the buyer can follow their delivery.</p>
+      <div class="ff">
+        <label>Tracking number (optional)</label>
+        <input id="trackingInput" class="ff-input" placeholder="e.g. 1Z999AA10123456784" />
+      </div>
+    </div>
+    <div class="smodal__foot">
+      <button class="btngs" id="trackingModalClose2">Cancel</button>
+      <button class="btnps" id="trackingConfirmBtn">Confirm &amp; Mark Shipped</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var CSRF = (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || '';
+  var pendingAction = null;
+  var modal = document.getElementById('trackingModal');
+  var trackingInput = document.getElementById('trackingInput');
+
+  function closeModal() {
+    modal.classList.remove('open');
+    trackingInput.value = '';
+    pendingAction = null;
+  }
+
+  document.getElementById('trackingModalClose').addEventListener('click', closeModal);
+  document.getElementById('trackingModalClose2').addEventListener('click', closeModal);
+
+  document.getElementById('trackingConfirmBtn').addEventListener('click', function () {
+    if (!pendingAction) return;
+    doAction(pendingAction.url, pendingAction.pk, trackingInput.value.trim());
+    closeModal();
+  });
+
+  function doAction(url, pk, tracking) {
+    var body = new URLSearchParams({ csrfmiddlewaretoken: CSRF });
+    if (tracking) body.append('tracking_number', tracking);
+
+    fetch(url, {
+      method: 'POST',
+      headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body.toString(),
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (data.ok) {
+        var badge = document.getElementById('status-badge-' + pk);
+        var row   = document.getElementById('order-row-' + pk);
+        if (badge) {
+          badge.className = 'statusx ' + data.css;
+          badge.textContent = data.label;
+        }
+        if (row) {
+          // Reload the action cell via full page refresh for simplicity
+          window.location.reload();
+        }
+      }
+    })
+    .catch(function () { window.location.reload(); });
+  }
+
+  // Wire up all action buttons
+  document.querySelectorAll('.order-action-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var url = btn.dataset.action;
+      var pk  = btn.dataset.pk;
+
+      // "Ship" button → show tracking modal first
+      if (url.indexOf('/transit/') !== -1) {
+        pendingAction = { url: url, pk: pk };
+        modal.classList.add('open');
+        trackingInput.focus();
+        return;
+      }
+
+      // "Delivered" button → confirm dialog then POST
+      if (!confirm(btn.dataset.confirm || 'Are you sure?')) return;
+      doAction(url, pk, '');
+    });
+  });
+})();
+</script>

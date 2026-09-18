@@ -1,0 +1,297 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Seller Overview">
+
+  <!-- ── hero ── -->
+  <div class="seller-hero">
+    <div class="seller-hero-main">
+      <span class="seller-hero-eyebrow"><span class="live-dot"></span>Live · Seller Center</span>
+      <h2>
+        {% if rev_pct > 0 %}Your store is gaining momentum,{% elif rev_pct < 0 %}Stay on track,{% else %}Welcome back,{% endif %}
+        {{ user.username|default:"Seller" }}.
+      </h2>
+      <p>
+        {% if total_orders == 0 %}
+          No orders yet — your products are live and ready for buyers.
+        {% elif pending_ship %}
+          You have <strong>{{ pending_ship }} order{{ pending_ship|pluralize }}</strong> waiting to be shipped today.
+        {% else %}
+          All orders are on track. Keep it up!
+        {% endif %}
+      </p>
+      <div class="seller-hero-actions">
+        <a class="seller-btn-light" href="/dashboards/seller/products/add/">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Add product
+        </a>
+        <a class="seller-btn-outline" href="/dashboards/seller/orders/" data-dashboard-link>
+          Review {{ order_counts.pending|default:"0" }} open order{{ order_counts.pending|default:"0"|pluralize }} →
+        </a>
+      </div>
+      <div class="seller-hero-stats">
+        <div>
+          <strong>${{ available_balance|floatformat:2 }}</strong>
+          <span>Available balance</span>
+        </div>
+        <div>
+          <strong>{{ order_counts.in_transit|default:"0" }}</strong>
+          <span>In transit</span>
+        </div>
+        <div>
+          <strong>{{ user.products.count }}</strong>
+          <span>Live products</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- setup checklist -->
+    <div class="seller-hero-side">
+      <h4>Setup checklist</h4>
+      <p>Finish these to unlock instant payouts.</p>
+      <div class="checklist">
+        <div class="checklist__item">
+          <span class="check-dot done">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </span>
+          <div>Store profile complete<small>Logged in and active</small></div>
+        </div>
+        <div class="checklist__item">
+          {% if user.products.count > 0 %}
+          <span class="check-dot done">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </span>
+          {% else %}
+          <span class="check-dot todo">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </span>
+          {% endif %}
+          <div>First product live<small>Catalog is visible to buyers</small></div>
+          <a class="go" href="/dashboards/seller/products/" data-dashboard-link>{% if user.products.count > 0 %}View{% else %}Add{% endif %}</a>
+        </div>
+        <div class="checklist__item">
+          {% if verification and verification.status == 'verified' %}
+          <span class="check-dot done">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </span>
+          {% else %}
+          <span class="check-dot todo">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </span>
+          {% endif %}
+          <div>
+            Verify ID + payout account
+            <small>
+              {% if verification %}{{ verification.get_status_display }}{% else %}Not started{% endif %}
+            </small>
+          </div>
+          <a class="go" href="/dashboards/seller/verification/">{% if verification and verification.status == 'verified' %}Done{% else %}Finish{% endif %}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── KPI cards ── -->
+  <div class="kpi-grid">
+    <div class="kpi" style="--ka:#2456e6;--ks:#eaf0ff">
+      <div class="kpi__top">
+        <span class="kpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg></span>
+        <span class="kpi__label">Total revenue</span>
+        {% if rev_pct > 0 %}<span class="kpi__delta">▲ {{ rev_pct }}%</span>
+        {% elif rev_pct < 0 %}<span class="kpi__delta down">▼ {{ rev_pct|cut:"-" }}%</span>
+        {% endif %}
+      </div>
+      <strong>${{ total_revenue|floatformat:2 }}</strong>
+      <p class="kpi__sub">From confirmed orders</p>
+    </div>
+
+    <div class="kpi" style="--ka:#0ca678;--ks:#e2f8f0">
+      <div class="kpi__top">
+        <span class="kpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></span>
+        <span class="kpi__label">Total orders</span>
+      </div>
+      <strong>{{ total_orders }}</strong>
+      <p class="kpi__sub">{{ order_counts.pending|default:"0" }} pending · {{ order_counts.in_transit|default:"0" }} in transit</p>
+    </div>
+
+    <div class="kpi" style="--ka:#7048e8;--ks:#efe9ff">
+      <div class="kpi__top">
+        <span class="kpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M17 6.5c0-1.6-2.2-2.5-5-2.5S7 5.1 7 6.9c0 4.4 10 2 10 6.6 0 1.8-2.2 2.9-5 2.9s-5-1-5-2.9"/></svg></span>
+        <span class="kpi__label">Available balance</span>
+      </div>
+      <strong>${{ available_balance|floatformat:2 }}</strong>
+      <p class="kpi__sub">Ready to withdraw</p>
+    </div>
+
+    <div class="kpi" style="--ka:#e8930c;--ks:#fff4dd">
+      <div class="kpi__top">
+        <span class="kpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/><path d="M3 3h2l2.5 12h10L21 7H7"/></svg></span>
+        <span class="kpi__label">Avg order value</span>
+      </div>
+      <strong>${{ aov|floatformat:2 }}</strong>
+      <p class="kpi__sub">In escrow: ${{ in_escrow|floatformat:2 }}</p>
+    </div>
+  </div>
+
+  <!-- ── two-col: pipeline + needs attention ── -->
+  <div class="sgrid2">
+
+    <!-- fulfillment pipeline -->
+    <div class="scard">
+      <div class="scard__head">
+        <div>
+          <h3>Fulfillment pipeline</h3>
+          <p>Where every order stands right now</p>
+        </div>
+        <div class="spacer">
+          <a class="scard__link" href="/dashboards/seller/orders/" data-dashboard-link>Open orders →</a>
+        </div>
+      </div>
+      <div class="scard__body">
+        <div class="pipex">
+          <div class="pipex__step">
+            <span>Pending</span>
+            <b>{{ order_counts.pending|default:"0" }}</b>
+            <em class="emB">Awaiting ship</em>
+          </div>
+          <div class="pipex__step">
+            <span>In Transit</span>
+            <b>{{ order_counts.in_transit|default:"0" }}</b>
+            <em class="emV">Tracked</em>
+          </div>
+          <div class="pipex__step">
+            <span>Delivered</span>
+            <b>{{ order_counts.delivered|default:"0" }}</b>
+            <em class="emA">Awaiting confirm</em>
+          </div>
+          <div class="pipex__step">
+            <span>Confirmed</span>
+            <b>{{ order_counts.confirmed|default:"0" }}</b>
+            <em class="emG">Payout ready</em>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- needs attention -->
+    <div class="scard">
+      <div class="scard__head">
+        <div>
+          <h3>Needs attention</h3>
+          <p>Action items for your store</p>
+        </div>
+        {% if overview_tasks %}
+        <div class="spacer"><span class="chipx chipx--warn">{{ overview_tasks|length }} open</span></div>
+        {% endif %}
+      </div>
+      {% if overview_tasks %}
+      <div class="taskx-list">
+        {% for task in overview_tasks %}
+        <div class="taskx">
+          <span class="taskx__ic" style="background:{% if task.badge == 'urgent' %}#eaf0ff{% elif task.badge == 'warn' %}#ffecec{% else %}#e2f8f0{% endif %}">
+            {% if task.icon == 'ship' %}
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v9a2 2 0 0 1-2 2h-1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+            {% elif task.icon == 'warn' %}
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+            {% else %}
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M17 6.5c0-1.6-2.2-2.5-5-2.5S7 5.1 7 6.9c0 4.4 10 2 10 6.6 0 1.8-2.2 2.9-5 2.9s-5-1-5-2.9"/></svg>
+            {% endif %}
+          </span>
+          <div>
+            <b>{{ task.label }}</b>
+            <p>{{ task.sub }}</p>
+          </div>
+          {% if task.icon == 'ship' %}
+          <time><a href="/dashboards/seller/orders/" data-dashboard-link style="color:var(--sblue);font-weight:800;font-size:12px">View →</a></time>
+          {% elif task.icon == 'warn' %}
+          <time><a href="/dashboards/seller/products/" data-dashboard-link style="color:var(--srose);font-weight:800;font-size:12px">Fix →</a></time>
+          {% else %}
+          <time><a href="/dashboards/seller/payouts/" data-dashboard-link style="color:var(--sgreen);font-weight:800;font-size:12px">Withdraw</a></time>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="emptyx" style="padding:24px">
+        <div class="emptyx__art" style="color:#0ca678"><svg class="sic" style="width:30px;height:30px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg></div>
+        <h4>All caught up!</h4>
+        <p>No action needed right now.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ── two-col: top products + recent orders ── -->
+  <div class="sgrid2b">
+
+    <!-- top products -->
+    <div class="scard">
+      <div class="scard__head">
+        <div><h3>Top products</h3><p>By units sold</p></div>
+        <div class="spacer"><a class="scard__link" href="/dashboards/seller/products/" data-dashboard-link>Manage →</a></div>
+      </div>
+      <div class="scard__body">
+        {% if top_products %}
+          {% for product in top_products %}
+          <div class="toppx">
+            <span class="toppx__rank">{{ forloop.counter }}</span>
+            <div class="toppx__meta">
+              <strong>{{ product.name|truncatechars:30 }}</strong>
+              <span>{{ product.sold }} sold · {{ product.stars }} {{ product.rating|floatformat:1 }}</span>
+            </div>
+            <b>${{ product.price }}</b>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="emptyx" style="padding:20px 0">
+            <div class="emptyx__art"><svg class="sic" style="width:28px;height:28px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="m3 8 9-5 9 5v8l-9 5-9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg></div>
+            <h4>No products yet</h4>
+            <p>Add your first product to start selling.</p>
+            <a class="seller-top-btn" href="/dashboards/seller/products/add/">Add product</a>
+          </div>
+        {% endif %}
+
+        {% if low_stock %}
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--sbd2)">
+          <p style="font-size:12px;font-weight:800;color:var(--srose);margin:0 0 8px;display:flex;gap:5px;align-items:center"><svg class="sic" style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3 2.8 20h18.4z"/><path d="M12 9v4M12 17h.01"/></svg>Low stock</p>
+          {% for p in low_stock %}
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;font-size:13px">
+            <span>{{ p.name|truncatechars:26 }}</span>
+            <span class="chipx chipx--warn">{{ p.stock }} left</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- recent orders -->
+    <div class="scard">
+      <div class="scard__head">
+        <div><h3>Recent orders</h3><p>Latest buyer activity</p></div>
+        <div class="spacer"><a class="scard__link" href="/dashboards/seller/orders/" data-dashboard-link>View all →</a></div>
+      </div>
+      {% if recent_orders %}
+      <div class="taskx-list">
+        {% for order in recent_orders %}
+        <div class="taskx">
+          <span class="taskx__ic" style="background:{% if order.status == 'confirmed' %}#e2f8f0{% elif order.status == 'in_transit' %}#eaf0ff{% elif order.status == 'delivered' %}#fff4dd{% else %}#f7f9fd{% endif %}">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>
+          </span>
+          <div>
+            <b>#{{ order.order_number }} · {{ order.buyer.username }} — ${{ order.total_price }}</b>
+            <p>{{ order.product_name|truncatechars:32 }} · <span class="statusx {{ order.status_css }}" style="font-size:11px;padding:2px 7px">{{ order.status_label }}</span></p>
+          </div>
+          <time style="font-size:11.5px;color:var(--sf);white-space:nowrap">{{ order.created_at|timesince }} ago</time>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="emptyx" style="padding:24px">
+        <div class="emptyx__art" style="color:#2456e6"><svg class="sic" style="width:30px;height:30px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.3"/><circle cx="18" cy="20" r="1.3"/><path d="M2.5 4h2l2.3 11h10.5L20 7H6"/></svg></div>
+        <h4>No orders yet</h4>
+        <p>When buyers purchase your products, they appear here.</p>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>

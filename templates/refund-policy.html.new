@@ -1,0 +1,521 @@
+{% extends "base.html" %}
+
+{% block page_title %}Refund Policy - DropHub | Money Back, Without the Drama{% endblock %}
+
+{% block head_extra %}
+  <meta name="description" content="DropHub's 4-step escrow refund policy. Learn how buyers are 100% protected on Pi Network, PayPal, and Naira orders." />
+  <meta property="og:title" content="Refund Policy - DropHub Marketplace" />
+  <meta property="og:description" content="Simple, transparent refund policy with instant Pi payouts and 24-hour dispute review." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/static/Logo.png" />
+  <style>
+    /* Mobile: tighten all refund-policy sections so cards fill full width */
+    @media (max-width: 640px) {
+      /* outer section side padding reduced */
+      .rp-section-wrap {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+      }
+      /* inner max-width wrapper gets zero extra padding so cards reach the edges */
+      .rp-section-wrap > div {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      /* step cards */
+      .rp-step-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+      }
+      /* stat ribbon cards */
+      .rp-stat-card-inline {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+      }
+      /* policy breakdown cards */
+      .rp-policy-card-inline {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+      }
+      /* checker container inner card */
+      .rp-checker-container {
+        padding: 24px 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        border-left: none !important;
+        border-right: none !important;
+      }
+      /* how-it-works grid and policy grid go single column */
+      .rp-section-wrap > div > div[style*="grid-template-columns"],
+      .rp-section-wrap > div > div > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+      }
+      /* FAQ list */
+      .rp-faq-list { padding: 0 !important; }
+      .rp-faq-item { width: 100% !important; max-width: 100% !important; box-sizing: border-box; }
+      /* speed grid */
+      .rp-speed-grid { grid-template-columns: 1fr !important; }
+      .rp-speed-card { width: 100% !important; max-width: 100% !important; }
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+
+<!-- HERO -->
+  <!-- ══════ HERO ══════ -->
+  <section class="ip-hero" style="padding-top:130px;padding-bottom:100px;">
+    <div style="position:relative;z-index:2;max-width:820px;margin:0 auto;text-align:center;">
+
+      <span class="ip-eyebrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11.2 14.2 15 10"/></svg>
+        100% Escrow-Protected · Every Single Order
+      </span>
+
+      <h1 class="ip-title" style="margin-top:22px;">
+        Money back,<br><em>without the drama.</em>
+      </h1>
+
+      <p class="ip-sub">
+        Every order is held in escrow. If it arrives broken, different, or never shows up —
+        a refund is a few clicks away, not a legal saga.
+      </p>
+
+      <!-- Trust badges -->
+      <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:28px;">
+        <span style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;background:rgba(31,100,255,.08);border:1px solid rgba(31,100,255,.15);color:#1F64FF;font-size:13px;font-weight:600;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Refunds in 3 Days
+        </span>
+        <span style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.15);color:#7C3AED;font-size:13px;font-weight:600;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          Pi, PayPal &amp; Naira
+        </span>
+        <span style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.15);color:#059669;font-size:13px;font-weight:600;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          24/7 Human Desk
+        </span>
+        <span style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;background:rgba(234,88,12,.08);border:1px solid rgba(234,88,12,.15);color:#EA580C;font-size:13px;font-weight:600;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          2% Dispute Rate
+        </span>
+      </div>
+
+      <div class="ip-hero-cta" style="margin-top:32px;">
+        <a href="#how-it-works" class="btn-primary">See How It Works</a>
+        <a href="#eligibility" class="btn-ghost" style="padding:15px 28px;font-size:15.5px;background:rgba(31,100,255,.08);border:1.5px solid rgba(31,100,255,.25);color:#1F64FF;border-radius:50px;display:inline-flex;align-items:center;gap:8px;font-weight:600;transition:all .2s ease;">Check Eligibility</a>
+      </div>
+    </div>
+  </section>
+
+<!-- ══════════════════════════════════════════════
+     SPEED STATS RIBBON
+══════════════════════════════════════════════ -->
+<section class="rp-section-wrap" style="padding:0 24px;transform:translateY(-36px);">
+  <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
+
+    <div class="rp-stat-card-inline" style="background:#fff;border-radius:20px;padding:28px 24px;text-align:center;border:1px solid rgba(15,23,42,.07);box-shadow:0 12px 32px rgba(15,23,42,.06);">
+      <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#eff6ff,#dbeafe);display:grid;place-items:center;margin:0 auto 14px;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div style="font-size:28px;font-weight:900;color:#0f172a;letter-spacing:-.02em;">3 Days</div>
+      <div style="font-size:13px;color:#64748b;margin-top:4px;font-weight:500;">Average refund speed</div>
+    </div>
+
+    <div class="rp-stat-card-inline" style="background:#fff;border-radius:20px;padding:28px 24px;text-align:center;border:1px solid rgba(15,23,42,.07);box-shadow:0 12px 32px rgba(15,23,42,.06);">
+      <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);display:grid;place-items:center;margin:0 auto 14px;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11.2 14.2 15 10"/></svg>
+      </div>
+      <div style="font-size:28px;font-weight:900;color:#0f172a;letter-spacing:-.02em;">100%</div>
+      <div style="font-size:13px;color:#64748b;margin-top:4px;font-weight:500;">Orders under escrow</div>
+    </div>
+
+    <div class="rp-stat-card-inline" style="background:#fff;border-radius:20px;padding:28px 24px;text-align:center;border:1px solid rgba(15,23,42,.07);box-shadow:0 12px 32px rgba(15,23,42,.06);">
+      <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#fdf4ff,#fae8ff);display:grid;place-items:center;margin:0 auto 14px;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <div style="font-size:28px;font-weight:900;color:#0f172a;letter-spacing:-.02em;">2%</div>
+      <div style="font-size:13px;color:#64748b;margin-top:4px;font-weight:500;">Low dispute rate</div>
+    </div>
+
+    <div class="rp-stat-card-inline" style="background:#fff;border-radius:20px;padding:28px 24px;text-align:center;border:1px solid rgba(15,23,42,.07);box-shadow:0 12px 32px rgba(15,23,42,.06);">
+      <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#fff7ed,#fed7aa);display:grid;place-items:center;margin:0 auto 14px;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </div>
+      <div style="font-size:28px;font-weight:900;color:#0f172a;letter-spacing:-.02em;">24/7</div>
+      <div style="font-size:13px;color:#64748b;margin-top:4px;font-weight:500;">Human resolution desk</div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     ELIGIBILITY CHECKER
+══════════════════════════════════════════════ -->
+<section id="eligibility" class="rp-section-wrap" style="padding:20px 24px 80px;">
+  <div style="max-width:960px;margin:0 auto;">
+
+    <div style="text-align:center;margin-bottom:40px;">
+      <span class="ip-sec-eyebrow">Instant Estimator</span>
+      <h2 class="ip-sec-title" style="margin-top:12px;">Check Your Refund Eligibility</h2>
+      <p class="ip-sec-sub">Pick your scenario and see the outcome instantly.</p>
+    </div>
+
+    <div style="background:#fff;border-radius:28px;padding:40px;border:1px solid rgba(15,23,42,.08);box-shadow:0 20px 50px rgba(15,23,42,.05);">
+      <div class="rp-checker-grid" id="checkerOptions">
+
+        <div class="rp-checker-opt active" data-res="damaged">
+          <div class="rp-opt-icon" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          </div>
+          <span>Item Damaged or Defective</span>
+        </div>
+
+        <div class="rp-checker-opt" data-res="delayed">
+          <div class="rp-opt-icon" style="background:linear-gradient(135deg,#fdf4ff,#fae8ff);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9333EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <span>Delayed Past 7 Days</span>
+        </div>
+
+        <div class="rp-checker-opt" data-res="different">
+          <div class="rp-opt-icon" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </div>
+          <span>Not as Described</span>
+        </div>
+
+        <div class="rp-checker-opt" data-res="mind">
+          <div class="rp-opt-icon" style="background:linear-gradient(135deg,#fff7ed,#fed7aa);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EA580C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <span>Changed Mind (&gt;14 Days)</span>
+        </div>
+
+        <div class="rp-checker-opt" data-res="digital">
+          <div class="rp-opt-icon" style="background:linear-gradient(135deg,#fef2f2,#fee2e2);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <span>Digital Product Delivered</span>
+        </div>
+
+      </div>
+
+      <div class="rp-checker-result" id="checkerResult" style="margin-top:28px;">
+        <div class="rp-checker-badge" id="resBadge" style="font-size:22px;width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#eff6ff,#dbeafe);display:grid;place-items:center;flex-shrink:0;">✅</div>
+        <div class="rp-checker-info">
+          <h5 id="resTitle">100% Full Refund Guarantee</h5>
+          <p id="resDesc">If your item arrives broken, cracked, or defective, upload a 5-second video or photo in your dashboard. Escrow funds freeze instantly and a full refund is dispatched within 24 hours.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     HOW IT WORKS — 4-STEP PROCESS
+══════════════════════════════════════════════ -->
+<section id="how-it-works" class="rp-section-wrap" style="padding:80px 24px;background:linear-gradient(180deg,#f8fafc 0%,#fff 100%);">
+  <div style="max-width:1100px;margin:0 auto;">
+
+    <div style="text-align:center;margin-bottom:52px;">
+      <span class="ip-sec-eyebrow">The Refund Journey</span>
+      <h2 class="ip-sec-title" style="margin-top:12px;">How your money comes home</h2>
+      <p class="ip-sec-sub">Four simple steps from problem to paid.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:24px;">
+
+      <div class="rp-step-card">
+        <div class="rp-step-num">1</div>
+        <h3 class="rp-step-title">Open a Case</h3>
+        <p class="rp-step-desc">Pick the order, choose the issue, attach a photo. Takes under 2 minutes in your dashboard.</p>
+      </div>
+
+      <div class="rp-step-card">
+        <div class="rp-step-num" style="background:linear-gradient(135deg,#7c3aed,#9333ea);box-shadow:0 8px 20px rgba(124,58,237,.25);">2</div>
+        <h3 class="rp-step-title">Escrow Lock</h3>
+        <p class="rp-step-desc">Seller payout freezes instantly. The merchant gets 24 hours to respond or assist.</p>
+      </div>
+
+      <div class="rp-step-card">
+        <div class="rp-step-num" style="background:linear-gradient(135deg,#0891b2,#0ea5e9);box-shadow:0 8px 20px rgba(8,145,178,.25);">3</div>
+        <h3 class="rp-step-title">Human Review</h3>
+        <p class="rp-step-desc">Our Trust &amp; Safety team reviews both sides. Clear cases are auto-approved in your favor.</p>
+      </div>
+
+      <div class="rp-step-card">
+        <div class="rp-step-num" style="background:linear-gradient(135deg,#16a34a,#22c55e);box-shadow:0 8px 20px rgba(22,163,74,.25);">4</div>
+        <h3 class="rp-step-title">Payout Sent</h3>
+        <p class="rp-step-desc">Pi refunds land in seconds. PayPal &amp; Naira card refunds post in 1–3 business days.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     POLICY BREAKDOWN CARDS
+══════════════════════════════════════════════ -->
+<section id="refund-policy" class="rp-section-wrap" style="padding:80px 24px;">
+  <div style="max-width:1100px;margin:0 auto;">
+
+    <div style="text-align:center;margin-bottom:52px;">
+      <span class="ip-sec-eyebrow">The Policy</span>
+      <h2 class="ip-sec-title" style="margin-top:12px;">Straightforward, line by line</h2>
+      <p class="ip-sec-sub">Everything you need to know — no legal jargon.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;">
+
+      <!-- Card 1 -->
+      <div class="rp-policy-card-inline" style="background:#fff;border-radius:24px;padding:36px 28px;border:1px solid rgba(15,23,42,.07);box-shadow:0 8px 28px rgba(15,23,42,.05);border-top:4px solid #1f64ff;transition:transform .25s ease,box-shadow .25s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(31,100,255,.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(15,23,42,.05)'">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+          <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#e8f1ff,#dbeafe);display:grid;place-items:center;flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <span style="font-size:12px;font-weight:800;color:#1f64ff;letter-spacing:.06em;text-transform:uppercase;">01 · Eligibility</span>
+        </div>
+        <h3 style="font-size:20px;font-weight:800;color:#0f172a;margin-bottom:10px;">Eligibility Terms</h3>
+        <p style="font-size:14.5px;color:#64748b;line-height:1.65;margin:0;">If the item arrives damaged, materially different from listing photos, or fails to arrive within the stated delivery window — you are 100% eligible. Open a request within <strong>14 days</strong> of delivery.</p>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="rp-policy-card-inline" style="background:#fff;border-radius:24px;padding:36px 28px;border:1px solid rgba(15,23,42,.07);box-shadow:0 8px 28px rgba(15,23,42,.05);border-top:4px solid #16a34a;transition:transform .25s ease,box-shadow .25s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(22,163,74,.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(15,23,42,.05)'">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+          <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);display:grid;place-items:center;flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <span style="font-size:12px;font-weight:800;color:#16a34a;letter-spacing:.06em;text-transform:uppercase;">02 · Escrow</span>
+        </div>
+        <h3 style="font-size:20px;font-weight:800;color:#0f172a;margin-bottom:10px;">Escrow Lock Clock</h3>
+        <p style="font-size:14.5px;color:#64748b;line-height:1.65;margin:0;">Your payment sits safely in the escrow vault until you click "Confirm Receipt". Sellers <strong>never receive funds</strong> prematurely before buyer verification occurs.</p>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="rp-policy-card-inline" style="background:#fff;border-radius:24px;padding:36px 28px;border:1px solid rgba(15,23,42,.07);box-shadow:0 8px 28px rgba(15,23,42,.05);border-top:4px solid #0891b2;transition:transform .25s ease,box-shadow .25s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(8,145,178,.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(15,23,42,.05)'">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+          <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#ecfeff,#cffafe);display:grid;place-items:center;flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <span style="font-size:12px;font-weight:800;color:#0891b2;letter-spacing:.06em;text-transform:uppercase;">03 · Process</span>
+        </div>
+        <h3 style="font-size:20px;font-weight:800;color:#0f172a;margin-bottom:10px;">Simple 3-Step Process</h3>
+        <p style="font-size:14.5px;color:#64748b;line-height:1.65;margin:0;">Dashboard → Select Order → Click "Get Help". Attach a photo or description. Trust &amp; Safety reviews and issues a decision within <strong>24–48 hours</strong>.</p>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="rp-policy-card-inline" style="background:#fff;border-radius:24px;padding:36px 28px;border:1px solid rgba(15,23,42,.07);box-shadow:0 8px 28px rgba(15,23,42,.05);border-top:4px solid #dc2626;transition:transform .25s ease,box-shadow .25s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(220,38,38,.10)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(15,23,42,.05)'">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+          <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#fef2f2,#fee2e2);display:grid;place-items:center;flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          </div>
+          <span style="font-size:12px;font-weight:800;color:#dc2626;letter-spacing:.06em;text-transform:uppercase;">04 · Exceptions</span>
+        </div>
+        <h3 style="font-size:20px;font-weight:800;color:#0f172a;margin-bottom:10px;">Non-Refundable Scenarios</h3>
+        <p style="font-size:14.5px;color:#64748b;line-height:1.65;margin:0;">Custom bespoke items already in production, fully delivered digital goods, or GPS-confirmed deliveries with no photo evidence of defect are <strong>not refundable</strong>.</p>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="rp-policy-card-inline" style="background:#fff;border-radius:24px;padding:36px 28px;border:1px solid rgba(15,23,42,.07);box-shadow:0 8px 28px rgba(15,23,42,.05);border-top:4px solid #7c3aed;transition:transform .25s ease,box-shadow .25s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(124,58,237,.10)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(15,23,42,.05)'">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+          <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#f5f3ff,#ede9fe);display:grid;place-items:center;flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <span style="font-size:12px;font-weight:800;color:#7c3aed;letter-spacing:.06em;text-transform:uppercase;">05 · Partial</span>
+        </div>
+        <h3 style="font-size:20px;font-weight:800;color:#0f172a;margin-bottom:10px;">Partial Refund Agreements</h3>
+        <p style="font-size:14.5px;color:#64748b;line-height:1.65;margin:0;">For minor cosmetic issues like a box dent, buyer and seller can agree on a partial escrow payout. Keep the product while receiving a <strong>cash refund portion</strong>.</p>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="rp-policy-card-inline" style="background:#fff;border-radius:24px;padding:36px 28px;border:1px solid rgba(15,23,42,.07);box-shadow:0 8px 28px rgba(15,23,42,.05);border-top:4px solid #0f172a;transition:transform .25s ease,box-shadow .25s ease;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(15,23,42,.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 28px rgba(15,23,42,.05)'">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+          <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#f8fafc,#e2e8f0);display:grid;place-items:center;flex-shrink:0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <span style="font-size:12px;font-weight:800;color:#334155;letter-spacing:.06em;text-transform:uppercase;">06 · Chargeback</span>
+        </div>
+        <h3 style="font-size:20px;font-weight:800;color:#0f172a;margin-bottom:10px;">Chargeback Protection</h3>
+        <p style="font-size:14.5px;color:#64748b;line-height:1.65;margin:0;">Funds are held in escrow first, so disputes resolve without bank delays. Pi refunds settle in <strong>seconds</strong>; PayPal &amp; Naira in 1–3 days.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     PAYMENT-SPECIFIC REFUND SPEEDS
+══════════════════════════════════════════════ -->
+<section class="rp-section-wrap" style="padding:0 24px 80px;">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div style="background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);border-radius:32px;padding:clamp(28px,5vw,56px) clamp(20px,4vw,48px);position:relative;overflow:hidden;">
+
+      <!-- Glow blobs -->
+      <div style="position:absolute;top:-40%;right:-10%;width:50%;height:200%;background:radial-gradient(ellipse,rgba(31,100,255,.15) 0%,transparent 60%);pointer-events:none;"></div>
+      <div style="position:absolute;bottom:-30%;left:-5%;width:40%;height:160%;background:radial-gradient(ellipse,rgba(124,58,237,.12) 0%,transparent 60%);pointer-events:none;"></div>
+
+      <div style="position:relative;z-index:2;text-align:center;margin-bottom:44px;">
+        <span style="display:inline-block;padding:5px 14px;border-radius:999px;background:rgba(31,100,255,.2);border:1px solid rgba(31,100,255,.3);color:#60a5fa;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px;">Refund Speeds by Payment Method</span>
+        <h2 style="font-size:clamp(26px,3vw,38px);font-weight:900;color:#fff;letter-spacing:-.02em;margin:0;">How fast does your refund land?</h2>
+      </div>
+
+      <div class="rp-speed-grid">
+
+        <!-- Pi Network -->
+        <div class="rp-speed-card">
+          <div class="rp-speed-icon" style="background:linear-gradient(135deg,rgba(139,92,246,.3),rgba(109,40,217,.3));border:1px solid rgba(139,92,246,.3);">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <div class="rp-speed-label" style="color:#a78bfa;">Pi Network</div>
+          <div class="rp-speed-time">Instant</div>
+          <div class="rp-speed-desc">Crypto settles in seconds once escrow is released</div>
+          <div class="rp-speed-footer">
+            <span class="rp-speed-pill" style="background:rgba(139,92,246,.2);color:#c4b5fd;">Zero fees</span>
+          </div>
+        </div>
+
+        <!-- PayPal -->
+        <div class="rp-speed-card">
+          <div class="rp-speed-icon" style="background:linear-gradient(135deg,rgba(31,100,255,.3),rgba(37,99,235,.3));border:1px solid rgba(31,100,255,.3);">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          </div>
+          <div class="rp-speed-label" style="color:#60a5fa;">PayPal</div>
+          <div class="rp-speed-time">1–3 Days</div>
+          <div class="rp-speed-desc">Returns to your PayPal balance or linked card</div>
+          <div class="rp-speed-footer">
+            <span class="rp-speed-pill" style="background:rgba(31,100,255,.2);color:#93c5fd;">Global coverage</span>
+          </div>
+        </div>
+
+        <!-- Naira / Paystack -->
+        <div class="rp-speed-card">
+          <div class="rp-speed-icon" style="background:linear-gradient(135deg,rgba(16,185,129,.3),rgba(5,150,105,.3));border:1px solid rgba(16,185,129,.3);">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="rp-speed-label" style="color:#4ade80;">Naira · Paystack</div>
+          <div class="rp-speed-time">1–3 Days</div>
+          <div class="rp-speed-desc">Credited back to your Nigerian bank card or account</div>
+          <div class="rp-speed-footer">
+            <span class="rp-speed-pill" style="background:rgba(16,185,129,.2);color:#86efac;">Local rails</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     FAQ SECTION
+══════════════════════════════════════════════ -->
+<section style="padding:0 24px 80px;background:linear-gradient(180deg,#f8fafc 0%,#fff 100%);">
+  <div style="max-width:800px;margin:0 auto;padding-top:80px;">
+
+    <div style="text-align:center;margin-bottom:48px;">
+      <span class="ip-sec-eyebrow">Got Questions?</span>
+      <h2 class="ip-sec-title" style="margin-top:12px;">Frequently Asked Questions</h2>
+    </div>
+
+    <div class="rp-faq-list" id="faqList">
+
+      <div class="rp-faq-item" onclick="toggleFaq(this)">
+        <div class="rp-faq-q">
+          How fast are refunds credited?
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="rp-faq-a" style="display:none;">
+          Most cases are reviewed within 24–48 hours. Pi Network refunds settle into your wallet instantly. PayPal and Naira card refunds post in 1–3 business days.
+        </div>
+      </div>
+
+      <div class="rp-faq-item" onclick="toggleFaq(this)">
+        <div class="rp-faq-q">
+          What if the seller doesn't reply?
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="rp-faq-a" style="display:none;">
+          If a merchant fails to respond within 24 hours of a dispute lock, the escrow system automatically rules in your favor and releases a full refund to your payment method.
+        </div>
+      </div>
+
+      <div class="rp-faq-item" onclick="toggleFaq(this)">
+        <div class="rp-faq-q">
+          Can I request a partial refund?
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="rp-faq-a" style="display:none;">
+          Yes. For minor flaws like missing accessories or slight color mismatches, you can propose a partial refund amount inside your dispute portal while keeping the item.
+        </div>
+      </div>
+
+      <div class="rp-faq-item" onclick="toggleFaq(this)">
+        <div class="rp-faq-q">
+          Are Pi Network transactions reversible?
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="rp-faq-a" style="display:none;">
+          While blockchain transactions are final once executed, DropHub holds Pi payments inside an off-chain escrow smart vault during delivery — making full reversals 100% possible before order release.
+        </div>
+      </div>
+
+      <div class="rp-faq-item" onclick="toggleFaq(this)">
+        <div class="rp-faq-q">
+          What evidence do I need to submit?
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="rp-faq-a" style="display:none;">
+          A clear photo or a 5-second video of the issue is sufficient for most cases. For non-delivery claims, we cross-check tracking data automatically — no extra steps needed.
+        </div>
+      </div>
+
+      <div class="rp-faq-item" onclick="toggleFaq(this)">
+        <div class="rp-faq-q">
+          Can a seller dispute my refund request?
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="rp-faq-a" style="display:none;">
+          Yes. Both parties can submit evidence. Our Trust &amp; Safety team acts as a neutral arbiter and makes a binding decision within 48 hours based on the evidence provided.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     CTA BANNER
+══════════════════════════════════════════════ -->
+<section class="blog-cta">
+  <div class="blog-cta-inner">
+    <span class="blog-cta-badge">Buyer Protection · Always On</span>
+    <h2>Need to open a case or start a refund?</h2>
+    <p>Real humans reply within 4 hours. No bots, no loops — just fast, fair resolution backed by escrow.</p>
+    <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;position:relative;z-index:2;">
+      <a href="/contact/" class="btn-primary" style="padding:14px 32px;font-size:15px;">Talk to Our Team →</a>
+      <a href="/help/" class="btn-cta-ghost" style="padding:14px 28px;font-size:15px;">Help Center Guide</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block footer_extra %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+['  // Eligibility Checker', "  var options = document.querySelectorAll('.rp-checker-opt');", "  var resBadge = document.getElementById('resBadge');", "  var resTitle = document.getElementById('resTitle');", "  var resDesc  = document.getElementById('resDesc');", '', '  var SCENARIOS = {', '    damaged: {', "      badge: '✅',", "      title: '100% Full Refund Guarantee',", "      desc: 'If your item arrives broken, cracked, or defective, upload a 5-second video or photo in your dashboard. Escrow funds freeze instantly and a full refund is dispatched within 24 hours.'", '    },', '    delayed: {', "      badge: '⌛',", "      title: '100% Full Refund Guarantee',", "      desc: 'If tracking shows no movement 7 days past the expected delivery date, the escrow system automatically marks the package lost and returns your full payment.'", '    },', '    different: {', "      badge: '🔄',", "      title: 'Full Refund or Replacement',", "      desc: 'If the item received is a different color, wrong size, or missing key advertised features, you receive a prepaid return label and full refund upon carrier scan.'", '    },', '    mind: {', "      badge: '⚠️',", "      title: 'Discretionary Store Credit / Return',", "      desc: 'For change-of-mind requests past the 14-day delivery window, approval is at seller discretion. If approved, return shipping fees apply.'", '    },', '    digital: {', "      badge: '🚫',", "      title: 'Exempt From Refund',", "      desc: 'Digital licenses, instant download keys, and customized bespoke items already manufactured cannot be refunded once delivered, unless proven non-functional.'", '    }', '  };', '', '  options.forEach(function(opt) {', "    opt.addEventListener('click', function() {", "      options.forEach(function(o) { o.classList.remove('active'); });", "      opt.classList.add('active');", '      var data = SCENARIOS[opt.dataset.res];', '      if (data) {', '        resBadge.textContent = data.badge;', '        resTitle.textContent = data.title;', '        resDesc.textContent  = data.desc;', '      }', '    });', '  });', '});']
+});
+
+['// FAQ accordion', 'function toggleFaq(item) {', "  var answer = item.querySelector('.rp-faq-a');", "  var icon   = item.querySelector('svg');", "  var isOpen = answer.style.display !== 'none';", '  // close all', "  document.querySelectorAll('.rp-faq-item').forEach(function(el) {", "    el.querySelector('.rp-faq-a').style.display = 'none';", "    el.querySelector('svg').style.transform = '';", "    el.style.borderColor = '';", '  });', '  if (!isOpen) {', "    answer.style.display = 'block';", "    icon.style.transform = 'rotate(180deg)';", "    item.style.borderColor = '#1F64FF';", '  }', '}']
+</script>
+{% endblock %}

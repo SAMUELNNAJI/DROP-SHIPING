@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — DropHub</title>
+  <meta name="description" content="Sign in or create your free DropHub account. Shop with Pi Network, PayPal or Naira — every order escrow-protected." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" /></noscript>
+  <link rel="icon" type="image/png" href="/static/Logo.png" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/auth.css" />
+</head>
+<body class="auth-page">
+
+  <!-- ══════════════════════════════════
+       NAVBAR
+  ══════════════════════════════════ -->
+  <header class="navbar">
+    <div class="nav-inner">
+      <a href="/" class="logo" aria-label="DropHub — Shop Global · We Drop It For You">
+        <img src="/static/Logo.png" alt="DropHub" class="logo-img" />
+      </a>
+      <nav class="nav-links">
+        <a href="/shop/">Shop</a>
+        <a href="/#safe" class="scroll-link">How It Works</a>
+        <a href="/about/">About</a>
+        <a href="/blog/">Blog</a>
+        <a href="/contact/">Contact</a>
+      </nav>
+      <div class="nav-actions">
+        <div class="cart-wrap">
+          <button class="nav-cart" id="cartToggle" aria-label="Open cart" aria-expanded="false" aria-controls="cartDropdown">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F0F0F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><circle cx="18" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><path d="M2.5 3.5h2l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.2L20.5 7H6"/></svg>
+            <span class="cart-badge">0</span>
+          </button>
+          <div class="cart-dropdown" id="cartDropdown" aria-hidden="true">
+            <div class="cart-head">
+              <div class="cart-title">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+                <span>Your Cart</span>
+                <span class="cart-count-pill">0 ITEMS</span>
+              </div>
+              <button class="cart-close" id="cartClose" aria-label="Close cart">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+              </button>
+            </div>
+            <div class="cart-items" id="cartItems">
+              <!-- Rendered dynamically by cart.js -->
+            </div>
+            <div class="cart-foot">
+              <div class="cart-subtotal"><span>Subtotal</span><strong>$0.00</strong></div>
+              <p class="cart-escrow">Escrow protected — payment held safely until delivery</p>
+              <div class="cart-actions">
+                <a href="/shop/" class="cart-btn-ghost">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                  Continue Shopping
+                </a>
+                <a href="/checkout/" class="cart-btn-checkout">
+                  Checkout
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a href="/signin/" class="nav-signin active" aria-current="page">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.8" r="3.6"/><path d="M4.8 19.8c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
+          <span>Sign In</span>
+        </a>
+        <a href="/signin/#signup" class="btn-sell"><span>Start Selling</span>
+          <svg class="btn-sell-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+        <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+          <span class="nav-burger-box">
+            <span class="nav-burger-line"></span>
+            <span class="nav-burger-line"></span>
+            <span class="nav-burger-line"></span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE / TABLET DRAWER MENU (Identical to Homepage) -->
+  <div class="mmenu" id="mobileMenu" aria-hidden="true">
+    <div class="mmenu-backdrop" data-mmenu-close></div>
+    <aside class="mmenu-panel" role="dialog" aria-modal="true" aria-label="Menu">
+      <div class="mmenu-head">
+        <a href="/" class="logo" aria-label="DropHub — Shop Global · We Drop It For You">
+          <img src="/static/Logo.png" alt="DropHub" class="logo-img" />
+        </a>
+        <button class="mmenu-close" aria-label="Close menu" data-mmenu-close>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+        </button>
+      </div>
+      <p class="mmenu-eyebrow">MENU</p>
+      <nav class="mmenu-nav">
+        <a class="mmenu-link" href="/shop/" style="--i:0">
+          <span class="mmenu-num">01</span> Shop
+          <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+        <a class="mmenu-link" href="/#safe" style="--i:1">
+          <span class="mmenu-num">02</span> How It Works
+          <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+        <a class="mmenu-link" href="/about/" style="--i:2">
+          <span class="mmenu-num">03</span> About
+          <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+        <a class="mmenu-link" href="/blog/" style="--i:3">
+          <span class="mmenu-num">04</span> Blog
+          <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+        <a class="mmenu-link" href="/contact/" style="--i:4">
+          <span class="mmenu-num">05</span> Contact
+          <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+      </nav>
+      <div class="mmenu-foot">
+        <a href="/signin/#signup" class="mmenu-cta"><span>Start Selling</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+        <a href="/signin/" class="mmenu-signin">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.8" r="3.6"/><path d="M4.8 19.8c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
+          <span>Sign In</span>
+        </a>
+        <p class="mmenu-assure">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l7.5 3v6c0 4.6-3.2 8-7.5 10-4.3-2-7.5-5.4-7.5-10v-6l7.5-3z"/><polyline points="9 12 11.2 14.2 15 10"/></svg>
+          Escrow-protected · Pi, PayPal &amp; Paystack
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ══════════════════════════════════
+       MAIN — split-screen auth area
+  ══════════════════════════════════ -->
+  <div class="auth-shell">
+
+    <!-- ── Left · brand story panel ── -->
+    <aside class="auth-side">
+      <div class="auth-side-inner">
+
+        <span class="auth-side-badge">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4D8DFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5l7.5 3v6c0 4.6-3.2 8-7.5 10-4.3-2-7.5-5.4-7.5-10v-6l7.5-3z"/><polyline points="9 12 11.2 14.2 15 10"/></svg>
+          ESCROW-PROTECTED MARKETPLACE
+        </span>
+
+        <h2 class="auth-side-title">Shop Everything.<br /><span>Pay Anything.</span></h2>
+        <p class="auth-side-text">One account for the world's first Pi-powered dropshipping marketplace — buy globally, sell instantly, and pay with Pi Network, PayPal or Naira.</p>
+
+        <div class="auth-points">
+          <div class="auth-point">
+            <span class="auth-point-icon">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
+            <div>
+              <p class="auth-point-title">Escrow on every order</p>
+              <p class="auth-point-text">Your payment is held safely by DropHub until you confirm delivery.</p>
+            </div>
+          </div>
+
+          <div class="auth-point">
+            <span class="auth-point-icon">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </span>
+            <div>
+              <p class="auth-point-title">Instant multi-rail payments</p>
+              <p class="auth-point-text">Pi Network, PayPal and Paystack — settle in seconds, not days.</p>
+            </div>
+          </div>
+
+          <div class="auth-point">
+            <span class="auth-point-icon">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </span>
+            <div>
+              <p class="auth-point-title">Sell to the world</p>
+              <p class="auth-point-text">List products free and reach verified buyers in 120+ countries.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-side-stats">
+          <div>
+            <p class="auth-stat-num">120+</p>
+            <p class="auth-stat-label">Countries Served</p>
+          </div>
+          <div>
+            <p class="auth-stat-num">50K+</p>
+            <p class="auth-stat-label">Active Merchants</p>
+          </div>
+          <div>
+            <p class="auth-stat-num">2.4M</p>
+            <p class="auth-stat-label">Orders Protected</p>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- ── Right · sign-in card ── -->
+    <main class="auth-main">
+
+    <!-- ── Auth card ── -->
+    <div class="auth-card">
+
+      <!-- Tab row -->
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab auth-tab--active"
+                role="tab" aria-selected="true"
+                id="tab-signin" aria-controls="panel-signin"
+                onclick="switchTab('signin')">Sign In</button>
+        <button class="auth-tab"
+                role="tab" aria-selected="false"
+                id="tab-signup" aria-controls="panel-signup"
+                onclick="switchTab('signup')">Create Account</button>
+      </div>
+
+      <div class="auth-form-wrap">
+
+        <!-- ════════════════════
+             SIGN IN PANEL
+        ════════════════════ -->
+        <div class="auth-form-panel is-active"
+             id="panel-signin" role="tabpanel" aria-labelledby="tab-signin">
+
+          <form novalidate onsubmit="handleSignIn(event)" id="form-signin">
+
+            <!-- Email -->
+            <div class="auth-field">
+              <label class="auth-label" for="si-email">Email Address</label>
+              <div class="auth-input-wrap">
+                <span class="auth-input-icon" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </span>
+                <input class="auth-input" type="email" id="si-email" name="email"
+                       placeholder="ngozi.adeyemi@gmail.com"
+                       autocomplete="email" required />
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="auth-field">
+              <label class="auth-label" for="si-password">Password</label>
+              <div class="auth-input-wrap">
+                <span class="auth-input-icon" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </span>
+                <input class="auth-input" type="password" id="si-password" name="password"
+                       placeholder="••••••••••••"
+                       autocomplete="current-password" required />
+                <button type="button" class="auth-pw-toggle"
+                        onclick="togglePw('si-password',this)" aria-label="Show password">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Forgot -->
+            <div class="auth-forgot-row">
+              <a href="#" class="auth-forgot">Forgot password?</a>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="auth-submit">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+              Sign In to DropHub
+            </button>
+
+          </form><!-- /form-signin -->
+
+          <div class="auth-divider">or continue with</div>
+
+          <div class="auth-socials">
+            <button class="auth-social-btn" type="button" aria-label="Continue with Google">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              Google
+            </button>
+            <button class="auth-social-btn" type="button" aria-label="Continue with Apple">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2.5"/><line x1="10.5" y1="18.5" x2="13.5" y2="18.5"/></svg>
+              Apple
+            </button>
+          </div>
+
+          <p class="auth-switch">Don't have an account? <a href="#" onclick="switchTab('signup');return false;">Sign up free</a></p>
+
+        </div><!-- /panel-signin -->
+
+        <!-- ════════════════════
+             CREATE ACCOUNT PANEL
+        ════════════════════ -->
+        <div class="auth-form-panel"
+             id="panel-signup" role="tabpanel" aria-labelledby="tab-signup">
+
+          <form novalidate onsubmit="handleSignUp(event)" id="form-signup">
+
+            <!-- Account type -->
+            <div class="auth-field">
+              <label class="auth-label">I want to…</label>
+              <div class="auth-type-row" role="radiogroup" aria-label="Account type">
+                <label class="auth-type-pill">
+                  <input type="radio" name="accountType" value="shopper" checked />
+                  <span class="auth-type-box">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l1.2 13H4.8L6 7z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+                    <span>Shop &amp; Buy</span>
+                  </span>
+                </label>
+                <label class="auth-type-pill">
+                  <input type="radio" name="accountType" value="seller" />
+                  <span class="auth-type-box">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l1.6-5h14.8L21 9"/><path d="M4.5 9v11h15V9"/><path d="M9.5 20v-6h5v6"/></svg>
+                    <span>Start Selling</span>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <!-- First / Last name row -->
+            <div class="auth-name-row">
+              <div class="auth-field">
+                <label class="auth-label" for="su-fname">First Name</label>
+                <div class="auth-input-wrap">
+                  <span class="auth-input-icon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="7" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>
+                  </span>
+                  <input class="auth-input" type="text" id="su-fname" name="fname"
+                         placeholder="Ngozi" autocomplete="given-name" required />
+                </div>
+              </div>
+              <div class="auth-field">
+                <label class="auth-label" for="su-lname">Last Name</label>
+                <div class="auth-input-wrap">
+                  <span class="auth-input-icon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="7" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg>
+                  </span>
+                  <input class="auth-input" type="text" id="su-lname" name="lname"
+                         placeholder="Adeyemi" autocomplete="family-name" required />
+                </div>
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="auth-field">
+              <label class="auth-label" for="su-email">Email Address</label>
+              <div class="auth-input-wrap">
+                <span class="auth-input-icon" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </span>
+                <input class="auth-input" type="email" id="su-email" name="email"
+                       placeholder="ngozi@example.com"
+                       autocomplete="email" required />
+              </div>
+            </div>
+
+            <!-- Phone (optional) -->
+            <div class="auth-field">
+              <label class="auth-label" for="su-phone">Phone Number <span class="auth-optional">(optional — for delivery updates)</span></label>
+              <div class="auth-input-wrap">
+                <span class="auth-input-icon" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.4 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2z"/></svg>
+                </span>
+                <input class="auth-input" type="tel" id="su-phone" name="phone"
+                       placeholder="+234 801 234 5678"
+                       autocomplete="tel" />
+              </div>
+            </div>
+
+            <!-- Password + strength meter -->
+            <div class="auth-field">
+              <label class="auth-label" for="su-password">Password</label>
+              <div class="auth-input-wrap">
+                <span class="auth-input-icon" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </span>
+                <input class="auth-input" type="password" id="su-password" name="password"
+                       placeholder="Minimum 8 characters"
+                       autocomplete="new-password" required minlength="8" />
+                <button type="button" class="auth-pw-toggle"
+                        onclick="togglePw('su-password',this)" aria-label="Show password">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Strength meter (class-based — styled by auth.css) -->
+            <div class="auth-strength-wrap" aria-live="polite">
+              <div class="auth-strength-bar">
+                <div class="auth-strength-fill" id="pw-strength-fill"></div>
+              </div>
+              <p class="auth-strength-label" id="pw-strength-label"></p>
+            </div>
+
+            <!-- Confirm password -->
+            <div class="auth-field">
+              <label class="auth-label" for="su-confirm">Confirm Password</label>
+              <div class="auth-input-wrap">
+                <span class="auth-input-icon" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><polyline points="9.5 16.5 11.5 18.5 15 14.5"/></svg>
+                </span>
+                <input class="auth-input" type="password" id="su-confirm" name="confirm"
+                       placeholder="Re-enter your password"
+                       autocomplete="new-password" required minlength="8" />
+                <button type="button" class="auth-pw-toggle"
+                        onclick="togglePw('su-confirm',this)" aria-label="Show password">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+              <p class="auth-field-error" id="su-confirm-error" style="display:none;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Passwords don't match.
+              </p>
+              <p class="auth-match-ok" id="su-match-ok" style="display:none;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Passwords match.
+              </p>
+            </div>
+
+            <!-- Terms -->
+            <div class="auth-terms">
+              <input type="checkbox" id="su-terms" name="terms" required />
+              <label for="su-terms">
+                I agree to DropHub's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+                I understand my payments are escrow-protected on every order.
+              </label>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="auth-submit">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+              Create Free Account
+            </button>
+
+          </form><!-- /form-signup -->
+
+          <div class="auth-divider">or sign up with</div>
+
+          <div class="auth-socials">
+            <button class="auth-social-btn" type="button" aria-label="Sign up with Google">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              Google
+            </button>
+            <button class="auth-social-btn" type="button" aria-label="Sign up with Apple">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2.5"/><line x1="10.5" y1="18.5" x2="13.5" y2="18.5"/></svg>
+              Apple
+            </button>
+          </div>
+
+          <p class="auth-switch">Already have an account? <a href="#" onclick="switchTab('signin');return false;">Sign in</a></p>
+
+        </div><!-- /panel-signup -->
+
+      </div><!-- /auth-form-wrap -->
+    </div><!-- /auth-card -->
+
+    <!-- Trust badges -->
+    <div class="auth-badges">
+      <span class="auth-badge-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+        Secure &amp; Encrypted
+      </span>
+      <span class="auth-badge-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Escrow Protected
+      </span>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="auth-toast" id="authToast" aria-live="assertive" role="status"></div>
+
+  </main><!-- /auth-main -->
+
+  </div><!-- /auth-shell -->
+
+  <!-- Footer (Identical to Homepage) -->
+  <footer class="footer">
+  <div class="footer-glow-bar"></div>
+  <div class="footer-container">
+    <div class="footer-newsletter">
+      <div class="fnl-left">
+        <span class="fnl-badge">Newsletter</span>
+        <h3 class="fnl-heading">Stay ahead of the market.</h3>
+        <p class="fnl-sub">Get new product drops, seller tips and Pi Network updates — straight to your inbox.</p>
+      </div>
+      <form class="fnl-form" onsubmit="return false">
+        <input class="fnl-input" type="email" placeholder="Enter your email address" />
+        <button class="fnl-btn" type="submit">Subscribe
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </form>
+    </div>
+
+    <div class="footer-divider"></div>
+
+    <div class="footer-cols">
+      <div class="footer-col footer-col--brand">
+        <a href="/" class="footer-logo" aria-label="DropHub">
+          <img src="/static/Logo.png" alt="DropHub" class="footer-logo-img" />
+        </a>
+        <p class="footer-brand-desc">The world's first dropshipping marketplace with Pi Network, PayPal &amp; Naira payments — built-in escrow on every order.</p>
+        <div class="footer-pay-chips">
+          <span class="pay-chip">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            Pi Network
+          </span>
+          <span class="pay-chip">PayPal</span>
+          <span class="pay-chip">Paystack</span>
+        </div>
+        <div class="footer-socials">
+          <a href="#" class="social-icon" aria-label="Twitter/X"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="#" class="social-icon" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" class="social-icon" aria-label="YouTube"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.47a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" class="social-icon" aria-label="Telegram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h6 class="footer-col-title">Marketplace</h6>
+        <ul class="footer-link-list">
+          <li><a href="/shop/">Browse Products</a></li>
+          <li><a href="/shop/">Top Rated Items</a></li>
+          <li><a href="/shop/">New Arrivals</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h6 class="footer-col-title">Sellers</h6>
+        <ul class="footer-link-list">
+          <li><a href="/shop/">Start Selling <span class="link-tag">Free</span></a></li>
+          <li><a href="/shop/">Seller Dashboard</a></li>
+          <li><a href="/payouts/">Payouts</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h6 class="footer-col-title">Payments</h6>
+        <ul class="footer-link-list">
+          <li><a href="/?tab=pi#pay-section">Pi Network Wallet</a></li>
+          <li><a href="/?tab=paypal#pay-section">PayPal Checkout</a></li>
+          <li><a href="/?tab=paystack#pay-section">Naira (Paystack)</a></li>
+          <li><a href="/#safe">Escrow Protection</a></li>
+          <li><a href="/refund-policy/">Refund Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h6 class="footer-col-title">Company</h6>
+        <ul class="footer-link-list">
+          <li><a href="/about/">About DropHub</a></li>
+          <li><a href="/blog/">Blog &amp; News</a></li>
+          <li><a href="/help/">Help Center</a></li>
+          <li><a href="/contact/">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-divider"></div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 DropHub, Inc. All rights reserved.</p>
+      <div class="footer-badges">
+        <span class="footer-badge-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Escrow Protected</span>
+        <span class="footer-badge-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> SSL Secured</span>
+        <span class="footer-badge-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Verified Sellers</span>
+      </div>
+      <div class="footer-legal-links">
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="/#safe">Trust &amp; Safety</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  <script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Mobile drawer menu listener
+  (function () {
+    var burger = document.getElementById('navBurger');
+    var menu = document.getElementById('mobileMenu');
+    if (!burger || !menu) return;
+    function openMenu() {
+      menu.classList.add('mmenu--open');
+      menu.setAttribute('aria-hidden', 'false');
+      burger.classList.add('is-active');
+      burger.setAttribute('aria-expanded', 'true');
+      document.body.classList.add('mmenu-locked');
+    }
+    function closeMenu() {
+      if (!menu.classList.contains('mmenu--open')) return;
+      menu.classList.remove('mmenu--open');
+      menu.setAttribute('aria-hidden', 'true');
+      burger.classList.remove('is-active');
+      burger.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('mmenu-locked');
+    }
+    burger.addEventListener('click', function () {
+      if (menu.classList.contains('mmenu--open')) closeMenu(); else openMenu();
+    });
+    menu.querySelectorAll('[data-mmenu-close], .mmenu-link, .mmenu-cta, .mmenu-signin').forEach(el => {
+      el.addEventListener('click', closeMenu);
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+  })();
+
+  // Navbar Scroll state
+  const nav = document.querySelector('.navbar');
+  if (nav) {
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 12);
+    }, { passive: true });
+  }
+
+  // Nav active-link highlight
+    (function () {
+      var seg = window.location.pathname.split('/');
+      var page = seg[1] ? '/' + seg[1] + '/' : '/';
+      var navMap = { '/': '/', '/shop/': '/shop/', '/about/': '/about/', '/blog/': '/blog/', '/contact/': '/contact/' };
+      var target = navMap[page];
+      if (target) {
+        document.querySelectorAll('.nav-links a').forEach(function (a) {
+          if (a.getAttribute('href') === target) { a.classList.add('active'); a.setAttribute('aria-current', 'page'); }
+        });
+        document.querySelectorAll('.mmenu-link').forEach(function (a) {
+          if (a.getAttribute('href') === target) { a.classList.add('mmenu-link--active'); }
+        });
+      }
+    })();
+});
+</script>
+
+<script src="/static/cart.js"></script>
+  <script>
+  /* ══════════════════════════════════
+     AUTH PAGE SCRIPT
+  ══════════════════════════════════ */
+
+  /* ── Tab switching ── */
+  function switchTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach(function(t) {
+      var active = t.id === 'tab-' + tab;
+      t.classList.toggle('auth-tab--active', active);
+      t.setAttribute('aria-selected', active);
+    });
+    document.querySelectorAll('.auth-form-panel').forEach(function(p) {
+      p.classList.toggle('is-active', p.id === 'panel-' + tab);
+    });
+    /* Update URL hash without scrolling */
+    history.replaceState(null, '', tab === 'signup' ? '#signup' : '#');
+  }
+
+  /* Open sign-up tab if URL contains #signup */
+  if (window.location.hash === '#signup') switchTab('signup');
+
+  /* Keep the right tab open when arriving via in-page #signup / #signin links */
+  window.addEventListener('hashchange', function () {
+    if (window.location.hash === '#signup') switchTab('signup');
+    else if (window.location.hash === '' || window.location.hash === '#signin') switchTab('signin');
+  });
+
+  /* ── Password visibility toggle ── */
+  function togglePw(id, btn) {
+    var inp  = document.getElementById(id);
+    var show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    btn.innerHTML = show
+      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
+      : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+  }
+
+  /* ── Live password strength meter + confirm-password match ── */
+  var suPw    = document.getElementById('su-password');
+  var suConf  = document.getElementById('su-confirm');
+  var confErr = document.getElementById('su-confirm-error');
+  var confOk  = document.getElementById('su-match-ok');
+
+  function checkMatch() {
+    if (!suConf || !confErr || !confOk) return;
+    var cf = suConf.value;
+    if (!cf) {
+      suConf.classList.remove('is-error');
+      confErr.style.display = 'none';
+      confOk.style.display = 'none';
+      return;
+    }
+    if (cf === suPw.value) {
+      suConf.classList.remove('is-error');
+      confErr.style.display = 'none';
+      confOk.style.display = 'flex';
+    } else {
+      suConf.classList.add('is-error');
+      confErr.style.display = 'flex';
+      confOk.style.display = 'none';
+    }
+  }
+
+  if (suPw) {
+    suPw.addEventListener('input', function() {
+      var v     = this.value;
+      var score = 0;
+      if (v.length >= 8)           score++;
+      if (/[A-Z]/.test(v))         score++;
+      if (/[0-9]/.test(v))         score++;
+      if (/[^A-Za-z0-9]/.test(v))  score++;
+
+      var levels = [
+        { w: '0%',   bg: '#e2e8f0', text: '' },
+        { w: '25%',  bg: '#ef4444', text: 'Weak — add uppercase letters' },
+        { w: '50%',  bg: '#f97316', text: 'Fair — add numbers too' },
+        { w: '75%',  bg: '#eab308', text: 'Good — add a special character' },
+        { w: '100%', bg: '#22c55e', text: 'Strong password ✓' }
+      ];
+      var lvl   = v.length ? levels[score] : levels[0];
+      var fill  = document.getElementById('pw-strength-fill');
+      var label = document.getElementById('pw-strength-label');
+      fill.style.width      = lvl.w;
+      fill.style.background = lvl.bg;
+      label.textContent     = lvl.text;
+      label.style.color     = lvl.bg;
+      checkMatch();
+    });
+  }
+  if (suConf) suConf.addEventListener('input', checkMatch);
+
+  /* ── Toast helper ── */
+  function showToast(msg, icon) {
+    var t = document.getElementById('authToast');
+    t.innerHTML = (icon || '') + msg;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 3200);
+  }
+
+  /* ── Sign-in submit ── */
+  function handleSignIn(e) {
+    e.preventDefault();
+    var btn = e.target.querySelector('.auth-submit');
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Signing in…';
+    btn.disabled = true;
+    /* ↓ Replace with real API call */
+    setTimeout(function() { window.location.href = '/shop/'; }, 1400);
+  }
+
+  /* ── Sign-up submit ── */
+  function handleSignUp(e) {
+    e.preventDefault();
+    var btn  = e.target.querySelector('.auth-submit');
+    var pwEl = document.getElementById('su-password');
+
+    /* Block submit until both passwords match (min. 8 characters) */
+    if (suConf && (suConf.value !== pwEl.value || suConf.value.length < 8)) {
+      suConf.classList.add('is-error');
+      confErr.style.display = 'flex';
+      confOk.style.display = 'none';
+      suConf.focus();
+      showToast('Please make sure both passwords match (min. 8 characters).');
+      return;
+    }
+
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Creating account…';
+    btn.disabled = true;
+    /* ↓ Replace with real API call */
+    setTimeout(function() {
+      showToast('🎉  Account created! Welcome to DropHub.');
+      setTimeout(function() { window.location.href = '/shop/'; }, 1600);
+    }, 1400);
+  }
+  </script>
+</body>
+</html>

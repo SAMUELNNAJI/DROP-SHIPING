@@ -1,0 +1,253 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="My Orders">
+
+  <!-- ── KPI row ── -->
+  <section class="bkpi" style="margin-bottom:14px">
+    <article class="glass bkpi__card" style="--gs:rgba(36,86,230,.12);--ga:#2456e6">
+      <div class="bkpi__top">
+        <span class="bkpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></span>
+        <span class="bkpi__label">Total orders</span>
+      </div>
+      <strong>{{ order_counts.total|default:"0" }}</strong>
+      <p class="bkpi__sub">Lifetime purchases</p>
+    </article>
+    <article class="glass bkpi__card" style="--gs:rgba(185,138,47,.14);--ga:#8a6420">
+      <div class="bkpi__top">
+        <span class="bkpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg></span>
+        <span class="bkpi__label">In progress</span>
+      </div>
+      <strong>{{ order_counts.in_progress|default:"0" }}</strong>
+      <p class="bkpi__sub">Awaiting delivery</p>
+    </article>
+    <article class="glass bkpi__card" style="--gs:rgba(12,166,120,.12);--ga:#0ca678">
+      <div class="bkpi__top">
+        <span class="bkpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.6 12.4 2.4 2.4 4.5-4.9"/></svg></span>
+        <span class="bkpi__label">Confirmed</span>
+      </div>
+      <strong>{{ order_counts.confirmed|default:"0" }}</strong>
+      <p class="bkpi__sub">Received &amp; confirmed</p>
+    </article>
+    <article class="glass bkpi__card" style="--gs:rgba(229,72,77,.12);--ga:#b4232a">
+      <div class="bkpi__top">
+        <span class="bkpi__icon"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></span>
+        <span class="bkpi__label">Refunded</span>
+      </div>
+      <strong>{{ order_counts.refunded|default:"0" }}</strong>
+      <p class="bkpi__sub">Money returned to you</p>
+    </article>
+  </section>
+
+  {% if orders %}
+  <!-- ── order cards ── -->
+  <div style="display:flex;flex-direction:column;gap:14px">
+    {% for order in orders %}
+    <article class="glass" id="buyer-order-{{ order.pk }}">
+      <!-- card head -->
+      <div class="glass__head" style="flex-wrap:wrap;gap:12px">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <b style="font-size:15px;color:var(--bblue)">#{{ order.order_number }}</b>
+            <span class="statusx {{ order.status_css }}" id="buyer-status-{{ order.pk }}">{{ order.status_label }}</span>
+            {% if order.status == 'delivered' and order.confirm_days_left is not None %}
+            <span style="font-size:11.5px;font-weight:700;color:#9a6200;background:#fff4dd;border:1px solid #f5d9a3;padding:4px 9px;border-radius:20px">
+              Auto-confirm in {{ order.confirm_days_left }} day{{ order.confirm_days_left|pluralize }}
+            </span>
+            {% endif %}
+          </div>
+          <p style="margin:4px 0 0;font-size:12px;color:var(--bm)">Ordered {{ order.created_at|date:"N j, Y" }}</p>
+        </div>
+        <div class="spacer">
+          <b style="font-size:17px">${{ order.total_price }}</b>
+          <span style="font-size:12px;color:var(--bm)">{{ order.get_payment_method_display }}</span>
+        </div>
+      </div>
+
+      <div class="glass__body" style="padding-top:16px">
+        <!-- product row -->
+        <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:18px;flex-wrap:wrap">
+          {% if order.product_image %}
+          <img src="{{ order.product_image }}" alt="{{ order.product_name }}"
+               style="width:72px;height:72px;border-radius:12px;object-fit:cover;border:1px solid var(--bbd);flex-shrink:0"
+               onerror="this.style.display='none'" />
+          {% else %}
+          <div style="width:72px;height:72px;border-radius:12px;background:linear-gradient(135deg,#EFF3FF,#C7D9FF);display:grid;place-items:center;flex-shrink:0;color:#2456e6"><svg class="sic" style="width:28px;height:28px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="m3 8 9-5 9 5v8l-9 5-9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg></div>
+          {% endif %}
+          <div style="flex:1;min-width:0">
+            <strong style="display:block;font-size:14px">{{ order.product_name }}</strong>
+            <span style="font-size:12.5px;color:var(--bm)">{{ order.store_name }}</span>
+            {% if order.tracking_number %}
+            <div style="margin-top:6px;display:inline-flex;align-items:center;gap:7px;background:#eaf0ff;border:1px solid #d4e2ff;border-radius:20px;padding:5px 11px;font-size:12px;font-weight:700;color:var(--bblue)">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v9a2 2 0 0 1-2 2h-1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
+              Tracking: {{ order.tracking_number }}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- delivery timeline -->
+        <div class="buyer-track">
+          <div class="buyer-track__step {% if order.status in 'pending,in_transit,delivered,confirmed' %}is-done{% endif %}">
+            <span class="buyer-track__dot"></span>
+            <div>
+              <strong>Order placed</strong>
+              <small>{{ order.created_at|date:"N j, Y" }}</small>
+            </div>
+          </div>
+          <div class="buyer-track__line {% if order.status in 'in_transit,delivered,confirmed' %}is-active{% endif %}"></div>
+
+          <div class="buyer-track__step {% if order.status == 'in_transit' %}is-now{% elif order.status in 'delivered,confirmed' %}is-done{% endif %}">
+            <span class="buyer-track__dot"></span>
+            <div>
+              <strong>Shipped</strong>
+              <small>{% if order.shipped_at %}{{ order.shipped_at|date:"N j · H:i" }}{% else %}Waiting for seller{% endif %}</small>
+            </div>
+          </div>
+          <div class="buyer-track__line {% if order.status in 'delivered,confirmed' %}is-active{% endif %}"></div>
+
+          <div class="buyer-track__step {% if order.status == 'delivered' %}is-now{% elif order.status == 'confirmed' %}is-done{% endif %}">
+            <span class="buyer-track__dot"></span>
+            <div>
+              <strong>Delivered</strong>
+              <small>{% if order.delivered_at %}{{ order.delivered_at|date:"N j · H:i" }}{% else %}Not yet delivered{% endif %}</small>
+            </div>
+          </div>
+          <div class="buyer-track__line {% if order.status == 'confirmed' %}is-active{% endif %}"></div>
+
+          <div class="buyer-track__step {% if order.status == 'confirmed' %}is-done{% endif %}">
+            <span class="buyer-track__dot"></span>
+            <div>
+              <strong>Confirmed</strong>
+              <small>
+                {% if order.confirmed_at %}
+                  {{ order.confirmed_at|date:"N j · H:i" }}{% if order.auto_confirmed %} <em style="color:#9a6200">(auto)</em>{% endif %}
+                {% else %}
+                  Pending your confirmation
+                {% endif %}
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── CONFIRM DELIVERY BUTTON ── shown only when status = delivered -->
+        {% if order.status == 'delivered' %}
+        <div class="buyer-confirm-bar" id="confirm-bar-{{ order.pk }}">
+          <div class="buyer-confirm-bar__inner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            <div>
+              <strong>Did your item arrive?</strong>
+              <span>Confirm receipt to release payment to the seller. If you don't confirm within 48 hours it will be confirmed automatically.</span>
+            </div>
+            <button class="buyer-confirm-btn" data-pk="{{ order.pk }}" data-url="{% url 'order_buyer_confirm' order.pk %}">
+              Confirm delivery
+            </button>
+            <form method="post" action="{% url 'order_not_delivered' order.pk %}">{% csrf_token %}<button class="buyer-confirm-btn" style="background:#fff;color:#b4232a;box-shadow:none" type="submit">Not delivered</button></form>
+            <form method="post" action="{% url 'order_request_refund' order.pk %}">{% csrf_token %}<button class="buyer-confirm-btn" style="background:transparent;border:1px solid rgba(255,255,255,.55);color:#fff;box-shadow:none" type="submit">Request refund</button></form>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- confirmed notice -->
+        {% if order.status == 'confirmed' %}
+        <div style="margin-top:12px;display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bgreensoft,#e2f8f0);border:1px solid #bfe9d8;border-radius:12px;font-size:13px;color:#0a7a57">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.6 12.4 2.4 2.4 4.5-4.9"/></svg>
+          <span>Delivery confirmed{% if order.auto_confirmed %} automatically{% endif %} — payment has been released to the seller.</span>
+        </div>
+        {% endif %}
+
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <!-- ── empty state ── -->
+  <section class="glass">
+    <div class="glass__body">
+      <div class="emptyb">
+        <div class="emptyb__art">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>
+        </div>
+        <h4>No orders yet</h4>
+        <p>When you place your first order it will appear here with live tracking and escrow status.</p>
+        <a class="mbtn mbtn--gold" href="/shop/">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+          Start shopping
+        </a>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+</div>
+
+<style>
+/* ── Buyer order tracking timeline ── */
+.buyer-track{display:flex;align-items:center;gap:0;margin-bottom:16px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
+.buyer-track__step{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:90px;text-align:center;flex:1}
+.buyer-track__dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--bbd);background:#fff;flex-shrink:0;transition:all .25s}
+.buyer-track__step.is-done .buyer-track__dot{background:var(--bgreen,#0ca678);border-color:var(--bgreen,#0ca678)}
+.buyer-track__step.is-now  .buyer-track__dot{background:var(--bblue,#2456e6);border-color:var(--bblue,#2456e6);box-shadow:0 0 0 4px rgba(36,86,230,.18)}
+.buyer-track__step strong{font-size:12px;font-weight:800;color:var(--bt)}
+.buyer-track__step small{font-size:11px;color:var(--bm)}
+.buyer-track__line{flex:1;height:2px;background:var(--bbd);border-radius:2px;transition:background .3s;min-width:16px}
+.buyer-track__line.is-active{background:var(--bgreen,#0ca678)}
+
+/* ── Confirm bar ── */
+.buyer-confirm-bar{margin-top:14px;border-radius:16px;background:linear-gradient(135deg,rgba(16,28,51,.96),rgba(36,86,230,.92));padding:18px 20px}
+.buyer-confirm-bar__inner{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.buyer-confirm-bar__inner svg{width:28px;height:28px;color:#7ee2b0;flex-shrink:0}
+.buyer-confirm-bar__inner strong{display:block;font-size:14px;color:#fff}
+.buyer-confirm-bar__inner span{font-size:12.5px;color:rgba(255,255,255,.72)}
+.buyer-confirm-bar__inner div{flex:1;min-width:180px}
+.buyer-confirm-btn{flex-shrink:0;min-height:44px;padding:0 20px;border:0;border-radius:12px;background:linear-gradient(135deg,#8bf3bd,#26d07c);color:#052712;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 8px 20px rgba(38,208,124,.32);transition:transform .15s}
+.buyer-confirm-btn:hover{transform:translateY(-2px)}
+</style>
+
+<script>
+(function () {
+  var CSRF = (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || '';
+
+  document.querySelectorAll('.buyer-confirm-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var pk  = btn.dataset.pk;
+      var url = btn.dataset.url;
+      btn.disabled = true;
+      btn.textContent = 'Confirming…';
+
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': CSRF,
+          'X-Requested-With': 'XMLHttpRequest',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'csrfmiddlewaretoken=' + CSRF,
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.ok) {
+          // Update the status badge
+          var badge = document.getElementById('buyer-status-' + pk);
+          if (badge) { badge.className = 'statusx statusx--done'; badge.textContent = 'Confirmed'; }
+          // Remove the confirm bar
+          var bar = document.getElementById('confirm-bar-' + pk);
+          if (bar) {
+            bar.style.transition = 'opacity .3s';
+            bar.style.opacity = '0';
+            setTimeout(function () { bar.remove(); }, 320);
+          }
+          // Add confirmed notice
+          var card = document.getElementById('buyer-order-' + pk);
+          if (card) {
+            var notice = document.createElement('div');
+            notice.style.cssText = 'margin-top:12px;display:flex;align-items:center;gap:10px;padding:12px 14px;background:#e2f8f0;border:1px solid #bfe9d8;border-radius:12px;font-size:13px;color:#0a7a57';
+            notice.innerHTML = '<svg style="width:18px;height:18px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.6 12.4 2.4 2.4 4.5-4.9"/></svg><span>Delivery confirmed — payment has been released to the seller.</span>';
+            card.querySelector('.glass__body').appendChild(notice);
+          }
+        }
+      })
+      .catch(function () { window.location.reload(); });
+    });
+  });
+})();
+</script>

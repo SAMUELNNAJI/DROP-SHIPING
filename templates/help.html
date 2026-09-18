@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Help Center - DropHub | How can we help</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" /></noscript>
+  <link rel="icon" type="image/png" href="/static/Logo.png" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/pages.css" />
+  <style>
+  /* Help page specific - will be moved to pages.css */
+.ip-title{font-size:clamp(40px,6vw + 10px,72px);font-weight:800;letter-spacing:-.03em;line-height:1.04;color:#0F172A;margin:0 auto;max-width:900px;animation:fiu .6s ease-out .1s both}
+.ip-title em{font-style:normal;background:linear-gradient(135deg,#1F64FF 0%,#7C3AED 50%,#EC4899 100%);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% auto;animation:gs 4s ease-in-out infinite}
+@keyframes gs{0%,100%{background-position:0% center}50%{background-position:100% center}}
+.ip-sub{max-width:620px;margin:24px auto 0;font-size:clamp(16px,1.4vw,20px);color:#64748B;line-height:1.7;font-weight:400;animation:fiu .6s ease-out .2s both}
+@keyframes fiu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.ip-pad{max-width:1200px;margin:0 auto;padding:0 24px}
+.ip-search-wrap{max-width:560px;margin:36px auto 0;animation:fiu .6s ease-out .3s both}
+.ip-search{position:relative;display:flex;align-items:center;background:#fff;border-radius:999px;border:1px solid rgba(15,23,42,.08);box-shadow:0 8px 32px rgba(15,23,42,.06),0 2px 8px rgba(15,23,42,.04);padding:6px 6px 6px 24px;transition:box-shadow .3s ease,border-color .3s ease}
+.ip-search:focus-within{box-shadow:0 12px 40px rgba(31,100,255,.12),0 4px 12px rgba(31,100,255,.06);border-color:rgba(31,100,255,.2)}
+.ip-search svg{color:#94A3B8;flex-shrink:0}
+.ip-search input{flex:1;border:none;outline:none;font-size:15px;font-family:inherit;color:#0F172A;background:transparent;padding:14px 16px;min-width:0}
+.ip-search input::placeholder{color:#94A3B8}
+.ip-search-btn{display:flex;align-items:center;gap:8px;padding:12px 24px;border-radius:999px;background:linear-gradient(135deg,#1F64FF,#7C3AED);color:#fff;font-weight:600;font-size:14px;font-family:inherit;border:none;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease;white-space:nowrap}
+.ip-search-btn:hover{transform:scale(1.03);box-shadow:0 4px 16px rgba(31,100,255,.3)}
+.ip-pills{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:28px;animation:fiu .6s ease-out .4s both}
+.ip-pill{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:999px;background:rgba(255,255,255,.8);border:1px solid rgba(15,23,42,.06);color:#475569;font-size:13px;font-weight:500;text-decoration:none;transition:all .2s ease;backdrop-filter:blur(8px)}
+.ip-pill:hover{background:#fff;border-color:rgba(31,100,255,.2);color:#1F64FF;box-shadow:0 4px 12px rgba(31,100,255,.1);transform:translateY(-2px)}
+.ip-section{padding:80px 0;position:relative}
+.ip-section--alt{background:linear-gradient(180deg,#fff 0%,#f8fafc 100%)}
+.ip-sec-head{text-align:center;margin-bottom:56px}
+.ip-sec-eyebrow{display:inline-block;padding:6px 14px;border-radius:999px;background:linear-gradient(135deg,rgba(31,100,255,.08),rgba(124,58,237,.08));color:#1F64FF;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:16px}
+.ip-sec-title{font-size:clamp(28px,3vw,40px);font-weight:800;letter-spacing:-.02em;color:#0F172A;margin:0;line-height:1.2}
+.ip-sec-title em{font-style:normal;background:linear-gradient(135deg,#1F64FF,#7C3AED);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ip-sec-sub{max-width:520px;margin:14px auto 0;color:#64748B;font-size:16px;line-height:1.6}
+.ip-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.ip-card{position:relative;padding:32px 28px;border-radius:24px;background:#fff;border:1px solid rgba(15,23,42,.06);box-shadow:0 4px 16px rgba(15,23,42,.04),0 1px 3px rgba(15,23,42,.03);display:flex;flex-direction:column;gap:16px;transition:all .35s cubic-bezier(.25,.46,.45,.94);overflow:hidden}
+.ip-card::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(31,100,255,.03) 0%,transparent 50%);opacity:0;transition:opacity .35s ease;pointer-events:none}
+.ip-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(31,100,255,.12),0 8px 20px rgba(15,23,42,.06);border-color:rgba(31,100,255,.1)}
+.ip-card:hover::before{opacity:1}
+.ip-card--glass{background:rgba(255,255,255,.75)!important;-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.6)!important;box-shadow:0 8px 32px rgba(15,23,42,.06),inset 0 1px 0 rgba(255,255,255,.8)}
+.ip-card--glass:hover{background:rgba(255,255,255,.88)!important;box-shadow:0 16px 48px rgba(31,100,255,.15),inset 0 1px 0 rgba(255,255,255,.9)}
+.ip-ic{display:grid;place-items:center;width:56px;height:56px;border-radius:18px;font-size:24px;flex:none;position:relative;z-index:1}
+.ip-card h3{font-size:18px;font-weight:700;letter-spacing:-.01em;color:#0F172A;position:relative;z-index:1}
+.ip-card p{font-size:14px;line-height:1.65;color:#64748B;position:relative;z-index:1}
+.ip-card a.ip-link{display:inline-flex;align-items:center;gap:6px;font-weight:600;color:#1F64FF;text-decoration:none;font-size:14px;transition:gap .2s ease;position:relative;z-index:1}
+.ip-card a.ip-link:hover{gap:10px}
+.ip-faq-list{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.ip-faq-item{background:#fff;border-radius:16px;border:1px solid rgba(15,23,42,.06);overflow:hidden;transition:all .3s ease}
+.ip-faq-item:hover{border-color:rgba(31,100,255,.12);box-shadow:0 4px 16px rgba(15,23,42,.04)}
+.ip-faq-item.is-open{border-color:rgba(31,100,255,.15);box-shadow:0 8px 24px rgba(31,100,255,.08)}
+.ip-faq-q{display:flex;align-items:center;justify-content:space-between;width:100%;padding:20px 24px;background:none;border:none;cursor:pointer;font-family:inherit;text-align:left;gap:16px;transition:all .2s ease}
+.ip-faq-q:hover{background:rgba(31,100,255,.02)}
+.ip-faq-q-text{font-size:15px;font-weight:600;color:#0F172A;letter-spacing:-.01em}
+.ip-faq-icon{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:rgba(31,100,255,.06);color:#1F64FF;flex-shrink:0;transition:transform .3s ease,background .3s ease}
+.ip-faq-item.is-open .ip-faq-icon{background:#1F64FF;color:#fff;transform:rotate(45deg)}
+.ip-faq-a{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.25,.46,.45,.94),padding .35s ease}
+.ip-faq-item.is-open .ip-faq-a{max-height:300px}
+.ip-faq-a-inner{padding:0 24px 20px;color:#64748B;font-size:14px;line-height:1.7}
+.ip-contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.ip-contact-card{position:relative;padding:28px;border-radius:20px;background:#fff;border:1px solid rgba(15,23,42,.06);box-shadow:0 4px 16px rgba(15,23,42,.04);display:flex;flex-direction:column;gap:14px;transition:all .3s ease;text-decoration:none}
+.ip-contact-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(31,100,255,.1);border-color:rgba(31,100,255,.12)}
+.ip-contact-ic{width:48px;height:48px;border-radius:14px;display:grid;place-items:center}
+.ip-contact-card h4{font-size:16px;font-weight:700;color:#0F172A;margin:0}
+.ip-contact-card p{font-size:13.5px;color:#64748B;line-height:1.6;margin:0}
+.ip-contact-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#1F64FF;transition:gap .2s ease}
+.ip-contact-card:hover .ip-contact-link{gap:10px}
+.ip-status{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;font-size:12px;font-weight:600}
+.ip-status--online{background:rgba(34,197,94,.08);color:#16A34A}
+.ip-status-dot{width:8px;height:8px;border-radius:50%;background:#22C55E;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.85)}}
+.ip-cta-section{padding:100px 0;position:relative;overflow:hidden}
+.ip-cta-card{position:relative;max-width:900px;margin:0 auto;padding:64px 48px;border-radius:32px;background:linear-gradient(135deg,#0F172A 0%,#1E293B 100%);text-align:center;overflow:hidden}
+.ip-cta-card::before{content:"";position:absolute;top:-50%;right:-20%;width:60%;height:200%;background:radial-gradient(ellipse,rgba(31,100,255,.15) 0%,transparent 60%);animation:ctaGlow 8s ease-in-out infinite}
+.ip-cta-card::after{content:"";position:absolute;bottom:-30%;left:-10%;width:50%;height:160%;background:radial-gradient(ellipse,rgba(124,58,237,.12) 0%,transparent 60%);animation:ctaGlow 10s ease-in-out infinite reverse}
+@keyframes ctaGlow{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-5%,5%) scale(1.05)}}
+.ip-cta-content{position:relative;z-index:2}
+.ip-cta-title{font-size:clamp(28px,3.5vw,40px);font-weight:800;color:#fff;letter-spacing:-.02em;margin:0 0 12px}
+.ip-cta-sub{font-size:16px;color:rgba(255,255,255,.6);margin:0 0 32px;line-height:1.6}
+.ip-cta-actions{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+@media(max-width:768px){.ip-hero{padding:110px 20px 80px}.ip-section{padding:60px 0}.ip-card{padding:24px 20px}.ip-cta-card{padding:48px 24px;border-radius:24px}.ip-search-btn span{display:none}.ip-search-btn{padding:12px 18px}}
+@media(max-width:640px){
+  .ip-pad{padding-left:16px!important;padding-right:16px!important}
+  .ip-section{padding-left:0!important;padding-right:0!important}
+  .ip-cta-section .ip-pad{padding-left:16px!important;padding-right:16px!important}
+  .ip-grid{gap:14px;grid-template-columns:1fr!important}
+  .ip-card,.ip-contact-card{width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important;box-sizing:border-box}
+  .ip-cta-card{padding:36px 20px!important;border-radius:20px!important}
+}
+</style>
+</head>
+<body>
+<div class="hero-wrapper">
+<div class="hero-stars" aria-hidden="true"></div>
+  <!-- NAVBAR (Identical to Homepage) -->
+  <header class="navbar">
+    <div class="nav-inner">
+      <a href="/" class="logo" aria-label="DropHub — Shop Global · We Drop It For You">
+        <img src="/static/Logo.png" alt="DropHub" class="logo-img" />
+      </a>
+      <nav class="nav-links">
+        <a href="/shop/">Shop</a>
+        <a href="/#safe" class="scroll-link">How It Works</a>
+        <a href="/about/">About</a>
+        <a href="/blog/">Blog</a>
+        <a href="/contact/">Contact</a>
+      </nav>
+      <div class="nav-actions">
+        <div class="cart-wrap">
+          <button class="nav-cart" id="cartToggle" aria-label="Open cart" aria-expanded="false" aria-controls="cartDropdown">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F0F0F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><circle cx="18" cy="20" r="1.4" fill="#0F0F0F" stroke="none"/><path d="M2.5 3.5h2l2.6 12.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.2L20.5 7H6"/></svg>
+            <span class="cart-badge">4</span>
+          </button>
+          <div class="cart-dropdown" id="cartDropdown" aria-hidden="true">
+            <div class="cart-head">
+              <div class="cart-title">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+                <span>Your Cart</span>
+                <span class="cart-count-pill">4 ITEMS</span>
+              </div>
+              <button class="cart-close" id="cartClose" aria-label="Close cart">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+              </button>
+            </div>
+            <div class="cart-items" id="cartItems">
+              <div class="cart-item">
+                <div class="cart-thumb"><img src="/static/img/headphones.jpg" alt="Headphones" /></div>
+                <div class="cart-info">
+                  <p class="cart-name">Wireless Noise-Cancelling Headphones</p>
+                  <p class="cart-store">TechVault Store</p>
+                  <div class="cart-row">
+                    <div class="qty-pill"><button type="button">−</button><span>1</span><button type="button">+</button></div>
+                    <span class="cart-price">$89.99</span>
+                  </div>
+                </div>
+                <button class="cart-trash" aria-label="Remove">✕</button>
+              </div>
+              <div class="cart-item">
+                <div class="cart-thumb"><img src="/static/img/backpack.jpg" alt="Wallet" /></div>
+                <div class="cart-info">
+                  <p class="cart-name">Minimalist Leather Wallet</p>
+                  <p class="cart-store">UrbanEdge Goods</p>
+                  <div class="cart-row">
+                    <div class="qty-pill"><button type="button">−</button><span>2</span><button type="button">+</button></div>
+                    <span class="cart-price">$69.98</span>
+                  </div>
+                </div>
+                <button class="cart-trash" aria-label="Remove">✕</button>
+              </div>
+              <div class="cart-item">
+                <div class="cart-thumb"><img src="/static/img/chair.jpg" alt="Tracker" /></div>
+                <div class="cart-info">
+                  <p class="cart-name">Smart Fitness Tracker Band</p>
+                  <p class="cart-store">FitLife Pro</p>
+                  <div class="cart-row">
+                    <div class="qty-pill"><button type="button">−</button><span>1</span><button type="button">+</button></div>
+                    <span class="cart-price">$54.99</span>
+                  </div>
+                </div>
+                <button class="cart-trash" aria-label="Remove">✕</button>
+              </div>
+            </div>
+            <div class="cart-foot">
+              <div class="cart-subtotal"><span>Subtotal</span><strong>$214.96</strong></div>
+              <p class="cart-escrow">Escrow protected — payment held safely until delivery</p>
+              <div class="cart-actions">
+                <a href="/shop/" class="cart-btn-ghost">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                  Continue Shopping
+                </a>
+                <a href="/checkout/" class="cart-btn-checkout">
+                  Checkout
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a href="/signin/" class="nav-signin">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#7B8798" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.8" r="3.6"/><path d="M4.8 19.8c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
+          <span>Sign In</span>
+        </a>
+        <a href="/signin/#signup" class="btn-sell"><span>Start Selling</span>
+          <svg class="btn-sell-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+        <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+          <span class="nav-burger-box">
+            <span class="nav-burger-line"></span>
+            <span class="nav-burger-line"></span>
+            <span class="nav-burger-line"></span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE / TABLET DRAWER MENU (Identical to Homepage) -->
+  <div class="mmenu" id="mobileMenu" aria-hidden="true">
+    <div class="mmenu-backdrop" data-mmenu-close></div>
+    <aside class="mmenu-panel" role="dialog" aria-modal="true" aria-label="Menu">
+      <div class="mmenu-head">
+        <a href="/" class="logo" aria-label="DropHub — Shop Global · We Drop It For You">
+          <img src="/static/Logo.png" alt="DropHub" class="logo-img" />
+        </a>
+        <button class="mmenu-close" aria-label="Close menu" data-mmenu-close>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+        </button>
+      </div>
+      <p class="mmenu-eyebrow">MENU</p>
+             <nav class="mmenu-nav">
+         <a class="mmenu-link" href="/shop/" style="--i:0">
+           <span class="mmenu-num">01</span> Shop
+           <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+         </a>
+         <a class="mmenu-link" href="/#safe" style="--i:1">
+           <span class="mmenu-num">02</span> How It Works
+           <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+         </a>
+         <a class="mmenu-link" href="/about/" style="--i:2">
+           <span class="mmenu-num">03</span> About
+           <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+         </a>
+         <a class="mmenu-link" href="/blog/" style="--i:3">
+           <span class="mmenu-num">04</span> Blog
+           <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+         </a>
+         <a class="mmenu-link" href="/contact/" style="--i:4">
+           <span class="mmenu-num">05</span> Contact
+           <svg class="mmenu-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+         </a>
+       </nav>
+      <div class="mmenu-foot">
+        <a href="/signin/#signup" class="mmenu-cta"><span>Start Selling</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="13 5 20 12 13 19"/></svg>
+        </a>
+        <a href="/signin/" class="mmenu-signin">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.8" r="3.6"/><path d="M4.8 19.8c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
+          <span>Sign In</span>
+        </a>
+        <p class="mmenu-assure">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l7.5 3v6c0 4.6-3.2 8-7.5 10-4.3-2-7.5-5.4-7.5-10v-6l7.5-3z"/><polyline points="9 12 11.2 14.2 15 10"/></svg>
+          Escrow-protected · Pi, PayPal &amp; Paystack
+        </p>
+      </div>
+    </aside>
+  </div>
+<section class="hero">
+  <div class="ip-hero-content">
+    <span class="ip-eyebrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Help Center</span>
+    <h1 class="ip-title">How can we <em>help you today?</em></h1>
+    <p class="ip-sub">Search our knowledge base or browse topics below &mdash; everything buyers and sellers need, all in one place.</p>
+    <div class="ip-search-wrap">
+      <div class="ip-search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search for answers...">
+        <button class="ip-search-btn"><span>Search</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+      </div>
+    </div>
+    <div class="ip-pills">
+      <a href="#faq-orders" class="ip-pill">Shipping &amp; Delivery</a>
+      <a href="#faq-payments" class="ip-pill">Payments</a>
+      <a href="#faq-escrow" class="ip-pill">Escrow</a>
+      <a href="#faq-returns" class="ip-pill">Returns</a>
+      <a href="#faq-account" class="ip-pill">Account</a>
+    </div>
+  </div>
+</section>
+</div><!-- /hero-wrapper -->
+
+<section class="ip-section">
+  <div class="ip-pad">
+    <div class="ip-sec-head">
+      <span class="ip-sec-eyebrow">Popular topics</span>
+      <h2 class="ip-sec-title">Browse by <em>category</em></h2>
+      <p class="ip-sec-sub">Find what you need fast — organized by the topics our community asks about most.</p>
+    </div>
+    <div class="ip-grid">
+      <div class="ip-card ip-card--glass"><span class="ip-ic" style="background:linear-gradient(135deg,#e8f1ff,#dbeafe)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span><h3>Orders &amp; Delivery</h3><p>Tracking, delivery windows, order changes and what happens if a parcel stalls at customs.</p><a class="ip-link" href="#faq-orders">Explore guides <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="ip-card ip-card--glass"><span class="ip-ic" style="background:linear-gradient(135deg,#e9f3ff,#e0e7ff)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span><h3>Payments &amp; Withdrawals</h3><p>Pi Network, PayPal and Naira payouts &mdash; when money lands, fees and currencies explained.</p><a class="ip-link" href="#faq-payments">Explore guides <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="ip-card ip-card--glass"><span class="ip-ic" style="background:linear-gradient(135deg,#eef4ff,#f0e6ff)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></span><h3>Escrow, Explained</h3><p>How your money is held safely while your order travels &mdash; released only when you confirm arrival.</p><a class="ip-link" href="#faq-escrow">Explore guides <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="ip-card ip-card--glass"><span class="ip-ic" style="background:linear-gradient(135deg,#f3eeff,#ede9fe)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3.5-7.1"/><polyline points="21 4 21 10 15 10"/></svg></span><h3>Returns &amp; Refunds</h3><p>When can you return, who pays shipping, and how fast money comes back. Spoiler: fast.</p><a class="ip-link" href="/refund-policy/">Refund policy <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="ip-card ip-card--glass"><span class="ip-ic" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></span><h3>Become a Seller</h3><p>Set up a store, list products, price in Pi or Naira, and get your first sale with zero listing fees.</p><a class="ip-link" href="/shop/">Start selling <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="ip-card ip-card--glass"><span class="ip-ic" style="background:linear-gradient(135deg,#fef3c7,#fde68a)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><h3>Account &amp; Tech</h3><p>Login issues, two-step verification, connection problems and keeping your account secure.</p><a class="ip-link" href="#faq-account">Explore guides <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+    </div>
+  </div>
+</section>
+
+<section class="ip-section ip-section--alt">
+  <div class="ip-pad">
+    <div class="ip-sec-head">
+      <span class="ip-sec-eyebrow">Frequently asked</span>
+      <h2 class="ip-sec-title">Quick <em>answers</em></h2>
+      <p class="ip-sec-sub">The questions we hear most often — answered clearly and concisely.</p>
+    </div>
+    <div class="ip-faq-list">
+      <div class="ip-faq-item" id="faq-orders">
+        <button class="ip-faq-q" aria-expanded="false">
+          <span class="ip-faq-q-text">How long does delivery take?</span>
+          <span class="ip-faq-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </button>
+        <div class="ip-faq-a"><div class="ip-faq-a-inner">Most orders arrive in 7&ndash;14 business days worldwide. Express lanes (3&ndash;6 days) are available at checkout for selected items. You get a tracking link the moment your seller ships.</div></div>
+      </div>
+      <div class="ip-faq-item">
+        <button class="ip-faq-q" aria-expanded="false">
+          <span class="ip-faq-q-text">Can I change or cancel my order after paying?</span>
+          <span class="ip-faq-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </button>
+        <div class="ip-faq-a"><div class="ip-faq-a-inner">Yes &mdash; while the order is in &ldquo;processing&rdquo; you can cancel from your dashboard. Once shipped, you can start a return instead. Escrow keeps your money protected either way.</div></div>
+      </div>
+      <div class="ip-faq-item">
+        <button class="ip-faq-q" aria-expanded="false">
+          <span class="ip-faq-q-text">Delivery says delivered but I don&rsquo;t have it.</span>
+          <span class="ip-faq-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </button>
+        <div class="ip-faq-a"><div class="ip-faq-a-inner">First check with neighbours or the local post office &mdash; it&rsquo;s very often a mislocation. If it&rsquo;s still missing, open a &ldquo;not received&rdquo; case within 48h and our team will investigate and refund you if needed.</div></div>
+      </div>
+      <div class="ip-faq-item" id="faq-payments">
+        <button class="ip-faq-q" aria-expanded="false">
+          <span class="ip-faq-q-text">Which payment methods do you support?</span>
+          <span class="ip-faq-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </button>
+        <div class="ip-faq-a"><div class="ip-faq-a-inner">Pi Network (the fastest &amp; fee-free), PayPal (buyer protection) and Naira via Paystack. All three are fully supported for deposits, checkouts and seller withdrawals.</div></div>
+      </div>
+      <div class="ip-faq-item">
+        <button class="ip-faq-q" aria-expanded="false">
+          <span class="ip-faq-q-text">When does a seller receive their payout?</span>
+          <span class="ip-faq-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </button>
+        <div class="ip-faq-a"><div class="ip-faq-a-inner">Payouts are triggered the moment a buyer confirms the order &mdash; typically within 24h. Pi payouts are instant; PayPal and bank payouts take 1&ndash;2 business days.</div></div>
+      </div>
+      <div class="ip-faq-item" id="faq-escrow">
+        <button class="ip-faq-q" aria-expanded="false">
+          <span class="ip-faq-q-text">What exactly is escrow on DropHub?</span>
+          <span class="ip-faq-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </button>
+        <div class="ip-faq-a"><div class="ip-faq-a-inner">When you pay, the money is held securely by DropHub &mdash; not by the seller. It is only released to the seller after you confirm the item arrived as described. That&rsquo;s the full &ldquo;safe&rdquo; in Safe &amp; Protected.</div></div>
+      </div>
+      <div class="ip-faq-item" id="faq-account">
+        <button class="ip-faq-q" aria-expanded="false">
+          <span class="ip-faq-q-text">How do I enable two-step verification?</span>
+          <span class="ip-faq-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+        </button>
+        <div class="ip-faq-a"><div class="ip-faq-a-inner">Settings &rarr; Security &rarr; Two-Step Verification. Choose an authenticator app or Pi wallet signature. It takes under a minute and makes your account dramatically safer.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ip-section" style="padding-top:0">
+  <div class="ip-pad">
+    <div class="ip-sec-head">
+      <span class="ip-sec-eyebrow">Need a human?</span>
+      <h2 class="ip-sec-title">We&rsquo;re here to <em>help</em></h2>
+      <p class="ip-sec-sub">Can&rsquo;t find what you need? Our support team is available across multiple channels.</p>
+    </div>
+    <div class="ip-contact-grid">
+      <a class="ip-contact-card" href="/contact/">
+        <div class="ip-contact-ic" style="background:linear-gradient(135deg,#e8f1ff,#dbeafe)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <h4>Email Support</h4>
+        <p>Get a detailed response within 4 hours. Our team is available 24/7.</p>
+        <span class="ip-contact-link">Send an email <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      </a>
+      <a class="ip-contact-card" href="/contact/">
+        <div class="ip-contact-ic" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <h4>Live Chat</h4>
+        <p>Chat with us in real-time. <span class="ip-status ip-status--online"><span class="ip-status-dot"></span> Online now</span></p>
+        <span class="ip-contact-link">Start chatting <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      </a>
+      <a class="ip-contact-card" href="/contact/">
+        <div class="ip-contact-ic" style="background:linear-gradient(135deg,#f3eeff,#ede9fe)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+        <h4>WhatsApp</h4>
+        <p>Reach us on WhatsApp for quick help on the go, any time of day.</p>
+        <span class="ip-contact-link">Message us <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="ip-cta-section">
+  <div class="ip-pad">
+    <div class="ip-cta-card">
+      <div class="ip-cta-content">
+        <h2 class="ip-cta-title">Still have questions?</h2>
+        <p class="ip-cta-sub">Our support crew answers within 4 hours on every channel &mdash; email, chat, WhatsApp or Telegram. We&rsquo;re always happy to help.</p>
+        <div class="ip-cta-actions">
+          <a class="btn-primary" href="/contact/" style="background:#fff;color:#0F172A">Contact Support</a>
+          <a class="btn-ghost" href="/refund-policy/" style="color:rgba(255,255,255,.7)">View Refund Policy <span>&rarr;</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section><!-- Footer (Identical to Homepage) -->
+<footer class="footer">
+  <div class="footer-glow-bar"></div>
+  <div class="footer-container">
+    <div class="footer-newsletter">
+      <div class="fnl-left">
+        <span class="fnl-badge">Newsletter</span>
+        <h3 class="fnl-heading">Stay ahead of the market.</h3>
+        <p class="fnl-sub">Get new product drops, seller tips and Pi Network updates — straight to your inbox.</p>
+      </div>
+      <form class="fnl-form" onsubmit="return false">
+        <input class="fnl-input" type="email" placeholder="Enter your email address" />
+        <button class="fnl-btn" type="submit">Subscribe
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </form>
+    </div>
+
+    <div class="footer-divider"></div>
+
+    <div class="footer-cols">
+      <div class="footer-col footer-col--brand">
+        <a href="/" class="footer-logo" aria-label="DropHub">
+          <img src="/static/Logo.png" alt="DropHub" class="footer-logo-img" />
+        </a>
+        <p class="footer-brand-desc">The world's first dropshipping marketplace with Pi Network, PayPal &amp; Naira payments — built-in escrow on every order.</p>
+        <div class="footer-pay-chips">
+          <span class="pay-chip">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            Pi Network
+          </span>
+          <span class="pay-chip">PayPal</span>
+          <span class="pay-chip">Paystack</span>
+        </div>
+        <div class="footer-socials">
+          <a href="#" class="social-icon" aria-label="Twitter/X"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="#" class="social-icon" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" class="social-icon" aria-label="YouTube"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.47a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" class="social-icon" aria-label="Telegram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h6 class="footer-col-title">Marketplace</h6>
+        <ul class="footer-link-list">
+          <li><a href="/shop/">Browse Products</a></li>
+          <li><a href="/shop/">Top Rated Items</a></li>
+          <li><a href="/shop/">New Arrivals</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h6 class="footer-col-title">Sellers</h6>
+        <ul class="footer-link-list">
+          <li><a href="/shop/">Start Selling <span class="link-tag">Free</span></a></li>
+          <li><a href="/shop/">Seller Dashboard</a></li>
+          <li><a href="/payouts/">Payouts</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h6 class="footer-col-title">Payments</h6>
+        <ul class="footer-link-list">
+          <li><a href="/?tab=pi#pay-section">Pi Network Wallet</a></li>
+          <li><a href="/?tab=paypal#pay-section">PayPal Checkout</a></li>
+          <li><a href="/?tab=paystack#pay-section">Naira (Paystack)</a></li>
+          <li><a href="/#safe">Escrow Protection</a></li>
+          <li><a href="/refund-policy/">Refund Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h6 class="footer-col-title">Company</h6>
+        <ul class="footer-link-list">
+          <li><a href="/about/">About DropHub</a></li>
+          <li><a href="/blog/">Blog &amp; News</a></li>
+          <li><a href="/help/">Help Center</a></li>
+          <li><a href="/contact/">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-divider"></div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 DropHub, Inc. All rights reserved.</p>
+      <div class="footer-badges">
+        <span class="footer-badge-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Escrow Protected</span>
+        <span class="footer-badge-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> SSL Secured</span>
+        <span class="footer-badge-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4da6ff" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Verified Sellers</span>
+      </div>
+      <div class="footer-legal-links">
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="/#safe">Trust &amp; Safety</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script>
+(function () {
+  var burger = document.getElementById('navBurger');
+  var menu = document.getElementById('mobileMenu');
+  if (!burger || !menu) return;
+  function closeMenu() {
+    if (!menu.classList.contains('mmenu--open')) return;
+    menu.classList.remove('mmenu--open');
+    menu.setAttribute('aria-hidden', 'true');
+    burger.classList.remove('is-active');
+    burger.setAttribute('aria-expanded', 'false');
+    burger.setAttribute('aria-label', 'Open menu');
+    document.body.classList.remove('mmenu-locked');
+  }
+  burger.addEventListener('click', function () {
+    if (menu.classList.contains('mmenu--open')) { closeMenu(); return; }
+    menu.classList.add('mmenu--open');
+    menu.setAttribute('aria-hidden', 'false');
+    burger.classList.add('is-active');
+    burger.setAttribute('aria-expanded', 'true');
+    burger.setAttribute('aria-label', 'Close menu');
+    document.body.classList.add('mmenu-locked');
+  });
+  menu.querySelectorAll('[data-mmenu-close]').forEach(function (el) { el.addEventListener('click', closeMenu); });
+  menu.querySelectorAll('.mmenu-link, .mmenu-cta, .mmenu-signin').forEach(function (a) { a.addEventListener('click', closeMenu); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
+  window.addEventListener('resize', function () { if (window.innerWidth > 1100) closeMenu(); });
+})();
+</script>
+
+  <script>
+    (function () {
+      var nav = document.querySelector('.navbar');
+      if (!nav) return;
+      function onScroll() { nav.classList.toggle('scrolled', window.scrollY > 12); }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    })();
+
+    // Nav active-link highlight
+    (function () {
+      var seg = window.location.pathname.split('/');
+      var page = seg[1] ? '/' + seg[1] + '/' : '/';
+      var navMap = { '/': '/', '/shop/': '/shop/', '/about/': '/about/', '/blog/': '/blog/', '/contact/': '/contact/' };
+      var target = navMap[page];
+      if (target) {
+        document.querySelectorAll('.nav-links a').forEach(function (a) {
+          if (a.getAttribute('href') === target) { a.classList.add('active'); a.setAttribute('aria-current', 'page'); }
+        });
+        document.querySelectorAll('.mmenu-link').forEach(function (a) {
+          if (a.getAttribute('href') === target) { a.classList.add('mmenu-link--active'); }
+        });
+      }
+    })();
+  </script>
+
+  <script>
+    (function () {
+      var faqItems = document.querySelectorAll('.ip-faq-item');
+      faqItems.forEach(function (item) {
+        var btn = item.querySelector('.ip-faq-q');
+        if (!btn) return;
+        btn.addEventListener('click', function () {
+          var isOpen = item.classList.contains('is-open');
+          faqItems.forEach(function (other) {
+            other.classList.remove('is-open');
+            other.querySelector('.ip-faq-q').setAttribute('aria-expanded', 'false');
+          });
+          if (!isOpen) {
+            item.classList.add('is-open');
+            btn.setAttribute('aria-expanded', 'true');
+          }
+        });
+      });
+    })();
+  </script>
+
+  <script>
+    (function () {
+      var els = document.querySelectorAll('.ip-card, .ip-contact-card, .ip-faq-item, .ip-sec-head');
+      els.forEach(function (el, i) {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(24px)';
+        el.style.transition = 'opacity .6s ease ' + (i * 0.05) + 's, transform .6s ease ' + (i * 0.05) + 's';
+      });
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+      els.forEach(function (el) { observer.observe(el); });
+    })();
+  </script>
+
+  <script src="/static/cart.js"></script>
+</body>
+</html>

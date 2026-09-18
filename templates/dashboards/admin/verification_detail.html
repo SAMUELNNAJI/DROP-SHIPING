@@ -1,0 +1,285 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Verification — {{ verification.user.username }}">
+
+  <!-- back -->
+  <a class="pform-back" href="/dashboards/admin/verifications/" data-dashboard-link>
+    <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Back to verifications
+  </a>
+
+  <!-- header -->
+  <div class="vd-header">
+    <div class="vd-header__avatar">{{ verification.user.username|first|upper }}</div>
+    <div class="vd-header__info">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <h2>{{ verification.full_name|default:verification.user.username }}</h2>
+        <span class="vstatus
+          {% if verification.status == 'verified' %}vstatus--ok
+          {% elif verification.status == 'pending' %}vstatus--wait
+          {% elif verification.status == 'rejected' %}vstatus--bad
+          {% else %}vstatus--new{% endif %}">
+          {{ verification.get_status_display }}
+        </span>
+      </div>
+      <p>@{{ verification.user.username }} · {{ verification.user.email|default:"no email" }} · Submitted {{ verification.submitted_at|date:"M j, Y · H:i" }}</p>
+    </div>
+    {% if verification.status == "pending" %}
+    <div class="vd-header__actions">
+      <form method="post" action="{% url 'admin_verification_action' verification.pk 'approve' %}" style="display:inline">
+        {% csrf_token %}
+        <button class="abtn abtn--primary" type="submit">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Approve
+        </button>
+      </form>
+      <button class="abtn abtn--ghost" type="button" id="vdRejectBtn"
+              style="border-color:rgba(229,72,77,.35);color:#b4232a;background:rgba(229,72,77,.06)">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Reject
+      </button>
+    </div>
+    {% endif %}
+  </div>
+
+  <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-top:20px">
+
+    <!-- ── Left: verification document ── -->
+    <div>
+      <!-- Personal info card -->
+      <div class="dashboard-panel vd-card" style="margin-bottom:14px">
+        <div class="panel-heading">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="#2456e6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><circle cx="12" cy="8" r="3.4"/><path d="M4.8 20c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
+          <h3>Personal information</h3>
+        </div>
+        <div class="vd-fields">
+          <div class="vd-field">
+            <span class="vd-field__label">Full name</span>
+            <span class="vd-field__value">{{ verification.full_name|default:"—" }}</span>
+          </div>
+          <div class="vd-field">
+            <span class="vd-field__label">Store name</span>
+            <span class="vd-field__value">{{ verification.store_name|default:"—" }}</span>
+          </div>
+          <div class="vd-field">
+            <span class="vd-field__label">Phone</span>
+            <span class="vd-field__value">{{ verification.phone|default:"—" }}</span>
+          </div>
+          <div class="vd-field">
+            <span class="vd-field__label">Address</span>
+            <span class="vd-field__value">{{ verification.address|default:"—" }}</span>
+          </div>
+          <div class="vd-field">
+            <span class="vd-field__label">City</span>
+            <span class="vd-field__value">{{ verification.city|default:"—" }}</span>
+          </div>
+          <div class="vd-field">
+            <span class="vd-field__label">Country</span>
+            <span class="vd-field__value">{{ verification.country|default:"—" }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Identity document card -->
+      <div class="dashboard-panel vd-card">
+        <div class="panel-heading">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="#7048e8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h4M6 13h8"/></svg>
+          <h3>Government ID</h3>
+        </div>
+        <div class="vd-fields">
+          <div class="vd-field">
+            <span class="vd-field__label">ID type</span>
+            <span class="vd-field__value">{{ verification.get_id_type_display }}</span>
+          </div>
+          <div class="vd-field">
+            <span class="vd-field__label">ID number</span>
+            <span class="vd-field__value" style="font-family:monospace;letter-spacing:.08em">{{ verification.id_number|default:"—" }}</span>
+          </div>
+          <div class="vd-field" style="grid-column:1/-1">
+            <span class="vd-field__label">Uploaded document</span>
+            {% if verification.document %}
+            <div class="vd-doc-preview">
+              {% with doc_url=verification.document.url doc_name=verification.document.name %}
+              {% if doc_name|lower|slice:"-4:" == ".pdf" or doc_name|lower|slice:"-4:" == ".pdf" %}
+                <div class="vd-doc-preview__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#e5484d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/></svg>
+                </div>
+                <div>
+                  <strong>PDF document uploaded</strong>
+                  <small>{{ doc_name|slice:"20:" }}</small>
+                </div>
+              {% else %}
+                <img src="{{ doc_url }}" alt="ID document" class="vd-doc-preview__img"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+                <div class="vd-doc-preview__fallback" style="display:none">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" width="32" height="32"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                  <span>Preview unavailable</span>
+                </div>
+              {% endif %}
+              <a href="{{ doc_url }}" target="_blank" rel="noopener" class="vd-doc-preview__btn">
+                <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                Open file
+              </a>
+              {% endwith %}
+            </div>
+            {% else %}
+            <span class="vd-field__value" style="color:#9ca3af">No document uploaded</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Right: review history + action ── -->
+    <div>
+      <!-- Account info -->
+      <div class="dashboard-panel vd-card" style="margin-bottom:14px">
+        <div class="panel-heading">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="#0ca678" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          <h3>Account details</h3>
+        </div>
+        <div class="vd-fields">
+          <div class="vd-field">
+            <span class="vd-field__label">Username</span>
+            <span class="vd-field__value">{{ verification.user.username }}</span>
+          </div>
+          <div class="vd-field">
+            <span class="vd-field__label">Email</span>
+            <span class="vd-field__value">{{ verification.user.email|default:"—" }}</span>
+          </div>
+          <div class="vd-field">
+            <span class="vd-field__label">Joined</span>
+            <span class="vd-field__value">{{ verification.user.date_joined|date:"M j, Y" }}</span>
+          </div>
+          <div class="vd-field">
+            <span class="vd-field__label">Products listed</span>
+            <span class="vd-field__value">{{ verification.user.products.count }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reviewer note / history -->
+      <div class="dashboard-panel vd-card">
+        <div class="panel-heading">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="#e8960c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <h3>Review record</h3>
+        </div>
+        <div style="padding:18px 22px">
+          <div class="vd-status-badge {% if verification.status == 'verified' %}vd-status-badge--ok{% elif verification.status == 'rejected' %}vd-status-badge--bad{% elif verification.status == 'pending' %}vd-status-badge--wait{% else %}vd-status-badge--new{% endif %}">
+            {% if verification.status == 'verified' %}
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            {% elif verification.status == 'rejected' %}
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            {% else %}
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            {% endif %}
+            Current status: {{ verification.get_status_display }}
+          </div>
+
+          {% if verification.reviewer_note %}
+          <div style="margin-top:14px;padding:14px;background:rgba(232,150,12,.08);border:1px solid rgba(232,150,12,.25);border-radius:12px">
+            <p style="font-size:12px;font-weight:800;color:#9a6200;margin:0 0 6px;text-transform:uppercase;letter-spacing:.08em">Reviewer note</p>
+            <p style="font-size:13.5px;color:#374151;margin:0;line-height:1.6">{{ verification.reviewer_note }}</p>
+          </div>
+          {% endif %}
+
+          {% if verification.status == "pending" %}
+          <!-- Inline quick-approve / reject -->
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:18px">
+            <form method="post" action="{% url 'admin_verification_action' verification.pk 'approve' %}">
+              {% csrf_token %}
+              <button class="abtn abtn--primary" type="submit" style="width:100%;justify-content:center">
+                <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Approve seller
+              </button>
+            </form>
+            <button class="abtn abtn--ghost" id="vdRejectBtn2" type="button"
+                    style="width:100%;justify-content:center;border-color:rgba(229,72,77,.35);color:#b4232a;background:rgba(229,72,77,.06)">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              Reject with note
+            </button>
+          </div>
+
+          <!-- Reject form (hidden by default) -->
+          <div id="vdRejectForm" class="vd-reject-form" hidden>
+            <form method="post" action="{% url 'admin_verification_action' verification.pk 'reject' %}">
+              {% csrf_token %}
+              <div class="vd-reject-form__heading"><span class="vd-reject-form__icon" aria-hidden="true">!</span><div><strong>Request a correction</strong><small>Give the seller clear next steps for resubmission.</small></div></div>
+              <div class="vd-reject-form__field">
+                <label for="vd-rejection-note">Rejection reason</label>
+                <textarea id="vd-rejection-note" name="reviewer_note" rows="4" required placeholder="For example: Please upload a clear photo of the full ID document."></textarea>
+              </div>
+              <div class="vd-reject-form__actions"><button class="abtn abtn--ghost vd-reject-cancel" type="button">Cancel</button><button class="btnps vd-reject-submit" type="submit">Send rejection</button></div>
+            </form>
+          </div>
+          {% elif verification.status != "pending" %}
+          <form method="post" action="{% url 'admin_verification_action' verification.pk 'reset' %}"
+                style="margin-top:14px"
+                onsubmit="return confirm('Reset this verification to unverified?')">
+            {% csrf_token %}
+            <button class="abtn abtn--ghost" type="submit" style="width:100%;justify-content:center">
+              Reset to unverified
+            </button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+.vd-header{display:flex;align-items:flex-start;gap:16px;padding:24px 0 20px;border-bottom:1px solid rgba(28,48,86,.08);flex-wrap:wrap}
+.vd-header__avatar{width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,#2456e6,#7048e8);color:#fff;display:grid;place-items:center;font-weight:800;font-size:24px;flex-shrink:0;box-shadow:0 12px 28px rgba(36,86,230,.28)}
+.vd-header__info{flex:1;min-width:0}
+.vd-header__info h2{margin:0 0 4px;font-size:22px;letter-spacing:-.03em}
+.vd-header__info p{margin:0;font-size:13px;color:#5d6a85}
+.vd-header__actions{display:flex;gap:10px;margin-left:auto;flex-wrap:wrap}
+.vd-card .panel-heading{gap:10px}
+.vd-fields{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:4px 0}
+.vd-field{display:flex;flex-direction:column;gap:3px;padding:13px 22px;border-bottom:1px solid rgba(28,48,86,.06)}
+.vd-field:last-child,.vd-field:nth-last-child(2):nth-child(odd){border-bottom:0}
+.vd-field__label{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#93a0bd}
+.vd-field__value{font-size:13.5px;color:#16223c;font-weight:600}
+.vd-doc-preview{display:flex;align-items:center;gap:12px;margin-top:8px;padding:14px;background:rgba(240,244,253,.7);border:1px solid rgba(28,48,86,.1);border-radius:14px}
+.vd-doc-preview__img{width:80px;height:60px;border-radius:10px;object-fit:cover;border:1px solid rgba(28,48,86,.1);flex-shrink:0}
+.vd-doc-preview__icon{width:52px;height:52px;border-radius:14px;background:#fff1f1;border:1px solid #fecaca;display:grid;place-items:center;flex-shrink:0}
+.vd-doc-preview__icon svg{width:26px;height:26px}
+.vd-doc-preview__fallback{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px;color:#9ca3af;font-size:12px;flex-shrink:0}
+.vd-doc-preview__btn{display:inline-flex;align-items:center;gap:7px;margin-left:auto;padding:8px 14px;border-radius:10px;background:linear-gradient(135deg,#1a41b4,#2456e6);color:#fff;font-size:12.5px;font-weight:700;text-decoration:none;white-space:nowrap}
+.vd-status-badge{display:flex;align-items:center;gap:9px;padding:12px 14px;border-radius:12px;font-size:13.5px;font-weight:700}
+.vd-status-badge .sic{width:16px;height:16px;flex-shrink:0}
+.vd-status-badge--ok{background:#e2f8f0;color:#0a7a57}
+.vd-status-badge--bad{background:#fff1f1;color:#b4232a}
+.vd-status-badge--wait{background:#fff4dd;color:#9a6200}
+.vd-status-badge--new{background:#eaf0ff;color:#1a41b4}
+.vd-reject-form{margin-top:16px;padding:16px;border:1px solid rgba(229,72,77,.25);border-radius:14px;background:linear-gradient(145deg,#fff8f8,#fff)}.vd-reject-form__heading{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;color:#7f1d1d}.vd-reject-form__heading strong{display:block;font-size:14px}.vd-reject-form__heading small{display:block;margin-top:3px;color:#8c5a5d;font-size:12px;line-height:1.45}.vd-reject-form__icon{display:grid;place-items:center;width:23px;height:23px;flex:0 0 23px;border-radius:50%;background:#fee2e2;color:#b4232a;font-weight:800}.vd-reject-form__field label{display:block;margin-bottom:6px;color:#5f2227;font-size:12px;font-weight:800}.vd-reject-form textarea{display:block;box-sizing:border-box;width:100%;min-height:100px;padding:11px 12px;resize:vertical;border:1px solid #f1b8bc;border-radius:10px;background:#fff;color:#16223c;font:inherit;font-size:13px;line-height:1.5;outline:0}.vd-reject-form textarea:focus{border-color:#e5484d;box-shadow:0 0 0 3px rgba(229,72,77,.12)}.vd-reject-form__actions{display:flex;justify-content:flex-end;gap:9px;margin-top:12px}.vd-reject-submit{background:#d9363e!important}.vd-reject-submit:hover{background:#b4232a!important}
+@media(max-width:900px){
+  .vd-header__actions{margin-left:0;width:100%}
+  .vd-fields{grid-template-columns:1fr}
+  [style*="grid-template-columns:1.4fr"]{grid-template-columns:1fr!important}
+}
+@media(max-width:520px){.vd-reject-form{padding:14px}.vd-reject-form__actions{flex-direction:column-reverse}.vd-reject-form__actions button{width:100%;justify-content:center}.vd-doc-preview{align-items:flex-start;flex-wrap:wrap}.vd-doc-preview__btn{margin-left:0;width:100%;justify-content:center}.vd-header__actions .abtn{flex:1;justify-content:center}}
+</style>
+
+<script>
+(function () {
+  var btn1 = document.getElementById('vdRejectBtn');
+  var btn2 = document.getElementById('vdRejectBtn2');
+  var form = document.getElementById('vdRejectForm');
+
+  function toggleReject() {
+    if (!form) return;
+    var open = !form.hidden;
+    form.hidden = open;
+    if (!open) {
+      var ta = form.querySelector('textarea');
+      if (ta) ta.focus();
+    }
+  }
+
+  if (btn1) btn1.addEventListener('click', toggleReject);
+  if (btn2) btn2.addEventListener('click', toggleReject);
+  form && form.querySelector('.vd-reject-cancel').addEventListener('click', toggleReject);
+})();
+</script>

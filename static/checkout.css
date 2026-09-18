@@ -1,0 +1,615 @@
+/* ═══════════════════════════════════════════════════
+   CHECKOUT.CSS — DropHub checkout flow
+   (Step 1 Order Review → Step 2 Payment → Step 3 Confirmation)
+   Depends on: style.css (navbar, buttons, cart)
+               auth.css  (page canvas, glassy navbar, footer)
+   ═══════════════════════════════════════════════════ */
+
+/* ── Mono numerals (prices, step numbers) ── */
+.ck-mono {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Checkout is a document page, not an app viewport.  Keep the browser's
+   root scroll container active on touch devices; the exception preserves the
+   intentional lock while the mobile navigation drawer is open. */
+@media (max-width: 900px) {
+  body.auth-page:not(.mmenu-locked) {
+    min-height: 100%;
+    overflow-y: auto;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ── Main area ── scrollable always; centred visually via padding when short ── */
+.ck-main {
+  position: relative;
+  z-index: 1;
+  min-height: calc(100vh - var(--header-h));
+  min-height: calc(100dvh - var(--header-h));
+  display: flex;
+  flex-direction: column;
+  /* removed justify-content:center — it clips overflow above the fold on mobile */
+  padding: calc(var(--header-h) + 20px) 24px 48px;
+}
+
+/* ══════════════════════════════════
+   STEPPER (compact)
+   ══════════════════════════════════ */
+.ck-stepper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin: 6px auto 24px;
+}
+.ck-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 120px;
+}
+.ck-step-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  font-weight: 600;
+  background: #dbe7fb;
+  color: #64809f;
+  transition: background .25s, color .25s, box-shadow .25s;
+}
+.ck-step-circle svg { width: 18px; height: 18px; }
+.ck-success-check svg { width: 30px; height: 30px; }
+.ck-pay-option svg, .ck-info svg, .ck-note svg,
+.ck-sum-box svg, .ck-status svg { flex-shrink: 0; }
+.ck-step-label {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #8aa0c4;
+  white-space: nowrap;
+}
+.ck-step--active .ck-step-circle {
+  background: #1F64FF;
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(31,100,255,.35);
+}
+.ck-step--active .ck-step-label { color: #1F64FF; font-weight: 600; }
+.ck-step--done .ck-step-circle  { background: #22c55e; color: #fff; }
+.ck-step--done .ck-step-label   { color: #64748b; }
+.ck-step-line {
+  width: 110px;
+  height: 2px;
+  border-radius: 2px;
+  background: #c7d9f5;
+  margin-top: 18px;
+  flex-shrink: 0;
+}
+.ck-step-line--done { background: #22c55e; }
+
+/* ══════════════════════════════════
+   LAYOUT  (compact main card + order summary)
+   ══════════════════════════════════ */
+.ck-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 28px;
+  max-width: 1080px;
+  margin: 0 auto;
+  align-items: start;
+  width: 100%;
+}
+
+/* ── Cards (slim, compact) ── */
+.ck-card {
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,.9);
+  box-shadow:
+    0 2px 6px rgba(15,28,77,.05),
+    0 12px 32px rgba(15,28,77,.08);
+  padding: 24px 26px 26px;
+  min-width: 0;
+}
+.ck-card--summary {
+  padding: 22px 22px 20px;
+  position: sticky;
+  top: calc(var(--header-h) + 16px);
+}
+.ck-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.ck-card-head svg { color: #1F64FF; flex-shrink: 0; width: 22px; height: 22px; }
+.ck-card-head--sum { margin-bottom: 12px; }
+.ck-card-head--sum .ck-card-title { font-size: 17px; letter-spacing: -.015em; }
+.ck-card-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -.02em;
+  margin: 0;
+}
+
+/* ══════════════════════════════════
+   ORDER ITEMS  (step 1)
+   ══════════════════════════════════ */
+.ck-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid #e3eaf5;
+  border-radius: 14px;
+  padding: 12px 14px 12px 12px;
+  margin-bottom: 12px;
+  background: #fff;
+}
+.ck-item-img {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #f1f5f9;
+  flex-shrink: 0;
+}
+.ck-item-info { flex: 1; min-width: 0; }
+.ck-item-name {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 4px;
+  letter-spacing: -.01em;
+}
+.ck-item-store { font-size: 12px; color: #8a94a6; margin: 0 0 8px; }
+.ck-item-qty   { font-size: 12.5px; color: #64748b; margin: 0; }
+.ck-item-price {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1F64FF;
+  white-space: nowrap;
+}
+
+/* ── Escrow note (step 1) ── */
+.ck-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  border: 1px solid #e3eaf5;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 14px 0 18px;
+}
+.ck-note svg { flex-shrink: 0; margin-top: 1px; }
+.ck-note-title {
+  color: #1F64FF;
+  font-weight: 600;
+  font-size: 13.5px;
+  margin: 0 0 2px;
+}
+.ck-note-text { color: #64748b; font-size: 12.5px; margin: 0; line-height: 1.5; }
+
+/* ══════════════════════════════════
+   ORDER SUMMARY SIDEBAR
+   ══════════════════════════════════ */
+
+/* ── Redesigned totals block ── */
+.ck-totals-block {
+  border-top: 1px solid #e9eef7;
+  margin-top: 8px;
+  padding-top: 14px;
+}
+.ck-totals-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+}
+.ck-totals-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  padding-top: 6px;          /* aligns with the large USD number */
+}
+.ck-totals-values {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+.ck-totals-usd {
+  font-size: 20px;
+  font-weight: 800;
+  color: #071c3f;
+  letter-spacing: -.03em;
+  line-height: 1.1;
+}
+.ck-totals-ngn {
+  font-size: 12px;
+  font-weight: 600;
+  color: #0891b2;
+  letter-spacing: -.01em;
+}
+.ck-totals-pi {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8b5cf6;
+  letter-spacing: -.01em;
+}
+.ck-totals-fees {
+  border-top: 1px solid #e9eef7;
+  padding-top: 10px;
+}
+.ck-totals-fee-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12.5px;
+  color: #8a94a6;
+  padding: 3px 0;
+}
+.ck-totals-fee-row .ck-mono {
+  font-size: 12.5px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.ck-sum-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+}
+.ck-sum-img {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: #f1f5f9;
+  flex-shrink: 0;
+}
+.ck-sum-info { min-width: 0; }
+.ck-sum-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ck-sum-qty { font-size: 11.5px; color: #8a94a6; margin: 0; }
+.ck-sum-price {
+  margin-left: auto;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f172a;
+  white-space: nowrap;
+}
+.ck-sum-rows { border-top: 1px solid #e9eef7; margin-top: 8px; padding-top: 10px; }
+.ck-sum-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13.5px;
+  color: #5c6b84;
+  padding: 4px 0;
+}
+.ck-sum-row .ck-mono { font-size: 13.5px; font-weight: 600; color: #0f172a; }
+.ck-sum-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #e9eef7;
+  margin-top: 8px;
+  padding: 10px 0 12px;
+}
+.ck-sum-total-label { font-size: 14.5px; font-weight: 600; color: #0f172a; }
+.ck-sum-total-val   { font-size: 19px; font-weight: 700; color: #1F64FF; }
+
+/* ── Summary info boxes ── */
+.ck-sum-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid #e3eaf5;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+.ck-sum-box:last-child { margin-bottom: 0; }
+.ck-sum-box svg { flex-shrink: 0; margin-top: 2px; }
+.ck-sum-box-title {
+  color: #1F64FF;
+  font-weight: 600;
+  font-size: 13.5px;
+  margin: 0 0 2px;
+}
+.ck-sum-box-text { color: #64748b; font-size: 12.5px; margin: 0; line-height: 1.5; }
+
+/* "Paying with …" strip (steps 2–3) */
+.ck-paying {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #eadfff;
+  background: #f7f3ff;
+  color: #8b5cf6;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 10px;
+  padding: 10px 12px;
+  transition: border-color .25s, background .25s, color .25s;
+}
+.ck-paying--paypal   { border-color: #d3e2fc; background: #f4f8ff; color: #1F64FF; }
+.ck-paying--paystack { border-color: #c9ecef; background: #f1fbfc; color: #0891b2; }
+
+/* ══════════════════════════════════
+   BUTTONS
+   ══════════════════════════════════ */
+.ck-btn-primary {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #1F64FF;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  letter-spacing: -.01em;
+  border: none;
+  border-radius: 12px;
+  min-height: 48px;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(31,100,255,.30);
+  text-decoration: none;
+  transition: background .2s, transform .2s, box-shadow .2s;
+}
+.ck-btn-primary:hover {
+  background: #1554e6;
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px rgba(31,100,255,.36);
+}
+.ck-btn-primary:active { transform: translateY(0); }
+
+.ck-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 48px;
+  border-radius: 12px;
+  border: 1px solid #e3eaf5;
+  background: #fff;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color .2s, color .2s, box-shadow .2s;
+}
+.ck-btn-ghost:hover {
+  border-color: #b9cdf0;
+  color: #1F64FF;
+  box-shadow: 0 6px 18px rgba(15,28,77,.07);
+}
+
+.ck-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  border-radius: 999px;
+  border: 1.5px solid #1F64FF;
+  background: #fff;
+  color: #1F64FF;
+  font-size: 14.5px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background .2s, box-shadow .2s;
+}
+.ck-btn-outline:hover { background: #f0f5ff; box-shadow: 0 8px 22px rgba(31,100,255,.14); }
+
+/* Button rows */
+.ck-actions       { display: grid; grid-template-columns: 1fr 2fr; gap: 12px; }
+.ck-actions--even { display: grid; grid-template-columns: 1fr 1.15fr; gap: 12px; margin-top: 4px; }
+
+/* ══════════════════════════════════
+   PAYMENT METHODS  (step 2)
+   ══════════════════════════════════ */
+.ck-pay-list { margin-bottom: 4px; }
+.ck-pay-option {
+  --accent: #1F64FF;
+  --accent-soft: #f4f8ff;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1.5px solid #e3eaf5;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  background: #fff;
+  transition: border-color .2s, background .2s, box-shadow .2s;
+}
+.ck-pay-option:hover { border-color: #c3d6f5; }
+.ck-pay-option.is-selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 10px 28px rgba(15,28,77,.08);
+}
+.ck-pay-option--pi       { --accent: #8b5cf6; --accent-soft: #f9f5ff; }
+.ck-pay-option--paypal   { --accent: #1F64FF; --accent-soft: #f4f8ff; }
+.ck-pay-option--paystack { --accent: #0891b2; --accent-soft: #f2fbfc; }
+
+.ck-pay-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.ck-pay-icon--pi       { background: #f3ebff; color: #8b5cf6; }
+.ck-pay-icon--paypal   { background: #e7efff; color: #1F64FF; }
+.ck-pay-icon--paystack { background: #e3f6f8; color: #0891b2; }
+
+.ck-pay-info { flex: 1; min-width: 0; }
+.ck-pay-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+.ck-pay-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 11px;
+  border-radius: 999px;
+  letter-spacing: .02em;
+}
+.ck-pay-badge--crypto { background: #f3e8ff; color: #8b5cf6; }
+.ck-pay-badge--usd    { background: #eef2f7; color: #64748b; }
+.ck-pay-badge--ngn    { background: #e0f7f7; color: #0891b2; }
+.ck-pay-sub { font-size: 12.5px; color: #8a94a6; margin: 2px 0 0; }
+
+.ck-radio {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  flex-shrink: 0;
+  transition: background .2s, border-color .2s;
+}
+.ck-pay-option.is-selected .ck-radio {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Pi exchange-rate banner */
+.ck-info {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  background: #f7f3ff;
+  border: 1px solid #eadfff;
+  color: #7c3aed;
+  font-size: 12.5px;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin: 8px 0 18px;
+}
+.ck-info svg { flex-shrink: 0; }
+
+/* ══════════════════════════════════
+   SUCCESS  (step 3)
+   ══════════════════════════════════ */
+.ck-success-head { text-align: center; padding: 8px 0 18px; }
+.ck-success-check {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #22c55e;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 18px;
+  box-shadow: 0 14px 34px rgba(34,197,94,.38);
+}
+.ck-success-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -.025em;
+  margin: 0 0 8px;
+}
+.ck-success-sub {
+  font-size: 14.5px;
+  color: #5c6b84;
+  line-height: 1.6;
+  max-width: 560px;
+  margin: 0 auto;
+}
+.ck-status {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  border: 1px solid #e3eaf5;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+}
+.ck-status svg { flex-shrink: 0; margin-top: 2px; }
+.ck-status-title {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 2px;
+}
+.ck-status-sub { font-size: 12.5px; color: #8a94a6; margin: 0; }
+.ck-success-actions { margin-top: 18px; }
+
+/* ══════════════════════════════════
+   RESPONSIVE — cards stack, everything fits small screens
+   ══════════════════════════════════ */
+@media (max-width: 1100px) {
+  .ck-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+}
+@media (max-width: 900px) {
+  .ck-main { justify-content: flex-start; min-height: 0; padding: calc(var(--header-h) + 12px) 16px 80px; }
+  .ck-stepper { margin: 4px auto 20px; }
+  .ck-step { width: 96px; gap: 6px; }
+  .ck-step-circle { width: 34px; height: 34px; font-size: 14px; }
+  .ck-step-circle svg { width: 16px; height: 16px; }
+  .ck-step-label { font-size: 11.5px; }
+  .ck-step-line { width: 56px; margin-top: 16px; }
+  .ck-layout { grid-template-columns: 1fr; gap: 16px; max-width: 560px; }
+  .ck-card { padding: 20px 18px 22px; border-radius: 18px; }
+  .ck-card--summary { position: static; order: 2; }
+  .ck-card-title { font-size: 18px; }
+  .ck-card-head { margin-bottom: 14px; }
+  .ck-card-head--sum .ck-card-title { font-size: 16px; }
+  .ck-item { gap: 12px; padding: 10px; }
+  .ck-item-img { width: 52px; height: 52px; }
+  .ck-item-name { font-size: 13.5px; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .ck-item-price { font-size: 14.5px; }
+  .ck-note { flex-direction: row; }
+  .ck-actions, .ck-actions--even { grid-template-columns: 1fr; gap: 10px; }
+  .ck-btn-primary { width: 100%; min-height: 50px; font-size: 15px; }
+  .ck-btn-ghost, .ck-btn-outline { width: 100%; min-height: 50px; font-size: 14px; }
+  .ck-success-check { width: 64px; height: 64px; margin-bottom: 14px; }
+  .ck-success-title { font-size: 22px; }
+  .ck-success-sub { font-size: 14px; }
+  .ck-pay-option { gap: 12px; padding: 12px 14px; }
+  .ck-pay-icon { width: 42px; height: 42px; }
+  .ck-radio { margin-left: auto; }
+}
+@media (max-width: 420px) {
+  .ck-main { padding: calc(var(--header-h) + 8px) 12px 72px; }
+  .ck-step { width: 84px; }
+  .ck-step-line { width: 40px; }
+  .ck-step-label { font-size: 10.5px; }
+  .ck-card { padding: 18px 14px 20px; }
+  .ck-item-store { display: none; }
+  .ck-sum-name { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .ck-pay-option { flex-wrap: wrap; }
+  .ck-radio { margin-left: auto; }
+}

@@ -1,0 +1,342 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Addresses">
+
+  <!-- ── saved addresses grid ── -->
+  <section class="glass" style="margin-bottom:16px">
+    <div class="glass__head">
+      <div>
+        <h3>Delivery addresses</h3>
+        <p>Saved destinations for fast, accurate checkout.</p>
+      </div>
+      <span class="spacer">
+        <span class="chipb">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+          {{ addresses|length }} address{{ addresses|length|pluralize:"es" }}
+        </span>
+        <button class="mbtn mbtn--gold" id="toggleAddressForm" type="button">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Add new
+        </button>
+      </span>
+    </div>
+
+    <div class="glass__body">
+      {% if addresses %}
+      <div class="addr-grid">
+        {% for address in addresses %}
+        <div class="addr-card {% if address.is_default %}addr-card--default{% endif %}" id="addr-{{ address.pk }}">
+          <div class="addr-card__head">
+            <span class="addr-card__label-badge">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+              {{ address.label }}
+            </span>
+            {% if address.is_default %}
+            <span class="chipb chipb--ok" style="font-size:10.5px;padding:4px 9px">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.6 12.4 2.4 2.4 4.5-4.9"/></svg>
+              Default
+            </span>
+            {% endif %}
+          </div>
+
+          <div class="addr-card__body">
+            <p class="addr-card__name">{{ address.recipient_name }}</p>
+            <p class="addr-card__line">
+              {{ address.line1 }}{% if address.line2 %}, {{ address.line2 }}{% endif %}
+            </p>
+            <p class="addr-card__line">
+              {{ address.city }}{% if address.state %}, {{ address.state }}{% endif %}{% if address.postal_code %} {{ address.postal_code }}{% endif %}
+            </p>
+            <p class="addr-card__line">{{ address.country }}</p>
+            {% if address.phone %}
+            <p class="addr-card__phone">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><path d="M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 4 4.2 2 2 0 0 1 6 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L10 9.9a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7A2 2 0 0 1 24 17z"/></svg>
+              {{ address.phone }}
+            </p>
+            {% endif %}
+          </div>
+
+          <div class="addr-card__foot">
+            {% if not address.is_default %}
+            <form method="post" action="{% url 'buyer_address_set_default' address.pk %}" style="display:inline">
+              {% csrf_token %}
+              <button class="addr-btn addr-btn--ghost" type="submit" title="Set as default">
+                <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.6 12.4 2.4 2.4 4.5-4.9"/></svg>
+                Set default
+              </button>
+            </form>
+            {% else %}
+            <span style="font-size:12px;color:var(--bgreen,#0ca678);font-weight:700;display:inline-flex;gap:4px;align-items:center"><svg class="sic" style="width:13px;height:13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg>Default address</span>
+            {% endif %}
+
+            <form method="post" action="{% url 'buyer_address_delete' address.pk %}" style="display:inline"
+                  onsubmit="return confirm('Remove {{ address.label }} address?')">
+              {% csrf_token %}
+              <button class="addr-btn addr-btn--remove" type="submit" title="Remove">
+                <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+                Remove
+              </button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="emptyb" id="addrEmpty">
+        <div class="emptyb__art">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+        </div>
+        <h4>No saved addresses</h4>
+        <p>Add the address where you want your parcels delivered — it'll be remembered for next time.</p>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- ── add address form ── -->
+  <section class="glass addr-form-section" id="addressFormSection" {% if not form.errors %}style="display:none"{% endif %}>
+    <div class="glass__head">
+      <span class="addr-form__icon">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      </span>
+      <div>
+        <h3>Add delivery address</h3>
+        <p>Your details are only used for delivery — never shared with third parties.</p>
+      </div>
+      <span class="spacer">
+        <button class="mbtn" type="button" id="cancelAddressForm">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+          Cancel
+        </button>
+      </span>
+    </div>
+
+    <div class="glass__body">
+      <form method="post" action="{% url 'dashboard_buyer_addresses' %}" class="addr-form">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="addr-form__error-banner">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+          {{ form.non_field_errors.0 }}
+        </div>
+        {% endif %}
+
+        <!-- Row 1: label + recipient -->
+        <div class="addr-form__row">
+          <div class="addr-form__field">
+            <label for="{{ form.label.id_for_label }}">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              Address label
+            </label>
+            {{ form.label }}
+            {% if form.label.errors %}<span class="addr-form__err">{{ form.label.errors.0 }}</span>{% endif %}
+          </div>
+          <div class="addr-form__field">
+            <label for="{{ form.recipient_name.id_for_label }}">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M4.8 20c.7-3.4 3.7-5.3 7.2-5.3s6.5 1.9 7.2 5.3"/></svg>
+              Recipient name <span class="addr-form__req">*</span>
+            </label>
+            {{ form.recipient_name }}
+            {% if form.recipient_name.errors %}<span class="addr-form__err">{{ form.recipient_name.errors.0 }}</span>{% endif %}
+          </div>
+        </div>
+
+        <!-- Row 2: phone -->
+        <div class="addr-form__row addr-form__row--1">
+          <div class="addr-form__field">
+            <label for="{{ form.phone.id_for_label }}">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 4 4.2 2 2 0 0 1 6 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L10 9.9a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7A2 2 0 0 1 24 17z"/></svg>
+              Phone number <span class="addr-form__req">*</span>
+            </label>
+            {{ form.phone }}
+            {% if form.phone.errors %}<span class="addr-form__err">{{ form.phone.errors.0 }}</span>{% endif %}
+          </div>
+        </div>
+
+        <!-- Row 3: street lines -->
+        <div class="addr-form__field">
+          <label for="{{ form.line1.id_for_label }}">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg>
+            Street address <span class="addr-form__req">*</span>
+          </label>
+          {{ form.line1 }}
+          {% if form.line1.errors %}<span class="addr-form__err">{{ form.line1.errors.0 }}</span>{% endif %}
+        </div>
+
+        <div class="addr-form__field">
+          <label for="{{ form.line2.id_for_label }}">Apartment, suite, unit <span style="font-weight:400;color:var(--bm)">(optional)</span></label>
+          {{ form.line2 }}
+        </div>
+
+        <!-- Row 4: city / state / postal -->
+        <div class="addr-form__row addr-form__row--3">
+          <div class="addr-form__field">
+            <label for="{{ form.city.id_for_label }}">City <span class="addr-form__req">*</span></label>
+            {{ form.city }}
+            {% if form.city.errors %}<span class="addr-form__err">{{ form.city.errors.0 }}</span>{% endif %}
+          </div>
+          <div class="addr-form__field">
+            <label for="{{ form.state.id_for_label }}">State / Province</label>
+            {{ form.state }}
+          </div>
+          <div class="addr-form__field">
+            <label for="{{ form.postal_code.id_for_label }}">Postal code</label>
+            {{ form.postal_code }}
+          </div>
+        </div>
+
+        <!-- Row 5: country -->
+        <div class="addr-form__row addr-form__row--1">
+          <div class="addr-form__field">
+            <label for="{{ form.country.id_for_label }}">Country <span class="addr-form__req">*</span></label>
+            {{ form.country }}
+            {% if form.country.errors %}<span class="addr-form__err">{{ form.country.errors.0 }}</span>{% endif %}
+          </div>
+        </div>
+
+        <!-- default checkbox -->
+        <label class="addr-form__check-row">
+          {{ form.is_default }}
+          <span>
+            <strong>Set as default address</strong>
+            <small>This address will be pre-selected at checkout.</small>
+          </span>
+        </label>
+
+        <!-- actions -->
+        <div class="addr-form__actions">
+          <button class="mbtn" type="button" id="cancelAddressForm2">Cancel</button>
+          <button class="mbtn mbtn--gold" type="submit">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+            Save address
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ── escrow trust note ── -->
+  <section class="bgrid2b" style="margin-top:16px">
+    <article class="glass">
+      <div class="glass__head">
+        <h3>Why save an address?</h3>
+        <p>It makes checkout faster and more accurate.</p>
+      </div>
+      <div class="glass__body">
+        <div class="border-row">
+          <span class="border-row__ic" style="--gs:rgba(36,86,230,.12);--ga:#2456e6">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </span>
+          <div><b>One-tap checkout</b><p>Skip re-typing every time you order.</p></div>
+        </div>
+        <div class="border-row">
+          <span class="border-row__ic" style="--gs:rgba(12,166,120,.12);--ga:#0ca678">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          </span>
+          <div><b>Escrow-protected delivery</b><p>Payment only releases once your parcel arrives.</p></div>
+        </div>
+        <div class="border-row">
+          <span class="border-row__ic" style="--gs:rgba(185,138,47,.14);--ga:#8a6420">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </span>
+          <div><b>Multiple locations</b><p>Home, office, family — save them all.</p></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="glass">
+      <div class="glass__head">
+        <h3>Privacy</h3>
+        <p>Your data stays yours.</p>
+      </div>
+      <div class="glass__body">
+        <div class="border-row">
+          <span class="border-row__ic" style="--gs:rgba(229,72,77,.12);--ga:#b4232a">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+          </span>
+          <div><b>Encrypted storage</b><p>Addresses are stored securely — never sold.</p></div>
+        </div>
+        <div class="border-row">
+          <span class="border-row__ic" style="--gs:rgba(112,72,232,.12);--ga:#7048e8">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1 .9-1 1.6v.4"/><circle cx="12" cy="17.2" r=".9" fill="currentColor" stroke="none"/></svg>
+          </span>
+          <div><b>Shared only for delivery</b><p>Sellers only see what they need to ship.</p></div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+</div>
+
+<style>
+/* ── Address cards ── */
+.addr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.addr-card{background:rgba(255,255,255,.72);border:1px solid var(--bbd);border-radius:18px;overflow:hidden;transition:box-shadow .2s,transform .15s;display:flex;flex-direction:column}
+.addr-card:hover{box-shadow:0 14px 32px rgba(28,35,51,.10);transform:translateY(-2px)}
+.addr-card--default{border-color:rgba(12,166,120,.45);background:rgba(226,248,240,.35)}
+.addr-card__head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 16px 10px;border-bottom:1px solid var(--bbd2)}
+.addr-card__label-badge{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:800;color:var(--bblue,#2456e6)}
+.addr-card__label-badge .sic{width:14px;height:14px}
+.addr-card__body{padding:12px 16px;flex:1}
+.addr-card__name{margin:0 0 4px;font-size:14px;font-weight:700;color:var(--bt)}
+.addr-card__line{margin:0;font-size:13px;color:var(--bm);line-height:1.5}
+.addr-card__phone{margin:8px 0 0;font-size:12px;color:var(--bm);display:flex;align-items:center;gap:5px}
+.addr-card__foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 16px;border-top:1px solid var(--bbd2);background:rgba(255,255,255,.45)}
+.addr-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:6px 11px;border-radius:9px;border:1px solid var(--bbd);background:#fff;color:var(--bt);cursor:pointer;text-decoration:none;transition:all .15s}
+.addr-btn--ghost:hover{border-color:var(--bgreen,#0ca678);color:var(--bgreen,#0ca678)}
+.addr-btn--remove:hover{border-color:rgba(229,72,77,.4);color:#b4232a;background:#fff5f5}
+.addr-btn .sic{width:13px;height:13px}
+
+/* ── Add form ── */
+.addr-form-section .glass__head{background:linear-gradient(135deg,rgba(36,86,230,.06),rgba(36,86,230,.02))}
+.addr-form__icon{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#2456e6,#4f8dff);color:#fff;flex-shrink:0;box-shadow:0 8px 18px rgba(36,86,230,.25)}
+.addr-form__icon .sic{width:20px;height:20px}
+.addr-form{display:flex;flex-direction:column;gap:0}
+.addr-form__field{margin-bottom:16px}
+.addr-form__field label{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:800;margin-bottom:7px;color:var(--bt)}
+.addr-form__field label .sic{width:14px;height:14px;color:var(--bgold2,#8a6420);flex-shrink:0}
+.addr-form__field .ff-input{width:100%;min-height:46px;border:1px solid var(--bbd);border-radius:12px;padding:0 13px;font:inherit;font-size:13.5px;background:rgba(255,255,255,.78);color:var(--bt);outline:0;transition:border-color .2s,box-shadow .2s,background .2s;box-sizing:border-box}
+.addr-form__field .ff-input:focus{border-color:var(--bblue,#2456e6);background:#fff;box-shadow:0 0 0 3.5px rgba(36,86,230,.10)}
+.addr-form__req{color:var(--bblue,#2456e6)}
+.addr-form__err{display:block;margin-top:5px;font-size:12px;font-weight:700;color:#b4232a}
+.addr-form__row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.addr-form__row--1{grid-template-columns:1fr}
+.addr-form__row--3{grid-template-columns:1fr 1fr 1fr}
+.addr-form__error-banner{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#fff1f1;border:1px solid #fbd0d0;border-radius:12px;color:#b4232a;font-size:13px;font-weight:700;margin-bottom:16px}
+.addr-form__error-banner .sic{width:18px;height:18px;flex-shrink:0}
+.addr-form__check-row{display:flex;align-items:flex-start;gap:12px;margin:4px 0 20px;cursor:pointer}
+.addr-form__check-row .ff-check{width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--bblue,#2456e6);cursor:pointer}
+.addr-form__check-row strong{display:block;font-size:13.5px}
+.addr-form__check-row small{color:var(--bm);font-size:12px}
+.addr-form__actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding-top:6px;border-top:1px solid var(--bbd2);margin-top:4px}
+
+@media(max-width:700px){
+  .addr-grid{grid-template-columns:1fr}
+  .addr-form__row{grid-template-columns:1fr}
+  .addr-form__row--3{grid-template-columns:1fr}
+}
+</style>
+
+<script>
+(function () {
+  var section  = document.getElementById('addressFormSection');
+  var showBtn  = document.getElementById('toggleAddressForm');
+  var cancelBtns = [
+    document.getElementById('cancelAddressForm'),
+    document.getElementById('cancelAddressForm2'),
+  ];
+
+  function showForm() {
+    section.style.display = '';
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    var first = section.querySelector('input');
+    if (first) setTimeout(function () { first.focus(); }, 300);
+  }
+  function hideForm() {
+    section.style.display = 'none';
+  }
+
+  if (showBtn) showBtn.addEventListener('click', showForm);
+  cancelBtns.forEach(function (btn) { if (btn) btn.addEventListener('click', hideForm); });
+})();
+</script>

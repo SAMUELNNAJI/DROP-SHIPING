@@ -1,0 +1,567 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Featured">
+
+  <div class="ahead">
+    <div class="ahead__row">
+      <span class="ahead__chip">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.6 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9-5.3-2.9-5.3 2.9 1.1-5.9L3.5 9.8l5.9-.8z"/></svg>
+        Promoted catalog
+      </span>
+    </div>
+    <h2>Featured &amp; Boost</h2>
+    <p>Manage boost plans and active product promotions.</p>
+
+    <div class="admin-order-kpis" style="margin-top:16px">
+      <div class="aokpi aokpi--green">
+        <span>Active boosts</span>
+        <b>{{ active_count }}</b>
+      </div>
+      <div class="aokpi aokpi--blue">
+        <span>Boost plans</span>
+        <b>{{ boost_plans|length }}</b>
+      </div>
+      <div class="aokpi">
+        <span>Total boost orders</span>
+        <b>{{ page_obj.paginator.count }}</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Boost plans grid ── -->
+  <section class="dashboard-panel" style="margin-top:18px;margin-bottom:18px">
+    <div class="panel-heading" style="flex-wrap:wrap;gap:10px">
+      <h3>Boost plans</h3>
+      <button class="abtn abtn--primary" id="openBoostPlanModal" type="button">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Add plan
+      </button>
+    </div>
+    <div style="padding:20px">
+      {% if boost_plans %}
+      <div class="featured-plans-grid">
+        {% for plan in boost_plans %}
+        <div class="featured-plan-card {% if not plan.is_active %}featured-plan-card--inactive{% endif %}">
+          <div class="featured-plan-card__head">
+            <span class="featured-plan-card__icon">
+              <svg viewBox="0 0 24 24" fill="{% if plan.is_active %}#e8b23c{% else %}none{% endif %}" stroke="#b9862c" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.6 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9-5.3-2.9-5.3 2.9 1.1-5.9L3.5 9.8l5.9-.8z"/></svg>
+            </span>
+            {% if plan.is_active %}
+            <span class="pill pill-green" style="font-size:10.5px;padding:4px 9px">Active</span>
+            {% else %}
+            <span class="pill pill-yellow" style="font-size:10.5px;padding:4px 9px">Inactive</span>
+            {% endif %}
+          </div>
+          <h3>{{ plan.name }}</h3>
+          <div class="featured-plan-card__price">${{ plan.price|floatformat:2 }}</div>
+          <div class="featured-plan-card__meta">{{ plan.price_ngn }} · {{ plan.price_pi }}</div>
+          <div class="featured-plan-card__meta">{{ plan.duration_days }} day{{ plan.duration_days|pluralize }}</div>
+          {% if plan.description %}
+          <p class="featured-plan-card__desc">{{ plan.description }}</p>
+          {% endif %}
+          <div class="featured-plan-card__foot">
+            <span style="font-size:12px;color:#5d6a85">{{ plan.orders.count }} boost{{ plan.orders.count|pluralize }} sold</span>
+            <form method="post" action="{% url 'admin_boost_plan_delete' plan.pk %}"
+                  onsubmit="return confirm('Deactivate {{ plan.name|escapejs }}?')">
+              {% csrf_token %}
+              <button type="submit" class="table-action table-action--soft" style="font-size:11px;padding:5px 11px">
+                {% if plan.is_active %}Deactivate{% else %}Remove{% endif %}
+              </button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div style="text-align:center;padding:32px;color:#93a0bd">
+        <div style="margin-bottom:10px;color:#d99800"><svg class="sic" style="width:40px;height:40px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg></div>
+        <p style="font-size:14px;font-weight:700;margin:0 0 6px">No boost plans yet</p>
+        <p style="font-size:13px;margin:0">Click <strong>Add plan</strong> above to create your first boost offer.</p>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- ── Active boost orders ── -->
+  <section class="dashboard-panel">
+    <div class="panel-heading" style="flex-wrap:wrap;gap:10px">
+      <h3>Boost orders</h3>
+      {% if active_count %}<span class="panel-meta">{{ active_count }} active</span>{% endif %}
+    </div>
+
+    <form class="admin-order-toolbar" method="get">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <a href="?status=all{% if search_q %}&q={{ search_q }}{% endif %}" class="admin-tab {% if status_filter == 'all' %}active{% endif %}">All</a>
+        <a href="?status=paid{% if search_q %}&q={{ search_q }}{% endif %}" class="admin-tab {% if status_filter == 'paid' %}active{% endif %}">Active</a>
+        <a href="?status=pending{% if search_q %}&q={{ search_q }}{% endif %}" class="admin-tab {% if status_filter == 'pending' %}active{% endif %}">Pending</a>
+        <a href="?status=expired{% if search_q %}&q={{ search_q }}{% endif %}" class="admin-tab {% if status_filter == 'expired' %}active{% endif %}">Expired</a>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+        <input class="admin-search-input" name="q" value="{{ search_q }}" placeholder="Search product, seller, plan…" />
+        <input type="hidden" name="status" value="{{ status_filter }}">
+        <button class="abtn abtn--ghost" type="submit">Search</button>
+      </div>
+    </form>
+
+    <div class="dashboard-table-wrap">
+      <table class="dashboard-table dashboard-table--wide">
+        <thead>
+          <tr><th>PRODUCT</th><th>SELLER</th><th>PLAN</th><th>AMOUNT</th><th>STARTED</th><th>EXPIRES</th><th>STATUS</th><th>ACTIONS</th></tr>
+        </thead>
+        <tbody>
+          {% for bo in boost_orders %}
+          <tr>
+            <td><b>{{ bo.product.name|truncatechars:28 }}</b></td>
+            <td class="muted">{{ bo.seller.username }}</td>
+            <td><span class="pill pill-blue" style="font-size:11px">{{ bo.plan_name }}</span></td>
+            <td><b>{{ bo.amount_display }}</b></td>
+            <td class="muted">{% if bo.paid_at %}{{ bo.paid_at|date:"M j, Y" }}{% else %}—{% endif %}</td>
+            <td class="muted">
+              {% if bo.expires_at %}{{ bo.expires_at|date:"M j, Y" }}
+                {% if bo.is_running %}<span style="color:#0a7a57;font-size:11px;font-weight:700"> ({{ bo.days_left }}d left)</span>{% endif %}
+              {% else %}—{% endif %}
+            </td>
+            <td>
+              <span class="pill {% if bo.status == 'paid' %}pill-green{% elif bo.status == 'pending' %}pill-yellow{% else %}pill-red{% endif %}">
+                {{ bo.get_status_display }}
+              </span>
+            </td>
+            <td>
+              {% if bo.status == 'paid' %}
+              <form method="post" action="{% url 'admin_boost_order_remove' bo.pk %}"
+                    onsubmit="return confirm('Expire this boost?')">
+                {% csrf_token %}
+                <button class="table-action table-action--soft" type="submit">Expire</button>
+              </form>
+              {% else %}—{% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="8" style="text-align:center;padding:40px;color:#9aa7bd">No boost orders found{% if search_q %} for "{{ search_q }}"{% endif %}.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% include "partials/pagination.html" with page_obj=page_obj extra_params="&status="|add:status_filter|add:"&q="|add:search_q %}
+  </section>
+</div>
+
+<!-- ── Add Boost Plan Modal ── -->
+<div class="smodal" id="boostPlanModal" role="dialog" aria-modal="true" aria-labelledby="boostPlanModalTitle">
+  <div class="smodal__box bpmodal" style="max-width:520px">
+
+    <div class="bpmodal__stripe"></div>
+
+    <div class="bpmodal__head">
+      <div class="bpmodal__icon">
+        <svg viewBox="0 0 24 24" fill="#e8b23c" stroke="#b9862c" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.6 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9-5.3-2.9-5.3 2.9 1.1-5.9L3.5 9.8l5.9-.8z"/></svg>
+      </div>
+      <div class="bpmodal__titles">
+        <h3 id="boostPlanModalTitle">Create boost plan</h3>
+        <p>Define a new promotion tier for sellers.</p>
+      </div>
+      <button class="bpmodal__close" id="closeBoostPlanModal" type="button" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+
+    <form method="post" action="{% url 'admin_boost_plan_create' %}">
+      {% csrf_token %}
+      <div class="bpmodal__body">
+
+        <!-- Plan name -->
+        <div class="bp-field">
+          <label for="{{ boost_form.name.id_for_label }}">{{ boost_form.name.label }}</label>
+          {{ boost_form.name }}
+          <small>Visible to sellers on the boost checkout page.</small>
+        </div>
+
+        <!-- Price currency -->
+        <div class="bp-field">
+          <label for="{{ boost_form.price_currency.id_for_label }}">{{ boost_form.price_currency.label }}</label>
+          {{ boost_form.price_currency }}
+          <small>Enter the price in this currency — the other payment currencies are calculated automatically.</small>
+        </div>
+
+        <!-- Price + Duration side by side -->
+        <div class="bp-row">
+          <div class="bp-field">
+            <label for="{{ boost_form.price.id_for_label }}">{{ boost_form.price.label }}</label>
+            <div class="bp-prefix">
+              <span class="bp-prefix__sym" id="bpCurrencySymbol">$</span>
+              {{ boost_form.price }}
+            </div>
+          </div>
+          <div class="bp-field">
+            <label for="{{ boost_form.duration_days.id_for_label }}">{{ boost_form.duration_days.label }}</label>
+            <div class="bp-suffix">
+              {{ boost_form.duration_days }}
+              <span class="bp-suffix__sym">days</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="bp-field">
+          <label for="{{ boost_form.description.id_for_label }}">{{ boost_form.description.label }}</label>
+          {{ boost_form.description }}
+          <small>e.g. ~8,000 extra views · homepage placement</small>
+        </div>
+
+        <!-- Active toggle -->
+        <label class="bp-check-row">
+          {{ boost_form.is_active }}
+          <span>
+            <strong>{{ boost_form.is_active.label }}</strong>
+            <em>Inactive plans are hidden from sellers until you enable them.</em>
+          </span>
+        </label>
+
+        <!-- Preview card -->
+        <div class="bpmodal__preview" id="bpPreview">
+          <div class="bpmodal__preview-label">Preview</div>
+          <div class="bpmodal__preview-card">
+            <div class="bpmodal__preview-head">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="#e8b23c" stroke="#b9862c" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.6 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9-5.3-2.9-5.3 2.9 1.1-5.9L3.5 9.8l5.9-.8z"/></svg>
+              <span class="pill pill-green" style="font-size:10px;padding:3px 8px">Active</span>
+            </div>
+            <div class="bpmodal__preview-name" id="bpPreviewName">Plan name</div>
+            <div class="bpmodal__preview-price" id="bpPreviewPrice">$0.00</div>
+            <div class="bpmodal__preview-meta" id="bpPreviewEquiv">₦0 · π0</div>
+            <div class="bpmodal__preview-meta" id="bpPreviewMeta">7 days</div>
+            <div class="bpmodal__preview-desc" id="bpPreviewDesc"></div>
+          </div>
+        </div>
+
+      </div>
+      <div class="bpmodal__foot">
+        <button class="bpmodal__btn-cancel" type="button" id="closeBoostPlanModal2">Cancel</button>
+        <button class="bpmodal__btn-submit" type="submit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Create plan
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+/* ── Featured plan cards ── */
+.featured-plans-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.featured-plan-card{background:rgba(255,255,255,.88);border:1px solid rgba(28,48,86,.1);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:6px;box-shadow:0 2px 10px rgba(16,30,54,.06);transition:transform .18s,box-shadow .18s}
+.featured-plan-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(16,30,54,.12)}
+.featured-plan-card--inactive{opacity:.55}
+.featured-plan-card__head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.featured-plan-card__icon{width:36px;height:36px;display:grid;place-items:center}
+.featured-plan-card__icon svg{width:28px;height:28px}
+.featured-plan-card h3{margin:0;font-size:15.5px;font-weight:800;color:var(--atext,#16223c)}
+.featured-plan-card__price{font-size:26px;font-weight:800;letter-spacing:-.04em;color:var(--ablue,#2456e6)}
+.featured-plan-card__meta{font-size:12.5px;font-weight:700;color:var(--amuted,#5d6a85)}
+.featured-plan-card__desc{margin:0;font-size:12.5px;color:var(--afaint,#93a0bd)}
+.featured-plan-card__foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:12px;border-top:1px solid rgba(28,48,86,.08)}
+@media(max-width:700px){
+  .featured-plans-grid{grid-template-columns:1fr}
+  .featured-plan-card{padding:16px}
+  .featured-plan-card__foot{gap:10px;align-items:flex-start;flex-direction:column}
+  .featured-plan-card__foot form,.featured-plan-card__foot button{width:100%}
+  .panel-heading .abtn{width:100%;justify-content:center}
+  .admin-order-toolbar>div:last-child{width:100%}
+  .admin-order-toolbar .admin-search-input{flex:1;min-width:0}
+}
+</style>
+
+<script>
+(function () {
+  var modal   = document.getElementById('boostPlanModal');
+  var btnOpen = document.getElementById('openBoostPlanModal');
+  var btnC1   = document.getElementById('closeBoostPlanModal');
+  var btnC2   = document.getElementById('closeBoostPlanModal2');
+
+  function openModal() {
+    modal.classList.add('open');
+    var first = modal.querySelector('input:not([type=hidden]):not([type=checkbox]),textarea');
+    if (first) setTimeout(function () { first.focus(); }, 80);
+  }
+  function closeModal() { modal.classList.remove('open'); }
+
+  if (btnOpen) btnOpen.addEventListener('click', openModal);
+  [btnC1, btnC2].forEach(function (b) { if (b) b.addEventListener('click', closeModal); });
+  modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+  /* ── Live preview ── */
+  var nameInput     = modal.querySelector('[name="name"]');
+  var priceInput    = modal.querySelector('[name="price"]');
+  var daysInput     = modal.querySelector('[name="duration_days"]');
+  var descInput     = modal.querySelector('[name="description"]');
+  var currencyInput = modal.querySelector('[name="price_currency"]');
+  var prefixSym     = document.getElementById('bpCurrencySymbol');
+
+  var prevName   = document.getElementById('bpPreviewName');
+  var prevPrice  = document.getElementById('bpPreviewPrice');
+  var prevEquiv  = document.getElementById('bpPreviewEquiv');
+  var prevMeta   = document.getElementById('bpPreviewMeta');
+  var prevDesc   = document.getElementById('bpPreviewDesc');
+
+  /* Rates match the marketplace convention (Product price_ngn / price_pi,
+     and BoostPlanForm converts NGN/PI amounts back to USD on save). */
+  var NGN_RATE = 1500, PI_RATE = 20000;
+  var SYMBOLS  = { USD: '$', NGN: '\u20a6', PI: '\u03c0' };
+
+  function fmtAmount(cur, usd) {
+    if (cur === 'NGN') return '\u20a6' + (usd * NGN_RATE).toLocaleString(undefined, {maximumFractionDigits: 0});
+    if (cur === 'PI')  return '\u03c0' + (usd * PI_RATE).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    return '$' + usd.toFixed(2);
+  }
+
+  function updatePreview() {
+    var n = (nameInput && nameInput.value.trim()) || 'Plan name';
+    var entered = parseFloat(priceInput && priceInput.value) || 0;
+    var d = parseInt(daysInput && daysInput.value) || 7;
+    var desc = (descInput && descInput.value.trim()) || '';
+    var cur = (currencyInput && currencyInput.value) || 'USD';
+    /* Server stores BoostPlan.price in USD; convert the entered amount. */
+    var usd = cur === 'NGN' ? entered / NGN_RATE : cur === 'PI' ? entered / PI_RATE : entered;
+    if (prefixSym) prefixSym.textContent = SYMBOLS[cur] || '$';
+    if (prevPrice) prevPrice.textContent = fmtAmount(cur, usd);
+    if (prevEquiv) prevEquiv.textContent = fmtAmount('USD', usd) + ' · ' + fmtAmount('NGN', usd) + ' · ' + fmtAmount('PI', usd);
+    if (prevMeta)  prevMeta.textContent  = d + ' day' + (d === 1 ? '' : 's');
+    if (prevDesc)  { prevDesc.textContent = desc; prevDesc.style.display = desc ? '' : 'none'; }
+  }
+
+  [nameInput, priceInput, daysInput, descInput, currencyInput].forEach(function (el) {
+    if (el) el.addEventListener('input', updatePreview);
+  });
+  if (currencyInput) currencyInput.addEventListener('change', updatePreview);
+  updatePreview();
+})();
+</script>
+
+{% comment %}
+<!-- Legacy duplicate markup retained in source history only. -->
+  <div class="ahead">
+    <div class="ahead__row">
+      <span class="ahead__chip">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.6 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9-5.3-2.9-5.3 2.9 1.1-5.9L3.5 9.8l5.9-.8z"/></svg>
+        Promoted catalog
+      </span>
+    </div>
+    <h2>Featured &amp; Boost</h2>
+    <p>Manage boost plans and active product promotions.</p>
+
+    <div class="admin-order-kpis" style="margin-top:16px">
+      <div class="aokpi aokpi--green">
+        <span>Active boosts</span>
+        <b>{{ active_count }}</b>
+      </div>
+      <div class="aokpi aokpi--blue">
+        <span>Boost plans</span>
+        <b>{{ boost_plans|length }}</b>
+      </div>
+      <div class="aokpi">
+        <span>Total boost orders</span>
+        <b>{{ page_obj.paginator.count }}</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Boost plans grid ── -->
+  <section class="dashboard-panel" style="margin-top:18px;margin-bottom:18px">
+    <div class="panel-heading" style="flex-wrap:wrap;gap:10px">
+      <h3>Boost plans</h3>
+      <button class="abtn abtn--primary" id="openBoostPlanModal" type="button">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Add plan
+      </button>
+    </div>
+    <div style="padding:20px">
+      {% if boost_plans %}
+      <div class="featured-plans-grid">
+        {% for plan in boost_plans %}
+        <div class="featured-plan-card {% if not plan.is_active %}featured-plan-card--inactive{% endif %}">
+          <div class="featured-plan-card__head">
+            <span class="featured-plan-card__icon">
+              <svg viewBox="0 0 24 24" fill="{% if not plan.is_active %}none{% else %}#e8b23c{% endif %}" stroke="#b9862c" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.6 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9-5.3-2.9-5.3 2.9 1.1-5.9L3.5 9.8l5.9-.8z"/></svg>
+            </span>
+            {% if plan.is_active %}
+            <span class="pill pill-green" style="font-size:10px;padding:3px 8px">Active</span>
+            {% else %}
+            <span class="pill pill-yellow" style="font-size:10px;padding:3px 8px">Inactive</span>
+            {% endif %}
+          </div>
+          <h3>{{ plan.name }}</h3>
+          <div class="featured-plan-card__price">${{ plan.price|floatformat:2 }}</div>
+          <div class="featured-plan-card__meta">{{ plan.duration_days }} day{{ plan.duration_days|pluralize }}</div>
+          {% if plan.description %}
+          <p class="featured-plan-card__desc">{{ plan.description }}</p>
+          {% endif %}
+          <div class="featured-plan-card__foot">
+            <span class="muted" style="font-size:12px">{{ plan.orders.count }} boost{{ plan.orders.count|pluralize }} sold</span>
+            <form method="post" action="{% url 'admin_boost_plan_delete' plan.pk %}"
+                  onsubmit="return confirm('Deactivate {{ plan.name|escapejs }}?')">
+              {% csrf_token %}
+              <button type="submit" class="table-action table-action--soft" style="font-size:11px;padding:4px 10px">
+                {% if plan.is_active %}Deactivate{% else %}Remove{% endif %}
+              </button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div style="text-align:center;padding:32px;color:#9aa7bd">
+        No boost plans yet. Click <strong>Add plan</strong> to create one.
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- ── Active boost orders ── -->
+  <section class="dashboard-panel">
+    <div class="panel-heading" style="flex-wrap:wrap;gap:10px">
+      <h3>Boost orders</h3>
+      {% if active_count %}
+      <span class="panel-meta">{{ active_count }} active</span>
+      {% endif %}
+    </div>
+
+    <form class="admin-order-toolbar" method="get">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <a href="?status=all{% if search_q %}&q={{ search_q }}{% endif %}" class="admin-tab {% if status_filter == 'all' %}active{% endif %}">All</a>
+        <a href="?status=paid{% if search_q %}&q={{ search_q }}{% endif %}" class="admin-tab {% if status_filter == 'paid' %}active{% endif %}">Active</a>
+        <a href="?status=pending{% if search_q %}&q={{ search_q }}{% endif %}" class="admin-tab {% if status_filter == 'pending' %}active{% endif %}">Pending</a>
+        <a href="?status=expired{% if search_q %}&q={{ search_q }}{% endif %}" class="admin-tab {% if status_filter == 'expired' %}active{% endif %}">Expired</a>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+        <input class="admin-search-input" name="q" value="{{ search_q }}" placeholder="Search product, seller, plan…" />
+        <input type="hidden" name="status" value="{{ status_filter }}">
+        <button class="abtn abtn--ghost" type="submit">Search</button>
+      </div>
+    </form>
+
+    <div class="dashboard-table-wrap">
+      <table class="dashboard-table dashboard-table--wide">
+        <thead>
+          <tr>
+            <th>PRODUCT</th>
+            <th>SELLER</th>
+            <th>PLAN</th>
+            <th>AMOUNT</th>
+            <th>STARTED</th>
+            <th>EXPIRES</th>
+            <th>STATUS</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for bo in boost_orders %}
+          <tr>
+            <td><b>{{ bo.product.name|truncatechars:28 }}</b></td>
+            <td class="muted">{{ bo.seller.username }}</td>
+            <td>
+              <span class="pill pill-blue" style="font-size:11px">{{ bo.plan_name }}</span>
+            </td>
+            <td><b>${{ bo.amount|floatformat:2 }}</b></td>
+            <td class="muted">
+              {% if bo.paid_at %}{{ bo.paid_at|date:"M j, Y" }}{% else %}—{% endif %}
+            </td>
+            <td class="muted">
+              {% if bo.expires_at %}
+                {{ bo.expires_at|date:"M j, Y" }}
+                {% if bo.is_running %}
+                  <span style="color:#0a7a57;font-size:11px;font-weight:700">({{ bo.days_left }}d left)</span>
+                {% endif %}
+              {% else %}—{% endif %}
+            </td>
+            <td>
+              <span class="pill {% if bo.status == 'paid' %}pill-green{% elif bo.status == 'pending' %}pill-yellow{% else %}pill-red{% endif %}">
+                {{ bo.get_status_display }}
+              </span>
+            </td>
+            <td>
+              {% if bo.status == 'paid' %}
+              <form method="post" action="{% url 'admin_boost_order_remove' bo.pk %}"
+                    onsubmit="return confirm('Expire this boost?')">
+                {% csrf_token %}
+                <button class="table-action table-action--soft" type="submit">Expire</button>
+              </form>
+              {% else %}—{% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8" style="text-align:center;padding:40px;color:#9aa7bd">
+              No boost orders found{% if search_q %} for "{{ search_q }}"{% endif %}.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% include "partials/pagination.html" with page_obj=page_obj extra_params="&status="|add:status_filter|add:"&q="|add:search_q %}
+  </section>
+</div>
+
+<!-- ── Add Boost Plan Modal ── -->
+<div class="smodal" id="boostPlanModal" role="dialog" aria-modal="true">
+  <div class="smodal__box" style="max-width:460px">
+    <div class="smodal__head">
+      <span class="sside__setupic" style="background:#fff8e6;border-color:#f5d9a3;color:#9a6200">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.6 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9-5.3-2.9-5.3 2.9 1.1-5.9L3.5 9.8l5.9-.8z"/></svg>
+      </span>
+      <h3>Create boost plan</h3>
+      <span style="margin-left:auto"></span>
+      <button class="mbtn" id="closeBoostPlanModal">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <form method="post" action="{% url 'admin_boost_plan_create' %}">
+      {% csrf_token %}
+      <div class="smodal__body">
+        <div class="ff"><label>{{ boost_form.name.label }}</label>{{ boost_form.name }}</div>
+        <div class="ff-row">
+          <div class="ff"><label>{{ boost_form.price.label }}</label>{{ boost_form.price }}</div>
+          <div class="ff"><label>{{ boost_form.duration_days.label }}</label>{{ boost_form.duration_days }}</div>
+        </div>
+        <div class="ff"><label>{{ boost_form.description.label }}</label>{{ boost_form.description }}</div>
+        <div class="ff" style="display:flex;align-items:center;gap:10px">
+          {{ boost_form.is_active }}
+          <label for="{{ boost_form.is_active.id_for_label }}" style="margin:0;font-size:13.5px;font-weight:600">{{ boost_form.is_active.label }}</label>
+        </div>
+      </div>
+      <div class="smodal__foot">
+        <button class="btngs" type="button" id="closeBoostPlanModal2">Cancel</button>
+        <button class="btnps" type="submit">Create plan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+.featured-plans-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.featured-plan-card{background:#fff;border:1px solid #e4eaf3;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:6px;box-shadow:0 2px 8px rgba(16,30,54,.06)}
+.featured-plan-card--inactive{opacity:.55}
+.featured-plan-card__head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.featured-plan-card__icon{width:34px;height:34px;display:grid;place-items:center}
+.featured-plan-card__icon svg{width:26px;height:26px}
+.featured-plan-card h3{margin:0;font-size:15px;font-weight:800}
+.featured-plan-card__price{font-size:24px;font-weight:800;letter-spacing:-.03em;color:#2456e6}
+.featured-plan-card__meta{font-size:12.5px;color:#6b7a90;font-weight:700}
+.featured-plan-card__desc{margin:0;font-size:12.5px;color:#6b7a90}
+.featured-plan-card__foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:10px;border-top:1px solid #f0f3f8}
+</style>
+
+<script>
+(function () {
+  var modal = document.getElementById('boostPlanModal');
+  var open  = document.getElementById('openBoostPlanModal');
+  var c1    = document.getElementById('closeBoostPlanModal');
+  var c2    = document.getElementById('closeBoostPlanModal2');
+  if (open) open.addEventListener('click', function () { modal.classList.add('open'); });
+  [c1, c2].forEach(function (b) { if (b) b.addEventListener('click', function () { modal.classList.remove('open'); }); });
+  modal.addEventListener('click', function (e) { if (e.target === modal) modal.classList.remove('open'); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') modal.classList.remove('open'); });
+})();
+</script>
+{% endcomment %}

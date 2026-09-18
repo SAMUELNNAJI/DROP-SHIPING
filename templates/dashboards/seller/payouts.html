@@ -1,0 +1,334 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Payouts">
+
+  <!-- ── balance hero ── -->
+  <div class="payout-hero" style="margin-bottom:16px">
+    <div class="payout-hero__top">
+      <span class="payout-hero__eyebrow">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="3"/><path d="M8 3v3M16 3v3M3 9.5h18"/></svg>
+        Escrow balance
+      </span>
+      {% if pending_payout and pending_payout > 0 %}
+      <span class="payout-hero__status"><i></i>Processing</span>
+      {% else %}
+      <span class="payout-hero__status"><i></i>Ready to withdraw</span>
+      {% endif %}
+    </div>
+
+    <div class="payout-hero__row">
+      <h2>${{ available_balance|floatformat:2 }}</h2>
+      <div class="payout-hero__meta">
+        <strong>Available balance</strong>
+        <span>
+          {% if default_method %}
+            Pays to {{ default_method }} · {{ default_method.get_currency_display }}
+          {% else %}
+            No payout method set — add one below
+          {% endif %}
+        </span>
+      </div>
+    </div>
+
+    {% if available_balance > 0 and default_method %}
+    <div class="payout-hero__actions">
+      <form method="post" action="{% url 'seller_request_payout' %}" style="display:inline">
+        {% csrf_token %}
+        <button class="seller-btn-light" type="submit"
+                onclick="return confirm('Withdraw ${{ available_balance|floatformat:2 }} to {{ default_method }}?')">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M17 6.5c0-1.6-2.2-2.5-5-2.5S7 5.1 7 6.9c0 4.4 10 2 10 6.6 0 1.8-2.2 2.9-5 2.9s-5-1-5-2.9"/></svg>
+          Withdraw ${{ available_balance|floatformat:2 }}
+        </button>
+      </form>
+      <button class="seller-btn-outline" id="openAddMethodBtn">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Add method
+      </button>
+    </div>
+    {% elif not default_method %}
+    <div class="payout-hero__actions">
+      <button class="seller-btn-light" id="openAddMethodBtn">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Add payout method
+      </button>
+    </div>
+    {% endif %}
+
+    <div class="balgrid">
+      <div>
+        <span>Available now</span>
+        <strong>${{ available_balance|floatformat:2 }}</strong>
+        <small>Ready to withdraw</small>
+      </div>
+      <div>
+        <span>In escrow</span>
+        <strong>${{ in_escrow|floatformat:2 }}</strong>
+        <small>Releases on delivery confirm</small>
+      </div>
+      <div>
+        <span>Lifetime paid</span>
+        <strong>${{ lifetime_paid|floatformat:2 }}</strong>
+        <small>All-time earnings sent</small>
+      </div>
+    </div>
+
+    {% if pending_payout and pending_payout > 0 %}
+    <div class="payout-hero__sched">
+      <span class="payout-chip">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        ${{ pending_payout|floatformat:2 }} processing
+      </span>
+      <span class="payout-chip">Est. 1–2 business days</span>
+      <span class="payout-chip">Fees waived for verified sellers</span>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="sgrid2">
+
+    <!-- ── payout methods ── -->
+    <div class="scard">
+      <div class="scard__head">
+        <div><h3>Payout accounts</h3><p>Where we send your earnings</p></div>
+        <div class="spacer">
+          <button class="seller-top-btn" id="openAddMethodBtn2">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            Add account
+          </button>
+        </div>
+      </div>
+      <div class="scard__body">
+        {% if payout_methods %}
+          {% for pm in payout_methods %}
+          <div class="paymethod" style="margin-bottom:10px">
+            <span class="bankic" style="{% if pm.method == 'pi' %}background:linear-gradient(135deg,#7048e8,#b79cff){% elif pm.method == 'paypal' %}background:linear-gradient(135deg,#0070ba,#009cde){% else %}background:linear-gradient(135deg,#0d1d3d,#2456e6){% endif %}">
+              {% if pm.method == 'bank' %}
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22h18M5 10v12M9.5 10v12M14.5 10v12M19 10v12M12 3 3 10h18z"/></svg>
+              {% elif pm.method == 'pi' %}
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+              {% else %}
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+              {% endif %}
+            </span>
+            <div style="flex:1;min-width:0">
+              <strong>
+                {% if pm.method == 'bank' %}
+                  {{ pm.bank_name }} · {{ pm.masked_account }}
+                {% else %}
+                  {{ pm.get_method_display }} · {{ pm.wallet_address|truncatechars:24 }}
+                {% endif %}
+              </strong>
+              <small>
+                {{ pm.get_currency_display }}
+                {% if pm.method == 'bank' %} · {{ pm.account_name|truncatechars:20 }}{% endif %}
+                {% if pm.is_default %} · <span style="color:var(--sgreen);font-weight:800">Default</span>{% endif %}
+              </small>
+            </div>
+            <div style="display:flex;gap:6px">
+              {% if not pm.is_default %}
+              <form method="post" action="{% url 'seller_set_default_payout_method' pm.pk %}">
+                {% csrf_token %}
+                <button class="mbtn" type="submit" title="Set as default">Default</button>
+              </form>
+              {% endif %}
+              <form method="post" action="{% url 'seller_delete_payout_method' pm.pk %}"
+                    onsubmit="return confirm('Remove this payout method?')">
+                {% csrf_token %}
+                <button class="mbtn" type="submit" style="color:var(--srose)" title="Remove">
+                  <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+                </button>
+              </form>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="emptyx" style="padding:20px 0">
+            <div class="emptyx__art" style="font-size:22px">🏦</div>
+            <h4>No payout method yet</h4>
+            <p>Add a bank account, Pi wallet, or PayPal to receive your earnings.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- ── payout history ── -->
+    <div class="scard">
+      <div class="scard__head">
+        <div><h3>Payout history</h3><p>All withdrawal records</p></div>
+      </div>
+      {% if payout_history %}
+      <div class="tablex-wrap">
+        <table class="stable">
+          <thead>
+            <tr><th>Date</th><th>Destination</th><th>Amount</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            {% for payout in payout_history %}
+            <tr>
+              <td>{{ payout.created_at|date:"M j · H:i" }}</td>
+              <td>
+                <b>{% if payout.payout_method %}{{ payout.payout_method }}{% else %}—{% endif %}</b><br>
+                <small style="color:#6b7a90">{{ payout.reference }}</small>
+              </td>
+              <td><b>${{ payout.amount|floatformat:2 }}</b></td>
+              <td><span class="statusx {{ payout.status_css }}">{{ payout.get_status_display }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="emptyx" style="padding:24px">
+        <div class="emptyx__art" style="font-size:22px">💸</div>
+        <h4>No payouts yet</h4>
+        <p>Your withdrawal history will appear here once you request your first payout.</p>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Add payout method modal — redesigned ── -->
+<div class="smodal" id="addMethodModal" role="dialog" aria-modal="true" aria-labelledby="pmModalTitle">
+  <div class="smodal__box pmmodal" style="max-width:500px">
+
+    <div class="pmmodal__stripe"></div>
+
+    <div class="pmmodal__head">
+      <div class="pmmodal__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
+      </div>
+      <div class="pmmodal__titles">
+        <h3 id="pmModalTitle">Add payout method</h3>
+        <p>Where you'd like to receive your earnings.</p>
+      </div>
+      <button class="pmmodal__close" id="closeAddMethodModal" type="button" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+
+    <form method="post" action="{% url 'seller_save_payout_method' %}">
+      {% csrf_token %}
+
+      <!-- Method tab switcher (visual — synced to hidden select) -->
+      <div class="pmmodal__tabs" role="group" aria-label="Payment method">
+        <button type="button" class="pmmodal__tab is-active" data-method="bank">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22h18M5 10v12M9.5 10v12M14.5 10v12M19 10v12M12 3 3 10h18z"/></svg>
+          Bank
+        </button>
+        <button type="button" class="pmmodal__tab" data-method="paypal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+          PayPal
+        </button>
+        <button type="button" class="pmmodal__tab" data-method="pi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 8h3.8a2.2 2.2 0 0 1 0 4.4H9.5V8zM9.5 12.4V16"/></svg>
+          Pi Wallet
+        </button>
+      </div>
+      <!-- Hidden real select (submitted with form) -->
+      <div style="display:none">{{ payout_form.method }}</div>
+
+      <div class="pmmodal__body">
+
+        <!-- Bank fields -->
+        <div id="pmBankFields">
+          <div class="pm-row">
+            <div class="pm-field">
+              <label>{{ payout_form.bank_name.label }}</label>
+              {{ payout_form.bank_name }}
+            </div>
+            <div class="pm-field">
+              <label>{{ payout_form.currency.label }}</label>
+              {{ payout_form.currency }}
+            </div>
+          </div>
+          <div class="pm-row" style="margin-top:14px">
+            <div class="pm-field">
+              <label>{{ payout_form.account_number.label }}</label>
+              {{ payout_form.account_number }}
+            </div>
+            <div class="pm-field">
+              <label>{{ payout_form.account_name.label }}</label>
+              {{ payout_form.account_name }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Wallet fields (Pi / PayPal) -->
+        <div id="pmWalletFields" style="display:none">
+          <div class="pm-field">
+            <label>{{ payout_form.wallet_address.label }}</label>
+            {{ payout_form.wallet_address }}
+          </div>
+        </div>
+
+        <!-- Default checkbox -->
+        <label class="pm-check-row" for="{{ payout_form.is_default.id_for_label }}">
+          {{ payout_form.is_default }}
+          <span>
+            <strong>{{ payout_form.is_default.label }}</strong>
+            <em>Payouts will automatically go to this account.</em>
+          </span>
+        </label>
+
+      </div>
+
+      <div class="pmmodal__trust">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Account details are encrypted and never shown to buyers.
+      </div>
+
+      <div class="pmmodal__foot">
+        <button class="pmmodal__btn-cancel" type="button" id="closeAddMethodModal2">Cancel</button>
+        <button class="pmmodal__btn-save" type="submit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>
+          Save method
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(function () {
+  var modal = document.getElementById('addMethodModal');
+
+  function openModal()  { modal.classList.add('open'); }
+  function closeModal() { modal.classList.remove('open'); }
+
+  ['openAddMethodBtn', 'openAddMethodBtn2'].forEach(function (id) {
+    var btn = document.getElementById(id);
+    if (btn) btn.addEventListener('click', openModal);
+  });
+  ['closeAddMethodModal', 'closeAddMethodModal2'].forEach(function (id) {
+    var btn = document.getElementById(id);
+    if (btn) btn.addEventListener('click', closeModal);
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+  modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+
+  /* ── Method tab switcher ── */
+  var tabs        = modal.querySelectorAll('.pmmodal__tab');
+  var methodSel   = document.getElementById('pmMethod');
+  var bankFields  = document.getElementById('pmBankFields');
+  var walletFields = document.getElementById('pmWalletFields');
+
+  function applyMethod(val) {
+    tabs.forEach(function (t) { t.classList.toggle('is-active', t.dataset.method === val); });
+    if (methodSel) methodSel.value = val;
+    var isWallet = val === 'pi' || val === 'paypal';
+    if (bankFields)   bankFields.style.display   = isWallet ? 'none' : '';
+    if (walletFields) walletFields.style.display  = isWallet ? ''     : 'none';
+  }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () { applyMethod(tab.dataset.method); });
+  });
+
+  /* sync if Django renders the select with a value */
+  if (methodSel) {
+    methodSel.addEventListener('change', function () { applyMethod(methodSel.value); });
+    applyMethod(methodSel.value || 'bank');
+  }
+})();
+</script>

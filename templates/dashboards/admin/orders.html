@@ -1,0 +1,235 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Orders">
+
+  <!-- ── page header ── -->
+  <div class="ahead">
+    <div class="ahead__row">
+      <span class="ahead__chip">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>
+        Marketplace activity
+      </span>
+    </div>
+    <h2>Orders</h2>
+    <p>Review fulfilment, payment status and escrow releases.</p>
+
+    {% if payout_ready_count %}
+    <div class="ahead__alert">
+      <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M17 6.5c0-1.6-2.2-2.5-5-2.5S7 5.1 7 6.9c0 4.4 10 2 10 6.6 0 1.8-2.2 2.9-5 2.9s-5-1-5-2.9"/></svg>
+      <strong>{{ payout_ready_count }} order{{ payout_ready_count|pluralize }} ready for payout release</strong>
+      <span>Buyers have confirmed receipt — release funds to sellers.</span>
+      <a href="?status=confirmed" class="abtn abtn--primary" style="margin-left:auto">View confirmed</a>
+    </div>
+    {% endif %}
+
+    <!-- KPI tiles -->
+    <div class="admin-order-kpis">
+      <div class="aokpi">
+        <span>Total orders</span>
+        <b>{{ order_counts.total|default:"0" }}</b>
+      </div>
+      <div class="aokpi aokpi--blue">
+        <span>In Transit</span>
+        <b>{{ order_counts.in_transit|default:"0" }}</b>
+      </div>
+      <div class="aokpi aokpi--amber">
+        <span>Delivered (awaiting confirm)</span>
+        <b>{{ order_counts.delivered|default:"0" }}</b>
+      </div>
+      <div class="aokpi aokpi--green">
+        <span>Payout ready</span>
+        <b>{{ order_counts.payout_ready|default:"0" }}</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── toolbar ── -->
+  <section class="dashboard-panel">
+    <div class="panel-heading" style="flex-wrap:wrap;gap:10px">
+      <h3>All Orders</h3>
+      {% if payout_ready_count %}
+      <span class="panel-meta">{{ payout_ready_count }} pending escrow release</span>
+      {% endif %}
+    </div>
+
+    <form class="admin-order-toolbar" method="get" action="">
+      <!-- status filter tabs -->
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <a href="?status=all{% if search_q %}&q={{ search_q }}{% endif %}"
+           class="admin-tab {% if status_filter == 'all' %}active{% endif %}">All</a>
+        <a href="?status=pending{% if search_q %}&q={{ search_q }}{% endif %}"
+           class="admin-tab {% if status_filter == 'pending' %}active{% endif %}">Pending</a>
+        <a href="?status=in_transit{% if search_q %}&q={{ search_q }}{% endif %}"
+           class="admin-tab {% if status_filter == 'in_transit' %}active{% endif %}">In Transit</a>
+        <a href="?status=delivered{% if search_q %}&q={{ search_q }}{% endif %}"
+           class="admin-tab {% if status_filter == 'delivered' %}active{% endif %}">Delivered</a>
+        <a href="?status=confirmed{% if search_q %}&q={{ search_q }}{% endif %}"
+           class="admin-tab {% if status_filter == 'confirmed' %}active{% endif %}">Confirmed</a>
+        <a href="?status=refunded{% if search_q %}&q={{ search_q }}{% endif %}"
+           class="admin-tab {% if status_filter == 'refunded' %}active{% endif %}">Refunded</a>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+        <input class="admin-search-input" name="q" value="{{ search_q }}" placeholder="Search order, buyer, seller, product…" />
+        <button class="abtn abtn--ghost" type="submit">Search</button>
+      </div>
+    </form>
+
+    <div class="dashboard-table-wrap">
+      <table class="dashboard-table dashboard-table--wide">
+        <thead>
+          <tr>
+            <th>ORDER ID</th>
+            <th>DATE</th>
+            <th>BUYER</th>
+            <th>SELLER</th>
+            <th>PRODUCT</th>
+            <th>AMOUNT</th>
+            <th>PAYMENT</th>
+            <th>STATUS</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+          <tr id="admin-order-row-{{ order.pk }}">
+            <td class="table-link">#{{ order.order_number }}</td>
+            <td class="muted">{{ order.created_at|date:"M j, Y" }}</td>
+            <td>
+              {{ order.buyer.get_full_name|default:order.buyer.username }}<br>
+              <small class="muted">{{ order.buyer.email }}</small>
+            </td>
+            <td class="muted">{{ order.store_name|default:order.seller.username }}</td>
+            <td class="muted">{{ order.product_name|truncatechars:24 }}</td>
+            <td><b>${{ order.total_price }}</b></td>
+            <td><span class="pill pill-blue" style="font-size:11px">{{ order.get_payment_method_display }}</span></td>
+            <td>
+              <span class="pill {% if order.status == 'confirmed' %}pill-green{% elif order.status == 'in_transit' %}pill-blue{% elif order.status == 'delivered' %}pill-yellow{% elif order.status == 'refunded' %}pill-red{% else %}pill-grey{% endif %}"
+                    id="admin-status-{{ order.pk }}">
+                {{ order.status_label }}
+              </span>
+              {% if order.status == 'confirmed' and order.auto_confirmed %}
+              <br><small class="muted" style="font-size:10px">Auto-confirmed</small>
+              {% endif %}
+            </td>
+            <td>
+              {% if order.payout_ready %}
+              <form method="post" action="{% url 'order_release_payout' order.pk %}" class="admin-payout-form" data-pk="{{ order.pk }}">
+                {% csrf_token %}
+                <button class="table-action table-action--green" type="submit">
+                  Release Payout
+                </button>
+              </form>
+              {% elif order.status == 'disputed' %}
+              <form method="post" action="{% url 'order_admin_refund' order.pk %}">
+                {% csrf_token %}
+                <button class="table-action table-action--soft" type="submit">Approve refund</button>
+              </form>
+              {% elif order.payout_released %}
+              <span class="muted" style="font-size:12px">
+                Paid {{ order.payout_released_at|date:"M j" }}
+              </span>
+              {% elif order.status == 'in_transit' %}
+              <span class="muted">In delivery</span>
+              {% elif order.status == 'delivered' %}
+              <span class="muted" style="color:#9a6200">
+                Awaiting buyer
+                {% if order.auto_confirm_due %}
+                  <br><small>Auto-confirm overdue</small>
+                {% endif %}
+              </span>
+              {% else %}—{% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="9" style="text-align:center;padding:40px;color:#9aa7bd">
+              No orders found{% if search_q %} for "{{ search_q }}"{% endif %}.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="tablex-foot">
+      <div class="pager-info">Showing {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ page_obj.paginator.count }}</div>
+      <div class="pagerx">
+        {% if page_obj.has_previous %}
+        <a class="pagerx-btn" href="?page={{ page_obj.previous_page_number }}&status={{ status_filter }}&q={{ search_q }}">&laquo;</a>
+        {% else %}<button disabled>&laquo;</button>{% endif %}
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}<button class="on">{{ num }}</button>
+          {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+            <a class="pagerx-btn" href="?page={{ num }}&status={{ status_filter }}&q={{ search_q }}">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <a class="pagerx-btn" href="?page={{ page_obj.next_page_number }}&status={{ status_filter }}&q={{ search_q }}">&raquo;</a>
+        {% else %}<button disabled>&raquo;</button>{% endif %}
+      </div>
+    </div>
+    {% endif %}
+  </section>
+</div>
+
+<style>
+/* ── Admin orders page extras ── */
+.admin-order-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0 0}
+.aokpi{padding:14px 16px;border-radius:14px;background:#f7f9fd;border:1px solid #e4eaf3}
+.aokpi span{display:block;font-size:11.5px;font-weight:700;color:#6b7a90;margin-bottom:6px}
+.aokpi b{font-size:26px;letter-spacing:-.04em;color:#0f1e33}
+.aokpi--blue{background:#eaf0ff;border-color:#d4e2ff}
+.aokpi--blue b{color:#2456e6}
+.aokpi--amber{background:#fff4dd;border-color:#f5d9a3}
+.aokpi--amber b{color:#9a6200}
+.aokpi--green{background:#e2f8f0;border-color:#bfe9d8}
+.aokpi--green b{color:#0a7a57}
+.ahead__alert{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:14px 0 0;padding:14px 16px;background:linear-gradient(135deg,#fff4dd,#ffe9b3);border:1px solid #f5d9a3;border-radius:14px;font-size:13.5px;color:#6c4a00}
+.ahead__alert strong{display:block;font-weight:800}
+.ahead__alert span{font-size:12.5px;color:#9a6200}
+.ahead__alert .sic{width:22px;height:22px;color:#9a6200;flex-shrink:0}
+.admin-order-toolbar{padding:14px 20px;border-bottom:1px solid #e4eaf3}
+.admin-search-input{height:40px;border:1px solid #e4eaf3;border-radius:11px;padding:0 13px;font:inherit;font-size:13px;background:#f7f9fd;color:#0f1e33;outline:0;min-width:260px}
+.admin-search-input:focus{border-color:#2456e6;box-shadow:0 0 0 3px rgba(36,86,230,.1)}
+.admin-tab{display:inline-flex;align-items:center;height:34px;padding:0 14px;border-radius:20px;font-size:13px;font-weight:700;color:#5b6b84;background:#f0f3f8;border:1px solid #e4eaf3;text-decoration:none;white-space:nowrap}
+.admin-tab.active,.admin-tab:hover{background:#2456e6;color:#fff;border-color:#2456e6}
+.table-action--green{background:#e2f8f0;color:#0a7a57;border:1px solid #bfe9d8;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:800;cursor:pointer;white-space:nowrap}
+.table-action--green:hover{background:#0a7a57;color:#fff}
+.pagerx-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9px;border:1px solid #e4eaf3;background:#fff;font-weight:800;cursor:pointer;text-decoration:none;color:#0f1e33;font-size:13px}
+@media(max-width:900px){.admin-order-kpis{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.admin-order-kpis{grid-template-columns:1fr}}
+</style>
+
+<script>
+(function () {
+  var CSRF = (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || '';
+
+  document.querySelectorAll('.admin-payout-form').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!confirm('Release payout for this order? This action cannot be undone.')) return;
+      var pk = form.dataset.pk;
+
+      fetch(form.action, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': CSRF,
+          'X-Requested-With': 'XMLHttpRequest',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'csrfmiddlewaretoken=' + CSRF,
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.ok) {
+          form.innerHTML = '<span style="font-size:12px;color:#0a7a57;font-weight:700">Paid</span>';
+          var badge = document.getElementById('admin-status-' + pk);
+          if (badge) { badge.style.opacity = '.6'; }
+        }
+      })
+      .catch(function () { window.location.reload(); });
+    });
+  });
+})();
+</script>

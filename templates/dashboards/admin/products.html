@@ -1,0 +1,153 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Products">
+
+  <div class="ahead">
+    <div class="ahead__row">
+      <span class="ahead__chip">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8.5 12 3 3 8.5v7L12 21l9-5.5z"/><path d="m3 8.5 9 5.5 9-5.5M12 21v-7"/></svg>
+        Catalog control
+      </span>
+    </div>
+    <h2>Products</h2>
+    <p>Review and moderate every product listed on the marketplace.</p>
+
+    <div class="admin-order-kpis" style="margin-top:16px">
+      <div class="aokpi">
+        <span>Total products</span>
+        <b>{{ page_obj.paginator.count }}</b>
+      </div>
+      <div class="aokpi aokpi--green">
+        <span>Live</span>
+        <b>{{ total_live }}</b>
+      </div>
+      <div class="aokpi aokpi--amber">
+        <span>Draft</span>
+        <b>{{ total_draft }}</b>
+      </div>
+      <div class="aokpi aokpi--blue">
+        <span>Categories</span>
+        <b>{{ categories|length }}</b>
+      </div>
+    </div>
+  </div>
+
+  <section class="dashboard-panel" style="margin-top:18px">
+    <div class="panel-heading" style="flex-wrap:wrap;gap:10px">
+      <h3>Product moderation</h3>
+    </div>
+
+    <form class="admin-order-toolbar" method="get">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <a href="?status=all{% if search_q %}&q={{ search_q }}{% endif %}&category={{ cat_filter }}" class="admin-tab {% if status_filter == 'all' %}active{% endif %}">All</a>
+        <a href="?status=live{% if search_q %}&q={{ search_q }}{% endif %}&category={{ cat_filter }}" class="admin-tab {% if status_filter == 'live' %}active{% endif %}">Live</a>
+        <a href="?status=draft{% if search_q %}&q={{ search_q }}{% endif %}&category={{ cat_filter }}" class="admin-tab {% if status_filter == 'draft' %}active{% endif %}">Draft</a>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px">
+        <input class="admin-search-input" name="q" value="{{ search_q }}" placeholder="Search name, seller, store…" />
+        <select class="admin-search-input" name="category" style="min-width:140px;cursor:pointer">
+          <option value="all" {% if cat_filter == 'all' %}selected{% endif %}>All categories</option>
+          {% for slug, label in categories %}
+          <option value="{{ slug }}" {% if cat_filter == slug %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+        <input type="hidden" name="status" value="{{ status_filter }}">
+        <button class="abtn abtn--ghost" type="submit">Filter</button>
+      </div>
+    </form>
+
+    <div class="dashboard-table-wrap">
+      <table class="dashboard-table dashboard-table--wide">
+        <thead>
+          <tr>
+            <th>PRODUCT</th>
+            <th>SELLER</th>
+            <th>PRICE</th>
+            <th>CATEGORY</th>
+            <th>STOCK</th>
+            <th>STATUS</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in products %}
+          <tr id="prod-row-{{ p.pk }}">
+            <td>
+              <div style="display:flex;align-items:center;gap:10px">
+                <img src="{{ p.image_src }}" alt="{{ p.name }}"
+                     style="width:44px;height:44px;border-radius:10px;object-fit:cover;flex-shrink:0;background:#edf2ff"
+                     onerror="this.style.background='#edf2ff';this.style.display='none'" />
+                <div>
+                  <b>{{ p.name|truncatechars:32 }}</b>
+                  <br><small class="muted">{{ p.get_store_display }}</small>
+                </div>
+              </div>
+            </td>
+            <td class="muted">{{ p.seller.username }}</td>
+            <td><b>${{ p.price|floatformat:2 }}</b></td>
+            <td class="muted">{{ p.category_label }}</td>
+            <td class="muted">{{ p.stock }}</td>
+            <td>
+              <span class="pill {% if p.status == 'live' %}pill-green{% else %}pill-yellow{% endif %}" id="prod-status-{{ p.pk }}">
+                {{ p.display_status }}
+              </span>
+            </td>
+            <td>
+              <div style="display:flex;gap:7px;flex-wrap:wrap">
+                <a class="table-action table-action--soft" href="/products/{{ p.pk }}/" target="_blank">View</a>
+                <button class="table-action table-action--soft prod-toggle-btn"
+                        data-pk="{{ p.pk }}"
+                        data-url="{% url 'admin_product_toggle_status' p.pk %}"
+                        id="prod-toggle-{{ p.pk }}">
+                  {% if p.status == 'live' %}Draft{% else %}Publish{% endif %}
+                </button>
+                <form method="post" action="{% url 'admin_product_delete' p.pk %}"
+                      onsubmit="return confirm('Delete {{ p.name|escapejs }}? This cannot be undone.')">
+                  {% csrf_token %}
+                  <button class="table-action" type="submit" style="color:#b4232a;border-color:#fbd0d0;background:#fff1f1">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" style="text-align:center;padding:40px;color:#9aa7bd">
+              No products found{% if search_q %} for "{{ search_q }}"{% endif %}.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% include "partials/pagination.html" with page_obj=page_obj extra_params="&status="|add:status_filter|add:"&q="|add:search_q|add:"&category="|add:cat_filter %}
+  </section>
+</div>
+
+<script>
+(function () {
+  var CSRF = (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || '';
+  document.querySelectorAll('.prod-toggle-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      fetch(btn.dataset.url, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': CSRF, 'X-Requested-With': 'XMLHttpRequest',
+                   'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'csrfmiddlewaretoken=' + CSRF,
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.ok) {
+          var pill = document.getElementById('prod-status-' + btn.dataset.pk);
+          if (data.status === 'live') {
+            pill.className = 'pill pill-green'; pill.textContent = 'Live';
+            btn.textContent = 'Draft';
+          } else {
+            pill.className = 'pill pill-yellow'; pill.textContent = 'Draft';
+            btn.textContent = 'Publish';
+          }
+        }
+      });
+    });
+  });
+})();
+</script>

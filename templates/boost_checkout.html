@@ -1,0 +1,221 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Boost {{ product.name|truncatechars:22 }}">
+
+  <!-- ── back + breadcrumb ── -->
+  <a class="pform-back" href="/dashboards/seller/products/" data-dashboard-link>
+    <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Back to products
+  </a>
+
+  <!-- ── hero ── -->
+  <div class="boost-hero">
+    <div class="boost-hero__left">
+      <img src="{{ product.image_src }}" alt="{{ product.name }}"
+           onerror="this.style.display='none'" />
+      <div>
+        <span style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6)">Boosting</span>
+        <h2>{{ product.name }}</h2>
+        <p>${{ product.price|floatformat:2 }} · {{ product.category_label }} · {{ product.stock }} in stock</p>
+      </div>
+    </div>
+    <div class="boost-hero__right">
+      <span class="boost-hero__badge">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.6 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9-5.3-2.9-5.3 2.9 1.1-5.9L3.5 9.8l5.9-.8z"/></svg>
+        Boost &amp; get featured on the marketplace homepage
+      </span>
+    </div>
+  </div>
+
+  {% if plans %}
+  <form method="post" action="" id="boostForm">
+    {% csrf_token %}
+
+    <!-- ── plan cards ── -->
+    <h3 style="font-size:18px;margin:28px 0 16px;letter-spacing:-.02em">Choose a boost plan</h3>
+    <div class="boost-plans-grid" id="boostPlansGrid">
+      {% for plan in plans %}
+      <label class="boost-plan {% if forloop.first %}boost-plan--selected{% endif %}" id="plan-label-{{ plan.pk }}">
+        <input type="radio" name="plan" value="{{ plan.pk }}" {% if forloop.first %}checked{% endif %}
+               class="boost-plan__radio" data-price="{{ plan.price }}" data-name="{{ plan.name }}" data-days="{{ plan.duration_days }}">
+        <div class="boost-plan__check">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="boost-plan__top">
+          <span class="boost-plan__icon">
+            <svg viewBox="0 0 24 24" fill="#e8b23c" stroke="#b9862c" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.6 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9-5.3-2.9-5.3 2.9 1.1-5.9L3.5 9.8l5.9-.8z"/></svg>
+          </span>
+          <span class="boost-plan__name">{{ plan.name }}</span>
+        </div>
+        <div class="boost-plan__price">${{ plan.price|floatformat:2 }}</div>
+        <div class="boost-plan__equiv">{{ plan.price_ngn }} · {{ plan.price_pi }}</div>
+        <div class="boost-plan__dur">{{ plan.duration_days }} day{{ plan.duration_days|pluralize }}</div>
+        {% if plan.description %}
+        <p class="boost-plan__desc">{{ plan.description }}</p>
+        {% endif %}
+      </label>
+      {% endfor %}
+    </div>
+
+    <!-- ── payment method + summary ── -->
+    <div class="boost-checkout-grid">
+      <div class="boost-checkout-left">
+        <h3>Payment method</h3>
+        <div class="boost-pay-options">
+          <label class="boost-pay-opt">
+            <input type="radio" name="payment_method" value="paypal" checked>
+            <span class="boost-pay-opt__icon boost-pay-opt__icon--paypal">P</span>
+            <span>PayPal</span>
+          </label>
+          <label class="boost-pay-opt">
+            <input type="radio" name="payment_method" value="pi">
+            <span class="boost-pay-opt__icon boost-pay-opt__icon--pi">π</span>
+            <span>Pi Network</span>
+          </label>
+          <label class="boost-pay-opt">
+            <input type="radio" name="payment_method" value="paystack">
+            <span class="boost-pay-opt__icon boost-pay-opt__icon--ps">₦</span>
+            <span>Paystack (Naira)</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="boost-summary">
+        <h3>Order summary</h3>
+        <div class="boost-summary__row">
+          <span>Plan</span>
+          <b id="summaryPlan">{{ plans.0.name }}</b>
+        </div>
+        <div class="boost-summary__row">
+          <span>Duration</span>
+          <b id="summaryDays">{{ plans.0.duration_days }} days</b>
+        </div>
+        <div class="boost-summary__divider"></div>
+        <div class="boost-summary__row boost-summary__row--total">
+          <span>Total</span>
+          <b id="summaryPrice">${{ plans.0.price|floatformat:2 }}</b>
+        </div>
+        <button class="boost-submit-btn" type="submit">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.6 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9-5.3-2.9-5.3 2.9 1.1-5.9L3.5 9.8l5.9-.8z"/></svg>
+          Boost now
+        </button>
+        <p class="boost-summary__note">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11.2 14.2 15 10"/></svg>
+          Payment is secure · Your product goes live immediately
+        </p>
+      </div>
+    </div>
+
+  </form>
+  {% else %}
+  <div style="text-align:center;padding:60px 24px">
+    <div style="font-size:48px;margin-bottom:14px">⭐</div>
+    <h3>No boost plans available yet</h3>
+    <p style="color:#6b7a90;margin:8px 0 0">Ask your admin to create boost plans first.</p>
+  </div>
+  {% endif %}
+
+</div>
+
+<style>
+.boost-hero{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding:28px;border-radius:20px;background:radial-gradient(700px 300px at 90% -10%,rgba(243,216,148,.35),transparent 60%),linear-gradient(135deg,#0d1d3d 0%,#1a3fa0 58%,#2456e6 100%);color:#fff;margin:12px 0 28px;box-shadow:0 22px 55px rgba(16,45,110,.30)}
+.boost-hero__left{display:flex;align-items:center;gap:18px}
+.boost-hero__left img{width:72px;height:72px;border-radius:14px;object-fit:cover;border:2px solid rgba(255,255,255,.3);flex-shrink:0}
+.boost-hero__left h2{margin:4px 0;font-size:22px;letter-spacing:-.03em}
+.boost-hero__left p{margin:0;color:rgba(255,255,255,.7);font-size:13px}
+.boost-hero__badge{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:#f3d894;background:rgba(243,216,148,.15);border:1px solid rgba(243,216,148,.35);padding:10px 14px;border-radius:14px}
+.boost-plans-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:32px}
+.boost-plan{position:relative;background:#fff;border:2px solid #e4eaf3;border-radius:18px;padding:20px;cursor:pointer;transition:border-color .2s,box-shadow .2s,transform .15s;display:flex;flex-direction:column;gap:6px}
+.boost-plan:hover{border-color:#2456e6;transform:translateY(-2px);box-shadow:0 12px 28px rgba(36,86,230,.14)}
+.boost-plan--selected{border-color:#2456e6;background:linear-gradient(135deg,#f4f7ff,#eaf0ff);box-shadow:0 14px 32px rgba(36,86,230,.18)}
+.boost-plan__radio{position:absolute;opacity:0;width:0;height:0}
+.boost-plan__check{position:absolute;top:14px;right:14px;width:22px;height:22px;border-radius:50%;background:#2456e6;display:none;place-items:center;color:#fff}
+.boost-plan--selected .boost-plan__check{display:grid}
+.boost-plan__check svg{width:12px;height:12px}
+.boost-plan__top{display:flex;align-items:center;gap:9px}
+.boost-plan__icon{width:32px;height:32px;display:grid;place-items:center;flex-shrink:0}
+.boost-plan__icon svg{width:26px;height:26px}
+.boost-plan__name{font-size:14.5px;font-weight:800;color:#0f1e33}
+.boost-plan__price{font-size:26px;font-weight:800;letter-spacing:-.04em;color:#2456e6}
+.boost-plan__dur{font-size:12.5px;font-weight:700;color:#6b7a90}
+.boost-plan__equiv{font-size:11.5px;font-weight:700;color:#8fa0b8;letter-spacing:-.01em}
+.boost-plan__desc{margin:0;font-size:12px;color:#9aa7bd}
+.boost-checkout-grid{display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start}
+.boost-checkout-left h3,.boost-summary h3{font-size:16px;font-weight:800;margin:0 0 14px}
+.boost-pay-options{display:flex;flex-direction:column;gap:10px}
+.boost-pay-opt{display:flex;align-items:center;gap:12px;padding:14px;border:2px solid #e4eaf3;border-radius:14px;cursor:pointer;font-size:14px;font-weight:700;color:#0f1e33;transition:border-color .2s,background .2s}
+.boost-pay-opt input{accent-color:#2456e6}
+.boost-pay-opt:has(input:checked){border-color:#2456e6;background:#f4f7ff}
+.boost-pay-opt__icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:16px;font-weight:900;flex-shrink:0}
+.boost-pay-opt__icon--paypal{background:#003087;color:#fff}
+.boost-pay-opt__icon--pi{background:#7048e8;color:#fff}
+.boost-pay-opt__icon--ps{background:#0ca678;color:#fff}
+.boost-summary{background:#fff;border:1px solid #e4eaf3;border-radius:18px;padding:22px;box-shadow:0 4px 16px rgba(16,30,54,.07)}
+.boost-summary__row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:14px}
+.boost-summary__row span{color:#6b7a90}
+.boost-summary__row--total{padding-top:12px;font-size:17px}
+.boost-summary__row--total b{font-size:22px;font-weight:800;color:#2456e6}
+.boost-summary__divider{height:1px;background:#f0f3f8;margin:6px 0}
+.boost-submit-btn{width:100%;min-height:50px;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:16px;border:0;border-radius:14px;background:linear-gradient(135deg,#1a41b4,#2456e6);color:#fff;font:inherit;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 12px 28px rgba(36,86,230,.30);transition:transform .15s,box-shadow .15s}
+.boost-submit-btn:hover{transform:translateY(-2px);box-shadow:0 18px 36px rgba(36,86,230,.38)}
+.boost-submit-btn .sic{width:18px;height:18px}
+.boost-summary__note{display:flex;align-items:center;gap:7px;margin:12px 0 0;font-size:12px;color:#6b7a90}
+.boost-summary__note .sic{width:14px;height:14px;flex-shrink:0}
+@media(max-width:900px){.boost-checkout-grid{grid-template-columns:1fr}.boost-plans-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.boost-plans-grid{grid-template-columns:1fr}.boost-hero{flex-direction:column;align-items:flex-start}}
+</style>
+
+<script>
+(function () {
+  /* ── Multi-currency boost checkout.
+     Boost plan prices are stored in USD; NGN and PI amounts are derived
+     using the same rates the marketplace uses for product prices
+     (1 USD = ₦1,500 = π20,000). The order summary total always shows the
+     currency of the payment method the seller selects:
+     PayPal → USD, Pi Network → PI, Paystack → NGN. ── */
+  var NGN_RATE = 1500, PI_RATE = 20000;
+
+  function fmt(cur, usd) {
+    if (cur === 'NGN') return '\u20a6' + (usd * NGN_RATE).toLocaleString(undefined, {maximumFractionDigits: 0});
+    if (cur === 'PI')  return '\u03c0' + (usd * PI_RATE).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    return '$' + usd.toFixed(2);
+  }
+
+  var grid   = document.getElementById('boostPlansGrid');
+  var sName  = document.getElementById('summaryPlan');
+  var sDays  = document.getElementById('summaryDays');
+  var sPrice = document.getElementById('summaryPrice');
+
+  if (!grid) return;
+
+  var payRadios  = document.querySelectorAll('input[name="payment_method"]');
+  var selectedRadio = grid.querySelector('.boost-plan__radio:checked');
+
+  function selectedCurrency() {
+    var method = 'paypal';
+    payRadios.forEach(function (r) { if (r.checked) method = r.value; });
+    if (method === 'pi')       return 'PI';
+    if (method === 'paystack') return 'NGN';
+    return 'USD';
+  }
+
+  function updateSummary() {
+    if (!selectedRadio || !sPrice) return;
+    var usd = parseFloat(selectedRadio.dataset.price) || 0;
+    sPrice.textContent = fmt(selectedCurrency(), usd);
+  }
+
+  grid.querySelectorAll('.boost-plan__radio').forEach(function (radio) {
+    radio.addEventListener('change', function () {
+      grid.querySelectorAll('.boost-plan').forEach(function (c) { c.classList.remove('boost-plan--selected'); });
+      radio.closest('.boost-plan').classList.add('boost-plan--selected');
+      selectedRadio      = radio;
+      sName.textContent  = radio.dataset.name;
+      sDays.textContent  = radio.dataset.days + ' day' + (parseInt(radio.dataset.days) === 1 ? '' : 's');
+      updateSummary();
+    });
+  });
+
+  payRadios.forEach(function (r) { r.addEventListener('change', updateSummary); });
+  updateSummary();
+})();
+</script>

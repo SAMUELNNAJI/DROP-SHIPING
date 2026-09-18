@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block page_title %}{% block title %}DropHub Account{% endblock %}{% endblock %}
+{% block body_class %}ip auth-page{% endblock %}
+
+{% block head_extra %}
+  <meta name="description" content="Sign in or create your free DropHub account. Every order is escrow-protected." />
+  <link rel="stylesheet" href="/static/auth.css?v=5" />
+  <link rel="stylesheet" href="/static/alerts.css" />
+  {% block extra_head %}{% endblock %}
+{% endblock %}
+
+{% block body %}
+  <div class="auth-shell">
+    <aside class="auth-side">
+      <div class="auth-side-inner">
+        <span class="auth-side-badge">Escrow-protected marketplace</span>
+        <h2 class="auth-side-title">Shop Everything.<br /><span>Pay Anything.</span></h2>
+        <p class="auth-side-text">One account for a global dropshipping marketplace — buy globally, sell instantly, and pay with Pi Network, PayPal or Naira.</p>
+        <div class="auth-points">
+          <div class="auth-point"><span class="auth-point-icon">✓</span><div><p class="auth-point-title">Escrow on every order</p><p class="auth-point-text">Your payment is held safely until you confirm delivery.</p></div></div>
+          <div class="auth-point"><span class="auth-point-icon">↯</span><div><p class="auth-point-title">Instant multi-rail payments</p><p class="auth-point-text">Pi Network, PayPal and Paystack — settle in seconds.</p></div></div>
+          <div class="auth-point"><span class="auth-point-icon">◎</span><div><p class="auth-point-title">Sell to the world</p><p class="auth-point-text">List products free and reach verified buyers globally.</p></div></div>
+        </div>
+        <div class="auth-side-stats"><div><p class="auth-stat-num">120+</p><p class="auth-stat-label">Countries Served</p></div><div><p class="auth-stat-num">50K+</p><p class="auth-stat-label">Active Merchants</p></div><div><p class="auth-stat-num">2.4M</p><p class="auth-stat-label">Orders Protected</p></div></div>
+      </div>
+    </aside>
+    <main class="auth-main">{% block auth_card %}{% endblock %}</main>
+  </div>
+{% endblock %}
+
+{% block footer_extra %}
+  {% block extra_scripts %}{% endblock %}
+  <script>
+    function toggleAuthPassword(id, button) {
+      var input = document.getElementById(id);
+      if (!input) return;
+      var visible = input.type === 'password';
+      input.type = visible ? 'text' : 'password';
+      button.classList.toggle('is-on', visible);
+      button.setAttribute('aria-label', visible ? 'Hide password' : 'Show password');
+    }
+  </script>
+{% endblock %}

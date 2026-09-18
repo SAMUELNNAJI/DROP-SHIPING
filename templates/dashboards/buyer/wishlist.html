@@ -1,0 +1,164 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Wishlist">
+
+  <section class="glass" style="margin-bottom:14px">
+    <div class="glass__head">
+      <h3>Saved products</h3>
+      <p>Keep an eye on the items you love — prices and stock update automatically.</p>
+      <span class="spacer">
+        <span class="chipb">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5S4.5 15.6 4.5 10.4A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 7.5 3.1c0 5.2-7.5 10.1-7.5 10.1z"/></svg>
+          <span id="wishCount">{{ wishlist_items|length }}</span> item{{ wishlist_items|length|pluralize }} saved
+        </span>
+        <a class="mbtn mbtn--gold" href="/shop/">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+          Browse marketplace
+        </a>
+      </span>
+    </div>
+
+    <div class="glass__body">
+      {% if wishlist_items %}
+      <div class="wish-grid" id="wishGrid">
+        {% for item in wishlist_items %}
+        <article class="wish" data-slug="{{ item.product_slug }}" id="wish-{{ item.product_slug }}">
+          <div class="wish__img" style="background:linear-gradient(145deg,#EFF3FF,#C7D9FF);position:relative;overflow:hidden;">
+            {% if item.display_image %}
+            <img src="{{ item.display_image }}" alt="{{ item.name }}"
+                 style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;"
+                 loading="lazy" onerror="this.style.display='none'" />
+            {% endif %}
+            {% if item.badge %}
+            <span style="position:absolute;top:8px;left:8px;font-size:9px;font-weight:800;letter-spacing:.08em;padding:3px 7px;border-radius:20px;background:rgba(36,86,230,.9);color:#fff;">{{ item.badge }}</span>
+            {% endif %}
+          </div>
+          <div class="wish__body">
+            <strong>{{ item.name }}</strong>
+            <span>{{ item.store_name }}</span>
+            <div class="wish__foot">
+              <span style="font-weight:800;font-size:13.5px;color:var(--bt);">
+                {{ item.price }}
+                {% if item.old_price %}
+                <s style="font-weight:400;font-size:11px;color:var(--bm);margin-left:4px;">{{ item.old_price }}</s>
+                {% endif %}
+              </span>
+              <div style="display:flex;gap:6px;align-items:center;">
+                <a href="/shop/"
+                   class="mbtn mbtn--dark"
+                   style="font-size:11px;padding:6px 10px;"
+                   title="Go to shop">
+                  <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+                  Buy
+                </a>
+                <button type="button"
+                        class="mbtn wish-remove-btn"
+                        style="font-size:11px;padding:6px 10px;background:rgba(229,72,77,.08);border:1px solid rgba(229,72,77,.30);color:#b4232a;"
+                        data-slug="{{ item.product_slug }}"
+                        title="Remove from wishlist"
+                        aria-label="Remove {{ item.name }} from wishlist">
+                  <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5S4.5 15.6 4.5 10.4A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 7.5 3.1c0 5.2-7.5 10.1-7.5 10.1z"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="emptyb" id="wishEmptyState">
+        <div class="emptyb__art">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5S4.5 15.6 4.5 10.4A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 7.5 3.1c0 5.2-7.5 10.1-7.5 10.1z"/></svg>
+        </div>
+        <h4>Your wishlist is empty</h4>
+        <p>Tap the heart on any product in the marketplace and it will land here, ready for your next order.</p>
+        <a class="mbtn mbtn--dark" href="/shop/">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          Find something you love
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="bgrid2b">
+    <article class="glass">
+      <div class="glass__head">
+        <h3>Why save items?</h3>
+        <p>Your wishlist works harder than a bookmark.</p>
+      </div>
+      <div class="glass__body">
+        <div class="border-row">
+          <span class="border-row__ic" style="--gs:rgba(185,138,47,.14);--ga:#8a6420"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M17 6.5c0-1.6-2.2-2.5-5-2.5S7 5.1 7 6.9c0 4.4 10 2 10 6.6 0 1.8-2.2 2.9-5 2.9s-5-1-5-2.9"/></svg></span>
+          <div><b>Price drop alerts</b><p>We'll flag it when the price falls</p></div>
+        </div>
+        <div class="border-row">
+          <span class="border-row__ic" style="--gs:rgba(229,72,77,.12);--ga:#b4232a"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><circle cx="12" cy="17" r=".9" fill="currentColor" stroke="none"/><path d="M10.3 3.9 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>
+          <div><b>Low stock warning</b><p>Buy before it sells out</p></div>
+        </div>
+        <div class="border-row">
+          <span class="border-row__ic" style="--gs:rgba(36,86,230,.12);--ga:#2456e6"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v3M16 3v3"/></svg></span>
+          <div><b>One-tap checkout</b><p>Jump straight back in later</p></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="glass">
+      <div class="glass__head">
+        <h3>Recently viewed</h3>
+        <p>Pick up where you left off.</p>
+      </div>
+      <div class="glass__body">
+        <div class="emptyb" style="padding:26px 12px">
+          <div class="emptyb__art" style="width:60px;height:60px"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.6"/></svg></div>
+          <h4>Nothing viewed yet</h4>
+          <p>Products you open in the marketplace will show up here.</p>
+        </div>
+      </div>
+    </article>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  var CSRF = (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || '';
+
+  /* ── Remove from wishlist (dashboard page) ── */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.wish-remove-btn');
+    if (!btn) return;
+    var slug = btn.dataset.slug;
+    fetch('/dashboards/wishlist/remove/' + slug + '/', {
+      method: 'POST',
+      headers: { 'X-CSRFToken': CSRF, 'X-Requested-With': 'XMLHttpRequest' },
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (data.removed) {
+        var card = document.getElementById('wish-' + slug);
+        if (card) {
+          card.style.transition = 'opacity .25s';
+          card.style.opacity = '0';
+          setTimeout(function () {
+            card.remove();
+            /* Update counter */
+            var counter = document.getElementById('wishCount');
+            if (counter) counter.textContent = data.count;
+            /* Show empty state if grid is now empty */
+            var grid = document.getElementById('wishGrid');
+            if (grid && !grid.querySelector('.wish')) {
+              grid.outerHTML = '<div class="emptyb" id="wishEmptyState">' +
+                '<div class="emptyb__art"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5S4.5 15.6 4.5 10.4A4.4 4.4 0 0 1 12 7.3a4.4 4.4 0 0 1 7.5 3.1c0 5.2-7.5 10.1-7.5 10.1z"/></svg></div>' +
+                '<h4>Your wishlist is empty</h4>' +
+                '<p>Tap the heart on any product in the marketplace and it will land here.</p>' +
+                '<a class="mbtn mbtn--dark" href="/shop/">Find something you love</a>' +
+                '</div>';
+            }
+          }, 260);
+        }
+      }
+    })
+    .catch(function () { window.location.reload(); });
+  });
+})();
+</script>

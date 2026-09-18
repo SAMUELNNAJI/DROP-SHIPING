@@ -1,0 +1,163 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Dashboard Overview">
+
+  <div class="ahead">
+    <div class="ahead__row">
+      <span class="ahead__chip">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8 20 7v6.4c0 4.9-3.4 8.4-8 9.8-4.6-1.4-8-4.9-8-9.8V7z"/><path d="m9.2 12.2 2 2 3.6-3.8"/></svg>
+        Admin workspace
+      </span>
+      <span class="ahead__date">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="3"/><path d="M8 3v4M16 3v4M3.5 10.5h17"/></svg>
+        {{ today|date:"D, M j, Y" }} · WAT
+      </span>
+    </div>
+    <h2>Dashboard Overview</h2>
+    <p>Monitor marketplace health, payment rails and escrow flow across every order on DropHub.</p>
+    {% if payout_ready %}
+    <div class="ahead__alert" style="margin-top:14px">
+      <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M17 6.5c0-1.6-2.2-2.5-5-2.5S7 5.1 7 6.9c0 4.4 10 2 10 6.6 0 1.8-2.2 2.9-5 2.9s-5-1-5-2.9"/></svg>
+      <div><strong>{{ payout_ready }} order{{ payout_ready|pluralize }} ready for payout release</strong><span>Buyers confirmed receipt — release funds to sellers now.</span></div>
+      <a href="/dashboards/admin/orders/?status=confirmed" class="abtn abtn--primary" data-dashboard-link style="margin-left:auto">Release payouts</a>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- KPI cards -->
+  <div class="ametrics">
+    <div class="acard acard--blue">
+      <div class="acard__top">
+        <span class="acard__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.6v18.8M16.6 6.2c-.9-1.6-2.6-2.4-4.6-2.4-2.5 0-4.5 1.4-4.5 3.7 0 4.9 9.4 2.7 9.4 7.5 0 2.3-2.1 3.8-4.9 3.8-2.3 0-4.2-1-5-2.8"/></svg></span>
+      </div>
+      <strong class="acard__val">${{ total_revenue|floatformat:2 }}</strong>
+      <span class="acard__label">Total Revenue (confirmed)</span>
+      <div class="acard__spark"><svg viewBox="0 0 120 38" preserveAspectRatio="none"><path d="M0 30 15 26 30 28 45 20 60 22 75 14 90 16 105 8 120 10" fill="none" stroke="#2456e6" stroke-width="2.2" stroke-linecap="round"/><path d="M0 30 15 26 30 28 45 20 60 22 75 14 90 16 105 8 120 10 120 38 0 38Z" fill="rgba(36,86,230,.10)"/></svg></div>
+    </div>
+    <div class="acard acard--amber">
+      <div class="acard__top">
+        <span class="acard__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="M12 8v4.5M12 15.8v.2"/></svg></span>
+        <span class="acard__change acard__change--warn">{{ order_counts.in_transit|default:0 }} in transit</span>
+      </div>
+      <strong class="acard__val">${{ pending_escrow|floatformat:2 }}</strong>
+      <span class="acard__label">Held in Escrow</span>
+      <div class="acard__spark"><svg viewBox="0 0 120 38" preserveAspectRatio="none"><path d="M0 22 15 25 30 19 45 24 60 18 75 21 90 15 105 18 120 12" fill="none" stroke="#e8960c" stroke-width="2.2" stroke-linecap="round"/><path d="M0 22 15 25 30 19 45 24 60 18 75 21 90 15 105 18 120 12 120 38 0 38Z" fill="rgba(232,150,12,.10)"/></svg></div>
+    </div>
+    <div class="acard acard--purple">
+      <div class="acard__top">
+        <span class="acard__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 20c.6-3.2 3.3-5 6.2-5s5.6 1.8 6.2 5"/><path d="M16.4 5.6a3 3 0 0 1 0 5.6M18 20c-.2-1.7-.9-3.1-1.9-4.1"/></svg></span>
+        <span class="acard__change">{{ total_sellers }} sellers</span>
+      </div>
+      <strong class="acard__val">{{ total_users }}</strong>
+      <span class="acard__label">Total Users</span>
+      <div class="acard__spark"><svg viewBox="0 0 120 38" preserveAspectRatio="none"><path d="M0 28 15 27 30 24 45 25 60 20 75 17 90 18 105 12 120 9" fill="none" stroke="#7048e8" stroke-width="2.2" stroke-linecap="round"/><path d="M0 28 15 27 30 24 45 25 60 20 75 17 90 18 105 12 120 9 120 38 0 38Z" fill="rgba(112,72,232,.10)"/></svg></div>
+    </div>
+    <div class="acard acard--green">
+      <div class="acard__top">
+        <span class="acard__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 11.6 12 21 3 12l9-9h9.5z"/><circle cx="16" cy="8" r="1.4"/></svg></span>
+        <span class="acard__change">all time</span>
+      </div>
+      <strong class="acard__val">{{ total_confirmed_orders }}</strong>
+      <span class="acard__label">Confirmed Orders</span>
+      <div class="acard__spark"><svg viewBox="0 0 120 38" preserveAspectRatio="none"><path d="M0 32 15 29 30 30 45 24 60 25 75 18 90 19 105 12 120 8" fill="none" stroke="#0ca678" stroke-width="2.2" stroke-linecap="round"/><path d="M0 32 15 29 30 30 45 24 60 25 75 18 90 19 105 12 120 8 120 38 0 38Z" fill="rgba(12,166,120,.10)"/></svg></div>
+    </div>
+  </div>
+
+  <!-- Revenue chart + payment rails -->
+  <div class="achart-row">
+    <div class="apanel">
+      <div class="apanel__head">
+        <div><h3>Payment rails</h3><p>Share of confirmed order volume by method</p></div>
+        <a class="alinks" href="/dashboards/admin/payments/" data-dashboard-link>View all <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+      <div class="asplit" style="padding:0 4px">
+        <div class="asplit__row">
+          <span class="asplit__ic"><svg class="sic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#7048e8"/></svg></span>
+          <div class="asplit__body">
+            <span>Pi Network <em>${{ pi_revenue|floatformat:2 }}</em></span>
+            <div class="asplit__bar"><i style="width:{{ pi_pct }}%;background:linear-gradient(90deg,#7048e8,#a78bfa)"></i></div>
+          </div>
+          <span class="asplit__pct">{{ pi_pct }}%</span>
+        </div>
+        <div class="asplit__row">
+          <span class="asplit__ic"><svg class="sic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#2456e6"/></svg></span>
+          <div class="asplit__body">
+            <span>PayPal <em>${{ paypal_revenue|floatformat:2 }}</em></span>
+            <div class="asplit__bar"><i style="width:{{ paypal_pct }}%;background:linear-gradient(90deg,#2456e6,#4f8dff)"></i></div>
+          </div>
+          <span class="asplit__pct">{{ paypal_pct }}%</span>
+        </div>
+        <div class="asplit__row">
+          <span class="asplit__ic"><svg class="sic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#0ea5c9"/></svg></span>
+          <div class="asplit__body">
+            <span>Paystack <em>${{ paystack_revenue|floatformat:2 }}</em></span>
+            <div class="asplit__bar"><i style="width:{{ paystack_pct }}%;background:linear-gradient(90deg,#0ea5c9,#67e8f9)"></i></div>
+          </div>
+          <span class="asplit__pct">{{ paystack_pct }}%</span>
+        </div>
+      </div>
+
+      <!-- quick-action tiles -->
+      <div class="admin-order-kpis" style="margin-top:20px;grid-template-columns:repeat(3,1fr)">
+        <div class="aokpi aokpi--amber">
+          <span>Payout ready</span>
+          <b>{{ payout_ready }}</b>
+        </div>
+        <div class="aokpi" style="background:#f3efff;border-color:#c4b5fd">
+          <span>Pending verif.</span>
+          <b style="color:#7048e8">{{ pending_verifications }}</b>
+        </div>
+        <div class="aokpi aokpi--blue">
+          <span>In escrow $</span>
+          <b style="font-size:18px">${{ pending_escrow|floatformat:0 }}</b>
+        </div>
+      </div>
+    </div>
+
+    <!-- recent orders -->
+    <div class="apanel" style="overflow:hidden">
+      <div class="apanel__head">
+        <div><h3>Recent orders</h3><p>Latest activity across the marketplace</p></div>
+        <a class="alinks" href="/dashboards/admin/orders/" data-dashboard-link>All orders <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+      <div class="afeed" style="padding:0 22px 16px">
+        {% for order in recent_orders %}
+        <div class="afeed__row {% if order.status == 'confirmed' %}afeed--check{% elif order.status == 'in_transit' %}afeed--order{% elif order.status == 'delivered' %}afeed--escrow{% else %}afeed--pay{% endif %}">
+          <span class="afeed__ic">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>
+          </span>
+          <div class="afeed__body">
+            <b>#{{ order.order_number }} — ${{ order.total_price }} · {{ order.buyer.username }}</b>
+            <small>{{ order.product_name|truncatechars:34 }} · <span class="pill pill-{% if order.status == 'confirmed' %}green{% elif order.status == 'in_transit' %}blue{% elif order.status == 'delivered' %}yellow{% else %}purple{% endif %}" style="font-size:10px;padding:2px 7px">{{ order.status_label }}</span></small>
+          </div>
+          <span class="afeed__time">{{ order.created_at|timesince }} ago</span>
+        </div>
+        {% empty %}
+        <div style="padding:24px;text-align:center;color:#93a0bd;font-size:13px">No orders yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick-access panels -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:18px">
+    <a class="apanel" href="/dashboards/admin/users/" data-dashboard-link style="text-decoration:none;cursor:pointer;transition:transform .15s,box-shadow .15s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 24px 60px rgba(16,42,98,.18)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+      <div class="apanel__head" style="margin-bottom:0">
+        <div><h3>Users</h3><p>{{ total_users }} total · {{ total_buyers }} buyers · {{ total_sellers }} sellers</p></div>
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="#7048e8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;margin-left:auto"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 20c.6-3.2 3.3-5 6.2-5s5.6 1.8 6.2 5"/><path d="M16.4 5.6a3 3 0 0 1 0 5.6M18 20c-.2-1.7-.9-3.1-1.9-4.1"/></svg>
+      </div>
+    </a>
+    <a class="apanel" href="/dashboards/admin/verifications/" data-dashboard-link style="text-decoration:none;cursor:pointer;transition:transform .15s,box-shadow .15s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 24px 60px rgba(16,42,98,.18)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+      <div class="apanel__head" style="margin-bottom:0">
+        <div><h3>Verifications</h3><p>{{ pending_verifications }} pending review</p></div>
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="#0ca678" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;margin-left:auto"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+    </a>
+    <a class="apanel" href="/dashboards/admin/featured/" data-dashboard-link style="text-decoration:none;cursor:pointer;transition:transform .15s,box-shadow .15s" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 24px 60px rgba(16,42,98,.18)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+      <div class="apanel__head" style="margin-bottom:0">
+        <div><h3>Featured &amp; Boost</h3><p>Manage seller promotions</p></div>
+        <svg class="sic" viewBox="0 0 24 24" fill="#e8b23c" stroke="#b9862c" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;margin-left:auto"><path d="m12 3.6 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9-5.3-2.9-5.3 2.9 1.1-5.9L3.5 9.8l5.9-.8z"/></svg>
+      </div>
+    </a>
+  </div>
+
+</div>

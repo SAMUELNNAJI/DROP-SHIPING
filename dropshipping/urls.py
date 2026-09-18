@@ -67,3 +67,13 @@ if settings.DEBUG or getattr(settings, 'SERVE_MEDIA', False):
             {'document_root': settings.MEDIA_ROOT},
         ),
     ]
+
+if settings.DEBUG:
+    # Preview the custom error templates without turning DEBUG off.
+    # Visit: /__preview__/400/  /403/  /404/  /500/
+    urlpatterns += [
+        path('__preview__/400/', shop_views.preview_400, name='preview_400'),
+        path('__preview__/403/', shop_views.preview_403, name='preview_403'),
+        path('__preview__/404/', shop_views.preview_404, name='preview_404'),
+        path('__preview__/500/', shop_views.preview_500, name='preview_500'),
+    ]

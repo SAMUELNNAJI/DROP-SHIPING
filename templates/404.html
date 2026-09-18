@@ -1,0 +1,321 @@
+﻿﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 — Page Not Found | DropHub</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" type="image/png" href="/static/Logo.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(160deg, #e8f0ff 0%, #d4e3fa 45%, #ccd9f6 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+
+    /* ── Floating background blobs ── */
+    .blobs {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: .35;
+    }
+    .blob-1 { width: 500px; height: 500px; background: #a5c2ff; top: -120px; left: -100px; animation: blobFloat 8s ease-in-out infinite; }
+    .blob-2 { width: 400px; height: 400px; background: #c4b5fd; bottom: -80px; right: -80px; animation: blobFloat 10s ease-in-out infinite reverse; }
+    .blob-3 { width: 260px; height: 260px; background: #6ee7b7; top: 40%; left: 55%; animation: blobFloat 7s ease-in-out infinite 2s; }
+
+    @keyframes blobFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33%       { transform: translate(20px, -30px) scale(1.05); }
+      66%       { transform: translate(-15px, 20px) scale(.97); }
+    }
+
+    /* ── Main card ── */
+    .card {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 0 24px;
+      max-width: 720px;
+      width: 100%;
+    }
+
+    /* ── Scene ── */
+    .scene {
+      width: min(400px, 84vw);
+      height: min(260px, 60vw);
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    /* Ground */
+    .ground {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 44px;
+      background: linear-gradient(180deg, #b8d0f8 0%, #93b8f0 100%);
+      border-radius: 22px;
+    }
+    .ground-line {
+      position: absolute;
+      bottom: 18px; left: 20px; right: 20px;
+      height: 4px;
+      background: repeating-linear-gradient(90deg, #fff 0 28px, transparent 28px 52px);
+      border-radius: 2px;
+      opacity: .55;
+    }
+
+    /* Road sign post */
+    .post {
+      position: absolute;
+      bottom: 44px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 8px;
+      height: 90px;
+      background: linear-gradient(180deg, #7fa8d8 0%, #4d7fc4 100%);
+      border-radius: 4px;
+    }
+
+    /* Sign board */
+    .sign {
+      position: absolute;
+      bottom: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1f64ff;
+      border-radius: 12px;
+      padding: 10px 18px;
+      box-shadow: 0 8px 24px rgba(31,100,255,.35), inset 0 1px 0 rgba(255,255,255,.2);
+      animation: signWobble 3s ease-in-out infinite;
+      white-space: nowrap;
+    }
+    .sign-top { font-size: 15px; font-weight: 800; color: #fff; letter-spacing: .04em; }
+    .sign-num {
+      font-size: 32px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -.03em;
+      line-height: 1;
+      text-shadow: 0 3px 10px rgba(0,0,0,.2);
+    }
+
+    @keyframes signWobble {
+      0%, 100% { transform: translateX(-50%) rotate(-2deg); }
+      50%       { transform: translateX(-50%) rotate(2deg); }
+    }
+
+    /* Character — walking person */
+    .character {
+      position: absolute;
+      bottom: 44px;
+      left: 18%;
+      animation: charWalk 2.4s ease-in-out infinite;
+    }
+    @keyframes charWalk {
+      0%, 100% { transform: translateX(0); }
+      50%       { transform: translateX(8px); }
+    }
+
+    /* Character SVG legs animate */
+    .leg-l { animation: legL 0.6s ease-in-out infinite alternate; transform-origin: 12px 0; }
+    .leg-r { animation: legR 0.6s ease-in-out infinite alternate; transform-origin: 12px 0; }
+    @keyframes legL { from { transform: rotate(-18deg); } to { transform: rotate(18deg); } }
+    @keyframes legR { from { transform: rotate(18deg); } to { transform: rotate(-18deg); } }
+
+    .arm-l { animation: armL 0.6s ease-in-out infinite alternate; transform-origin: 4px 4px; }
+    .arm-r { animation: armR 0.6s ease-in-out infinite alternate; transform-origin: 18px 4px; }
+    @keyframes armL { from { transform: rotate(-20deg); } to { transform: rotate(20deg); } }
+    @keyframes armR { from { transform: rotate(20deg); } to { transform: rotate(-20deg); } }
+
+    .head-bob { animation: headBob 0.6s ease-in-out infinite alternate; transform-origin: center bottom; }
+    @keyframes headBob {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-2px); }
+    }
+
+    /* Question marks floating */
+    .q-mark {
+      position: absolute;
+      font-size: 22px;
+      font-weight: 900;
+      color: #1f64ff;
+      animation: qFloat 2s ease-in-out infinite;
+      opacity: 0;
+    }
+    .q1 { top: 20px; left: 22%; animation-delay: 0s; }
+    .q2 { top: 8px;  left: 32%; animation-delay: .5s; }
+    .q3 { top: 24px; left: 42%; animation-delay: 1s; }
+    @keyframes qFloat {
+      0%   { opacity: 0; transform: translateY(0); }
+      30%  { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-32px); }
+    }
+
+    /* Stars in background */
+    .star {
+      position: absolute;
+      width: 6px; height: 6px;
+      background: #1f64ff;
+      border-radius: 50%;
+      animation: twinkle 2s ease-in-out infinite;
+    }
+    .star:nth-child(1) { top: 18px; right: 18px; animation-delay: 0s; }
+    .star:nth-child(2) { top: 32px; right: 38px; animation-delay: .4s; width: 4px; height: 4px; }
+    .star:nth-child(3) { top: 12px; right: 56px; animation-delay: .8s; width: 5px; height: 5px; }
+    @keyframes twinkle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: .2; transform: scale(.6); }
+    }
+
+    /* ── Text ── */
+    .err-title {
+      font-size: clamp(22px, 6vw, 30px);
+      font-weight: 800;
+      color: #071c3f;
+      letter-spacing: -.03em;
+      margin-bottom: 10px;
+    }
+    .err-sub {
+      font-size: 15px;
+      color: #567098;
+      line-height: 1.65;
+      max-width: 520px;
+      margin-bottom: 28px;
+    }
+
+    /* ── Buttons ── */
+    .err-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 26px;
+      background: #1f64ff; color: #fff;
+      font-size: 15px; font-weight: 700;
+      border-radius: 12px; text-decoration: none;
+      box-shadow: 0 8px 20px rgba(31,100,255,.30);
+      transition: background .2s, transform .2s;
+    }
+    .btn-primary:hover { background: #1554e6; transform: translateY(-2px); }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 26px;
+      border: 1.5px solid #1f64ff; color: #1f64ff;
+      font-size: 15px; font-weight: 700;
+      border-radius: 12px; text-decoration: none; background: #fff;
+      transition: background .2s, box-shadow .2s;
+    }
+    .btn-ghost:hover { background: #f0f5ff; box-shadow: 0 6px 18px rgba(31,100,255,.12); }
+
+    @media (max-width: 480px) {
+      .err-actions { flex-direction: column; align-items: stretch; }
+      .btn-primary, .btn-ghost { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating background blobs -->
+  <div class="blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+<main class="card" role="main" aria-labelledby="err-title">
+
+    <!-- Animated scene -->
+    <div class="scene" aria-hidden="true">
+      <!-- Twinkling stars -->
+      <div class="star"></div>
+      <div class="star"></div>
+      <div class="star"></div>
+
+      <!-- Floating question marks -->
+      <span class="q-mark q1">?</span>
+      <span class="q-mark q2">?</span>
+      <span class="q-mark q3">?</span>
+
+      <!-- Sign post + board -->
+      <div class="post"></div>
+      <div class="sign">
+        <div class="sign-top">PAGE</div>
+        <div class="sign-num">404</div>
+        <div class="sign-top">NOT FOUND</div>
+      </div>
+
+      <!-- Walking character -->
+      <div class="character">
+        <svg width="44" height="80" viewBox="0 0 44 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Head -->
+          <g class="head-bob">
+            <circle cx="22" cy="12" r="11" fill="#fcd7b0" stroke="#e8a97a" stroke-width="1.5"/>
+            <!-- Eyes -->
+            <circle cx="18" cy="11" r="2" fill="#1a1a2e"/>
+            <circle cx="26" cy="11" r="2" fill="#1a1a2e"/>
+            <!-- Pupils -->
+            <circle cx="18.7" cy="10.5" r=".8" fill="#fff"/>
+            <circle cx="26.7" cy="10.5" r=".8" fill="#fff"/>
+            <!-- Mouth — confused expression -->
+            <path d="M18 16 Q22 14 26 16" stroke="#c97a4a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+            <!-- Hair -->
+            <path d="M13 10 Q14 4 22 3 Q30 4 31 10" fill="#3d2b1f"/>
+          </g>
+          <!-- Body -->
+          <rect x="14" y="24" width="16" height="22" rx="5" fill="#2456e6"/>
+          <!-- Arms -->
+          <rect class="arm-l" x="4" y="24" width="10" height="5" rx="2.5" fill="#fcd7b0"/>
+          <rect class="arm-r" x="30" y="24" width="10" height="5" rx="2.5" fill="#fcd7b0"/>
+          <!-- Legs -->
+          <rect class="leg-l" x="14" y="46" width="7" height="20" rx="3.5" fill="#1a3d8f"/>
+          <rect class="leg-r" x="23" y="46" width="7" height="20" rx="3.5" fill="#1a3d8f"/>
+          <!-- Shoes -->
+          <ellipse cx="17.5" cy="67" rx="6" ry="3.5" fill="#0d1f3c"/>
+          <ellipse cx="26.5" cy="67" rx="6" ry="3.5" fill="#0d1f3c"/>
+        </svg>
+      </div>
+
+      <!-- Ground -->
+      <div class="ground">
+        <div class="ground-line"></div>
+      </div>
+    </div>
+
+    <h1 class="err-title" id="err-title">Oops! Page not found</h1>
+    <p class="err-sub">Looks like this page took a wrong turn. Let's get you back to somewhere familiar.</p>
+
+    <div class="err-actions">
+      <a href="/" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Go Home
+      </a>
+      <a href="/shop/" class="btn-ghost">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h15l-1.2 11a1.5 1.5 0 0 1-1.5 1.3H8.7a1.5 1.5 0 0 1-1.5-1.3L6 8z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+        Browse Shop
+      </a>
+    </div>
+
+  </main>
+
+</body>
+</html>

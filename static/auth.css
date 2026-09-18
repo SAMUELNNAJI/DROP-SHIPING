@@ -1,4 +1,4 @@
-﻿﻿/* ═══════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    AUTH.CSS — DropHub Sign-In / Sign-Up styles
    Depends on: style.css (shared navbar, buttons, cart)
    ═══════════════════════════════════════════════════ */
@@ -64,6 +64,7 @@
   -webkit-backdrop-filter: blur(16px) saturate(160%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.72);
   box-shadow: 0 2px 18px rgba(31, 100, 255, 0.07);
+  overflow-x: clip;
 }
 
 /* ── Main area: right column of the split layout; flows naturally ── */
@@ -1063,13 +1064,11 @@
   .auth-main  { padding-top: calc(var(--header-h) + 6px); }
 
   /* ── Navbar: prevent horizontal overflow on narrow phones ──
-     Reduce outer padding; let nav-actions push right via margin-left:auto
-     (already set in style.css).  Do NOT set gap:0 — that squishes the
-     cart icon against the burger.  Instead rely on nav-actions.margin-left
-     to fill the space, same as the homepage. */
+     Reduce outer padding; shrink gap so logo+cart+burger fit at
+     360px and below; clip the header so nothing spills sideways. */
   .auth-page .nav-inner {
-    padding: 0 14px;
-    /* gap stays at style.css default (36px) — no override needed */
+    padding: 0 8px;
+    gap: 8px;
   }
 
   /* Hide text-heavy items; burger drawer handles navigation */
@@ -1083,17 +1082,26 @@
 
   /* Logo: same behaviour as home page — fixed size, sits left */
   .auth-page .logo     { flex-shrink: 0; min-width: 0; }
-  .auth-page .logo-img { height: 38px; width: auto; }
+  .auth-page .logo-img { height: 30px; width: auto; }
 
   .auth-card  { max-width: 100%; border-radius: 20px; }
   .auth-main  { padding-left: 16px; padding-right: 16px; }
 }
+
 @media (max-width: 480px) {
-  .auth-page .nav-inner { padding: 0 10px; }
+  .auth-page .nav-inner { padding: 0 8px; gap: 8px; overflow-x: clip; }
   .auth-page .logo-img  { height: 33px; }
+  .auth-page .nav-cart, .auth-page .nav-burger { width: 40px; height: 40px; flex-shrink: 0; }
+
+  .auth-card  { max-width: 100%; border-radius: 20px; }
+  .auth-main  { padding-left: 16px; padding-right: 16px; }
 }
+
 @media (max-width: 360px) {
-  .auth-page .nav-inner { padding: 0 8px; }
-  .auth-page .logo-img  { height: 30px; }
-  .auth-page .nav-cart, .auth-page .nav-burger { width: 40px; height: 40px; }
+  .auth-page .nav-inner { padding: 0 6px; gap: 6px; overflow-x: clip; }
+  .auth-page .logo-img  { height: 28px; }
+  .auth-page .nav-cart, .auth-page .nav-burger { width: 38px; height: 38px; flex-shrink: 0; }
+
+  .auth-card  { max-width: 100%; border-radius: 18px; }
+  .auth-main  { padding-left: 12px; padding-right: 12px; }
 }

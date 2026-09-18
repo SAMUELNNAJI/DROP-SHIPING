@@ -409,7 +409,7 @@ body { padding-top: 0; }
 .cart-foot { flex-shrink:0; padding:18px 16px 16px; background:#fff; border-top:1px solid rgba(15,28,77,.07); }
 .cart-subtotal { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
 .cart-subtotal span { color:#64748b; font-size:16px; font-weight:500; }
-.cart-subtotal strong { font-size:28px; line-height:1; font-weight:800; letter-spacing:-.04em; color:#0A172E; }
+.cart-subtotal strong { font-size:22px; line-height:1; font-weight:800; letter-spacing:-.04em; color:#0A172E; }
 .cart-currency-lines { display:block; margin-top:5px; color:#64748b; font-size:11px; font-weight:700; letter-spacing:0; line-height:1.45; }
 .cart-price .cart-currency-lines { font-size:10px; text-align:right; }
 .cart-escrow { display:block; margin:0 0 14px; padding:13px 14px; font-size:13px; font-weight:500; line-height:1.45; color:#2563d9; border:1.5px solid #d7e4fb; border-radius:16px; background:#f6f9ff; }
@@ -422,7 +422,7 @@ body { padding-top: 0; }
   justify-content: center;
   gap: 8px;
   white-space: nowrap;
-  padding: 14px 12px;
+  padding: 10px 12px;
   border-radius: 16px;
   font-size: 14px;
 }
@@ -2019,8 +2019,8 @@ body { padding-top: 0; }
   display: none;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 42px;
+  height: 42px;
   border-radius: 14px;
   border: 1px solid rgba(31,100,255,.18);
   background: rgba(255,255,255,.65);
@@ -2059,6 +2059,11 @@ body { padding-top: 0; }
   visibility: hidden;
   pointer-events: none;
   transition: visibility 0s .55s;
+  /* The closed drawer panel rests at translateX(105%) — without clipping it
+     pokes past the right edge of the viewport and creates a horizontal
+     page scrollbar (most visible on the auth pages on mobile). */
+  overflow: hidden;
+  overflow: clip;
 }
 .mmenu--open { visibility: visible; pointer-events: auto; transition: visibility 0s; }
 .mmenu-backdrop {
@@ -2222,7 +2227,7 @@ body.mmenu-locked { overflow: hidden; }
 @media (max-width: 600px) {
   .nav-signin { display: none; }
   .btn-sell   { display: none; }
-  .nav-burger { width: 44px; height: 44px; }
+  .nav-burger { width: 42px; height: 42px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .mmenu-panel, .mmenu-backdrop, .mmenu-link, .nav-burger-line { transition-duration: .01s !important; }

@@ -9,6 +9,23 @@ from django.template.loader import render_to_string
 from .models import BlogPost, Product
 
 
+# ── Dev-only error page previews ──────────────────────────────────────────────
+# Reachable at /__preview__/400/, /403/, /404/, /500/ only when DEBUG=True.
+# Remove or ignore once you've finished reviewing the designs.
+
+def preview_400(request):
+    return render(request, '400.html', status=200)
+
+def preview_403(request):
+    return render(request, '403.html', status=200)
+
+def preview_404(request):
+    return render(request, '404.html', status=200)
+
+def preview_500(request):
+    return render(request, '500.html', status=200)
+
+
 SHOP_SORTS = (
     ("default", "Featured"),
     ("newest", "Newest"),

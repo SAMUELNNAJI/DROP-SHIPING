@@ -1,0 +1,323 @@
+﻿﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>500 — Server Error | DropHub</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" type="image/png" href="/static/Logo.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body {
+      background: linear-gradient(160deg, #0f172a 0%, #1e1b4b 50%, #1a0a2e 100%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      min-height: 100vh; min-height: 100dvh;
+    }
+
+    /* Stars field */
+    .stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      animation: twinkle var(--d, 3s) ease-in-out infinite var(--dl, 0s);
+    }
+    @keyframes twinkle {
+      0%,100% { opacity: var(--op, .6); transform: scale(1); }
+      50%      { opacity: .1; transform: scale(.6); }
+    }
+
+    /* Blobs */
+    .blobs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .2; }
+    .blob-1 { width: 500px; height: 500px; background: #ef4444; top: -150px; right: -100px; animation: blobFloat 10s ease-in-out infinite; }
+    .blob-2 { width: 400px; height: 400px; background: #f97316; bottom: -100px; left: -80px; animation: blobFloat 12s ease-in-out infinite reverse; }
+    @keyframes blobFloat {
+      0%,100% { transform: translate(0,0) scale(1); }
+      50%      { transform: translate(20px,-20px) scale(1.06); }
+    }
+
+    .card { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 24px; max-width: 720px; width: 100%; }
+
+    /* ── Robot character ── */
+    .scene { width: min(360px, 80vw); height: min(260px, 60vw); margin-bottom: 24px; position: relative; }
+
+    .robot-wrap {
+      position: absolute;
+      bottom: 36px; left: 50%; transform: translateX(-50%);
+      animation: robotFloat 3s ease-in-out infinite;
+    }
+    @keyframes robotFloat {
+      0%,100% { transform: translateX(-50%) translateY(0) rotate(-1deg); }
+      50%      { transform: translateX(-50%) translateY(-12px) rotate(1deg); }
+    }
+
+    /* Head */
+    .robot-head {
+      width: 72px; height: 62px;
+      background: linear-gradient(160deg, #374151, #1f2937);
+      border-radius: 14px;
+      margin: 0 auto 2px;
+      position: relative;
+      border: 3px solid #4b5563;
+      box-shadow: 0 4px 16px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    /* Antenna */
+    .robot-head::before {
+      content: '';
+      position: absolute;
+      top: -18px; left: 50%; transform: translateX(-50%);
+      width: 4px; height: 18px;
+      background: #6b7280;
+      border-radius: 2px;
+    }
+    .robot-head::after {
+      content: '';
+      position: absolute;
+      top: -24px; left: 50%; transform: translateX(-50%);
+      width: 10px; height: 10px;
+      background: #ef4444;
+      border-radius: 50%;
+      animation: antennaBlink 1s ease-in-out infinite;
+      box-shadow: 0 0 8px #ef4444;
+    }
+    @keyframes antennaBlink {
+      0%,100% { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+      50%      { background: #fca5a5; box-shadow: 0 0 14px #ef4444; }
+    }
+
+    /* Eyes — X X */
+    .robot-eye {
+      position: absolute;
+      top: 16px;
+      width: 18px; height: 18px;
+      background: #1f2937;
+      border-radius: 4px;
+      border: 2px solid #374151;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 900; color: #ef4444;
+      animation: eyeGlitch 4s ease-in-out infinite;
+    }
+    .eye-l { left: 12px; }
+    .eye-r { right: 12px; }
+    @keyframes eyeGlitch {
+      0%,90%,100% { transform: scaleX(1); filter: none; }
+      92%          { transform: scaleX(1.3); filter: blur(1px); color: #fbbf24; }
+      94%          { transform: scaleX(.8); }
+      96%          { transform: scaleX(1.1); color: #ef4444; }
+    }
+
+    /* Mouth — sad line */
+    .robot-mouth {
+      position: absolute;
+      bottom: 10px; left: 50%; transform: translateX(-50%);
+      width: 28px; height: 4px;
+      background: #4b5563;
+      border-radius: 2px;
+    }
+
+    /* Body */
+    .robot-body {
+      width: 80px; height: 56px;
+      background: linear-gradient(160deg, #374151, #1f2937);
+      border-radius: 10px;
+      margin: 0 auto;
+      border: 3px solid #4b5563;
+      position: relative;
+      box-shadow: 0 4px 16px rgba(0,0,0,.4);
+    }
+    /* Chest screen */
+    .robot-screen {
+      position: absolute;
+      top: 10px; left: 50%; transform: translateX(-50%);
+      width: 44px; height: 26px;
+      background: #0f172a;
+      border-radius: 6px;
+      border: 2px solid #374151;
+      overflow: hidden;
+    }
+    /* Error bars on screen */
+    .screen-bar {
+      position: absolute;
+      left: 4px; right: 4px;
+      height: 4px;
+      border-radius: 2px;
+      background: #ef4444;
+      animation: screenBar 1.4s ease-in-out infinite;
+    }
+    .sb1 { top: 4px; animation-delay: 0s; }
+    .sb2 { top: 11px; background: #f97316; animation-delay: .3s; width: 60%; }
+    .sb3 { top: 18px; background: #fbbf24; animation-delay: .6s; width: 40%; }
+    @keyframes screenBar {
+      0%,100% { opacity: 1; }
+      50%      { opacity: .2; }
+    }
+
+    /* Arms */
+    .robot-arms {
+      display: flex; justify-content: space-between;
+      width: 100px; margin: -34px auto 0;
+      position: relative; z-index: -1;
+    }
+    .robot-arm {
+      width: 14px; height: 36px;
+      background: linear-gradient(180deg, #374151, #1f2937);
+      border-radius: 7px;
+      border: 2px solid #4b5563;
+    }
+    .arm-l { animation: armLspin 3s ease-in-out infinite; transform-origin: top center; }
+    .arm-r { animation: armRspin 3s ease-in-out infinite; transform-origin: top center; }
+    @keyframes armLspin { 0%,100% { transform: rotate(-10deg); } 50% { transform: rotate(10deg); } }
+    @keyframes armRspin { 0%,100% { transform: rotate(10deg); } 50% { transform: rotate(-10deg); } }
+
+    /* Smoke puffs */
+    .smoke {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(156,163,175,.5);
+      animation: smokeRise var(--sd, 2s) ease-out infinite var(--sdl, 0s);
+      opacity: 0;
+    }
+    .sm1 { width: 16px; height: 16px; top: -40px; left: 12px; --sd: 2s; --sdl: 0s; }
+    .sm2 { width: 12px; height: 12px; top: -32px; left: 28px; --sd: 2.4s; --sdl: .5s; }
+    .sm3 { width: 20px; height: 20px; top: -48px; right: 8px; --sd: 2.2s; --sdl: 1s; }
+    @keyframes smokeRise {
+      0%   { opacity: 0; transform: translateY(0) scale(.5); }
+      20%  { opacity: .7; }
+      100% { opacity: 0; transform: translateY(-50px) scale(2); }
+    }
+
+    /* Ground */
+    .ground { position: absolute; bottom: 0; left: 0; right: 0; height: 36px; background: linear-gradient(180deg, #1e293b, #0f172a); border-radius: 18px; border-top: 2px solid #334155; }
+
+    /* Floating error codes */
+    .float-code {
+      position: absolute;
+      font-size: 11px; font-weight: 800; letter-spacing: .05em;
+      color: #ef4444; font-family: monospace;
+      animation: codeFloat var(--cf, 3s) linear infinite var(--cfl, 0s);
+      opacity: 0;
+    }
+    .fc1 { top: 10px; left: 8%;  --cf: 2.8s; --cfl: 0s; }
+    .fc2 { top: 4px;  right: 6%; --cf: 3.2s; --cfl: .7s; }
+    .fc3 { top: 22px; left: 24%; --cf: 2.5s; --cfl: 1.4s; }
+    @keyframes codeFloat {
+      0%   { opacity: 0; transform: translateY(0); }
+      25%  { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-36px); }
+    }
+
+    /* Text & buttons */
+    .err-title { font-size: clamp(26px, 5vw, 38px); font-weight: 800; color: #f1f5f9; letter-spacing: -.03em; margin-bottom: 10px; }
+    .err-sub { font-size: 15px; color: #94a3b8; line-height: 1.65; max-width: 520px; margin-bottom: 28px; }
+    .err-code-label {
+      display: inline-block;
+      background: rgba(239,68,68,.12);
+      border: 1.5px solid rgba(239,68,68,.3);
+      color: #fca5a5;
+      font-size: 13px; font-weight: 700;
+      padding: 6px 16px; border-radius: 999px;
+      margin-bottom: 14px;
+      letter-spacing: .04em;
+    }
+    .err-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 13px 26px; background: #ef4444; color: #fff; font-size: 15px; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 8px 20px rgba(239,68,68,.35); transition: background .2s, transform .2s; }
+    .btn-primary:hover { background: #dc2626; transform: translateY(-2px); }
+    .btn-ghost { display: inline-flex; align-items: center; gap: 8px; padding: 13px 26px; border: 1.5px solid #475569; color: #cbd5e1; font-size: 15px; font-weight: 700; border-radius: 12px; text-decoration: none; background: rgba(255,255,255,.05); transition: background .2s; }
+    .btn-ghost:hover { background: rgba(255,255,255,.1); }
+
+
+    @media (max-width: 480px) {
+      .err-actions { flex-direction: column; align-items: stretch; }
+      .btn-primary, .btn-ghost { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Star field -->
+  <div class="stars" id="stars" aria-hidden="true"></div>
+  <div class="blobs"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
+<main class="card" role="main" aria-labelledby="err-title">
+
+    <div class="scene" aria-hidden="true">
+      <!-- Floating error codes -->
+      <span class="float-code fc1">ERR_500</span>
+      <span class="float-code fc2">null</span>
+      <span class="float-code fc3">crash!</span>
+
+      <div class="robot-wrap">
+        <!-- Smoke -->
+        <div class="smoke sm1"></div>
+        <div class="smoke sm2"></div>
+        <div class="smoke sm3"></div>
+
+        <!-- Head -->
+        <div class="robot-head">
+          <div class="robot-eye eye-l">✕</div>
+          <div class="robot-eye eye-r">✕</div>
+          <div class="robot-mouth"></div>
+        </div>
+
+        <!-- Arms + Body -->
+        <div class="robot-arms">
+          <div class="robot-arm arm-l"></div>
+          <div class="robot-arm arm-r"></div>
+        </div>
+
+        <div class="robot-body">
+          <div class="robot-screen">
+            <div class="screen-bar sb1"></div>
+            <div class="screen-bar sb2"></div>
+            <div class="screen-bar sb3"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ground"></div>
+    </div>
+
+    <span class="err-code-label">500 — SERVER ERROR</span>
+    <h1 class="err-title" id="err-title">Something broke on our end</h1>
+    <p class="err-sub">Our robot is a little fried right now. This is totally on us — your cart and orders are safe. Try refreshing or come back in a moment.</p>
+
+    <div class="err-actions">
+      <a href="javascript:location.reload()" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Refresh
+      </a>
+      <a href="/" class="btn-ghost">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Go Home
+      </a>
+    </div>
+
+  </main>
+
+  <script>
+  /* Generate random star field */
+  (function () {
+    var container = document.getElementById('stars');
+    for (var i = 0; i < 80; i++) {
+      var s = document.createElement('div');
+      s.className = 'star';
+      var size = Math.random() * 2.5 + 1;
+      s.style.cssText = [
+        'width:'  + size + 'px',
+        'height:' + size + 'px',
+        'top:'    + Math.random() * 100 + '%',
+        'left:'   + Math.random() * 100 + '%',
+        '--d:'    + (Math.random() * 3 + 2) + 's',
+        '--dl:'   + (Math.random() * 3) + 's',
+        '--op:'   + (Math.random() * .5 + .3)
+      ].join(';');
+      container.appendChild(s);
+    }
+  })();
+  </script>
+
+</body>
+</html>

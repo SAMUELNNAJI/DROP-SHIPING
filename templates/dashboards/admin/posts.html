@@ -1,252 +1,963 @@
 {% load static %}
 <div class="dashboard-page" data-page-title="Blog Posts">
 
-  <!-- ── Header ── -->
-  <div class="ahead">
-    <div class="ahead__row">
+<!-- ══════════════════════════════════════
+     PAGE HEADER  (admin .ahead glass style)
+══════════════════════════════════════════ -->
+<div class="ahead pst-ahead">
+  <!-- decorative grid overlay (masked, matches admin.css .ahead::after) -->
+
+  <div class="ahead__row">
+    <div>
       <span class="ahead__chip">
-        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-        Content management
+        <svg class="sic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Content Management
       </span>
+      <h2>Blog Posts</h2>
+      <p>Create, edit and publish articles that appear on the public blog.</p>
     </div>
-    <h2>Blog Posts</h2>
-    <p>Create, edit and publish articles that appear on the public blog page.</p>
-    <div class="admin-order-kpis" style="margin-top:16px">
-      <div class="aokpi aokpi--green"><span>Published</span><b>{{ published_count }}</b></div>
-      <div class="aokpi aokpi--amber"><span>Featured</span><b>{{ featured_count }}</b></div>
-      <div class="aokpi"><span>Total posts</span><b>{{ total_posts }}</b></div>
+
+    <div class="ahead__actions pst-ahead__kpis">
+      <div class="pst-aokpi">
+        <span class="pst-aokpi__ic pst-aokpi__ic--plain">
+          <svg class="sic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </span>
+        <div class="pst-aokpi__body">
+          <span>Total Posts</span>
+          <b>{{ total_posts }}</b>
+        </div>
+      </div>
+      <div class="pst-aokpi pst-aokpi--blue">
+        <span class="pst-aokpi__ic pst-aokpi__ic--blue">
+          <svg class="sic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </span>
+        <div class="pst-aokpi__body">
+          <span>Published</span>
+          <b>{{ published_count }}</b>
+        </div>
+      </div>
+      <div class="pst-aokpi pst-aokpi--amber">
+        <span class="pst-aokpi__ic pst-aokpi__ic--amber">
+          <svg class="sic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </span>
+        <div class="pst-aokpi__body">
+          <span>Featured</span>
+          <b>{{ featured_count }}</b>
+        </div>
+      </div>
+      <div class="pst-aokpi pst-aokpi--green">
+        <span class="pst-aokpi__ic pst-aokpi__ic--green">
+          <svg class="sic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </span>
+        <div class="pst-aokpi__body">
+          <span>Drafts</span>
+          <b>{{ total_posts|add:"-"|add:published_count }}</b>
+        </div>
+      </div>
     </div>
   </div>
+</div>
 
-  <!-- ── Create / Edit form ── -->
-  <section class="dashboard-panel" style="margin:18px 0">
-    <div class="panel-heading">
-      <h3>{% if editing_post %}Edit: {{ editing_post.title|truncatechars:50 }}{% else %}New blog post{% endif %}</h3>
+<!-- ══════════════════════════════════════
+     COMPOSER CARD
+══════════════════════════════════════════ -->
+<div class="pst-composer">
+
+  <!-- Composer header -->
+  <div class="pst-composer__hd">
+    <div class="pst-composer__hdleft">
+      <span class="pst-composer__hdicon">
+        {% if editing_post %}
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        {% else %}
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        {% endif %}
+      </span>
+      <div>
+        <h3 class="pst-composer__title">{% if editing_post %}Edit article{% else %}New article{% endif %}</h3>
+        <p class="pst-composer__sub">{% if editing_post %}{{ editing_post.title|truncatechars:60 }}{% else %}Fill in the fields below and hit publish{% endif %}</p>
+      </div>
+    </div>
+    <div class="pst-composer__hdright">
       {% if editing_post %}
-      <a href="{% url 'admin_posts' %}" class="abtn abtn--ghost" style="font-size:13px">
-        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m19 12H5M12 5l-7 7 7 7"/></svg>
-        Cancel edit
+      <a href="/blog/{{ editing_post.slug }}/" target="_blank" rel="noopener" class="pst-composer__viewbtn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14 21 3"/></svg>
+        Live preview
+      </a>
+      <a href="{% url 'admin_posts' %}" class="pst-composer__cancelbtn" data-dashboard-link>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+        Cancel
       </a>
       {% endif %}
     </div>
-    <div style="padding:22px">
-      <form method="post"
-            enctype="multipart/form-data"
-            action="{% if editing_post %}{% url 'admin_post_edit' editing_post.pk %}{% else %}{% url 'admin_post_create' %}{% endif %}">
-        {% csrf_token %}
+  </div>
 
-        <!-- Row 1: title + slug -->
-        <div class="posts-form-row">
-          <div class="posts-field posts-field--wide">
-            <label>Post title <span class="posts-req">*</span></label>
-            {{ post_form.title }}
-            {% if post_form.title.errors %}<p class="posts-err">{{ post_form.title.errors.0 }}</p>{% endif %}
-          </div>
-          <div class="posts-field">
-            <label>Slug <small class="posts-hint">(auto-generated if blank)</small></label>
-            {{ post_form.slug }}
-          </div>
-        </div>
+  <!-- Composer body -->
+  <form class="pst-composer__form"
+        method="post"
+        enctype="multipart/form-data"
+        id="postForm"
+        action="{% if editing_post %}{% url 'admin_post_edit' editing_post.pk %}{% else %}{% url 'admin_post_create' %}{% endif %}">
+    {% csrf_token %}
 
-        <!-- Row 2: category + tag + read time -->
-        <div class="posts-form-row" style="margin-top:14px">
-          <div class="posts-field">
-            <label>Category</label>
-            {{ post_form.category }}
-          </div>
-          <div class="posts-field">
-            <label>Tag label <small class="posts-hint">e.g. PI COMMERCE</small></label>
-            {{ post_form.tag_label }}
-          </div>
-          <div class="posts-field posts-field--sm">
-            <label>Read (min)</label>
-            {{ post_form.read_minutes }}
-          </div>
-        </div>
+    <!-- ── Two-column grid ── -->
+    <div class="pst-cols">
 
-        <!-- Row 3: excerpt -->
-        <div class="posts-field" style="margin-top:14px">
-          <label>Excerpt <small class="posts-hint">Short summary shown on the blog card</small></label>
-          {{ post_form.excerpt }}
-          {% if post_form.excerpt.errors %}<p class="posts-err">{{ post_form.excerpt.errors.0 }}</p>{% endif %}
-        </div>
+      <!-- ── LEFT column ── -->
+      <div class="pst-col">
 
-        <!-- Row 4: body -->
-        <div class="posts-field" style="margin-top:14px">
-          <label>Body content <small class="posts-hint">HTML supported</small></label>
-          {{ post_form.body }}
-          {% if post_form.body.errors %}<p class="posts-err">{{ post_form.body.errors.0 }}</p>{% endif %}
-        </div>
-
-        <!-- Row 5: images -->
-        <div class="posts-form-row" style="margin-top:14px">
-          <div class="posts-field">
-            <label>Cover image URL <small class="posts-hint">Unsplash or CDN link</small></label>
-            {{ post_form.image_url }}
+        <!-- Article block -->
+        <div class="pst-block">
+          <div class="pst-block__bar">
+            <span class="pst-block__num">01</span>
+            <span class="pst-block__label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Article
+            </span>
           </div>
-          <div class="posts-field">
-            <label>Upload image <small class="posts-hint">Overrides URL</small></label>
-            {{ post_form.image }}
-            {% if editing_post and editing_post.image %}
-              <div style="margin-top:8px;font-size:12px;color:#5d6a85">Current: <a href="{{ editing_post.image.url }}" target="_blank" style="color:#2456e6">View</a></div>
-            {% endif %}
+          <div class="pst-fields">
+            <div class="pst-field pst-field--full">
+              <label class="pst-label">Title <span class="pst-req">*</span></label>
+              {{ post_form.title }}
+              {% if post_form.title.errors %}<p class="pst-err">{{ post_form.title.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="pst-field pst-field--full">
+              <label class="pst-label">Excerpt <span class="pst-hint">shown on the blog card</span></label>
+              {{ post_form.excerpt }}
+              {% if post_form.excerpt.errors %}<p class="pst-err">{{ post_form.excerpt.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="pst-field pst-field--full">
+              <label class="pst-label">Body <span class="pst-hint">HTML supported</span></label>
+              {{ post_form.body }}
+              {% if post_form.body.errors %}<p class="pst-err">{{ post_form.body.errors.0 }}</p>{% endif %}
+            </div>
           </div>
-        </div>
+        </div><!-- /.pst-block -->
 
-        <!-- Row 6: author -->
-        <div class="posts-form-row" style="margin-top:14px">
-          <div class="posts-field">
-            <label>Author name</label>
-            {{ post_form.author_name }}
+        <!-- Cover image block -->
+        <div class="pst-block">
+          <div class="pst-block__bar">
+            <span class="pst-block__num">03</span>
+            <span class="pst-block__label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              Cover image
+            </span>
           </div>
-          <div class="posts-field">
-            <label>Author role</label>
-            {{ post_form.author_role }}
-          </div>
-        </div>
-
-        <!-- Row 7: publish controls -->
-        <div class="posts-form-row posts-form-row--checks" style="margin-top:14px">
-          <div class="posts-field posts-field--sm">
-            <label>Publish date</label>
-            {{ post_form.published_at }}
-          </div>
-          <label class="posts-check-row">
-            {{ post_form.is_published }}
-            <span><strong>Published</strong><em>Visible on the public blog</em></span>
-          </label>
-          <label class="posts-check-row">
-            {{ post_form.is_featured }}
-            <span><strong>Featured spotlight</strong><em>Shown as the hero article</em></span>
-          </label>
-        </div>
-
-        <div style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end">
-          <button type="submit" class="abtn abtn--primary">
-            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>
-            {% if editing_post %}Update post{% else %}Create post{% endif %}
-          </button>
-        </div>
-      </form>
-    </div>
-  </section>
-
-  <!-- ── Posts table ── -->
-  <section class="dashboard-panel">
-    <div class="panel-heading">
-      <h3>All posts</h3>
-      <span class="panel-meta">{{ total_posts }} total</span>
-    </div>
-    <div class="dashboard-table-wrap">
-      <table class="dashboard-table dashboard-table--wide">
-        <thead>
-          <tr>
-            <th>TITLE</th>
-            <th>CATEGORY</th>
-            <th>AUTHOR</th>
-            <th>DATE</th>
-            <th>STATUS</th>
-            <th>ACTIONS</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for post in posts %}
-          <tr>
-            <td>
-              <div style="display:flex;align-items:center;gap:10px">
-                <div class="posts-thumb" style="background-image:url('{{ post.cover_src }}')"></div>
+          <div class="pst-fields">
+            <div class="pst-field pst-field--full">
+              <label class="pst-label">Image URL <span class="pst-hint">Unsplash or CDN link</span></label>
+              {{ post_form.image_url }}
+            </div>
+            <div class="pst-field pst-field--full">
+              <label class="pst-label">Upload file <span class="pst-hint">overrides URL above</span></label>
+              <label class="pst-drop" id="pstUploadLabel">
+                <input type="file" name="{{ post_form.image.html_name }}" accept="image/*" class="pst-drop__input" id="pstImageInput" />
+                <span class="pst-drop__icon">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </span>
+                <span class="pst-drop__copy">
+                  <strong>Drop image or <u>browse</u></strong>
+                  <small>PNG · JPG · WEBP — max 4 MB · 1200×630 recommended</small>
+                </span>
+              </label>
+              <div class="pst-drop__preview" id="pstImgPreview" style="display:none">
+                <img id="pstImgPreviewImg" src="" alt="Preview" />
+                <button type="button" class="pst-drop__remove" id="pstImgRemove" title="Remove image">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+                </button>
+              </div>
+              {% if editing_post and editing_post.image %}
+              <div class="pst-drop__current">
+                <img src="{{ editing_post.image.url }}" alt="Current cover" />
                 <div>
-                  <b>{{ post.title|truncatechars:55 }}</b>
-                  {% if post.is_featured %}<span class="pill pill-yellow" style="font-size:10px;padding:2px 7px;margin-left:4px">Featured</span>{% endif %}
-                  <br><small class="muted">{{ post.slug }}</small>
+                  <span>Current cover</span>
+                  <a href="{{ editing_post.image.url }}" target="_blank">View &rarr;</a>
                 </div>
               </div>
-            </td>
-            <td><span class="pill pill-blue" style="font-size:11px">{{ post.category_display }}</span></td>
-            <td class="muted">{{ post.author_name }}</td>
-            <td class="muted">{{ post.published_display }}</td>
-            <td>
-              {% if post.is_published %}
-                <span class="pill pill-green">Live</span>
-              {% else %}
-                <span class="pill pill-yellow">Draft</span>
               {% endif %}
-            </td>
-            <td>
-              <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center">
-                <a class="table-action table-action--soft"
-                   href="/blog/{{ post.slug }}/"
-                   target="_blank" rel="noopener">
-                  <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14 21 3"/></svg>
-                  View
-                </a>
-                <a class="table-action table-action--soft"
-                   href="{% url 'admin_post_edit' post.pk %}"
-                   data-dashboard-link>
-                  <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                  Edit
-                </a>
-                <form method="post" action="{% url 'admin_post_delete' post.pk %}"
-                      onsubmit="return confirm('Delete {{ post.title|escapejs }}?')">
-                  {% csrf_token %}
-                  <button type="submit" class="table-action table-action--danger">
-                    <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-                    Delete
-                  </button>
-                </form>
-              </div>
-            </td>
-          </tr>
-          {% empty %}
-          <tr><td colspan="6" style="text-align:center;padding:40px;color:#9aa7bd">No blog posts yet — create your first one above.</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </section>
+              {% if post_form.image.errors %}<p class="pst-err">{{ post_form.image.errors.0 }}</p>{% endif %}
+            </div>
+          </div>
+        </div><!-- /.pst-block -->
+
+      </div><!-- /.pst-col left -->
+
+      <!-- ── RIGHT column ── -->
+      <div class="pst-col pst-col--side">
+
+        <!-- Taxonomy block -->
+        <div class="pst-block">
+          <div class="pst-block__bar">
+            <span class="pst-block__num">02</span>
+            <span class="pst-block__label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              Taxonomy
+            </span>
+          </div>
+          <div class="pst-fields">
+            <div class="pst-field pst-field--full">
+              <label class="pst-label">Category</label>
+              {{ post_form.category }}
+            </div>
+            <div class="pst-field pst-field--full">
+              <label class="pst-label">Tag label <span class="pst-hint">e.g. PI COMMERCE</span></label>
+              {{ post_form.tag_label }}
+            </div>
+          </div>
+        </div><!-- /.pst-block -->
+
+        <!-- Meta block -->
+        <div class="pst-block">
+          <div class="pst-block__bar">
+            <span class="pst-block__num">04</span>
+            <span class="pst-block__label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              Author &amp; Meta
+            </span>
+          </div>
+          <div class="pst-fields">
+            <div class="pst-field pst-field--full">
+              <label class="pst-label">Author name</label>
+              {{ post_form.author_name }}
+            </div>
+            <div class="pst-field pst-field--full">
+              <label class="pst-label">Author role</label>
+              {{ post_form.author_role }}
+            </div>
+            <div class="pst-field pst-field--full">
+              <label class="pst-label">Slug <span class="pst-hint">auto-generated if blank</span></label>
+              {{ post_form.slug }}
+            </div>
+            <div class="pst-field pst-field--full">
+              <label class="pst-label">Read time <span class="pst-hint">minutes</span></label>
+              {{ post_form.read_minutes }}
+            </div>
+          </div>
+        </div><!-- /.pst-block -->
+
+        <!-- Publish block -->
+        <div class="pst-block pst-block--publish">
+          <div class="pst-block__bar">
+            <span class="pst-block__num">05</span>
+            <span class="pst-block__label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Publishing
+            </span>
+          </div>
+          <div class="pst-fields">
+            <div class="pst-field pst-field--full">
+              <label class="pst-label">Publish date</label>
+              {{ post_form.published_at }}
+            </div>
+            <div class="pst-toggles">
+              <label class="pst-toggle">
+                {{ post_form.is_published }}
+                <span class="pst-toggle__track"></span>
+                <span class="pst-toggle__body">
+                  <strong>Published</strong>
+                  <small>Visible on the public blog</small>
+                </span>
+              </label>
+              <label class="pst-toggle">
+                {{ post_form.is_featured }}
+                <span class="pst-toggle__track"></span>
+                <span class="pst-toggle__body">
+                  <strong>Featured spotlight</strong>
+                  <small>Shown as the hero article</small>
+                </span>
+              </label>
+            </div>
+            <!-- Publish CTA -->
+            <button type="submit" class="pst-submit">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                {% if editing_post %}
+                <path d="m5 13 4 4L19 7"/>
+                {% else %}
+                <path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9l20-7z"/>
+                {% endif %}
+              </svg>
+              {% if editing_post %}Update post{% else %}Publish post{% endif %}
+            </button>
+          </div>
+        </div><!-- /.pst-block -->
+
+      </div><!-- /.pst-col side -->
+
+    </div><!-- /.pst-cols -->
+  </form>
+
+</div><!-- /.pst-composer -->
+
+<!-- ══════════════════════════════════════
+     POSTS GRID
+══════════════════════════════════════════ -->
+<div class="pst-list-head">
+  <h3 class="pst-list-head__title">
+    All posts
+    <span class="pst-list-head__count">{{ total_posts }}</span>
+  </h3>
+  <div class="pst-list-head__filters">
+    <span class="pst-filter pst-filter--active" data-filter="all">All</span>
+    <span class="pst-filter" data-filter="published">Published</span>
+    <span class="pst-filter" data-filter="draft">Drafts</span>
+    <span class="pst-filter" data-filter="featured">Featured</span>
+  </div>
 </div>
 
+{% if posts %}
+<div class="pst-grid" id="pstGrid">
+  {% for post in posts %}
+  <article class="pst-card"
+           data-published="{{ post.is_published|yesno:'yes,no' }}"
+           data-featured="{{ post.is_featured|yesno:'yes,no' }}">
+
+    <!-- Cover -->
+    <div class="pst-card__cover" style="background-image:url('{{ post.cover_src }}')">
+      <div class="pst-card__cover-badges">
+        {% if post.is_featured %}
+        <span class="pst-badge pst-badge--star">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Featured
+        </span>
+        {% endif %}
+        {% if post.is_published %}
+        <span class="pst-badge pst-badge--live">Live</span>
+        {% else %}
+        <span class="pst-badge pst-badge--draft">Draft</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="pst-card__body">
+      <div class="pst-card__meta">
+        <span class="pst-card__cat">{{ post.category_display }}</span>
+        {% if post.tag_label %}
+        <span class="pst-card__tag">{{ post.tag_label }}</span>
+        {% endif %}
+      </div>
+
+      <h4 class="pst-card__title">{{ post.title|truncatechars:72 }}</h4>
+      {% if post.excerpt %}
+      <p class="pst-card__excerpt">{{ post.excerpt|truncatechars:100 }}</p>
+      {% endif %}
+
+      <div class="pst-card__info">
+        <span class="pst-card__author">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          {{ post.author_name }}
+        </span>
+        <span class="pst-card__date">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          {{ post.published_display }}
+        </span>
+        <span class="pst-card__read">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          {{ post.read_minutes }} min
+        </span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="pst-card__actions">
+      <a href="/blog/{{ post.slug }}/" target="_blank" rel="noopener" class="pst-act pst-act--view" title="View live">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14 21 3"/></svg>
+        View
+      </a>
+      <a href="{% url 'admin_post_edit' post.pk %}" data-dashboard-link class="pst-act pst-act--edit" title="Edit post">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Edit
+      </a>
+      <form method="post" action="{% url 'admin_post_delete' post.pk %}"
+            onsubmit="return confirm('Delete \&quot;{{ post.title|escapejs }}\&quot;? This cannot be undone.')">
+        {% csrf_token %}
+        <button type="submit" class="pst-act pst-act--del" title="Delete post">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          Delete
+        </button>
+      </form>
+    </div>
+
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<div class="pst-empty">
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#c8d5ea" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+  <h4>No posts yet</h4>
+  <p>Create your first article using the editor above and it will appear here.</p>
+</div>
+{% endif %}
+
+</div><!-- /.dashboard-page -->
+
+
 <style>
-/* ── Admin blog posts form ── */
-.posts-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.posts-form-row--checks { grid-template-columns: auto 1fr 1fr; align-items: end; }
-.posts-field { display: flex; flex-direction: column; gap: 5px; }
-.posts-field--wide { grid-column: span 2; }
-.posts-field--sm { max-width: 120px; }
-.posts-field label { font-size: 12.5px; font-weight: 800; color: var(--atext,#16223c); }
-.posts-hint { font-weight: 500; color: #93a0bd; font-size: 11.5px; }
-.posts-req { color: #e5484d; }
-.posts-err { margin: 3px 0 0; font-size: 12px; color: #e5484d; }
-.posts-field .ff-input,
-.posts-field input:not([type=checkbox]),
-.posts-field select,
-.posts-field textarea {
-  width: 100%; min-height: 44px; border: 1.5px solid rgba(28,48,86,.13);
-  border-radius: 11px; padding: 0 13px; font: inherit; font-size: 13.5px;
-  background: rgba(248,250,255,.9); color: var(--atext,#16223c);
-  outline: none; transition: border-color .18s, box-shadow .18s; box-sizing: border-box;
+/* ═══════════════════════════════════════════════
+   ADMIN POSTS PAGE — scoped styles
+   Redesigned: full-width composer, no tips card
+═══════════════════════════════════════════════ */
+
+/* ── Page header — glass, matches admin .ahead exactly ── */
+.pst-ahead {
+  margin-bottom: 24px;
 }
-.posts-field .ff-input:focus,
-.posts-field input:not([type=checkbox]):focus,
-.posts-field select:focus,
-.posts-field textarea:focus {
-  border-color: rgba(36,86,230,.5); box-shadow: 0 0 0 3px rgba(36,86,230,.1); background: #fff;
+/* KPI tile row sits in ahead__actions */
+.pst-ahead__kpis {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: stretch;
+  margin-left: auto;
 }
-.posts-field textarea { min-height: 120px; resize: vertical; padding: 10px 13px; }
-.posts-check-row {
-  display: flex; align-items: flex-start; gap: 11px; padding: 10px 14px;
-  border-radius: 12px; background: rgba(248,250,255,.7); border: 1.5px solid rgba(28,48,86,.1);
+
+/* ── Individual KPI tile ── */
+.pst-aokpi {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.72);
+  border: 1px solid rgba(28,48,86,.10);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: 0 1px 2px rgba(16,30,54,.05), 0 8px 22px rgba(16,42,98,.07);
+  min-width: 104px;
+  transition: transform .18s, box-shadow .18s;
+}
+.pst-aokpi:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 1px 2px rgba(16,30,54,.06), 0 14px 30px rgba(16,42,98,.12);
+}
+.pst-aokpi__ic {
+  width: 38px; height: 38px; flex-shrink: 0;
+  border-radius: 11px;
+  display: grid; place-items: center;
+  background: rgba(28,48,86,.07);
+  color: #5d6a85;
+  border: 1px solid rgba(28,48,86,.10);
+}
+.pst-aokpi__ic .sic { width: 17px; height: 17px; }
+
+.pst-aokpi__ic--blue   { background: rgba(36,86,230,.1);  color: #2456e6; border-color: rgba(36,86,230,.2); }
+.pst-aokpi__ic--amber  { background: rgba(232,150,12,.11); color: #c07c00; border-color: rgba(232,150,12,.26); }
+.pst-aokpi__ic--green  { background: rgba(12,166,120,.1);  color: #0ca678; border-color: rgba(12,166,120,.22); }
+
+.pst-aokpi__body { display: flex; flex-direction: column; gap: 2px; }
+.pst-aokpi__body span {
+  font-size: 11px; font-weight: 700;
+  color: var(--amuted, #5d6a85);
+  text-transform: uppercase; letter-spacing: .06em;
+}
+.pst-aokpi__body b {
+  font-size: 26px; font-weight: 800;
+  letter-spacing: -.04em; line-height: 1;
+  color: var(--atext, #16223c);
+}
+/* coloured values */
+.pst-aokpi--blue  { border-color: rgba(36,86,230,.18);  background: rgba(234,240,255,.72); }
+.pst-aokpi--blue  .pst-aokpi__body b { color: #2456e6; }
+.pst-aokpi--amber { border-color: rgba(232,150,12,.22);  background: rgba(255,244,221,.72); }
+.pst-aokpi--amber .pst-aokpi__body b { color: #9a6200; }
+.pst-aokpi--green { border-color: rgba(12,166,120,.22);  background: rgba(226,248,240,.72); }
+.pst-aokpi--green .pst-aokpi__body b { color: #0a7a57; }
+
+/* ── Composer card ── */
+.pst-composer {
+  background: #fff;
+  border-radius: 22px;
+  border: 1px solid rgba(28,48,86,.09);
+  box-shadow: 0 2px 20px rgba(15,28,77,.06);
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+
+/* composer header */
+.pst-composer__hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 26px;
+  background: linear-gradient(110deg, #0d1b3e 0%, #162350 50%, #0d2060 100%);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.pst-composer__hdleft { display: flex; align-items: center; gap: 14px; }
+.pst-composer__hdicon {
+  width: 40px; height: 40px; flex-shrink: 0;
+  border-radius: 12px;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.16);
+  display: grid; place-items: center;
+  color: #fff;
+}
+.pst-composer__title {
+  font-size: 17px; font-weight: 800;
+  color: #fff;
+  letter-spacing: -.02em;
+  margin: 0 0 2px;
+}
+.pst-composer__sub { font-size: 12.5px; color: rgba(180,200,255,.6); margin: 0; }
+.pst-composer__hdright { display: flex; align-items: center; gap: 10px; }
+.pst-composer__viewbtn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 16px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.15);
+  color: rgba(200,220,255,.9);
+  font-size: 13px; font-weight: 600;
+  text-decoration: none;
+  transition: background .18s;
+}
+.pst-composer__viewbtn:hover { background: rgba(255,255,255,.18); color: #fff; }
+.pst-composer__cancelbtn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 16px;
+  border-radius: 10px;
+  background: rgba(229,72,77,.15);
+  border: 1px solid rgba(229,72,77,.25);
+  color: #ff8587;
+  font-size: 13px; font-weight: 600;
+  text-decoration: none;
+  transition: background .18s;
+}
+.pst-composer__cancelbtn:hover { background: rgba(229,72,77,.25); color: #ffb0b2; }
+
+/* ── Two-column form grid ── */
+.pst-cols {
+  display: grid;
+  grid-template-columns: minmax(0,1.6fr) 340px;
+  gap: 0;
+  align-items: start;
+}
+@media (max-width: 1060px) { .pst-cols { grid-template-columns: 1fr; } }
+.pst-col { display: flex; flex-direction: column; }
+.pst-col--side {
+  border-left: 1px solid rgba(28,48,86,.07);
+}
+
+/* ── Block ── */
+.pst-block {
+  padding: 0;
+  border-bottom: 1px solid rgba(28,48,86,.07);
+}
+.pst-block:last-child { border-bottom: none; }
+.pst-block__bar {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 24px 11px;
+  background: #fafbff;
+  border-bottom: 1px solid rgba(28,48,86,.06);
+}
+.pst-block__num {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #1f64ff, #2456e6);
+  color: #fff;
+  font-size: 9.5px; font-weight: 800;
+  letter-spacing: .04em;
+  display: grid; place-items: center;
+  flex-shrink: 0;
+}
+.pst-block__label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 800;
+  color: #3d5080;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.pst-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  padding: 18px 24px 20px;
+}
+
+/* fields */
+.pst-field { display: flex; flex-direction: column; gap: 5px; }
+.pst-field--full { grid-column: 1 / -1; }
+.pst-label  { font-size: 12.5px; font-weight: 700; color: #16223c; }
+.pst-hint   { font-size: 11.5px; font-weight: 500; color: #93a0bd; }
+.pst-req    { color: #e5484d; }
+.pst-err    { font-size: 12px; color: #e5484d; margin: 2px 0 0; }
+
+/* inputs */
+.pst-fields .ff-input,
+.pst-fields input:not([type=checkbox]):not([type=file]),
+.pst-fields select,
+.pst-fields textarea {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 13px;
+  border: 1.5px solid rgba(28,48,86,.12);
+  border-radius: 11px;
+  font: inherit;
+  font-size: 13.5px;
+  color: #16223c;
+  background: #f8faff;
+  outline: none;
+  transition: border-color .17s, box-shadow .17s, background .17s;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.pst-fields .ff-input:focus,
+.pst-fields input:not([type=checkbox]):not([type=file]):focus,
+.pst-fields select:focus,
+.pst-fields textarea:focus {
+  border-color: rgba(36,86,230,.48);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(36,86,230,.1);
+}
+.pst-fields textarea { min-height: 110px; resize: vertical; line-height: 1.65; }
+.pst-fields textarea[rows="10"] { min-height: 240px; }
+/* select arrow */
+.pst-fields select {
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='7' viewBox='0 0 12 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237b90b4' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+/* ── Drop / upload zone ── */
+.pst-drop {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 2px dashed rgba(31,100,255,.22);
+  border-radius: 14px;
   cursor: pointer;
+  background: rgba(31,100,255,.025);
+  transition: border-color .2s, background .2s;
 }
-.posts-check-row input[type=checkbox] { width: 17px; height: 17px; margin-top: 2px; flex-shrink: 0; accent-color: #2456e6; }
-.posts-check-row strong { display: block; font-size: 13px; color: var(--atext,#16223c); }
-.posts-check-row em { display: block; font-size: 12px; color: #93a0bd; font-style: normal; margin-top: 2px; }
-.posts-thumb {
-  width: 48px; height: 48px; border-radius: 10px; flex-shrink: 0;
-  background-size: cover; background-position: center; background-color: #eaf0ff;
+.pst-drop:hover { border-color: rgba(31,100,255,.48); background: rgba(31,100,255,.055); }
+.pst-drop__input { position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; }
+.pst-drop__icon {
+  width: 44px; height: 44px; flex-shrink: 0;
+  border-radius: 11px;
+  background: rgba(31,100,255,.1);
+  color: #1f64ff;
+  display: grid; place-items: center;
 }
-@media (max-width: 700px) {
-  .posts-form-row, .posts-form-row--checks { grid-template-columns: 1fr; }
-  .posts-field--wide { grid-column: span 1; }
+.pst-drop__copy { display: flex; flex-direction: column; gap: 3px; }
+.pst-drop__copy strong { font-size: 13px; font-weight: 600; color: #16223c; }
+.pst-drop__copy small  { font-size: 11.5px; color: #93a0bd; }
+.pst-drop__preview {
+  position: relative;
+  margin-top: 10px;
+  display: inline-block;
+}
+.pst-drop__preview img {
+  height: 80px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(28,48,86,.12);
+  object-fit: cover;
+}
+.pst-drop__remove {
+  position: absolute; top: -8px; right: -8px;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: #e5484d;
+  color: #fff;
+  cursor: pointer;
+  display: grid; place-items: center;
+}
+.pst-drop__current {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 11px;
+  background: #f4f6fb;
+  border: 1px solid rgba(28,48,86,.09);
+}
+.pst-drop__current img { height: 50px; width: 68px; object-fit: cover; border-radius: 8px; }
+.pst-drop__current div { display: flex; flex-direction: column; gap: 3px; }
+.pst-drop__current span { font-size: 12.5px; font-weight: 600; color: #16223c; }
+.pst-drop__current a   { font-size: 12px; color: #1f64ff; text-decoration: none; }
+
+/* ── Toggle switches ── */
+.pst-toggles { display: flex; flex-direction: column; gap: 8px; grid-column: 1 / -1; }
+.pst-toggle  {
+  display: flex; align-items: center; gap: 13px;
+  padding: 13px 15px;
+  border-radius: 13px;
+  background: #f8faff;
+  border: 1.5px solid rgba(28,48,86,.09);
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  position: relative;
+}
+.pst-toggle:hover { border-color: rgba(31,100,255,.24); background: rgba(31,100,255,.03); }
+.pst-toggle input[type=checkbox] { position: absolute; opacity: 0; width: 0; height: 0; }
+.pst-toggle__track {
+  width: 38px; height: 21px; flex-shrink: 0;
+  border-radius: 999px;
+  background: #d1d9e6;
+  position: relative;
+  transition: background .2s;
+  order: -1;
+}
+.pst-toggle__track::after {
+  content: '';
+  position: absolute;
+  top: 2.5px; left: 2.5px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,.2);
+  transition: transform .2s;
+}
+.pst-toggle input[type=checkbox]:checked ~ .pst-toggle__track { background: #1f64ff; }
+.pst-toggle input[type=checkbox]:checked ~ .pst-toggle__track::after { transform: translateX(17px); }
+.pst-toggle__body { display: flex; flex-direction: column; gap: 1px; }
+.pst-toggle__body strong { font-size: 13px; font-weight: 700; color: #16223c; }
+.pst-toggle__body small  { font-size: 11.5px; color: #93a0bd; }
+
+/* ── Publish block accent ── */
+.pst-block--publish { background: linear-gradient(180deg, #fff 0%, #f8faff 100%); }
+
+/* ── Publish submit button ── */
+.pst-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  padding: 14px 20px;
+  margin-top: 4px;
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, #0d1b3e 0%, #1f3a8f 50%, #1f64ff 100%);
+  color: #fff;
+  font-size: 14.5px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  border: none;
+  border-radius: 13px;
+  cursor: pointer;
+  box-shadow:
+    0 6px 20px rgba(20,50,140,.28),
+    inset 0 1px 0 rgba(255,255,255,.12);
+  transition: transform .2s, box-shadow .2s, filter .2s;
+  font-family: inherit;
+}
+.pst-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(20,50,140,.36), inset 0 1px 0 rgba(255,255,255,.14);
+  filter: brightness(1.05);
+}
+.pst-submit:active { transform: translateY(0); }
+
+/* ── List header ── */
+.pst-list-head {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+  margin-bottom: 16px;
+}
+.pst-list-head__title {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 18px; font-weight: 800;
+  color: #16223c;
+  margin: 0;
+}
+.pst-list-head__count {
+  font-size: 12px; font-weight: 700;
+  background: rgba(31,100,255,.1);
+  color: #2456e6;
+  border-radius: 999px;
+  padding: 3px 10px;
+  letter-spacing: .03em;
+}
+.pst-list-head__filters { display: flex; gap: 6px; flex-wrap: wrap; }
+.pst-filter {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(28,48,86,.12);
+  background: rgba(255,255,255,.7);
+  font-size: 12.5px; font-weight: 600;
+  color: #5a6a85;
+  cursor: pointer;
+  transition: all .18s;
+  user-select: none;
+}
+.pst-filter:hover   { border-color: #1f64ff; color: #1f64ff; }
+.pst-filter--active { background: #1f64ff; color: #fff; border-color: #1f64ff; }
+
+/* ── Posts grid ── */
+.pst-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+  margin-bottom: 32px;
+}
+.pst-card {
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid rgba(28,48,86,.09);
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(15,28,77,.05);
+  display: flex; flex-direction: column;
+  transition: transform .22s, box-shadow .22s;
+}
+.pst-card:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(15,28,77,.10); }
+
+/* Cover */
+.pst-card__cover {
+  height: 160px;
+  background-size: cover; background-position: center;
+  background-color: #e8f0ff;
+  position: relative;
+  flex-shrink: 0;
+}
+.pst-card__cover-badges {
+  position: absolute; bottom: 10px; left: 10px;
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+.pst-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 10.5px; font-weight: 800;
+  letter-spacing: .04em;
+  backdrop-filter: blur(8px);
+}
+.pst-badge--live  { background: rgba(22,163,74,.85);  color: #fff; }
+.pst-badge--draft { background: rgba(100,116,139,.8); color: #fff; }
+.pst-badge--star  { background: rgba(217,119,6,.9);   color: #fff; }
+
+/* Body */
+.pst-card__body { padding: 14px 16px 12px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.pst-card__meta { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.pst-card__cat  {
+  font-size: 10.5px; font-weight: 800; letter-spacing: .05em;
+  color: #2456e6; text-transform: uppercase;
+}
+.pst-card__tag  {
+  font-size: 10px; font-weight: 700; letter-spacing: .05em;
+  padding: 2px 8px; border-radius: 999px;
+  background: rgba(31,100,255,.08); color: #2456e6;
+  border: 1px solid rgba(31,100,255,.15);
+}
+.pst-card__title {
+  font-size: 14.5px; font-weight: 700;
+  color: #16223c;
+  letter-spacing: -.02em; line-height: 1.4;
+  margin: 0;
+}
+.pst-card__excerpt {
+  font-size: 12.5px; color: #7b90b4; line-height: 1.55;
+  margin: 0; flex: 1;
+}
+.pst-card__info {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding-top: 8px;
+  border-top: 1px solid rgba(28,48,86,.07);
+}
+.pst-card__author,
+.pst-card__date,
+.pst-card__read {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11.5px; color: #93a0bd; font-weight: 500;
+}
+
+/* Actions row */
+.pst-card__actions {
+  display: flex; gap: 0;
+  border-top: 1px solid rgba(28,48,86,.08);
+}
+.pst-act {
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  flex: 1;
+  padding: 11px 8px;
+  font-size: 12.5px; font-weight: 600;
+  border: none; background: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background .18s, color .18s;
+  font-family: inherit;
+  color: #5a6a85;
+}
+.pst-act + .pst-act { border-left: 1px solid rgba(28,48,86,.08); }
+.pst-act:hover         { background: #f0f4ff; }
+.pst-act--edit:hover   { color: #2456e6; }
+.pst-act--view:hover   { color: #0891b2; }
+.pst-act--del          { color: #c0392b; }
+.pst-act--del:hover    { background: #fff5f5; color: #e5484d; }
+.pst-act form          { display: contents; }
+
+/* ── Empty state ── */
+.pst-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #9aa7bd;
+}
+.pst-empty h4 { font-size: 18px; font-weight: 700; color: #546880; margin: 14px 0 6px; }
+.pst-empty p  { font-size: 14px; max-width: 360px; margin: 0 auto; line-height: 1.6; }
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  .pst-ahead__kpis { width: 100%; }
+  .pst-aokpi { flex: 1; min-width: 80px; }
+  .pst-fields { grid-template-columns: 1fr; }
+  .pst-grid { grid-template-columns: 1fr; }
+  .pst-composer__hd { flex-direction: column; align-items: flex-start; }
 }
 </style>
+
+<script>
+(function () {
+  /* ── Image upload preview ── */
+  var input      = document.getElementById('pstImageInput');
+  var preview    = document.getElementById('pstImgPreview');
+  var previewImg = document.getElementById('pstImgPreviewImg');
+  var removeBtn  = document.getElementById('pstImgRemove');
+  var label      = document.getElementById('pstUploadLabel');
+
+  if (input) {
+    input.addEventListener('change', function () {
+      var file = this.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        previewImg.src = e.target.result;
+        preview.style.display = 'block';
+        label.style.display   = 'none';
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  if (removeBtn) {
+    removeBtn.addEventListener('click', function () {
+      input.value = '';
+      previewImg.src = '';
+      preview.style.display = 'none';
+      label.style.display   = 'flex';
+    });
+  }
+
+  /* ── Post grid filter ── */
+  var filters = document.querySelectorAll('.pst-filter');
+  var cards   = document.querySelectorAll('.pst-card');
+
+  filters.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      filters.forEach(function (b) { b.classList.remove('pst-filter--active'); });
+      btn.classList.add('pst-filter--active');
+
+      var f = btn.getAttribute('data-filter');
+      cards.forEach(function (card) {
+        var show = true;
+        if      (f === 'published') show = card.getAttribute('data-published') === 'yes';
+        else if (f === 'draft')     show = card.getAttribute('data-published') === 'no';
+        else if (f === 'featured')  show = card.getAttribute('data-featured')  === 'yes';
+        card.style.display = show ? '' : 'none';
+      });
+    });
+  });
+})();
+</script>

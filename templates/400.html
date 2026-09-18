@@ -1,0 +1,167 @@
+﻿﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>400 — Bad Request | DropHub</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" type="image/png" href="/static/Logo.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body {
+      background: linear-gradient(160deg, #f5f3ff 0%, #ede9fe 45%, #ddd6fe 100%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      min-height: 100vh; min-height: 100dvh;
+    }
+
+    .blobs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(65px); opacity: .3; }
+    .blob-1 { width: 460px; height: 460px; background: #a78bfa; top: -120px; left: -80px; animation: blobFloat 9s ease-in-out infinite; }
+    .blob-2 { width: 380px; height: 380px; background: #818cf8; bottom: -90px; right: -60px; animation: blobFloat 11s ease-in-out infinite reverse; }
+    .blob-3 { width: 240px; height: 240px; background: #c4b5fd; top: 40%; right: 15%; animation: blobFloat 7.5s ease-in-out infinite 1.5s; }
+    @keyframes blobFloat {
+      0%,100% { transform: translate(0,0) scale(1); }
+      33%      { transform: translate(16px,-24px) scale(1.04); }
+      66%      { transform: translate(-12px,16px) scale(.97); }
+    }
+
+    .card { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 24px; max-width: 720px; width: 100%; }
+
+    /* Scene */
+    .scene { width: min(380px, 82vw); height: min(240px, 56vw); margin-bottom: 24px; position: relative; }
+
+    /* Broken envelope */
+    .envelope-wrap {
+      position: absolute;
+      bottom: 36px; left: 50%; transform: translateX(-50%);
+      animation: envBob 3s ease-in-out infinite;
+    }
+    @keyframes envBob {
+      0%,100% { transform: translateX(-50%) translateY(0); }
+      50%      { transform: translateX(-50%) translateY(-10px); }
+    }
+
+    /* Pieces flying off */
+    .piece {
+      position: absolute;
+      background: #8b5cf6;
+      border-radius: 3px;
+      animation: piecefly 2.4s ease-in-out infinite;
+      opacity: 0;
+    }
+    .p1 { width: 18px; height: 10px; top: -10px; left: -20px; animation-delay: .1s; transform-origin: center; }
+    .p2 { width: 12px; height: 8px;  top: -18px; right: -14px; animation-delay: .4s; background: #6d28d9; }
+    .p3 { width: 22px; height: 6px;  top: 0; right: -28px; animation-delay: .7s; background: #a78bfa; }
+    .p4 { width: 10px; height: 14px; bottom: 4px; left: -22px; animation-delay: 1s; background: #7c3aed; }
+    @keyframes piecefly {
+      0%   { opacity: 0; transform: translate(0,0) rotate(0deg); }
+      20%  { opacity: 1; }
+      100% { opacity: 0; transform: translate(var(--dx, 30px), var(--dy, -30px)) rotate(var(--dr, 45deg)); }
+    }
+    .p1 { --dx: -28px; --dy: -24px; --dr: -40deg; }
+    .p2 { --dx: 22px;  --dy: -32px; --dr: 55deg; }
+    .p3 { --dx: 36px;  --dy: -14px; --dr: -20deg; }
+    .p4 { --dx: -32px; --dy: 10px;  --dr: 70deg; }
+
+    /* Warning triangle pulsing */
+    .warn-ring {
+      position: absolute;
+      top: -4px; left: 50%; transform: translateX(-50%);
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 3px solid #f59e0b;
+      animation: warnPulse 1.2s ease-out infinite;
+    }
+    @keyframes warnPulse {
+      0%   { transform: translateX(-50%) scale(.8); opacity: 1; }
+      100% { transform: translateX(-50%) scale(2.2); opacity: 0; }
+    }
+
+    /* Ground */
+    .ground { position: absolute; bottom: 0; left: 0; right: 0; height: 36px; background: linear-gradient(180deg, #ddd6fe 0%, #c4b5fd 100%); border-radius: 18px; }
+
+    /* Exclamation particles */
+    .excl {
+      position: absolute;
+      font-size: 20px; font-weight: 900; color: #f59e0b;
+      animation: exclPop 2s ease-in-out infinite;
+      opacity: 0;
+    }
+    .e1 { top: 14px; left: 14%; animation-delay: 0s; }
+    .e2 { top: 4px;  right: 16%; animation-delay: .8s; }
+    @keyframes exclPop {
+      0%   { opacity: 0; transform: scale(.5); }
+      30%  { opacity: 1; transform: scale(1.2); }
+      60%  { opacity: .8; transform: scale(1); }
+      100% { opacity: 0; transform: scale(.5) translateY(-16px); }
+    }
+
+    .err-title { font-size: clamp(26px, 5vw, 38px); font-weight: 800; color: #3b0764; letter-spacing: -.03em; margin-bottom: 10px; }
+    .err-sub { font-size: 15px; color: #5b21b6; line-height: 1.65; max-width: 520px; margin-bottom: 28px; }
+    .err-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 13px 26px; background: #7c3aed; color: #fff; font-size: 15px; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: 0 8px 20px rgba(124,58,237,.32); transition: background .2s, transform .2s; }
+    .btn-primary:hover { background: #6d28d9; transform: translateY(-2px); }
+    .btn-ghost { display: inline-flex; align-items: center; gap: 8px; padding: 13px 26px; border: 1.5px solid #7c3aed; color: #5b21b6; font-size: 15px; font-weight: 700; border-radius: 12px; text-decoration: none; background: #fff; transition: background .2s; }
+    .btn-ghost:hover { background: #f5f3ff; }
+
+
+    @media (max-width: 480px) {
+      .err-actions { flex-direction: column; align-items: stretch; }
+      .btn-primary, .btn-ghost { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="blobs"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
+<main class="card" role="main" aria-labelledby="err-title">
+
+    <div class="scene" aria-hidden="true">
+      <span class="excl e1">!</span>
+      <span class="excl e2">!</span>
+
+      <div class="envelope-wrap">
+        <div class="warn-ring"></div>
+        <div class="piece p1"></div>
+        <div class="piece p2"></div>
+        <div class="piece p3"></div>
+        <div class="piece p4"></div>
+
+        <!-- Broken envelope SVG -->
+        <svg width="120" height="90" viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Envelope body -->
+          <rect x="4" y="24" width="112" height="62" rx="10" fill="#ede9fe" stroke="#8b5cf6" stroke-width="3"/>
+          <!-- Flap — open / broken -->
+          <path d="M4 34 L60 10 L116 34" stroke="#8b5cf6" stroke-width="3" fill="#ddd6fe" stroke-linejoin="round"/>
+          <!-- Crack lines -->
+          <path d="M44 50 L52 60 L44 70" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <path d="M76 50 L68 60 L76 70" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <!-- Warning symbol inside -->
+          <path d="M60 38 L72 62 L48 62 Z" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" stroke-linejoin="round"/>
+          <line x1="60" y1="47" x2="60" y2="54" stroke="#d97706" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="60" cy="58" r="1.5" fill="#d97706"/>
+        </svg>
+      </div>
+
+      <div class="ground"></div>
+    </div>
+
+    <h1 class="err-title" id="err-title">Bad request — 400</h1>
+    <p class="err-sub">Something about that request didn't add up. The link may be expired or the form token is missing. Go back and try again.</p>
+
+    <div class="err-actions">
+      <a href="javascript:history.back()" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Go Back
+      </a>
+      <a href="/" class="btn-ghost">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Go Home
+      </a>
+    </div>
+
+  </main>
+</body>
+</html>

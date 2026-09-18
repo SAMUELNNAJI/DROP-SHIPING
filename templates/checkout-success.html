@@ -177,7 +177,7 @@
         <div class="ck-paying {% if payment_method == 'paypal' %}ck-paying--paypal{% elif payment_method == 'paystack' %}ck-paying--paystack{% endif %}">
           {% if payment_method == 'pi' %}
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><line x1="9" y1="2" x2="9" y2="5"/><line x1="15" y1="2" x2="15" y2="5"/><line x1="9" y1="19" x2="9" y2="22"/><line x1="15" y1="19" x2="15" y2="22"/><line x1="2" y1="9" x2="5" y2="9"/><line x1="2" y1="15" x2="5" y2="15"/><line x1="19" y1="9" x2="22" y2="9"/><line x1="19" y1="15" x2="22" y2="15"/></svg>
-            <span>Paid with Pi Network Wallet</span>
+            <span>{% if payment_awaiting_review %}Pi transfer reported — awaiting confirmation{% else %}Paid with Pi Network Wallet{% endif %}</span>
           {% elif payment_method == 'paypal' %}
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2.5"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
             <span>Paid with PayPal</span>
@@ -185,6 +185,19 @@
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 12h.01M18 12h.01"/></svg>
             <span>Paid with Paystack (NGN)</span>
           {% endif %}
+        </div>
+        {% endif %}
+
+        {% if payment_awaiting_review %}
+        <div class="ck-note" style="margin-top:14px">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div>
+            <p class="ck-note-title">Waiting on one check</p>
+            <p class="ck-note-text">
+              We have your Pi transfer details. Our team confirms it in the wallet before the seller ships —
+              you will see the order move to confirmed in <a href="/dashboards/buyer/orders/">My Orders</a>.
+            </p>
+          </div>
         </div>
         {% endif %}
 

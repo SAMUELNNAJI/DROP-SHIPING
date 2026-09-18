@@ -14,6 +14,26 @@
   <link rel="stylesheet" href="/static/style.css?v=4" />
   <link rel="stylesheet" href="/static/auth.css?v=5" />
   <link rel="stylesheet" href="/static/checkout.css?v=6" />
+  <style>
+    /* ── Live payment rails (Paystack · PayPal · Pi Network) ── */
+    .ck-pay-option--off { opacity: .5; cursor: not-allowed; }
+    .ck-pay-option--off .ck-radio { display: none; }
+    .ck-pay-status { margin-top: 14px; padding: 12px 14px; border-radius: 12px; font-size: 13.5px; font-weight: 600; line-height: 1.55; border: 1px solid #e4eaf3; background: #f7f9fd; color: #3c4a63; }
+    .ck-pay-status--error { border-color: #f6c9cc; background: #fdf2f2; color: #b4232a; }
+    .ck-pay-status--warn  { border-color: #f7e2b8; background: #fffbf0; color: #8a5a00; }
+    .ck-pay-status--ok    { border-color: #c8e9d2; background: #f2fbf5; color: #15803d; }
+    .ck-provider { margin-top: 14px; padding: 16px; border: 1px solid #e4eaf3; border-radius: 14px; background: #fbfcff; }
+    .ck-provider[hidden] { display: none !important; }
+    .ck-provider-title { margin: 0 0 6px; font-size: 14px; font-weight: 800; color: #0f1b2d; }
+    .ck-provider-text { margin: 0 0 10px; font-size: 13px; line-height: 1.6; color: #5b6b86; }
+    .ck-provider-row { display: flex; gap: 10px; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #e4eaf3; font-size: 13px; color: #5b6b86; }
+    .ck-provider-row:last-of-type { border-bottom: 0; }
+    .ck-provider-row code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; font-weight: 700; color: #0f1b2d; word-break: break-all; text-align: right; }
+    .ck-provider-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .ck-provider-actions button { min-height: 44px; }
+    .ck-provider-alt { display: inline-block; margin-top: 10px; font-size: 12.5px; font-weight: 700; color: #2456e6; }
+    #paypalButtons { min-height: 44px; }
+  </style>
 </head>
 <body class="auth-page">
 
@@ -175,20 +195,20 @@
         </div>
 
         <div class="ck-pay-list" role="radiogroup" aria-label="Payment method">
-          <div class="ck-pay-option ck-pay-option--pi is-selected" role="radio" aria-checked="true" tabindex="0" data-name="Pi Network Wallet" data-currency="pi" data-strip="ck-paying">
+          <div class="ck-pay-option ck-pay-option--pi {% if payment_config.pi.enabled %}is-selected{% else %}ck-pay-option--off{% endif %}" role="radio" aria-checked="{{ payment_config.pi.enabled|yesno:'true,false' }}" tabindex="0" data-method="pi" data-enabled="{{ payment_config.pi.enabled|yesno:'true,false' }}" data-name="Pi Network Wallet" data-currency="pi" data-strip="ck-paying">
             <div class="ck-pay-icon ck-pay-icon--pi">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2.5"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><line x1="9" y1="2" x2="9" y2="5"/><line x1="15" y1="2" x2="15" y2="5"/><line x1="9" y1="19" x2="9" y2="22"/><line x1="15" y1="19" x2="15" y2="22"/><line x1="2" y1="9" x2="5" y2="9"/><line x1="2" y1="15" x2="5" y2="15"/><line x1="19" y1="9" x2="22" y2="9"/><line x1="19" y1="15" x2="22" y2="15"/></svg>
             </div>
             <div class="ck-pay-info">
               <p class="ck-pay-name">Pi Network Wallet <span class="ck-pay-badge ck-pay-badge--crypto">Crypto</span></p>
-              <p class="ck-pay-sub">Pay with Pi cryptocurrency</p>
+              <p class="ck-pay-sub">{% if payment_config.pi.sdk %}Pay with Pi inside the Pi Browser{% elif payment_config.pi.manual %}Send Pi to the DropHub wallet{% else %}Not available right now{% endif %}</p>
             </div>
             <span class="ck-radio" aria-hidden="true">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </span>
           </div>
 
-          <div class="ck-pay-option ck-pay-option--paypal" role="radio" aria-checked="false" tabindex="0" data-name="PayPal" data-currency="usd" data-strip="ck-paying ck-paying--paypal">
+          <div class="ck-pay-option ck-pay-option--paypal {% if not payment_config.paypal.enabled %}ck-pay-option--off{% endif %}" role="radio" aria-checked="false" tabindex="0" data-method="paypal" data-enabled="{{ payment_config.paypal.enabled|yesno:'true,false' }}" data-name="PayPal" data-currency="usd" data-strip="ck-paying ck-paying--paypal">
             <div class="ck-pay-icon ck-pay-icon--paypal">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2.5"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
             </div>
@@ -201,7 +221,7 @@
             </span>
           </div>
 
-          <div class="ck-pay-option ck-pay-option--paystack" role="radio" aria-checked="false" tabindex="0" data-name="Paystack" data-currency="ngn" data-strip="ck-paying ck-paying--paystack">
+          <div class="ck-pay-option ck-pay-option--paystack {% if not payment_config.paystack.enabled %}ck-pay-option--off{% endif %}" role="radio" aria-checked="false" tabindex="0" data-method="paystack" data-enabled="{{ payment_config.paystack.enabled|yesno:'true,false' }}" data-name="Paystack" data-currency="ngn" data-strip="ck-paying ck-paying--paystack">
             <div class="ck-pay-icon ck-pay-icon--paystack">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 12h.01M18 12h.01"/></svg>
             </div>
@@ -220,14 +240,41 @@
           <span id="paymentInfo" aria-live="polite">Select a payment method to see amounts in its currency.</span>
         </div>
 
-        <form class="ck-actions" id="paymentForm" method="post" action="/dashboards/checkout/complete/">
+        <form class="ck-actions" id="paymentForm" method="post" action="{% url 'payment_start' %}">
           {% csrf_token %}<input type="hidden" name="payment_method" id="paymentMethod" value="pi" />
           <a href="/checkout/" class="ck-btn-ghost">Back</a>
           <button type="submit" class="ck-btn-primary" id="payBtn">
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            Pay <span class="ck-currency" data-usd="626.23">$626.23</span>
+            <span id="payBtnLabel">Pay</span> <span class="ck-currency" data-usd="{{ checkout_totals.total|floatformat:2 }}">${{ checkout_totals.total|floatformat:2 }}</span>
           </button>
         </form>
+
+        {# Live status / error messages from the payment providers #}
+        <div class="ck-pay-status" id="payStatus" role="status" aria-live="polite" hidden></div>
+
+        <!-- PayPal — the official buttons are mounted here on demand -->
+        <div class="ck-provider" id="paypalPanel" hidden>
+          <p class="ck-provider-title">Finish paying with PayPal</p>
+          <p class="ck-provider-text">Your order is created the moment PayPal confirms the payment.</p>
+          <div id="paypalButtons"></div>
+          <a class="ck-provider-alt" id="paypalRedirect" href="#" hidden>Having trouble? Continue on PayPal's website</a>
+        </div>
+
+        <!-- Pi Network — manual transfer, used outside the Pi Browser -->
+        <div class="ck-provider" id="piPanel" hidden>
+          <p class="ck-provider-title">Send Pi to the DropHub wallet</p>
+          <p class="ck-provider-text">
+            Send the exact amount below to the DropHub wallet address and use the reference as the memo.
+            Your order is recorded straight away and marked <b>awaiting confirmation</b> until the transfer is checked.
+          </p>
+          <div class="ck-provider-row"><span>Wallet</span><code id="piWallet">—</code></div>
+          <div class="ck-provider-row"><span>Amount</span><code id="piAmount">—</code></div>
+          <div class="ck-provider-row"><span>Memo</span><code id="piMemo">—</code></div>
+          <div class="ck-provider-actions">
+            <button type="button" class="ck-btn-ghost" id="piCopyBtn">Copy wallet address</button>
+            <button type="button" class="ck-btn-primary" id="piClaimBtn">I have sent the Pi</button>
+          </div>
+        </div>
       </section>
 
       <!-- ── Right · Order summary ── -->
@@ -436,6 +483,9 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <script src="/static/cart.js"></script>
+  {# Everything the browser needs to start a payment — no secret keys here. #}
+  {{ payment_config|json_script:"paymentConfig" }}
+
   <script>
   /* ══════════════════════════════════
      LIVE PAYMENT RAILS — Paystack · PayPal · Pi Network
@@ -813,32 +863,23 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     }
 
-      fetch('/dashboards/cart/sync/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrf,
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify(localItems)
-      })
-      .then(function (r) { return r.json(); })
-      .then(function (syncData) {
-        if (syncData.ok && syncData.count > 0) {
-          /* Items are now in the DB — proceed to order creation */
-          doSubmit();
-        } else {
-          alert(syncData.error || 'Could not sync your cart. Please add items from the shop and try again.');
-          button.disabled = false;
-          button.textContent = 'Pay securely';
-        }
-      })
-      .catch(function () {
-        /* Sync failed — try the submit anyway; server will give a clear message */
-        doSubmit();
+      /* ── Pay with the selected rail ── */
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      var method = selectedMethod();
+      setStatus('');
+      setBusy(true, 'Starting…');
+
+      syncLocalCart().then(function () {
+        if (method === 'paystack') return payWithPaystack();
+        if (method === 'paypal') return payWithPaypal();
+        return startPayment('pi').then(payWithPi);
+      }).catch(function (error) {
+        setBusy(false);
+        setStatus(error.message || 'The payment could not be started. Please try again.', 'error');
       });
-    }
-  });
+    });
+  })();
   </script>
 </body>
 </html>

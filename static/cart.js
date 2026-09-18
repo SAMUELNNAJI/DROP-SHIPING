@@ -290,14 +290,24 @@
       var qty = 1;
       var qtyVal = document.getElementById('pdQtyVal');
       if (qtyVal) qty = parseInt(qtyVal.textContent) || 1;
-      addToCart({
+      var productData = {
         id: buyNowBtn.dataset.id,
         name: buyNowBtn.dataset.name,
         price: parseFloat(buyNowBtn.dataset.price),
         store: buyNowBtn.dataset.store,
         img: buyNowBtn.dataset.img,
         qty: qty
-      });
+      };
+      // 1. Add to localStorage cart (guest sidebar, header dropdown, etc.)
+      addToCart(productData);
+      // 2. If logged in, sync to the database cart so checkout page sees it
+      if (window.DropHubCart && window.DropHubCart.syncToDb) {
+        window.DropHubCart.syncToDb([{
+          product_pk: parseInt(buyNowBtn.dataset.productPk) || null,
+          quantity: qty
+        }]).catch(function () {});
+      }
+      // 3. Go to checkout
       window.location.href = '/checkout/';
       return;
     }
@@ -343,13 +353,31 @@
   }
 
   /* Expose Global API for manual calls if needed */
-  window.DropHubCart = {
+  
+  function getCsrfToken() {
+    var m = document.cookie.match(/csrftoken=([^;]+)/);
+    return m ? m[1] : '';
+  }
+  function syncToDb(items) {
+    return fetch('/dashboards/cart/sync/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': getCsrfToken()
+      },
+      body: JSON.stringify(items)
+    }).then(function (r) { return r.json(); }).catch(function () {});
+  }
+
+window.DropHubCart = {
     getCart: getCart,
     addToCart: addToCart,
     updateQty: updateQty,
     removeItem: removeItem,
     clearCart: clearCart,
-    render: renderCartUI
+    render: renderCartUI,
+    syncToDb: syncToDb
   };
 
   /* Initialize on DOMContentLoaded */

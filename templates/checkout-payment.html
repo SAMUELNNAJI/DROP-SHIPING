@@ -302,14 +302,14 @@
         {% endif %}
 
         <div class="ck-sum-rows">
-          <div class="ck-sum-row"><span>Subtotal</span><span class="ck-mono ck-currency" data-usd="{{ checkout_totals.subtotal|floatformat:2 }}">${{ checkout_totals.subtotal|floatformat:2 }}</span></div>
-          <div class="ck-sum-row"><span>Escrow Fee ({{ payment_config.fees.escrow_pct }}%)</span><span class="ck-mono ck-currency" data-usd="{{ checkout_totals.escrow|floatformat:2 }}">${{ checkout_totals.escrow|floatformat:2 }}</span></div>
-          <div class="ck-sum-row"><span>Platform Fee ({{ payment_config.fees.platform_pct }}%)</span><span class="ck-mono ck-currency" data-usd="{{ checkout_totals.platform|floatformat:2 }}">${{ checkout_totals.platform|floatformat:2 }}</span></div>
+          <div class="ck-sum-row"><span>Subtotal</span><span class="ck-mono ck-currency" id="paySubtotalAmt" data-usd="{{ checkout_totals.subtotal|floatformat:2 }}">${{ checkout_totals.subtotal|floatformat:2 }}</span></div>
+          <div class="ck-sum-row"><span>Escrow Fee ({{ payment_config.fees.escrow_pct }}%)</span><span class="ck-mono ck-currency" id="payEscrowAmt" data-usd="{{ checkout_totals.escrow|floatformat:2 }}">${{ checkout_totals.escrow|floatformat:2 }}</span></div>
+          <div class="ck-sum-row"><span>Platform Fee ({{ payment_config.fees.platform_pct }}%)</span><span class="ck-mono ck-currency" id="payPlatformAmt" data-usd="{{ checkout_totals.platform|floatformat:2 }}">${{ checkout_totals.platform|floatformat:2 }}</span></div>
         </div>
 
         <div class="ck-sum-total">
           <span class="ck-sum-total-label">Total</span>
-          <span class="ck-sum-total-val ck-mono ck-currency" data-usd="{{ checkout_totals.total|floatformat:2 }}">${{ checkout_totals.total|floatformat:2 }}</span>
+          <span class="ck-sum-total-val ck-mono ck-currency" id="payTotalAmt" data-usd="{{ checkout_totals.total|floatformat:2 }}">${{ checkout_totals.total|floatformat:2 }}</span>
         </div>
 
         <div class="ck-sum-box">
@@ -423,24 +423,7 @@
       </div>
     </div>
   </div>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  function updatePaySubtotal() {
-    var el = document.getElementById('ckPaySubtotal');
-    if (!el) return;
-    var cart = (window.DropHubCart && window.DropHubCart.getCart) ? window.DropHubCart.getCart() : [];
-    var sub = cart.reduce(function (s, i) { return s + (parseFloat(i.price)||0) * (parseInt(i.qty)||1); }, 0);
-    el.innerHTML = '$' + sub.toFixed(2);
-    var btn = document.querySelector('#payBtn .ck-currency');
-    if (btn) { btn.textContent = '$' + sub.toFixed(2); btn.setAttribute('data-usd', sub.toFixed(2)); }
-  }
-  updatePaySubtotal();
-  if (window.DropHubCart && window.DropHubCart.render) {
-    var orig = window.DropHubCart.render;
-    window.DropHubCart.render = function () { orig.call(window.DropHubCart); updatePaySubtotal(); };
-  }
-});
-</script>
+
 
 </footer>
 
@@ -502,6 +485,44 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <script src="/static/cart.js"></script>
+<script>
+/* Checkout payment page: update subtotal from cart */
+(function () {
+  function updatePaySubtotal(val) {
+    var el = document.getElementById("ckPaySubtotal");
+    if (el) el.innerHTML = "$" + val.toFixed(2);
+    var btn = document.querySelector("#payBtn .ck-currency");
+    if (btn) { btn.textContent = "$" + val.toFixed(2); btn.setAttribute("data-usd", val.toFixed(2)); }
+    var s = document.getElementById("paySubtotalAmt");
+    if (s) s.innerHTML = "$" + val.toFixed(2);
+    var e = document.getElementById("payEscrowAmt");
+    if (e) e.innerHTML = "$" + (val * 0.02).toFixed(2);
+    var p = document.getElementById("payPlatformAmt");
+    if (p) p.innerHTML = "$" + (val * 0.01).toFixed(2);
+    var t = document.getElementById("payTotalAmt");
+    if (t) t.innerHTML = "$" + (val * 1.03).toFixed(2);
+  }
+  function getSubtotal() {
+    // Server subtotal for logged-in users
+    var s = parseFloat("{{ cart_subtotal|default:0 }}") || 0;
+    if (s > 0) return s;
+    // Guest: read from cart.js
+    if (window.DropHubCart && window.DropHubCart.getCart) {
+      var cart = window.DropHubCart.getCart();
+      if (cart && cart.length) {
+        return cart.reduce(function (a, i) { return a + (parseFloat(i.price)||0) * (parseInt(i.qty)||1); }, 0);
+      }
+    }
+    return 0;
+  }
+  updatePaySubtotal(getSubtotal());
+  if (window.DropHubCart && window.DropHubCart.render) {
+    var orig = window.DropHubCart.render;
+    window.DropHubCart.render = function () { orig.call(window.DropHubCart); updatePaySubtotal(getSubtotal()); };
+  }
+})();
+</script>
+
   {# Everything the browser needs to start a payment — no secret keys here. #}
   {{ payment_config|json_script:"paymentConfig" }}
 

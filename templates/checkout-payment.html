@@ -544,20 +544,118 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if (initial) select(initial);
 
-  document.getElementById('paymentForm').addEventListener('submit', function (event) {
-    event.preventDefault();
-    var form   = this;
-    var button = document.getElementById('payBtn');
-    var csrf   = form.querySelector('[name=csrfmiddlewaretoken]').value;
-    button.disabled = true;
-    button.textContent = 'Securing payment\u2026';
+  /* ─ Shared helpers ─────────────────────────────────────── */
+    function postJson(url, body) {
+      return fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken,
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(body || {})
+      }).then(function (response) {
+        return response.json().catch(function () { return {}; }).then(function (data) {
+          if (!response.ok || data.error) {
+            throw new Error(data.error || 'The payment could not be completed.');
+          }
+          return data;
+        });
+      });
+    }
 
-    /* ── Step 1: sync any localStorage cart items to the server DB ──
-       This covers the common case where the buyer browsed as a guest,
-       added items via cart.js (localStorage), then signed in.  If the
-       server already has DB cart items (cart_count > 0 from context)
-       we skip the sync to avoid double-counting. */
-    var serverCartCount = parseInt('{{ cart_count|default:"0" }}', 10);
+    function loadScript(src) {
+      return new Promise(function (resolve, reject) {
+        var script = document.createElement('script');
+        script.src = src;
+        script.async = true;
+        script.onload = resolve;
+        script.onerror = function () { reject(new Error('Could not load ' + src)); };
+        document.head.appendChild(script);
+      });
+    }
+
+    function startPayment(method) {
+      return postJson('/dashboards/checkout/start/', { payment_method: method });
+    }
+
+    function goToSuccess(data) {
+      setStatus('Payment confirmed — taking you to your order…', 'ok');
+      window.location.href = (data && data.redirect) || '/checkout-success/';
+    }
+
+    var lastStart = null;   /* remembers the attempt being paid for */
+
+    /* ─ Step 1: push a localStorage cart to the server (a guest who added
+       items before signing in and then landed here). ── */
+    var serverCartCount = parseInt('{{ cart_count|default:"0" }}', 10) || 0;
+
+    function syncLocalCart() {
+      if (serverCartCount > 0) return Promise.resolve();
+      var items = [];
+      if (window.DropHubCart && typeof window.DropHubCart.getCart === 'function') {
+        items = window.DropHubCart.getCart().map(function (i) {
+          return { product_pk: i.pk || i.id || i.product_pk, quantity: i.qty || i.quantity || 1 };
+        }).filter(function (i) { return i.product_pk; });
+      }
+      if (!items.length) return Promise.resolve();
+      return postJson('/dashboards/cart/sync/', items).then(function (data) {
+        serverCartCount = (data && data.count) || 1;
+      });
+    }
+
+    /* ── Paystack: server-initialised transaction + inline popup ── */
+    function ensurePaystackSdk() {
+      if (window.PaystackPop) return Promise.resolve();
+      return loadScript('https://js.paystack.co/v2/inline.js');
+    }
+
+    function confirmPaystack(reference) {
+      return postJson('/dashboards/checkout/paystack/verify/', { reference: reference });
+    }
+
+    function beginPaystack() {
+      return startPayment('paystack').then(function (data) {
+        lastStart = { method: 'paystack', reference: data.reference, at: Date.now() };
+        return ensurePaystackSdk().then(function () {
+          var popup = new window.PaystackPop();
+          popup.resumeTransaction(data.access_code, {
+            onSuccess: function () {
+              setStatus('Payment received — confirming it with Paystack…', 'ok');
+              confirmPaystack(data.reference).then(goToSuccess).catch(function (error) {
+                setBusy(false);
+                setStatus(error.message + ' Press Pay to confirm again.', 'warn');
+              });
+            },
+            onCancel: function () {
+              setBusy(false);
+              setStatus('Payment window closed — nothing has been charged. Press Pay to try again.', 'warn');
+            },
+            onError: function (error) {
+              setBusy(false);
+              setStatus((error && error.message) || 'Paystack could not complete that payment.', 'error');
+            }
+          });
+          return null;
+        }).catch(function () {
+          /* Inline script blocked or offline: Paystack's hosted page does the
+             same job and returns to our callback URL. */
+          window.location.href = data.authorization_url;
+          return null;
+        });
+      });
+    }
+
+    function payWithPaystack() {
+      /* If this session already opened an attempt, check it first so a buyer
+         who really paid is never charged a second time. */
+      if (lastStart && lastStart.method === 'paystack' && Date.now() - lastStart.at < 15 * 60 * 1000) {
+        return confirmPaystack(lastStart.reference).then(goToSuccess).catch(function () {
+          return beginPaystack();
+        });
+      }
+      return beginPaystack();
+    }
 
     function doSubmit() {
       fetch(form.action, {

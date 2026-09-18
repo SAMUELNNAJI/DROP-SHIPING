@@ -277,6 +277,31 @@
         }, 1500);
       }
     }
+
+    /* Buy now button on product detail page: add to cart then go to checkout */
+    var buyNowBtn = e.target.closest('.pdp-buy-now-btn');
+    if (buyNowBtn) {
+      e.preventDefault();
+      var roleBlocked = buyNowBtn.getAttribute('data-role-blocked');
+      if (roleBlocked === '1') {
+        showToast('You cannot purchase your own product.');
+        return;
+      }
+      var qty = 1;
+      var qtyVal = document.getElementById('pdQtyVal');
+      if (qtyVal) qty = parseInt(qtyVal.textContent) || 1;
+      addToCart({
+        id: buyNowBtn.dataset.id,
+        name: buyNowBtn.dataset.name,
+        price: parseFloat(buyNowBtn.dataset.price),
+        store: buyNowBtn.dataset.store,
+        img: buyNowBtn.dataset.img,
+        qty: qty
+      });
+      window.location.href = '/checkout/';
+      return;
+    }
+
   });
 
   /* Setup Header Dropdown Toggle Logic */

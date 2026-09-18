@@ -75,7 +75,7 @@
               <!-- Rendered dynamically by cart.js -->
             </div>
             <div class="cart-foot">
-              <div class="cart-subtotal"><span>Subtotal</span><strong>$0.00</strong></div>
+              <div class="cart-subtotal"><span>Subtotal</span><strong id="ckPaySubtotal">$0.00</strong></div>
               <p class="cart-escrow">Escrow protected — payment held safely until delivery</p>
               <div class="cart-actions">
                 <a href="/shop/" class="cart-btn-ghost">
@@ -423,6 +423,25 @@
       </div>
     </div>
   </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  function updatePaySubtotal() {
+    var el = document.getElementById('ckPaySubtotal');
+    if (!el) return;
+    var cart = (window.DropHubCart && window.DropHubCart.getCart) ? window.DropHubCart.getCart() : [];
+    var sub = cart.reduce(function (s, i) { return s + (parseFloat(i.price)||0) * (parseInt(i.qty)||1); }, 0);
+    el.innerHTML = '$' + sub.toFixed(2);
+    var btn = document.querySelector('#payBtn .ck-currency');
+    if (btn) { btn.textContent = '$' + sub.toFixed(2); btn.setAttribute('data-usd', sub.toFixed(2)); }
+  }
+  updatePaySubtotal();
+  if (window.DropHubCart && window.DropHubCart.render) {
+    var orig = window.DropHubCart.render;
+    window.DropHubCart.render = function () { orig.call(window.DropHubCart); updatePaySubtotal(); };
+  }
+});
+</script>
+
 </footer>
 
   <script>

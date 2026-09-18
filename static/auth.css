@@ -1,4 +1,4 @@
-﻿/* ═══════════════════════════════════════════════════
+﻿﻿/* ═══════════════════════════════════════════════════
    AUTH.CSS — DropHub Sign-In / Sign-Up styles
    Depends on: style.css (shared navbar, buttons, cart)
    ═══════════════════════════════════════════════════ */
@@ -650,9 +650,7 @@
   .auth-main {
     padding: var(--header-h) 12px 40px;
   }
-  /* Extra tightening on very small phones */
-  .auth-page .nav-inner { padding: 0 8px; }
-  .auth-page .logo-img  { height: 32px; }
+  /* nav-inner responsive sizing handled in the 760px block below */
   .auth-card {
     border-radius: 22px;
     max-width: 100%;
@@ -1060,55 +1058,42 @@
   }
 }
 @media (max-width: 760px) {
-  /* Header must be able to shrink on narrow phones.  The logo is the only
-     flexible part; the cart and menu buttons retain their tap targets. */
-  .auth-page .navbar { width: 100%; max-width: 100vw; }
-  .auth-shell {
-    display: block;
-    min-height: 0;
-  }
-  .auth-side {
-    display: none !important;
-  }
-  .auth-main {
-    padding-top: calc(var(--header-h) + 6px);
-  }
-  /* Tighten nav-inner so logo + cart + burger never overflow the navbar */
+  .auth-shell { display: block; min-height: 0; }
+  .auth-side  { display: none !important; }
+  .auth-main  { padding-top: calc(var(--header-h) + 6px); }
+
+  /* ── Navbar: prevent horizontal overflow on narrow phones ──
+     Reduce outer padding; let nav-actions push right via margin-left:auto
+     (already set in style.css).  Do NOT set gap:0 — that squishes the
+     cart icon against the burger.  Instead rely on nav-actions.margin-left
+     to fill the space, same as the homepage. */
   .auth-page .nav-inner {
-    padding: 0 12px;
-    gap: 0;
+    padding: 0 14px;
+    /* gap stays at style.css default (36px) — no override needed */
   }
-  /* Hide text-heavy items — burger drawer covers all navigation */
+
+  /* Hide text-heavy items; burger drawer handles navigation */
   .auth-page .nav-links  { display: none; }
   .auth-page .nav-signin { display: none; }
   .auth-page .btn-sell   { display: none; }
-  /* Keep cart wrap always accessible */
+
+  /* Cart and burger stay visible with their natural 20px gap from style.css */
   .auth-page .cart-wrap  { display: flex; }
-  /* Burger stays visible; push it right with a small left gap */
-  .auth-page .nav-burger { display: inline-flex !important; margin-left: 0; }
-  /* Keep actions compact: only cart icon + burger remain */
-  .auth-page .nav-actions {
-    /* Match the visual separation of the homepage cart and menu controls. */
-    gap: 14px;
-    margin-left: auto;
-    flex-shrink: 0;
-  }
-  /* Logo must not grow — stays at natural width */
-  .auth-page .logo { flex: 1 1 auto; min-width: 0; max-width: calc(100vw - 116px); }
-  .auth-page .logo-img { width: auto; max-width: 100%; height: 34px; object-fit: contain; object-position: left center; }
-  .auth-card {
-    max-width: 100%;
-    border-radius: 20px;
-  }
-  .auth-main {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
+  .auth-page .nav-burger { display: inline-flex !important; }
+
+  /* Logo shrinks to fit; nav-actions margin-left:auto fills remaining space */
+  .auth-page .logo     { flex: 0 1 auto; min-width: 0; overflow: hidden; }
+  .auth-page .logo-img { height: 36px; width: auto; max-width: 100%; }
+
+  .auth-card  { max-width: 100%; border-radius: 20px; }
+  .auth-main  { padding-left: 16px; padding-right: 16px; }
+}
+@media (max-width: 480px) {
+  .auth-page .nav-inner { padding: 0 10px; }
+  .auth-page .logo-img  { height: 33px; }
 }
 @media (max-width: 360px) {
-  .auth-page .nav-inner { padding-left: 8px; padding-right: 8px; }
-  .auth-page .nav-actions { gap: 8px; }
+  .auth-page .nav-inner { padding: 0 8px; }
+  .auth-page .logo-img  { height: 30px; }
   .auth-page .nav-cart, .auth-page .nav-burger { width: 40px; height: 40px; }
-  .auth-page .logo { max-width: calc(100vw - 94px); }
-  .auth-page .logo-img { height: 30px; }
 }

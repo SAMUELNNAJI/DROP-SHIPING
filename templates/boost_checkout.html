@@ -47,6 +47,7 @@
           <span class="boost-plan__name">{{ plan.name }}</span>
         </div>
         <div class="boost-plan__price">${{ plan.price|floatformat:2 }}</div>
+        <div class="boost-plan__equiv">{{ plan.price_ngn }} · {{ plan.price_pi }}</div>
         <div class="boost-plan__dur">{{ plan.duration_days }} day{{ plan.duration_days|pluralize }}</div>
         {% if plan.description %}
         <p class="boost-plan__desc">{{ plan.description }}</p>
@@ -136,6 +137,7 @@
 .boost-plan__name{font-size:14.5px;font-weight:800;color:#0f1e33}
 .boost-plan__price{font-size:26px;font-weight:800;letter-spacing:-.04em;color:#2456e6}
 .boost-plan__dur{font-size:12.5px;font-weight:700;color:#6b7a90}
+.boost-plan__equiv{font-size:11.5px;font-weight:700;color:#8fa0b8;letter-spacing:-.01em}
 .boost-plan__desc{margin:0;font-size:12px;color:#9aa7bd}
 .boost-checkout-grid{display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start}
 .boost-checkout-left h3,.boost-summary h3{font-size:16px;font-weight:800;margin:0 0 14px}
@@ -164,6 +166,20 @@
 
 <script>
 (function () {
+  /* ── Multi-currency boost checkout.
+     Boost plan prices are stored in USD; NGN and PI amounts are derived
+     using the same rates the marketplace uses for product prices
+     (1 USD = ₦1,500 = π20,000). The order summary total always shows the
+     currency of the payment method the seller selects:
+     PayPal → USD, Pi Network → PI, Paystack → NGN. ── */
+  var NGN_RATE = 1500, PI_RATE = 20000;
+
+  function fmt(cur, usd) {
+    if (cur === 'NGN') return '\u20a6' + (usd * NGN_RATE).toLocaleString(undefined, {maximumFractionDigits: 0});
+    if (cur === 'PI')  return '\u03c0' + (usd * PI_RATE).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    return '$' + usd.toFixed(2);
+  }
+
   var grid   = document.getElementById('boostPlansGrid');
   var sName  = document.getElementById('summaryPlan');
   var sDays  = document.getElementById('summaryDays');
@@ -171,14 +187,35 @@
 
   if (!grid) return;
 
+  var payRadios  = document.querySelectorAll('input[name="payment_method"]');
+  var selectedRadio = grid.querySelector('.boost-plan__radio:checked');
+
+  function selectedCurrency() {
+    var method = 'paypal';
+    payRadios.forEach(function (r) { if (r.checked) method = r.value; });
+    if (method === 'pi')       return 'PI';
+    if (method === 'paystack') return 'NGN';
+    return 'USD';
+  }
+
+  function updateSummary() {
+    if (!selectedRadio || !sPrice) return;
+    var usd = parseFloat(selectedRadio.dataset.price) || 0;
+    sPrice.textContent = fmt(selectedCurrency(), usd);
+  }
+
   grid.querySelectorAll('.boost-plan__radio').forEach(function (radio) {
     radio.addEventListener('change', function () {
       grid.querySelectorAll('.boost-plan').forEach(function (c) { c.classList.remove('boost-plan--selected'); });
       radio.closest('.boost-plan').classList.add('boost-plan--selected');
+      selectedRadio      = radio;
       sName.textContent  = radio.dataset.name;
       sDays.textContent  = radio.dataset.days + ' day' + (parseInt(radio.dataset.days) === 1 ? '' : 's');
-      sPrice.textContent = '$' + parseFloat(radio.dataset.price).toFixed(2);
+      updateSummary();
     });
   });
+
+  payRadios.forEach(function (r) { r.addEventListener('change', updateSummary); });
+  updateSummary();
 })();
 </script>

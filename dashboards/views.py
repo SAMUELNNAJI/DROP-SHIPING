@@ -1420,12 +1420,19 @@ def seller_boost_checkout(request, product_pk):
         payment_method = request.POST.get("payment_method", "paypal")
         plan = get_object_or_404(BoostPlan, pk=plan_pk, is_active=True)
 
+        # The seller pays in the currency of the payment method they chose
+        # (PayPal → USD, Pi Network → PI, Paystack → NGN).
+        currency = BoostOrder.PAYMENT_CURRENCY.get(payment_method, "USD")
+        amount   = plan.price * BoostOrder.RATES_TO_USD[currency]
+        amount   = amount.quantize(Decimal("0.01"))
+
         boost = BoostOrder.objects.create(
             seller         = request.user,
             product        = product,
             plan           = plan,
             plan_name      = plan.name,
-            amount         = plan.price,
+            amount         = amount,
+            currency       = currency,
             duration_days  = plan.duration_days,
             status         = BoostOrder.STATUS_PAID,   # demo: instant activation
             payment_method = payment_method,
@@ -1434,7 +1441,8 @@ def seller_boost_checkout(request, product_pk):
         )
         messages.success(
             request,
-            f'"{product.name}" is now boosted with {plan.name} for {plan.duration_days} days!'
+            f'"{product.name}" is now boosted with {plan.name} for {plan.duration_days} days — '
+            f'{boost.amount_display} charged via {boost.get_payment_method_display()}.'
         )
         return redirect("seller_products")
 

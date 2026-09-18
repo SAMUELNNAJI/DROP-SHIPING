@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
@@ -386,6 +388,22 @@ class BoostPlan(models.Model):
     def __str__(self):
         return "%s — $%s / %dd" % (self.name, self.price, self.duration_days)
 
+    # Multi-currency helpers. BoostPlan.price is stored in USD (converted on
+    # save by BoostPlanForm) — same convention as Product.price.
+    @property
+    def price_ngn(self):
+        try:
+            return "\u20a6{:,.0f}".format(float(self.price) * 1500)
+        except (TypeError, ValueError):
+            return ""
+
+    @property
+    def price_pi(self):
+        try:
+            return "\u03c0{:,.2f}".format(float(self.price) * 20000)
+        except (TypeError, ValueError):
+            return ""
+
 
 class BoostOrder(models.Model):
     """A seller's purchase of a boost plan for one product."""
@@ -406,6 +424,24 @@ class BoostOrder(models.Model):
         ("paystack", "Paystack"),
     ]
 
+    CURRENCY_CHOICES = [
+        ("USD", "USD — US Dollar"),
+        ("NGN", "NGN — Nigerian Naira"),
+        ("PI", "Pi Network"),
+    ]
+
+    # Maps a payment method to the currency the seller actually pays in.
+    PAYMENT_CURRENCY = {
+        "paypal":   "USD",
+        "pi":       "PI",
+        "paystack": "NGN",
+    }
+
+    CURRENCY_SYMBOLS = {"USD": "$", "NGN": "\u20a6", "PI": "\u03c0"}
+
+    # USD conversion rates (match Product price_ngn / price_pi helpers).
+    RATES_TO_USD = {"USD": Decimal("1"), "NGN": Decimal("1500"), "PI": Decimal("20000")}
+
     seller = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -425,6 +461,8 @@ class BoostOrder(models.Model):
 
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_PENDING)
     payment_method = models.CharField(max_length=10, choices=PAYMENT_CHOICES, default="paypal")
+    # Currency of `amount` — derived from the payment method used.
+    currency = models.CharField(max_length=5, choices=CURRENCY_CHOICES, default="USD")
     reference = models.CharField(max_length=20, unique=True, blank=True)
 
     paid_at = models.DateTimeField(null=True, blank=True)
@@ -444,6 +482,18 @@ class BoostOrder(models.Model):
 
     def __str__(self):
         return "%s — %s (%s)" % (self.reference, self.plan_name, self.get_status_display())
+
+    @property
+    def amount_display(self):
+        """Amount formatted with the symbol of the currency it was paid in."""
+        try:
+            amount = float(self.amount)
+        except (TypeError, ValueError):
+            return ""
+        symbol = self.CURRENCY_SYMBOLS.get(self.currency, "$")
+        if self.currency == "NGN":
+            return "{}{:,.0f}".format(symbol, amount)
+        return "{}{:,.2f}".format(symbol, amount)
 
     @property
     def is_running(self):

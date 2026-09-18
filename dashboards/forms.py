@@ -3,6 +3,10 @@ from .models import BuyerAddress, BoostPlan, SellerPayoutMethod, SellerVerificat
 
 
 class BoostPlanForm(forms.ModelForm):
+    PRICE_CURRENCIES = (("USD", "USD — US Dollar"), ("NGN", "NGN — Nigerian Naira"), ("PI", "Pi Network"))
+    price_currency = forms.ChoiceField(choices=PRICE_CURRENCIES, initial="USD", required=True,
+                                       widget=forms.Select(attrs={"class": "ff-input", "id": "id_price_currency"}),
+                                       label="Price currency")
     class Meta:
         model  = BoostPlan
         fields = ("name", "price", "duration_days", "description", "is_active")
@@ -15,11 +19,23 @@ class BoostPlanForm(forms.ModelForm):
         }
         labels = {
             "name":          "Plan name",
-            "price":         "Price (USD)",
+            "price":         "Price",
             "duration_days": "Duration (days)",
             "description":   "Short description",
             "is_active":     "Active (visible to sellers)",
         }
+
+    def clean(self):
+        cleaned = super().clean()
+        price = cleaned.get("price")
+        currency = cleaned.get("price_currency", "USD")
+        # BoostPlan.price stays USD everywhere else in the marketplace.
+        # These rates match the existing Product.price_ngn / price_pi helpers.
+        if price is not None and currency == "NGN":
+            cleaned["price"] = price / 1500
+        elif price is not None and currency == "PI":
+            cleaned["price"] = price / 20000
+        return cleaned
 
 
 class SellerPayoutMethodForm(forms.ModelForm):

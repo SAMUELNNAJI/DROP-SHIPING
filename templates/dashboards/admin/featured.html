@@ -53,6 +53,7 @@
           </div>
           <h3>{{ plan.name }}</h3>
           <div class="featured-plan-card__price">${{ plan.price|floatformat:2 }}</div>
+          <div class="featured-plan-card__meta">{{ plan.price_ngn }} · {{ plan.price_pi }}</div>
           <div class="featured-plan-card__meta">{{ plan.duration_days }} day{{ plan.duration_days|pluralize }}</div>
           {% if plan.description %}
           <p class="featured-plan-card__desc">{{ plan.description }}</p>
@@ -112,7 +113,7 @@
             <td><b>{{ bo.product.name|truncatechars:28 }}</b></td>
             <td class="muted">{{ bo.seller.username }}</td>
             <td><span class="pill pill-blue" style="font-size:11px">{{ bo.plan_name }}</span></td>
-            <td><b>${{ bo.amount|floatformat:2 }}</b></td>
+            <td><b>{{ bo.amount_display }}</b></td>
             <td class="muted">{% if bo.paid_at %}{{ bo.paid_at|date:"M j, Y" }}{% else %}—{% endif %}</td>
             <td class="muted">
               {% if bo.expires_at %}{{ bo.expires_at|date:"M j, Y" }}
@@ -175,12 +176,19 @@
           <small>Visible to sellers on the boost checkout page.</small>
         </div>
 
+        <!-- Price currency -->
+        <div class="bp-field">
+          <label for="{{ boost_form.price_currency.id_for_label }}">{{ boost_form.price_currency.label }}</label>
+          {{ boost_form.price_currency }}
+          <small>Enter the price in this currency — the other payment currencies are calculated automatically.</small>
+        </div>
+
         <!-- Price + Duration side by side -->
         <div class="bp-row">
           <div class="bp-field">
             <label for="{{ boost_form.price.id_for_label }}">{{ boost_form.price.label }}</label>
             <div class="bp-prefix">
-              <span class="bp-prefix__sym">$</span>
+              <span class="bp-prefix__sym" id="bpCurrencySymbol">$</span>
               {{ boost_form.price }}
             </div>
           </div>
@@ -219,6 +227,7 @@
             </div>
             <div class="bpmodal__preview-name" id="bpPreviewName">Plan name</div>
             <div class="bpmodal__preview-price" id="bpPreviewPrice">$0.00</div>
+            <div class="bpmodal__preview-meta" id="bpPreviewEquiv">₦0 · π0</div>
             <div class="bpmodal__preview-meta" id="bpPreviewMeta">7 days</div>
             <div class="bpmodal__preview-desc" id="bpPreviewDesc"></div>
           </div>
@@ -281,30 +290,49 @@
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
 
   /* ── Live preview ── */
-  var nameInput  = modal.querySelector('[name="name"]');
-  var priceInput = modal.querySelector('[name="price"]');
-  var daysInput  = modal.querySelector('[name="duration_days"]');
-  var descInput  = modal.querySelector('[name="description"]');
+  var nameInput     = modal.querySelector('[name="name"]');
+  var priceInput    = modal.querySelector('[name="price"]');
+  var daysInput     = modal.querySelector('[name="duration_days"]');
+  var descInput     = modal.querySelector('[name="description"]');
+  var currencyInput = modal.querySelector('[name="price_currency"]');
+  var prefixSym     = document.getElementById('bpCurrencySymbol');
 
-  var prevName  = document.getElementById('bpPreviewName');
-  var prevPrice = document.getElementById('bpPreviewPrice');
-  var prevMeta  = document.getElementById('bpPreviewMeta');
-  var prevDesc  = document.getElementById('bpPreviewDesc');
+  var prevName   = document.getElementById('bpPreviewName');
+  var prevPrice  = document.getElementById('bpPreviewPrice');
+  var prevEquiv  = document.getElementById('bpPreviewEquiv');
+  var prevMeta   = document.getElementById('bpPreviewMeta');
+  var prevDesc   = document.getElementById('bpPreviewDesc');
+
+  /* Rates match the marketplace convention (Product price_ngn / price_pi,
+     and BoostPlanForm converts NGN/PI amounts back to USD on save). */
+  var NGN_RATE = 1500, PI_RATE = 20000;
+  var SYMBOLS  = { USD: '$', NGN: '\u20a6', PI: '\u03c0' };
+
+  function fmtAmount(cur, usd) {
+    if (cur === 'NGN') return '\u20a6' + (usd * NGN_RATE).toLocaleString(undefined, {maximumFractionDigits: 0});
+    if (cur === 'PI')  return '\u03c0' + (usd * PI_RATE).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    return '$' + usd.toFixed(2);
+  }
 
   function updatePreview() {
     var n = (nameInput && nameInput.value.trim()) || 'Plan name';
-    var p = parseFloat(priceInput && priceInput.value) || 0;
+    var entered = parseFloat(priceInput && priceInput.value) || 0;
     var d = parseInt(daysInput && daysInput.value) || 7;
     var desc = (descInput && descInput.value.trim()) || '';
-    if (prevName)  prevName.textContent  = n;
-    if (prevPrice) prevPrice.textContent = '$' + p.toFixed(2);
+    var cur = (currencyInput && currencyInput.value) || 'USD';
+    /* Server stores BoostPlan.price in USD; convert the entered amount. */
+    var usd = cur === 'NGN' ? entered / NGN_RATE : cur === 'PI' ? entered / PI_RATE : entered;
+    if (prefixSym) prefixSym.textContent = SYMBOLS[cur] || '$';
+    if (prevPrice) prevPrice.textContent = fmtAmount(cur, usd);
+    if (prevEquiv) prevEquiv.textContent = fmtAmount('USD', usd) + ' · ' + fmtAmount('NGN', usd) + ' · ' + fmtAmount('PI', usd);
     if (prevMeta)  prevMeta.textContent  = d + ' day' + (d === 1 ? '' : 's');
     if (prevDesc)  { prevDesc.textContent = desc; prevDesc.style.display = desc ? '' : 'none'; }
   }
 
-  [nameInput, priceInput, daysInput, descInput].forEach(function (el) {
+  [nameInput, priceInput, daysInput, descInput, currencyInput].forEach(function (el) {
     if (el) el.addEventListener('input', updatePreview);
   });
+  if (currencyInput) currencyInput.addEventListener('change', updatePreview);
   updatePreview();
 })();
 </script>

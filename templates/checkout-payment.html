@@ -237,33 +237,32 @@
           <h2 class="ck-card-title">Order Summary</h2>
         </div>
 
-        <div class="ck-sum-item">
-          <img class="ck-sum-img" src="/static/img/headphones.jpg" alt="Sony WH-1000XM5 Headphones" />
-          <div class="ck-sum-info">
-            <p class="ck-sum-name">Sony WH-1000XM5 Headphones</p>
-            <p class="ck-sum-qty">×1</p>
+        {% if cart_items %}
+          {% for item in cart_items %}
+          <div class="ck-sum-item">
+            <img class="ck-sum-img" src="{{ item.product.image_src }}" alt="{{ item.product.name }}"
+                 onerror="this.src='/static/img/headphones.jpg'" />
+            <div class="ck-sum-info">
+              <p class="ck-sum-name">{{ item.product.name|truncatechars:30 }}</p>
+              <p class="ck-sum-qty">&times;{{ item.quantity }}</p>
+            </div>
+            <span class="ck-sum-price ck-mono ck-currency" data-usd="{{ item.line_total|floatformat:2 }}">${{ item.line_total|floatformat:2 }}</span>
           </div>
-          <span class="ck-sum-price ck-mono ck-currency" data-usd="349.99">$349.99</span>
-        </div>
-
-        <div class="ck-sum-item">
-          <img class="ck-sum-img" src="/static/img/backpack.jpg" alt="Minimalist Leather Backpack" />
-          <div class="ck-sum-info">
-            <p class="ck-sum-name">Minimalist Leather Backpack</p>
-            <p class="ck-sum-qty">×2</p>
-          </div>
-          <span class="ck-sum-price ck-mono ck-currency" data-usd="258.00">$258.00</span>
-        </div>
+          {% endfor %}
+        {% else %}
+          {# Guest: cart.js fills this from the localStorage cart (if any). #}
+          <div id="ckGuestSummary"></div>
+        {% endif %}
 
         <div class="ck-sum-rows">
-          <div class="ck-sum-row"><span>Subtotal</span><span class="ck-mono ck-currency" data-usd="607.99">$607.99</span></div>
-          <div class="ck-sum-row"><span>Escrow Fee (2%)</span><span class="ck-mono ck-currency" data-usd="12.16">$12.16</span></div>
-          <div class="ck-sum-row"><span>Platform Fee (1%)</span><span class="ck-mono ck-currency" data-usd="6.08">$6.08</span></div>
+          <div class="ck-sum-row"><span>Subtotal</span><span class="ck-mono ck-currency" data-usd="{{ checkout_totals.subtotal|floatformat:2 }}">${{ checkout_totals.subtotal|floatformat:2 }}</span></div>
+          <div class="ck-sum-row"><span>Escrow Fee ({{ payment_config.fees.escrow_pct }}%)</span><span class="ck-mono ck-currency" data-usd="{{ checkout_totals.escrow|floatformat:2 }}">${{ checkout_totals.escrow|floatformat:2 }}</span></div>
+          <div class="ck-sum-row"><span>Platform Fee ({{ payment_config.fees.platform_pct }}%)</span><span class="ck-mono ck-currency" data-usd="{{ checkout_totals.platform|floatformat:2 }}">${{ checkout_totals.platform|floatformat:2 }}</span></div>
         </div>
 
         <div class="ck-sum-total">
           <span class="ck-sum-total-label">Total</span>
-          <span class="ck-sum-total-val ck-mono ck-currency" data-usd="626.23">$626.23</span>
+          <span class="ck-sum-total-val ck-mono ck-currency" data-usd="{{ checkout_totals.total|floatformat:2 }}">${{ checkout_totals.total|floatformat:2 }}</span>
         </div>
 
         <div class="ck-sum-box">
@@ -439,18 +438,40 @@ document.addEventListener('DOMContentLoaded', function () {
 <script src="/static/cart.js"></script>
   <script>
   /* ══════════════════════════════════
-     PAYMENT METHOD SELECTION
+     LIVE PAYMENT RAILS — Paystack · PayPal · Pi Network
+     Every rail is started on the server and finished with the
+     provider. Orders are only created after the provider
+     confirms the money, so the browser can never fake a payment.
   ══════════════════════════════════ */
   (function () {
-    var options = document.querySelectorAll('.ck-pay-option');
-    var strip   = document.getElementById('payingStrip');
-    var text    = document.getElementById('payingText');
-    var info    = document.getElementById('paymentInfo');
-    if (!options.length || !strip || !text) return;
+    'use strict';
+    var config    = JSON.parse(document.getElementById('paymentConfig').textContent);
+    var options   = Array.prototype.slice.call(document.querySelectorAll('.ck-pay-option'));
+    var strip     = document.getElementById('payingStrip');
+    var text      = document.getElementById('payingText');
+    var info      = document.getElementById('paymentInfo');
+    var form      = document.getElementById('paymentForm');
+    var payBtn    = document.getElementById('payBtn');
+    var payLabel  = document.getElementById('payBtnLabel');
+    var statusBox = document.getElementById('payStatus');
+    var paypalPanel    = document.getElementById('paypalPanel');
+    var paypalButtons  = document.getElementById('paypalButtons');
+    var paypalRedirect = document.getElementById('paypalRedirect');
+    var piPanel = document.getElementById('piPanel');
+    if (!options.length || !strip || !text || !form) return;
 
-    /* These display rates are estimates only. The server remains the source
-       of truth when the selected payment provider creates the charge. */
-    var rates = { usd: 1, ngn: 1600, pi: 0.5 };
+    var csrfToken = (form.querySelector('[name=csrfmiddlewaretoken]') || {}).value || '';
+
+    /* Rates come from the server (NGN_PER_USD / PI_PER_USD), so the page can
+       never disagree with the amount the provider is asked to charge. */
+    var rates = {
+      usd: 1,
+      ngn: parseFloat(config.rates.ngn_per_usd) || 1600,
+      pi:  parseFloat(config.rates.pi_per_usd) || 0.5
+    };
+    var methodCurrency = { pi: 'pi', paypal: 'usd', paystack: 'ngn' };
+    var currencyLabels = { pi: 'Pi (π)', usd: 'US dollars (USD)', ngn: 'Nigerian Naira (NGN)' };
+
     function formatAmount(usd, currency) {
       var amount = usd * rates[currency];
       if (currency === 'ngn') {
@@ -459,28 +480,54 @@ document.addEventListener('DOMContentLoaded', function () {
       if (currency === 'pi') return 'π ' + amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
     }
+
     function updateAmounts(currency) {
-      document.querySelectorAll('.ck-currency[data-usd]').forEach(function (element) {
-        element.textContent = formatAmount(parseFloat(element.getAttribute('data-usd')), currency);
+      Array.prototype.forEach.call(document.querySelectorAll('.ck-currency[data-usd]'), function (element) {
+        element.textContent = formatAmount(parseFloat(element.getAttribute('data-usd')) || 0, currency);
       });
       if (info) {
-        var labels = { pi: 'Pi (π)', usd: 'US dollars (USD)', ngn: 'Nigerian Naira (NGN)' };
-        info.textContent = 'All amounts are shown in ' + labels[currency] + '. The final provider amount is confirmed before payment.';
+        info.textContent = 'All amounts are shown in ' + currencyLabels[currency] +
+          '. The provider charges the total confirmed by our server.';
       }
     }
 
+    function setStatus(message, kind) {
+      if (!statusBox) return;
+      statusBox.hidden = !message;
+      statusBox.className = 'ck-pay-status' + (kind ? ' ck-pay-status--' + kind : '');
+      statusBox.textContent = message || '';
+    }
+
+    function setBusy(busy, label) {
+      if (payBtn) payBtn.disabled = busy;
+      if (payLabel) payLabel.textContent = label || (busy ? 'Working…' : 'Pay');
+    }
+
+    function selectedMethod() { return document.getElementById('paymentMethod').value; }
+
+    function hideProviderPanels() {
+      if (paypalPanel) paypalPanel.hidden = true;
+      if (piPanel) piPanel.hidden = true;
+    }
+
     function select(option) {
+      if (option.getAttribute('data-enabled') === 'false') {
+        setStatus('That payment method is not available right now — please choose another one.', 'warn');
+        return;
+      }
       options.forEach(function (o) {
         var on = o === option;
         o.classList.toggle('is-selected', on);
         o.setAttribute('aria-checked', on ? 'true' : 'false');
       });
       /* Sync the "Paying with …" strip in the order summary */
+      var method = option.getAttribute('data-method') || 'pi';
       strip.className = option.getAttribute('data-strip');
       text.textContent = 'Paying with ' + option.getAttribute('data-name');
-      var method = option.classList.contains('ck-pay-option--paystack') ? 'paystack' : (option.classList.contains('ck-pay-option--paypal') ? 'paypal' : 'pi');
       document.getElementById('paymentMethod').value = method;
-      updateAmounts(option.getAttribute('data-currency'));
+      updateAmounts(methodCurrency[method] || 'usd');
+      setStatus('');
+      hideProviderPanels();
     }
 
     options.forEach(function (o) {
@@ -489,8 +536,14 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(o); }
       });
     });
-    updateAmounts(document.querySelector('.ck-pay-option.is-selected').getAttribute('data-currency'));
-  })();
+
+    /* Start on the first rail that is actually configured. */
+    var initial = document.querySelector('.ck-pay-option.is-selected');
+    if (!initial || initial.getAttribute('data-enabled') === 'false') {
+      initial = options.filter(function (o) { return o.getAttribute('data-enabled') !== 'false'; })[0];
+    }
+    if (initial) select(initial);
+
   document.getElementById('paymentForm').addEventListener('submit', function (event) {
     event.preventDefault();
     var form   = this;

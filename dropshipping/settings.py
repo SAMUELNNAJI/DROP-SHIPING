@@ -157,6 +157,8 @@ PI_API_KEY = os.environ.get('PI_API_KEY', '').strip()
 # browser, where the Pi SDK is unavailable).
 PI_WALLET_ADDRESS = os.environ.get('PI_WALLET_ADDRESS', '').strip()
 PI_API_BASE = os.environ.get('PI_API_BASE', 'https://api.minepi.com').rstrip('/')
+# Pi Developer Portal sandbox mode. Leave off for the production Pi app.
+PI_SANDBOX = env_bool('PI_SANDBOX', default=False)
 # Allow a manual Pi transfer (buyer sends Pi to PI_WALLET_ADDRESS and quotes the
 # order reference) when the Pi Browser SDK cannot be used. The order is recorded
 # as awaiting confirmation so a human can reconcile it.

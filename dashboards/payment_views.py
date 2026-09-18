@@ -74,10 +74,10 @@ def cart_snapshot(user):
     return items, subtotal, cart_totals(subtotal)
 
 
-def provider_config():
+def provider_config(totals=None):
     """Browser-safe provider configuration (never contains a secret key)."""
     manual_pi = bool(settings.PI_MANUAL_TRANSFER and settings.PI_WALLET_ADDRESS)
-    return {
+    config = {
         'paystack': {
             'enabled': payments.paystack_enabled(),
             'public_key': settings.PAYSTACK_PUBLIC_KEY,
@@ -92,18 +92,30 @@ def provider_config():
             'enabled': payments.pi_sdk_enabled() or manual_pi,
             'sdk': payments.pi_sdk_enabled(),
             'manual': manual_pi,
+            'sandbox': settings.PI_SANDBOX,
             'wallet_address': settings.PI_WALLET_ADDRESS,
         },
         'rates': {
             'ngn_per_usd': str(settings.NGN_PER_USD),
             'pi_per_usd': str(settings.PI_PER_USD),
         },
+        'fees': {
+            'escrow_pct': int(settings.CHECKOUT_ESCROW_FEE_RATE * 100),
+            'platform_pct': int(settings.CHECKOUT_PLATFORM_FEE_RATE * 100),
+        },
     }
+    if totals is not None:
+        config['amounts'] = {
+            'usd': str(payments.money(totals['total'])),
+            'ngn': str(payments.usd_to_ngn(totals['total'])),
+            'pi': str(payments.usd_to_pi(totals['total'])),
+        }
+    return config
 
 
 def checkout_context(request):
     """Cart + totals + live rails for the payment page."""
-    items, subtotal, totals = cart_snapshot(request.user) if request.user.is_authenticated else (
+    items, _subtotal, totals = cart_snapshot(request.user) if request.user.is_authenticated else (
         [], payments.money(0), cart_totals(0)
     )
     return {
@@ -111,13 +123,9 @@ def checkout_context(request):
         'cart_subtotal': totals['subtotal'],
         'cart_count': sum(item.quantity for item in items),
         'checkout_totals': totals,
-        # Amount the buyer pays in each rail's own currency.
-        'payment_amounts': {
-            'usd': str(totals['total']),
-            'ngn': str(payments.usd_to_ngn(totals['total'])),
-            'pi': str(payments.usd_to_pi(totals['total'])),
-        },
-        'payment_config': provider_config(),
+        # Every figure the page renders, already converted into each rail's
+        # currency, so the browser never has to guess an exchange rate.
+        'payment_config': provider_config(totals),
     }
 
 # ══════════════════════════════════════════════════════════════

@@ -722,9 +722,14 @@
       }
 
       var USER_STATE = document.body.getAttribute('data-user-state') || 'guest';
+      var modalTitle = document.getElementById('wlModalTitle');
       var modalSub = document.getElementById('wlModalSub');
-      if (USER_STATE === 'auth' && modalSub) {
-        modalSub.textContent = "You're signed in with a seller/admin account — switch to a buyer account to save products.";
+      if (USER_STATE === 'seller' && modalTitle && modalSub) {
+        modalTitle.textContent = "Sellers can't use the wishlist";
+        modalSub.textContent = "You're signed in as a seller — kindly sign in or sign up as a buyer to save products and check out.";
+      } else if (USER_STATE === 'admin' && modalTitle && modalSub) {
+        modalTitle.textContent = "Admins can't use the wishlist";
+        modalSub.textContent = "You're signed in as an admin — kindly sign in or sign up as a buyer to save products and check out.";
       }
 
       document.querySelectorAll('.pc-heart').forEach(function (h) {
@@ -795,8 +800,25 @@
       card.style.cursor = 'pointer';
     });
 
+    /* ── Shop: add-to-cart — sellers/admins get the buyer-only popup ── */
     document.querySelectorAll('.pc-add').forEach(function (btn) {
       btn.addEventListener('click', function () {
+        var state = document.body.getAttribute('data-user-state') || 'guest';
+        if (state === 'seller' || state === 'admin') {
+          var backdrop = document.getElementById('wlModalBackdrop');
+          var title = document.getElementById('wlModalTitle');
+          var sub = document.getElementById('wlModalSub');
+          if (title) title.textContent = state === 'seller' ? "Sellers can't pay for orders" : "Admins can't pay for orders";
+          if (sub) sub.textContent = state === 'seller'
+            ? "You're signed in as a seller — kindly sign in or sign up as a buyer to add items to cart and pay."
+            : "You're signed in as an admin — kindly sign in or sign up as a buyer to add items to cart and pay.";
+          if (backdrop) {
+            backdrop.classList.add('is-open');
+            backdrop.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            return;
+          }
+        }
         var badge = document.querySelector('.cart-badge');
         if (badge) {
           badge.textContent = (parseInt(badge.textContent, 10) || 0) + 1;

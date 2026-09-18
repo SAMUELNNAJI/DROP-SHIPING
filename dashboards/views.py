@@ -354,6 +354,25 @@ def seller_products_view(request):
     paginator = Paginator(qs, PRODUCTS_PER_PAGE)
     page_obj = paginator.get_page(request.GET.get("page"))
 
+    # ── Active boost per product ──────────────────────────────────────
+    # Map product_id -> running BoostOrder (paid & not expired) so the table
+    # can show exactly which plan is live on each boosted product.
+    _now = timezone.now()
+    _running = (
+        BoostOrder.objects.filter(
+            seller=request.user,
+            status=BoostOrder.STATUS_PAID,
+            expires_at__gt=_now,
+        )
+        .select_related("plan")
+        .order_by("-paid_at", "-created_at")
+    )
+    _boost_by_product = {}
+    for _bo in _running:
+        _boost_by_product.setdefault(_bo.product_id, _bo)
+    for _p in page_obj.object_list:
+        _p.active_boost = _boost_by_product.get(_p.pk)
+
     context = dashboard_context(request, "seller", "products")
     context.update({
         "page_obj": page_obj,

@@ -24,9 +24,10 @@ services:
       # Render generates a strong SECRET_KEY and keeps it secret.
       - key: SECRET_KEY
         generateValue: true
-      # Neon Postgres connection string — set this in the Render dashboard
-      # (Environment tab). Leaving it unset would fall back to SQLite, which is
-      # wiped on every deploy.
+      # Neon Postgres connection string — REQUIRED in production.
+      # Render's disk is ephemeral, so without this the app refuses to boot
+      # (see settings.py) instead of writing to SQLite that gets wiped on
+      # every sleep/restart/deploy — which is what deleted seller products.
       - key: DATABASE_URL
         sync: false
       # Extra hostnames (custom domains). Render's own hostname is added at

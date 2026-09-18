@@ -182,8 +182,11 @@ def shop_page(request):
         wishlist_slugs = list(
             WishlistItem.objects.filter(user=request.user).values_list("product_slug", flat=True)
         )
+    elif request.user.is_authenticated and getattr(request.user, "is_staff", False):
+        user_state = "admin"
+        wishlist_slugs = []
     elif request.user.is_authenticated:
-        user_state = "auth"
+        user_state = "seller"
         wishlist_slugs = []
     else:
         user_state = "guest"
@@ -239,7 +242,15 @@ def product_detail(request, pk):
     product = get_object_or_404(Product.objects.select_related("seller"), pk=pk)
     if product.status != "live" and (not request.user.is_authenticated or request.user != product.seller):
         raise Http404("Product not found")
-    return render(request, "product_detail.html", {"product": product, "page_title": product.name})
+    if request.user.is_authenticated and getattr(request.user, "role", "") == "buyer":
+        viewer_state = "buyer"
+    elif request.user.is_authenticated and getattr(request.user, "is_staff", False):
+        viewer_state = "admin"
+    elif request.user.is_authenticated:
+        viewer_state = "seller"
+    else:
+        viewer_state = "guest"
+    return render(request, "product_detail.html", {"product": product, "page_title": product.name, "viewer_state": viewer_state})
 
 
 def blog_view(request):

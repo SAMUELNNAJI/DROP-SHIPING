@@ -161,9 +161,16 @@ WSGI_APPLICATION = 'dropshipping.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 #
-# DATABASE_URL drives the production database (Neon Postgres on Render). When
-# it is not set — the default for local development — the project falls back to
-# the bundled SQLite file so `runserver` keeps working out of the box.
+# DATABASE_URL drives the production database (Postgres on Render — e.g. Neon).
+# Locally (no DATABASE_URL) the project falls back to the bundled SQLite file
+# so `runserver` keeps working out of the box.
+#
+# IMPORTANT (Render persistence): Render's filesystem is EPHEMERAL — any file
+# written after boot (including db.sqlite3) is wiped on every sleep/wake,
+# restart and deploy. That is why "upload a product, see it, sleep, gone" was
+# happening: without DATABASE_URL the app silently wrote to SQLite and lost it.
+# In production (DEBUG off) we now FAIL FAST with a clear error instead of
+# silently using SQLite, so a missing DATABASE_URL can never eat seller data.
 
 DATABASE_URL = os.environ.get('DATABASE_URL', '').strip()
 
@@ -179,6 +186,13 @@ if DATABASE_URL:
     # server-side cursors and long-lived connections are not safe to rely on.
     DATABASES['default']['DISABLE_SERVER_SIDE_CURSORS'] = True
 else:
+    if not DEBUG:
+        raise ImproperlyConfigured(
+            'DATABASE_URL is not set. On Render, add a Postgres database '
+            '(e.g. Neon) and set DATABASE_URL in the Environment tab — '
+            'otherwise seller products/orders are stored in ephemeral SQLite '
+            'and disappear after every sleep, restart or deploy.'
+        )
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',

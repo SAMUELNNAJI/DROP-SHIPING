@@ -139,6 +139,10 @@ class Order(models.Model):
     payment_method = models.CharField(
         max_length=10, choices=PAYMENT_CHOICES, default="paypal"
     )
+    # Provider-side reference for the transaction that paid for this order
+    # (Paystack reference, PayPal order id or Pi payment id). Empty for orders
+    # created before real gateway verification existed.
+    payment_reference = models.CharField(max_length=120, blank=True, default="")
 
     # ── Delivery address (snapshot at order time) ──────────────
     shipping_name    = models.CharField(max_length=160, blank=True, default="")
@@ -535,4 +539,81 @@ class CartItem(models.Model):
             return float(self.product.price) * self.quantity
         except (TypeError, ValueError):
             return 0
+
+
+class PaymentIntent(models.Model):
+    """One attempt to pay a cart total through a real payment provider.
+
+    The row is created *before* the buyer is handed to Paystack / PayPal / Pi
+    and is only marked ``paid`` after the provider itself confirms the money
+    (Paystack ``/transaction/verify``, PayPal capture, Pi ``complete``).  Orders
+    are created at that moment, so a cancelled or forged browser callback can
+    never produce a protected order.
+    """
+
+    STATUS_PENDING   = "pending"    # started, waiting for the provider
+    STATUS_PAID      = "paid"       # provider confirmed the money
+    STATUS_FAILED    = "failed"     # provider rejected it
+    STATUS_CANCELLED = "cancelled"  # buyer closed the window / went back
+
+    STATUS_CHOICES = [
+        (STATUS_PENDING,   "Awaiting payment"),
+        (STATUS_PAID,      "Paid"),
+        (STATUS_FAILED,    "Failed"),
+        (STATUS_CANCELLED, "Cancelled"),
+    ]
+
+    PURPOSE_CHECKOUT = "checkout"
+    PURPOSE_BOOST    = "boost"
+
+    PURPOSE_CHOICES = [
+        (PURPOSE_CHECKOUT, "Marketplace checkout"),
+        (PURPOSE_BOOST,    "Product boost"),
+    ]
+
+    # Same three rails as an order, so the two models can never drift apart.
+    METHOD_CHOICES = Order.PAYMENT_CHOICES
+
+    user   = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="payment_intents",
+    )
+    # Our own reference — always quoted to the buyer and sent to the provider.
+    reference = models.CharField(max_length=40, unique=True)
+    method    = models.CharField(max_length=10, choices=METHOD_CHOICES)
+    purpose   = models.CharField(max_length=12, choices=PURPOSE_CHOICES, default=PURPOSE_CHECKOUT)
+
+    # Cart subtotal in USD (what the orders will record) plus the fees the
+    # buyer actually pays, converted into the currency of the chosen rail.
+    subtotal_usd = models.DecimalField(max_digits=10, decimal_places=2)
+    amount_usd   = models.DecimalField(max_digits=10, decimal_places=2)
+    currency     = models.CharField(max_length=5, default="USD")
+    amount       = models.DecimalField(max_digits=12, decimal_places=2)
+
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    # Paystack reference / PayPal order id / Pi payment id.
+    provider_reference = models.CharField(max_length=120, blank=True, default="")
+    # PKs of the orders created once the payment succeeded.
+    order_pks = models.JSONField(default=list, blank=True)
+    # Trimmed provider payloads, kept for reconciliation and disputes.
+    provider_payload = models.JSONField(default=dict, blank=True)
+    note = models.CharField(max_length=200, blank=True, default="")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    paid_at    = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return "%s — %s %s (%s)" % (
+            self.reference, self.amount, self.currency, self.get_status_display()
+        )
+
+    @property
+    def is_paid(self):
+        return self.status == self.STATUS_PAID
+
 

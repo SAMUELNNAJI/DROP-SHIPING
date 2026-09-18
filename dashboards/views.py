@@ -4,7 +4,6 @@ from decimal import Decimal
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator
-from django.db import transaction
 from django.db.models import Avg, Q, Sum
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -16,6 +15,7 @@ from django.utils import timezone
 from shop.forms import BlogPostForm, ProductForm
 from shop.models import BlogPost, Product
 
+from . import payment_views
 from .forms import BuyerAddressForm, BoostPlanForm, SellerPayoutMethodForm, SellerVerificationForm
 from .models import BuyerAddress, BoostOrder, BoostPlan, CartItem, Order, OrderTrackingEvent, SellerPayout, SellerPayoutMethod, SellerVerification, WishlistItem
 
@@ -1567,7 +1567,9 @@ def checkout_payment(request):
         return redirect("shop")
 
     ctx = {"page_title": "Choose payment", "slug": "checkout-payment"}
-    ctx.update(cart_context(request))
+    # Real cart, real totals and the payment rails that are actually configured
+    # (see dashboards/payment_views.py — nothing is charged without one of them).
+    ctx.update(payment_views.checkout_context(request))
 
     return render(request, "checkout-payment.html", ctx)
 
@@ -1624,53 +1626,14 @@ def cart_sync(request):
     return JsonResponse({"ok": True, "synced": synced, "count": int(count)})
 
 
-@require_POST
-@login_required
-def checkout_complete(request):
-    """Create protected orders only after the selected payment provider succeeds.
-
-    Production payment webhooks should verify the provider signature before
-    calling this endpoint; no card or wallet credential is ever stored here.
-    """
-    if request.user.role != "buyer":
-        return JsonResponse({"error": "Buyer account required."}, status=403)
-    method = request.POST.get("payment_method", "").lower()
-    if method not in {"paystack", "paypal", "pi"}:
-        return JsonResponse({"error": "Choose Paystack, PayPal, or Pi."}, status=400)
-    items = list(CartItem.objects.filter(user=request.user).select_related("product", "product__seller"))
-    if not items:
-        return JsonResponse({"error": "Your cart is empty."}, status=400)
-    address = BuyerAddress.objects.filter(user=request.user, is_default=True).first() or BuyerAddress.objects.filter(user=request.user).first()
-    with transaction.atomic():
-        created = []
-        for item in items:
-            product = item.product
-            verification = getattr(product.seller, "seller_verification", None)
-            if product.status != "live" or product.stock < item.quantity or not product.seller.is_active or not verification or verification.status != "verified":
-                return JsonResponse({"error": f"{product.name} is no longer available from a verified seller."}, status=409)
-            order = Order.objects.create(
-                buyer=request.user, seller=product.seller, product=product,
-                product_name=product.name, product_image=product.image_src, store_name=product.get_store_display(),
-                unit_price=product.price, quantity=item.quantity, total_price=product.price * item.quantity,
-                payment_method=method, shipping_name=address.recipient_name if address else request.user.get_full_name(),
-                shipping_address=(f"{address.line1}, {address.city}, {address.country}" if address else ""),
-            )
-            product.stock -= item.quantity
-            product.sold += item.quantity
-            product.save(update_fields=["stock", "sold", "updated_at"])
-            OrderTrackingEvent.objects.create(order=order, status="pending", message="Payment secured in escrow. Seller is preparing your order.")
-            created.append(order.pk)
-        CartItem.objects.filter(user=request.user).delete()
-
-    # Stash order PKs + payment method in the session so the success page can
-    # render real order data without exposing PKs in the URL.
-    request.session["last_order_pks"] = created
-    request.session["last_order_payment_method"] = method
-
-    order_numbers = list(
-        Order.objects.filter(pk__in=created).values_list("order_number", flat=True)
-    )
-    return JsonResponse({"ok": True, "orders": order_numbers, "redirect": "/checkout-success/"})
+# Payments used to be "completed" here without contacting a provider, which
+# meant anyone could create an escrow order for free.  The whole flow now lives
+# in dashboards/payment_views.py (Paystack / PayPal / Pi) and orders are only
+# created after the provider confirms the money.
+#
+# ``/dashboards/checkout/complete/`` is kept as an alias of ``payment_start`` so
+# older pages that still post to it keep working — they simply start a real
+# payment instead of creating an order.
 
 
 @login_required
@@ -1678,25 +1641,24 @@ def checkout_success_view(request):
     """Order confirmation page — shows real order data from the session."""
     pks    = request.session.pop("last_order_pks", [])
     method = request.session.pop("last_order_payment_method", "")
+    awaiting = request.session.pop("last_payment_awaiting_confirmation", False)
 
     orders = (
         list(Order.objects.filter(pk__in=pks, buyer=request.user))
         if pks else []
     )
 
-    subtotal = sum(o.total_price for o in orders)
-    escrow   = subtotal * Decimal("0.02")
-    platform = subtotal * Decimal("0.01")
-    total    = subtotal + escrow + platform
+    totals = payment_views.cart_totals(sum((o.total_price for o in orders), Decimal("0")))
 
     ctx = {
-        "page_title":            "Order Confirmed",
-        "orders":                orders,
-        "payment_method":        method or (orders[0].payment_method if orders else ""),
-        "order_subtotal":        subtotal,
-        "order_escrow_fee":      escrow,
-        "order_platform_fee":    platform,
-        "order_total":           total,
+        "page_title":              "Order Confirmed",
+        "orders":                  orders,
+        "payment_method":          method or (orders[0].payment_method if orders else ""),
+        "payment_awaiting_review": awaiting,
+        "order_subtotal":          totals["subtotal"],
+        "order_escrow_fee":        totals["escrow"],
+        "order_platform_fee":      totals["platform"],
+        "order_total":             totals["total"],
     }
     return render(request, "checkout-success.html", ctx)
 

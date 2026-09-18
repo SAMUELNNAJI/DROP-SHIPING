@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import payment_views, views
 
 urlpatterns = [
     # ── Dashboard homes ──────────────────────────────────────
@@ -81,7 +81,25 @@ urlpatterns = [
     path("cart/remove/<int:product_pk>/", views.cart_remove, name="cart_remove"),
     path("cart/sync/", views.cart_sync, name="cart_sync"),
     path("checkout/payment/", views.checkout_payment, name="checkout_payment"),
-    path("checkout/complete/", views.checkout_complete, name="checkout_complete"),
+
+    # ── Checkout payments (Paystack · PayPal · Pi Network) ────
+    # Starting a payment never creates an order: that only happens once the
+    # provider confirms the money through one of the endpoints below.
+    path("checkout/start/", payment_views.payment_start, name="payment_start"),
+    # Legacy alias — old pages posted straight to this URL.
+    path("checkout/complete/", payment_views.payment_start, name="checkout_complete"),
+    # Paystack: inline popup verification, hosted-flow callback and webhook.
+    path("checkout/paystack/verify/", payment_views.paystack_verify_payment, name="paystack_verify"),
+    path("checkout/paystack/callback/", payment_views.paystack_callback, name="paystack_callback"),
+    path("checkout/paystack/webhook/", payment_views.paystack_webhook, name="paystack_webhook"),
+    # PayPal: capture from the SDK buttons, plus the redirect fallbacks.
+    path("checkout/paypal/capture/", payment_views.paypal_capture_payment, name="paypal_capture"),
+    path("checkout/paypal/return/", payment_views.paypal_return, name="paypal_return"),
+    path("checkout/paypal/cancel/", payment_views.paypal_cancel, name="paypal_cancel"),
+    # Pi Network: Pi Browser approve/complete and the manual-transfer claim.
+    path("checkout/pi/approve/", payment_views.pi_approve, name="pi_approve"),
+    path("checkout/pi/complete/", payment_views.pi_complete, name="pi_complete"),
+    path("checkout/pi/manual/", payment_views.pi_manual_claim, name="pi_manual_claim"),
 
     # ── Generic section loader (must stay last) ───────────────
     path("<str:role>/<str:section>/", views.dashboard_section, name="dashboard_section"),

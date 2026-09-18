@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 import os
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
 import dj_database_url
@@ -54,6 +55,21 @@ def env_list(name, default=None):
     """Read a comma-separated environment variable into a list."""
     items = [item.strip() for item in os.environ.get(name, '').split(',') if item.strip()]
     return items or list(default or [])
+
+
+def env_decimal(name, default):
+    """Read a decimal environment variable, falling back to ``default``.
+
+    A typo in the environment (or in `.env`) must never take the checkout down,
+    so an unparsable value is ignored and the default is used instead.
+    """
+    raw = os.environ.get(name, '').strip()
+    if not raw:
+        return Decimal(default)
+    try:
+        return Decimal(raw)
+    except (InvalidOperation, ValueError):
+        return Decimal(default)
 
 
 _ENV_FILE_KEYS = _load_env_file(BASE_DIR / '.env')
@@ -109,6 +125,55 @@ GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
 GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')
 APPLE_CLIENT_ID = os.environ.get('APPLE_CLIENT_ID', '')
 APPLE_CLIENT_SECRET = os.environ.get('APPLE_CLIENT_SECRET', '')
+
+
+# Payments — three rails: Paystack (Naira), PayPal (USD) and Pi Network (π).
+#
+# Every credential below lives in the environment only (locally in the
+# git-ignored `.env`, in production in Render's Environment tab). A rail turns
+# itself on the moment its credentials exist: the checkout page then offers it,
+# and hides it otherwise, so a missing key can never break the whole checkout.
+
+# Paystack — card / bank transfer / USSD in Naira. The public key is served to
+# the browser for the inline popup; the secret key stays server-side and is the
+# only thing used to initialise and verify a transaction.
+PAYSTACK_PUBLIC_KEY = os.environ.get('PAYSTACK_PUBLIC_KEY', '').strip()
+PAYSTACK_SECRET_KEY = os.environ.get('PAYSTACK_SECRET_KEY', '').strip()
+
+# PayPal — the official JS SDK buttons plus server-side create/capture.
+PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID', '').strip()
+PAYPAL_CLIENT_SECRET = os.environ.get('PAYPAL_CLIENT_SECRET', '').strip()
+# "live" for real money, anything else (default) uses the sandbox.
+PAYPAL_MODE = (os.environ.get('PAYPAL_MODE', 'sandbox').strip().lower() or 'sandbox')
+PAYPAL_API_BASE = os.environ.get(
+    'PAYPAL_API_BASE',
+    'https://api-m.paypal.com' if PAYPAL_MODE == 'live' else 'https://api-m.sandbox.paypal.com',
+).rstrip('/')
+
+# Pi Network — the app's API key (from the Pi Developer Portal) authorises the
+# server-side approve/complete calls made by the Pi Browser SDK flow.
+PI_API_KEY = os.environ.get('PI_API_KEY', '').strip()
+# Wallet that receives Pi payments (also shown to buyers who pay from a normal
+# browser, where the Pi SDK is unavailable).
+PI_WALLET_ADDRESS = os.environ.get('PI_WALLET_ADDRESS', '').strip()
+PI_API_BASE = os.environ.get('PI_API_BASE', 'https://api.minepi.com').rstrip('/')
+# Allow a manual Pi transfer (buyer sends Pi to PI_WALLET_ADDRESS and quotes the
+# order reference) when the Pi Browser SDK cannot be used. The order is recorded
+# as awaiting confirmation so a human can reconcile it.
+PI_MANUAL_TRANSFER = env_bool('PI_MANUAL_TRANSFER', default=True)
+
+# Shop prices are stored in USD. These rates decide how much the buyer is
+# charged when they pick a local rail (Naira) or Pi.
+NGN_PER_USD = env_decimal('NGN_PER_USD', '1600')
+PI_PER_USD = env_decimal('PI_PER_USD', '0.5')
+
+# Timeout (seconds) for outbound calls to the payment providers.
+PAYMENT_HTTP_TIMEOUT = int(os.environ.get('PAYMENT_HTTP_TIMEOUT', '25'))
+
+# Escrow (2%) + platform (1%) fees added to the cart subtotal at checkout. These
+# mirror the fee breakdown shown on the checkout pages.
+CHECKOUT_ESCROW_FEE_RATE = env_decimal('CHECKOUT_ESCROW_FEE_RATE', '0.02')
+CHECKOUT_PLATFORM_FEE_RATE = env_decimal('CHECKOUT_PLATFORM_FEE_RATE', '0.01')
 
 
 # Application definition

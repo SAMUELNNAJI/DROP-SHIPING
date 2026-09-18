@@ -657,49 +657,161 @@ document.addEventListener('DOMContentLoaded', function () {
       return beginPaystack();
     }
 
-    function doSubmit() {
-      fetch(form.action, {
-        method: 'POST',
-        headers: {
-          'X-CSRFToken': csrf,
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: new FormData(form)
-      })
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        if (data.ok) {
-          window.location.href = data.redirect;
-        } else {
-          alert(data.error || 'Payment could not be completed.');
-          button.disabled = false;
-          button.textContent = 'Pay securely';
+    /* ── PayPal: server-created order + official SDK buttons ── */
+    function ensurePaypalSdk() {
+      if (window.paypal) return Promise.resolve();
+      var url = 'https://www.paypal.com/sdk/js?client-id=' +
+        encodeURIComponent(config.paypal.client_id) +
+        '&currency=' + encodeURIComponent(config.paypal.currency || 'USD') +
+        '&intent=capture&components=buttons';
+      return loadScript(url);
+    }
+
+    function payWithPaypal() {
+      return startPayment('paypal').then(function (data) {
+        lastStart = { method: 'paypal', reference: data.order_id, at: Date.now() };
+        if (paypalRedirect) {
+          paypalRedirect.href = data.approve_url || '#';
+          paypalRedirect.hidden = !data.approve_url;
         }
-      })
-      .catch(function () {
-        alert('Please try again.');
-        button.disabled = false;
-        button.textContent = 'Pay securely';
+        return ensurePaypalSdk().then(function () {
+          if (!window.paypal || !paypalPanel || !paypalButtons) {
+            window.location.href = data.approve_url;
+            return null;
+          }
+          paypalPanel.hidden = false;
+          paypalButtons.innerHTML = '';
+          window.paypal.Buttons({
+            style: { layout: 'vertical', shape: 'rect', label: 'paypal' },
+            createOrder: function () { return Promise.resolve(data.order_id); },
+            onApprove: function (approved) {
+              setStatus('PayPal approved the payment — capturing it…', 'ok');
+              return postJson('/dashboards/checkout/paypal/capture/', {
+                order_id: (approved && approved.orderID) || data.order_id
+              }).then(goToSuccess).catch(function (error) {
+                setStatus(error.message, 'error');
+              });
+            },
+            onCancel: function () {
+              setStatus('PayPal payment cancelled — your cart is still waiting.', 'warn');
+            },
+            onError: function (error) {
+              setStatus((error && error.message) || 'PayPal could not complete that payment.', 'error');
+            }
+          }).render('#paypalButtons');
+          setBusy(false, 'Pay');
+          setStatus('Press the PayPal button below to finish paying.', 'ok');
+          return null;
+        }).catch(function () {
+          window.location.href = data.approve_url;
+          return null;
+        });
       });
     }
 
-    if (serverCartCount > 0) {
-      /* DB cart already populated — go straight to order creation */
-      doSubmit();
-    } else {
-      /* Try to push localStorage items to the server first */
-      var localItems = [];
-      if (window.DropHubCart) {
-        localItems = window.DropHubCart.getCart().map(function (i) {
-          return { product_pk: i.pk || i.id || i.product_pk, quantity: i.qty || i.quantity || 1 };
-        }).filter(function (i) { return i.product_pk; });
-      }
+    /* ── Pi Network: Pi Browser SDK, or a manual transfer elsewhere ── */
+    function ensurePiSdk() {
+      if (window.Pi) return Promise.resolve();
+      return loadScript('https://sdk.minepi.com/pi-sdk.js');
+    }
 
-      if (!localItems.length) {
-        /* Nothing in localStorage either — let the server return the proper error */
-        doSubmit();
-        return;
+    function onIncompletePiPayment(payment) {
+      /* Pi found an earlier payment that never finished — hand its txid to the
+         server so that order is not lost. */
+      var txid = payment && payment.transaction && payment.transaction.txid;
+      if (!txid || !payment.identifier) return;
+      postJson('/dashboards/checkout/pi/complete/', {
+        payment_id: payment.identifier,
+        txid: txid
+      }).catch(function () { /* reported server-side */ });
+    }
+
+    function showPiManual(data) {
+      lastStart = { method: 'pi', reference: data.reference, at: Date.now() };
+      document.getElementById('piWallet').textContent = data.wallet_address || '—';
+      document.getElementById('piAmount').textContent = 'π ' + data.amount_pi;
+      document.getElementById('piMemo').textContent = data.memo || data.reference;
+      if (piPanel) piPanel.hidden = false;
+      setBusy(false, 'Pay');
+      setStatus('Send the exact amount to the DropHub wallet, then confirm below.', 'warn');
+    }
+
+    function payWithPi(data) {
+      if (data.mode === 'manual') {
+        showPiManual(data);
+        return Promise.resolve(null);
       }
+      lastStart = { method: 'pi', reference: data.reference, at: Date.now() };
+      return ensurePiSdk().then(function () {
+        if (!window.Pi) {
+          setBusy(false);
+          setStatus('Open this page inside the Pi Browser to pay with Pi.', 'warn');
+          return null;
+        }
+        return window.Pi.init({ version: '2.0', sandbox: !!config.pi.sandbox })
+          .then(function () {
+            return window.Pi.authenticate(['payments', 'username'], onIncompletePiPayment);
+          })
+          .then(function () {
+            window.Pi.createPayment({
+              amount: parseFloat(data.amount),
+              memo: 'DropHub order ' + data.reference,
+              metadata: { reference: data.reference, amount_usd: data.amount_usd }
+            }, {
+              onReadyForServerApproval: function (paymentId) {
+                postJson('/dashboards/checkout/pi/approve/', { payment_id: paymentId })
+                  .catch(function (error) { setStatus(error.message, 'error'); });
+              },
+              onReadyForServerCompletion: function (paymentId, txid) {
+                setStatus('Pi payment submitted — finalising your order…', 'ok');
+                postJson('/dashboards/checkout/pi/complete/', {
+                  payment_id: paymentId,
+                  txid: txid
+                }).then(goToSuccess).catch(function (error) {
+                  setStatus(error.message, 'error');
+                });
+              },
+              onCancel: function () {
+                setBusy(false);
+                setStatus('Pi payment cancelled — nothing has been charged.', 'warn');
+              },
+              onError: function (error) {
+                setBusy(false);
+                setStatus((error && error.message) || 'Pi could not complete that payment.', 'error');
+              }
+            });
+            return null;
+          });
+      }).catch(function () {
+        setBusy(false);
+        setStatus('The Pi SDK could not be loaded. Reload this page inside the Pi Browser.', 'warn');
+        return null;
+      });
+    }
+
+    /* ── Manual Pi transfer buttons ── */
+    var piClaimBtn = document.getElementById('piClaimBtn');
+    if (piClaimBtn) {
+      piClaimBtn.addEventListener('click', function () {
+        if (!lastStart || lastStart.method !== 'pi') {
+          setStatus('Start the Pi payment again so we can match your transfer.', 'warn');
+          return;
+        }
+        setBusy(true, 'Recording…');
+        postJson('/dashboards/checkout/pi/manual/', { reference: lastStart.reference })
+          .then(goToSuccess)
+          .catch(function (error) { setBusy(false); setStatus(error.message, 'error'); });
+      });
+    }
+
+    var piCopyBtn = document.getElementById('piCopyBtn');
+    if (piCopyBtn) {
+      piCopyBtn.addEventListener('click', function () {
+        var wallet = document.getElementById('piWallet').textContent;
+        if (navigator.clipboard) navigator.clipboard.writeText(wallet);
+        setStatus('DropHub Pi wallet address copied.', 'ok');
+      });
+    }
 
       fetch('/dashboards/cart/sync/', {
         method: 'POST',

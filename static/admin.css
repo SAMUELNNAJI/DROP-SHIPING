@@ -2222,6 +2222,14 @@ body.dashboard-body--admin .dashboard-brand {
   flex-direction: column;
   max-height: 92vh;
 }
+/* The form owns the available height between the modal header and footer.
+   Without this flex wrapper, a long form is clipped by the modal on phones. */
+.bpmodal > form {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
 
 /* ── Amber accent stripe ── */
 .bpmodal__stripe {
@@ -2290,6 +2298,10 @@ body.dashboard-body--admin .dashboard-brand {
   flex-direction: column;
   gap: 16px;
   overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 /* ── Form fields ── */
@@ -2531,4 +2543,5 @@ body.dashboard-body--admin .dashboard-brand {
     max-height: calc(100dvh - 24px);
     border-radius: 18px 18px 14px 14px;
   }
+  .bpmodal__body { padding-bottom: 24px; }
 }

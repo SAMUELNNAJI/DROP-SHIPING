@@ -1081,9 +1081,9 @@
   .auth-page .cart-wrap  { display: flex; }
   .auth-page .nav-burger { display: inline-flex !important; }
 
-  /* Logo shrinks to fit; nav-actions margin-left:auto fills remaining space */
-  .auth-page .logo     { flex: 0 1 auto; min-width: 0; overflow: hidden; }
-  .auth-page .logo-img { height: 36px; width: auto; max-width: 100%; }
+  /* Logo: same behaviour as home page — fixed size, sits left */
+  .auth-page .logo     { flex-shrink: 0; min-width: 0; }
+  .auth-page .logo-img { height: 38px; width: auto; }
 
   .auth-card  { max-width: 100%; border-radius: 20px; }
   .auth-main  { padding-left: 16px; padding-right: 16px; }

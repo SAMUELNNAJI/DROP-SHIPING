@@ -957,19 +957,39 @@ document.addEventListener('DOMContentLoaded', function () {
       setStatus('Send the exact amount to the DropHub wallet, then confirm below.', 'warn');
     }
 
+    /* Manual-transfer instructions built from the server config, used when
+       the Pi Browser SDK cannot run (i.e. any normal browser). */
+    function piManualData(data) {
+      return {
+        reference: data.reference,
+        amount_pi: data.amount_pi || data.amount,
+        memo: data.memo || data.reference,
+        wallet_address: data.wallet_address || (config.pi || {}).wallet_address || ''
+      };
+    }
+
     function payWithPi(data) {
-      if (data.mode === 'manual') {
+      lastStart = { method: 'pi', reference: data.reference, at: Date.now() };
+      if (data.mode !== 'sdk') {
         showPiManual(data);
         return Promise.resolve(null);
       }
-      lastStart = { method: 'pi', reference: data.reference, at: Date.now() };
+      /* The Pi SDK only works inside the Pi Browser. Try it; if anything
+         fails (init throws or rejects, the SDK script is blocked, or the
+         buyer is in a normal browser), fall back to the manual transfer so
+         the buyer is never stuck. */
       return ensurePiSdk().then(function () {
         if (!window.Pi) {
-          setBusy(false);
-          setStatus('Open this page inside the Pi Browser to pay with Pi.', 'warn');
+          showPiManual(piManualData(data));
           return null;
         }
-        return window.Pi.init({ version: '2.0', sandbox: !!config.pi.sandbox })
+        var initPromise;
+        try {
+          initPromise = window.Pi.init({ version: '2.0', sandbox: !!config.pi.sandbox });
+        } catch (err) {
+          initPromise = Promise.reject(err);
+        }
+        return initPromise
           .then(function () {
             return window.Pi.authenticate(['payments', 'username'], onIncompletePiPayment);
           })
@@ -1002,10 +1022,15 @@ document.addEventListener('DOMContentLoaded', function () {
               }
             });
             return null;
+          })
+          .catch(function () {
+            /* Not inside the Pi Browser (or the SDK refused) — offer the
+               manual transfer instead of a dead-end error. */
+            showPiManual(piManualData(data));
+            return null;
           });
       }).catch(function () {
-        setBusy(false);
-        setStatus('The Pi SDK could not be loaded. Reload this page inside the Pi Browser.', 'warn');
+        showPiManual(piManualData(data));
         return null;
       });
     }

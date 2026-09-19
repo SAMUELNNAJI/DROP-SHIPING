@@ -361,7 +361,3 @@ def pi_complete_payment(payment_id, txid):
         headers=_pi_headers(),
     )
 
-    expected = hmac.new(
-        settings.PAYSTACK_SECRET_KEY.encode('utf-8'), raw_body or b'', sha512
-    ).hexdigest()
-    return hmac.compare_digest(expected, signature.strip())

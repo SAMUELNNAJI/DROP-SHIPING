@@ -968,16 +968,33 @@ document.addEventListener('DOMContentLoaded', function () {
       };
     }
 
+    /* The Pi SDK only actually works inside the Pi Browser. There the
+       user agent contains "PiBrowser". In every other browser the SDK
+       loads and init() resolves, but authenticate()/createPayment() hang
+       forever without calling any callback — which used to leave the
+       button stuck on "Starting…". So we only try the SDK flow when we
+       really are in the Pi Browser, and show the manual transfer
+       everywhere else. */
+    function isPiBrowser() {
+      return /PiBrowser|PiPhone/i.test(navigator.userAgent || '');
+    }
+
     function payWithPi(data) {
       lastStart = { method: 'pi', reference: data.reference, at: Date.now() };
       if (data.mode !== 'sdk') {
         showPiManual(data);
         return Promise.resolve(null);
       }
-      /* The Pi SDK only works inside the Pi Browser. Try it; if anything
-         fails (init throws or rejects, the SDK script is blocked, or the
-         buyer is in a normal browser), fall back to the manual transfer so
-         the buyer is never stuck. */
+      if (!isPiBrowser()) {
+        /* A normal browser cannot talk to the Pi wallet — offer the
+           manual transfer straight away instead of a silent hang. */
+        showPiManual(piManualData(data));
+        setStatus('Pi wallet payments open inside the Pi Browser. Send the transfer below and confirm it.', 'warn');
+        return Promise.resolve(null);
+      }
+      /* Real Pi Browser: run the native one-tap flow. If anything still
+         fails, fall back to the manual transfer so the buyer is never
+         stuck. */
       return ensurePiSdk().then(function () {
         if (!window.Pi) {
           showPiManual(piManualData(data));

@@ -271,6 +271,43 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <script src="/static/cart.js?v=6"></script>
 <script>
+/* ── Keep the server cart in step with the browser cart ──
+   The dropdown/localStorage cart is the source of truth. Push it to the
+   server on load; if the server copy differed, reload once so this page
+   renders the real cart (items, summary and totals) server-side. */
+(function () {
+  var cart = window.DropHubCart ? window.DropHubCart.getCart() : [];
+  if (!cart.length) return;
+  var items = cart.map(function (i) {
+    return { product_pk: i.pk || i.product_pk || i.id, quantity: i.qty || i.quantity || 1 };
+  }).filter(function (i) { return i.product_pk; });
+  if (!items.length) return;
+  /* Token from a rendered form, or from the csrftoken cookie (set on page
+     load) — needed when the server cart is empty and no forms exist. */
+  var tokEl = document.querySelector('[name=csrfmiddlewaretoken]');
+  var csrf = tokEl ? tokEl.value : '';
+  if (!csrf) {
+    var m = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
+    if (m) csrf = decodeURIComponent(m[1]);
+  }
+  fetch('/dashboards/cart/sync/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrf,
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+    body: JSON.stringify(items)
+  }).then(function (r) { return r.json(); }).then(function (data) {
+    var last = parseInt(sessionStorage.getItem('ckCartSyncAt') || '0', 10);
+    if (data && data.changed && Date.now() - last > 15000) {
+      sessionStorage.setItem('ckCartSyncAt', String(Date.now()));
+      window.location.reload();
+    }
+  }).catch(function () { /* offline: the localStorage view still renders */ });
+})();
+</script>
+<script>
 /* ── Compute fees using live server rates (DB-managed by admin) ── */
 (function () {
   /* Rates injected by the server so the page never disagrees with what

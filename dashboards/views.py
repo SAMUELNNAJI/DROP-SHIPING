@@ -1616,7 +1616,8 @@ def cart_sync(request):
     if not isinstance(payload, list):
         return JsonResponse({"error": "Expected a list of cart items."}, status=400)
 
-    synced = 0
+    # Resolve every payload entry into a desired {product_pk: (product, qty)} map.
+    desired = {}
     for entry in payload:
         raw = str(entry.get("product_pk") or entry.get("pk") or entry.get("id") or "").strip()
         try:
@@ -1639,25 +1640,34 @@ def cart_sync(request):
                 if candidate == target:
                     product = prod
                     break
-        if product is None:
-            continue
-        try:
-            item, created = CartItem.objects.get_or_create(
-                user=request.user,
-                product=product,
-                defaults={"quantity": qty},
-            )
-        except Exception:
-            continue
-        if not created:
-            # merge: keep whichever quantity is larger to avoid duplicate adds
-            if qty > item.quantity:
-                item.quantity = qty
-                item.save(update_fields=["quantity"])
-        synced += 1
+        if product is not None:
+            desired[product.pk] = (product, qty)
+
+    # The browser cart (localStorage dropdown) is the source of truth for a
+    # signed-in buyer: mirror it exactly into the DB and report whether
+    # anything differed, so checkout pages can reload once to re-render.
+    changed = False
+    existing = {item.product_id: item for item in CartItem.objects.filter(user=request.user)}
+
+    # Remove DB items the buyer no longer has in the browser cart.
+    for pid, item in existing.items():
+        if pid not in desired:
+            item.delete()
+            changed = True
+
+    # Upsert the rest with the exact browser quantity.
+    for pid, (product, qty) in desired.items():
+        item = existing.get(pid)
+        if item is None:
+            CartItem.objects.create(user=request.user, product=product, quantity=qty)
+            changed = True
+        elif item.quantity != qty:
+            item.quantity = qty
+            item.save(update_fields=["quantity"])
+            changed = True
 
     count = CartItem.objects.filter(user=request.user).aggregate(s=Sum("quantity"))["s"] or 0
-    return JsonResponse({"ok": True, "synced": synced, "count": int(count)})
+    return JsonResponse({"ok": True, "synced": len(desired), "count": int(count), "changed": changed})
 
 
 # Payments used to be "completed" here without contacting a provider, which

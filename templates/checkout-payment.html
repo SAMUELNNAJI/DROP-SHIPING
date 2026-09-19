@@ -486,27 +486,54 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <script src="/static/cart.js?v=6"></script>
 <script>
+/* ── Keep the server cart in step with the browser cart ──
+   Push the localStorage cart to the server on load; if the server copy
+   differed, reload once so the order summary renders the real cart
+   server-side (before Pay is even pressed). */
+(function () {
+  var cart = window.DropHubCart ? window.DropHubCart.getCart() : [];
+  if (!cart.length) return;
+  var items = cart.map(function (i) {
+    return { product_pk: i.pk || i.product_pk || i.id, quantity: i.qty || i.quantity || 1 };
+  }).filter(function (i) { return i.product_pk; });
+  if (!items.length) return;
+  var tokEl = document.querySelector('[name=csrfmiddlewaretoken]');
+  var csrf = tokEl ? tokEl.value : '';
+  if (!csrf) {
+    var m = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
+    if (m) csrf = decodeURIComponent(m[1]);
+  }
+  fetch('/dashboards/cart/sync/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrf,
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+    body: JSON.stringify(items)
+  }).then(function (r) { return r.json(); }).then(function (data) {
+    var last = parseInt(sessionStorage.getItem('ckCartSyncAt') || '0', 10);
+    if (data && data.changed && Date.now() - last > 15000) {
+      sessionStorage.setItem('ckCartSyncAt', String(Date.now()));
+      window.location.reload();
+    }
+  }).catch(function () { /* offline: the localStorage view still renders */ });
+})();
+</script>
+<script>
 /* Checkout payment page: sync subtotal + fees from cart/server */
 (function () {
-  /* Rates come from payment_config (already on the page) which reads
-     from the DB via CurrencyRate. Parse it early so recalculation is
-     consistent with whatever the payment JS will use. */
-  var _cfg = null;
-  try {
-    var _el = document.getElementById('paymentConfig');
-    if (_el) _cfg = JSON.parse(_el.textContent);
-  } catch (e) {}
-
-  var ESCROW_RATE   = _cfg ? (parseFloat((_cfg.fees || {}).escrow_pct   || 2) / 100) : 0.02;
-  var PLATFORM_RATE = _cfg ? (parseFloat((_cfg.fees || {}).platform_pct || 1) / 100) : 0.01;
-
-  /* Rates for formatting amounts in the currency of the rail the buyer is
-     currently on. Same server-injected rates the payment JS uses. */
-  var RATES = {
-    usd: 1,
-    ngn: _cfg ? (parseFloat((_cfg.rates || {}).ngn_per_usd) || 1600) : 1600,
-    pi:  _cfg ? (parseFloat((_cfg.rates || {}).pi_per_usd)  || 2)    : 2
-  };
+  /* Rates come from payment_config, which reads from the DB via CurrencyRate.
+     IMPORTANT: the paymentConfig JSON block sits later in the document, so it
+     must be read lazily (at recalc time) — capturing it at parse time used to
+     return null and silently fall back to hardcoded rates, making the
+     initially-selected Pi rail show a wrong amount. */
+  function getCfg() {
+    try {
+      var el = document.getElementById('paymentConfig');
+      return el ? JSON.parse(el.textContent) : null;
+    } catch (e) { return null; }
+  }
 
   function selectedCurrency() {
     var sel = document.querySelector('.ck-pay-option.is-selected');
@@ -516,36 +543,49 @@ document.addEventListener('DOMContentLoaded', function () {
     return 'usd';
   }
 
-  function fmtAmount(usd, cur) {
-    var v = usd * RATES[cur];
+  function rates() {
+    var cfg = getCfg() || {};
+    var r = cfg.rates || {};
+    var f = cfg.fees || {};
+    return {
+      escrow:   (parseFloat(f.escrow_pct)   || 2) / 100,
+      platform: (parseFloat(f.platform_pct) || 1) / 100,
+      ngn:      parseFloat(r.ngn_per_usd) || 1600,
+      pi:       parseFloat(r.pi_per_usd)  || 2
+    };
+  }
+
+  function fmtAmount(usd, cur, rt) {
+    var v = usd * (cur === 'ngn' ? rt.ngn : cur === 'pi' ? rt.pi : 1);
     if (cur === 'ngn') return '\u20a6' + Math.round(v).toLocaleString();
     if (cur === 'pi')  return '\u03c0' + v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     return '$' + v.toFixed(2);
   }
 
   function recalc(subtotal) {
-    var escrow   = subtotal * ESCROW_RATE;
-    var platform = subtotal * PLATFORM_RATE;
+    var rt       = rates();
+    var escrow   = subtotal * rt.escrow;
+    var platform = subtotal * rt.platform;
     var total    = subtotal + escrow + platform;
     var cur      = selectedCurrency();
 
     /* Cart dropdown subtotal */
     var sd = document.getElementById("ckPaySubtotal");
-    if (sd) sd.innerHTML = fmtAmount(subtotal, cur);
+    if (sd) sd.innerHTML = fmtAmount(subtotal, cur, rt);
 
     /* Order summary rows */
     var sEl = document.getElementById("paySubtotalAmt");
-    if (sEl) { sEl.textContent = fmtAmount(subtotal, cur); sEl.setAttribute("data-usd", subtotal.toFixed(2)); }
+    if (sEl) { sEl.textContent = fmtAmount(subtotal, cur, rt); sEl.setAttribute("data-usd", subtotal.toFixed(2)); }
     var eEl = document.getElementById("payEscrowAmt");
-    if (eEl) { eEl.textContent = fmtAmount(escrow, cur); eEl.setAttribute("data-usd", escrow.toFixed(2)); }
+    if (eEl) { eEl.textContent = fmtAmount(escrow, cur, rt); eEl.setAttribute("data-usd", escrow.toFixed(2)); }
     var pEl = document.getElementById("payPlatformAmt");
-    if (pEl) { pEl.textContent = fmtAmount(platform, cur); pEl.setAttribute("data-usd", platform.toFixed(2)); }
+    if (pEl) { pEl.textContent = fmtAmount(platform, cur, rt); pEl.setAttribute("data-usd", platform.toFixed(2)); }
     var tEl = document.getElementById("payTotalAmt");
-    if (tEl) { tEl.textContent = fmtAmount(total, cur); tEl.setAttribute("data-usd", total.toFixed(2)); }
+    if (tEl) { tEl.textContent = fmtAmount(total, cur, rt); tEl.setAttribute("data-usd", total.toFixed(2)); }
 
     /* Pay button amount */
     var btn = document.querySelector("#payBtn .ck-currency");
-    if (btn) { btn.textContent = fmtAmount(total, cur); btn.setAttribute("data-usd", total.toFixed(2)); }
+    if (btn) { btn.textContent = fmtAmount(total, cur, rt); btn.setAttribute("data-usd", total.toFixed(2)); }
   }
 
   function getSubtotal() {
@@ -561,8 +601,13 @@ document.addEventListener('DOMContentLoaded', function () {
     return 0;
   }
 
-  /* Run immediately (server-rendered subtotal is already available) */
-  recalc(getSubtotal());
+  /* Run immediately only if the paymentConfig block is already in the DOM.
+     If it isn't (this script sits above it), skip — DOMContentLoaded below
+     runs recalc with the real DB rates, and the rails script has already
+     applied the correct currency by then. */
+  if (document.getElementById('paymentConfig')) {
+    recalc(getSubtotal());
+  }
 
   /* Also re-run after cart.js?v=6 finishes rendering (guest flow) */
   document.addEventListener("DOMContentLoaded", function () {
@@ -589,7 +634,7 @@ document.addEventListener('DOMContentLoaded', function () {
           + '<p class="ck-sum-qty">&times;' + (item.qty || 1) + "</p>"
           + "</div>"
           + '<span class="ck-sum-price ck-mono ck-currency" data-usd="' + ((item.price || 0) * (item.qty || 1)).toFixed(2) + '">'
-          + fmtAmount((item.price || 0) * (item.qty || 1), selectedCurrency())
+          + fmtAmount((item.price || 0) * (item.qty || 1), selectedCurrency(), rates())
           + "</span>"
           + "</div>";
       });

@@ -228,6 +228,9 @@ def _remember_for_success_page(request, intent):
     request.session['last_payment_awaiting_confirmation'] = (
         intent.status != PaymentIntent.STATUS_PAID
     )
+    # Store the reference so the success page can show expected totals for
+    # Pi payments that are still awaiting admin verification (no orders yet).
+    request.session['last_intent_reference'] = intent.reference
 
 
 # ══════════════════════════════════════════════════════════════

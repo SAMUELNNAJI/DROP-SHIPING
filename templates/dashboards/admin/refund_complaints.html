@@ -1,0 +1,123 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Refund Complaints">
+
+<!-- Header -->
+<div class="ahead">
+  <div class="ahead__row">
+    <div>
+      <span class="ahead__chip">
+        <svg class="sic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+        Dispute management
+      </span>
+      <h2>Refund Complaints</h2>
+      <p>Review buyer disputes, message them directly and approve or reject refunds.</p>
+    </div>
+    <div class="ahead__actions" style="flex-wrap:wrap;gap:10px">
+      <div class="aokpi aokpi--amber" style="min-width:90px">
+        <div class="aokpi__body"><span>Open</span><b>{{ counts.open }}</b></div>
+      </div>
+      <div class="aokpi" style="min-width:90px">
+        <div class="aokpi__body"><span>In Review</span><b>{{ counts.in_review }}</b></div>
+      </div>
+      <div class="aokpi aokpi--green" style="min-width:90px">
+        <div class="aokpi__body"><span>Resolved</span><b>{{ counts.resolved }}</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Filter tabs -->
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+  {% for key, label in status_choices %}
+  <a href="?status={{ key }}"
+     class="admin-tab {% if status_filter == key %}active{% endif %}">
+    {{ label }}
+    {% if key == 'open' and counts.open %}<span style="background:#e5484d;color:#fff;border-radius:999px;padding:1px 7px;font-size:10px;font-weight:800;margin-left:4px">{{ counts.open }}</span>{% endif %}
+  </a>
+  {% endfor %}
+  <a href="?status=all" class="admin-tab {% if status_filter == 'all' %}active{% endif %}">All ({{ counts.all }})</a>
+</div>
+
+<!-- Table -->
+<div class="dashboard-panel">
+  {% if complaints %}
+  <div class="dashboard-table-wrap">
+    <table class="dashboard-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Order</th>
+          <th>Product &amp; Seller</th>
+          <th>Buyer</th>
+          <th>Complaint</th>
+          <th>Refund to</th>
+          <th>Status</th>
+          <th>Submitted</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in complaints %}
+        <tr>
+          <td><b class="table-link">#{{ c.pk }}</b></td>
+          <td>
+            <b>{{ c.order.order_number }}</b><br>
+            <small class="muted">${{ c.order.total_price }}</small>
+          </td>
+          <td>
+            <div style="display:flex;align-items:center;gap:9px">
+              {% if c.order.product_image %}
+              <img src="{{ c.order.product_image }}" alt=""
+                   style="width:34px;height:34px;border-radius:7px;object-fit:cover;border:1px solid rgba(28,48,86,.1);flex-shrink:0"
+                   onerror="this.style.display='none'" />
+              {% endif %}
+              <div>
+                <strong style="display:block;font-size:13px">{{ c.order.product_name|truncatechars:28 }}</strong>
+                <small class="muted">{{ c.order.store_name|truncatechars:20 }}</small><br>
+                <small style="color:var(--ablue,#2456e6);font-weight:700">{{ c.order.seller.username }}</small>
+              </div>
+            </div>
+          </td>
+          <td>
+            <b>{{ c.buyer.username }}</b><br>
+            <small class="muted">{{ c.buyer.email|truncatechars:22 }}</small>
+          </td>
+          <td style="max-width:220px">
+            <span style="font-size:12.5px">{{ c.reason|truncatechars:80 }}</span>
+          </td>
+          <td>
+            {% if c.refund_method == 'bank' %}
+            <span style="font-size:12px">{{ c.refund_bank_name }}<br>{{ c.refund_account_no }}<br>{{ c.refund_account_name }}</span>
+            {% elif c.refund_method %}
+            <span style="font-size:12px;text-transform:capitalize">{{ c.refund_method }}<br>{{ c.refund_wallet|truncatechars:22 }}</span>
+            {% else %}<span class="muted">—</span>{% endif %}
+          </td>
+          <td><span class="pill {{ c.status_css }}"><i></i>{{ c.get_status_display }}</span></td>
+          <td><small class="muted">{{ c.created_at|date:"N j, Y" }}</small></td>
+          <td>
+            {% if c.unread_by_admin %}
+            <span style="background:#e5484d;color:#fff;border-radius:999px;padding:2px 8px;font-size:10.5px;font-weight:800;margin-right:6px">{{ c.unread_by_admin }} new</span>
+            {% endif %}
+            <a href="{% url 'admin_refund_complaint_detail' c.pk %}"
+               class="table-action" data-dashboard-link>
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Review
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-dashboard">
+    <div class="aempty__art"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg></div>
+    <h4>No complaints</h4>
+    <p>No refund complaints match this filter.</p>
+  </div>
+  {% endif %}
+</div>
+
+</div>
+
+{% comment %}Pass status_choices to template context via view{% endcomment %}

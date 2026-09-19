@@ -155,7 +155,36 @@
       <div class="scard__head">
         <div><h3>Payout history</h3><p>All withdrawal records</p></div>
       </div>
-      {% if payout_history %}
+      {% if payout_records %}
+      <div class="tablex-wrap">
+        <table class="stable">
+          <thead>
+            <tr><th>Date</th><th>Order</th><th>Destination</th><th>Amount</th><th>Note</th></tr>
+          </thead>
+          <tbody>
+            {% for rec in payout_records %}
+            <tr>
+              <td>{{ rec.paid_at|date:"M j · H:i" }}</td>
+              <td><b>{% if rec.order %}{{ rec.order.order_number }}{% else %}—{% endif %}</b></td>
+              <td>
+                {% if rec.payout_method %}
+                  {% if rec.payout_method.method == 'bank' %}
+                  <b>{{ rec.payout_method.bank_name }}</b><br>
+                  <small style="color:#6b7a90">{{ rec.payout_method.masked_account }} · {{ rec.payout_method.account_name|truncatechars:20 }}</small>
+                  {% else %}
+                  <b>{{ rec.payout_method.get_method_display }}</b><br>
+                  <small style="color:#6b7a90">{{ rec.payout_method.wallet_address|truncatechars:22 }}</small>
+                  {% endif %}
+                {% else %}—{% endif %}
+              </td>
+              <td><b style="color:var(--sgreen)">${{ rec.amount|floatformat:2 }}</b></td>
+              <td><small style="color:#6b7a90">{{ rec.note|truncatechars:40|default:"—" }}</small></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% elif payout_history %}
       <div class="tablex-wrap">
         <table class="stable">
           <thead>
@@ -180,7 +209,7 @@
       <div class="emptyx" style="padding:24px">
         <div class="emptyx__art" style="font-size:22px">💸</div>
         <h4>No payouts yet</h4>
-        <p>Your withdrawal history will appear here once you request your first payout.</p>
+        <p>Your withdrawal history will appear here once admin marks your first payout as sent.</p>
       </div>
       {% endif %}
     </div>

@@ -1,0 +1,280 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Seller Payouts">
+
+<!-- ── Header banner ── -->
+<div class="ahead" style="margin-bottom:18px">
+  <div class="ahead__row">
+    <div>
+      <span class="ahead__chip">
+        <svg class="sic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M17 6.5c0-1.6-2.2-2.5-5-2.5S7 5.1 7 6.9c0 4.4 10 2 10 6.6 0 1.8-2.2 2.9-5 2.9s-5-1-5-2.9"/></svg>
+        Finance
+      </span>
+      <h2>Seller Payouts</h2>
+      <p>Buyers have confirmed delivery — manually transfer earnings to each seller then mark as paid.</p>
+    </div>
+    <div class="ahead__actions">
+      <div class="aokpi aokpi--amber">
+        <div class="aokpi__body">
+          <span>Pending</span>
+          <b>{{ pending_orders|length }}</b>
+        </div>
+      </div>
+      <div class="aokpi aokpi--blue">
+        <div class="aokpi__body">
+          <span>Total owed</span>
+          <b>${{ pending_total|floatformat:2 }}</b>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PENDING PAYOUTS
+══════════════════════════════════════════ -->
+{% if pending_orders %}
+<div class="dashboard-panel" style="margin-bottom:20px">
+  <div class="panel-heading">
+    <h3>Awaiting payment</h3>
+    <span class="panel-meta">{{ pending_orders|length }} order{{ pending_orders|length|pluralize }}</span>
+  </div>
+  <div class="dashboard-table-wrap">
+    <table class="dashboard-table">
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Buyer</th>
+          <th>Seller</th>
+          <th>Confirmed</th>
+          <th>Amount</th>
+          <th>Seller's payout account</th>
+          <th>Note</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in pending_orders %}
+        {% with pm=order.seller.payout_methods.all|first %}
+        <tr id="payout-row-{{ order.pk }}">
+          <td>
+            <b class="table-link">{{ order.order_number }}</b><br>
+            <small class="muted">{{ order.payment_method|capfirst }}</small>
+          </td>
+          <td>
+            <b>{{ order.buyer.username }}</b><br>
+            <small class="muted">{{ order.buyer.email|truncatechars:22 }}</small>
+          </td>
+          <td>
+            <b>{{ order.seller.username }}</b><br>
+            <small class="muted">{{ order.seller.email|truncatechars:22 }}</small>
+          </td>
+          <td>
+            <small>{{ order.confirmed_at|date:"N j, Y" }}</small><br>
+            <small class="muted">{{ order.confirmed_at|date:"H:i" }}</small>
+          </td>
+          <td>
+            <b style="font-size:16px;color:var(--atext)">${{ order.total_price|floatformat:2 }}</b>
+          </td>
+          <td>
+            {% if pm %}
+              {% if pm.method == 'bank' %}
+              <div class="sp-account-card sp-account-card--bank">
+                <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22h18M5 10v12M9.5 10v12M14.5 10v12M19 10v12M12 3 3 10h18z"/></svg>
+                <div>
+                  <strong>{{ pm.bank_name }}</strong>
+                  <span>{{ pm.account_number }} · {{ pm.account_name }}</span>
+                  <em>{{ pm.get_currency_display }}</em>
+                </div>
+              </div>
+              {% elif pm.method == 'pi' %}
+              <div class="sp-account-card sp-account-card--pi">
+                <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 8h3.8a2.2 2.2 0 0 1 0 4.4H9.5V8zM9.5 12.4V16"/></svg>
+                <div>
+                  <strong>Pi Wallet</strong>
+                  <span>{{ pm.wallet_address|truncatechars:28 }}</span>
+                </div>
+              </div>
+              {% elif pm.method == 'paypal' %}
+              <div class="sp-account-card sp-account-card--paypal">
+                <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                <div>
+                  <strong>PayPal</strong>
+                  <span>{{ pm.wallet_address|truncatechars:28 }}</span>
+                </div>
+              </div>
+              {% endif %}
+            {% else %}
+            <span class="pill pill-rose"><i></i>No payout method set</span>
+            {% endif %}
+          </td>
+          <td>
+            <input type="text" id="note-{{ order.pk }}" class="admin-search-input"
+                   style="width:160px;font-size:12px"
+                   placeholder="Optional note…"
+                   value="Payout for {{ order.order_number }}" />
+          </td>
+          <td>
+            <button class="table-action table-action--green sp-mark-paid-btn"
+                    data-pk="{{ order.pk }}"
+                    data-num="{{ order.order_number }}"
+                    data-amount="{{ order.total_price|floatformat:2 }}"
+                    data-url="{% url 'order_release_payout' order.pk %}"
+                    data-note-id="note-{{ order.pk }}">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>
+              Mark as paid
+            </button>
+          </td>
+        </tr>
+        {% endwith %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="apanel" style="padding:48px 24px;text-align:center;margin-bottom:20px">
+  <div class="aempty__art" style="margin:0 auto 14px"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M17 6.5c0-1.6-2.2-2.5-5-2.5S7 5.1 7 6.9c0 4.4 10 2 10 6.6 0 1.8-2.2 2.9-5 2.9s-5-1-5-2.9"/></svg></div>
+  <h4 style="margin:0 0 6px;color:var(--atext)">All clear</h4>
+  <p style="color:var(--amuted);font-size:14px;margin:0">No confirmed orders awaiting seller payment right now.</p>
+</div>
+{% endif %}
+
+<!-- ══════════════════════════════════════
+     PAID HISTORY
+══════════════════════════════════════════ -->
+<div class="dashboard-panel">
+  <div class="panel-heading">
+    <h3>Payment history</h3>
+    <span class="panel-meta panel-meta--blue">Last 50 records</span>
+  </div>
+  {% if paid_records %}
+  <div class="dashboard-table-wrap">
+    <table class="dashboard-table">
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Seller</th>
+          <th>Amount</th>
+          <th>Paid to</th>
+          <th>Note</th>
+          <th>Paid by</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rec in paid_records %}
+        <tr>
+          <td>
+            {% if rec.order %}<b>{{ rec.order.order_number }}</b>{% else %}<span class="muted">—</span>{% endif %}
+          </td>
+          <td><b>{{ rec.seller.username }}</b></td>
+          <td><b>${{ rec.amount|floatformat:2 }}</b></td>
+          <td>
+            {% if rec.payout_method %}
+              {% if rec.payout_method.method == 'bank' %}
+              <small>{{ rec.payout_method.bank_name }} · {{ rec.payout_method.masked_account }}</small>
+              {% else %}
+              <small>{{ rec.payout_method.get_method_display }} · {{ rec.payout_method.wallet_address|truncatechars:20 }}</small>
+              {% endif %}
+            {% else %}<span class="muted">—</span>{% endif %}
+          </td>
+          <td><small class="muted">{{ rec.note|truncatechars:40|default:"—" }}</small></td>
+          <td><small>{{ rec.paid_by.username|default:"—" }}</small></td>
+          <td><small>{{ rec.paid_at|date:"N j, Y · H:i" }}</small></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div style="padding:32px;text-align:center;color:var(--amuted);font-size:13.5px">No payout records yet.</div>
+  {% endif %}
+</div>
+
+</div><!-- /.dashboard-page -->
+
+<style>
+/* ── Seller account cards ── */
+.sp-account-card {
+  display: flex; align-items: flex-start; gap: 9px;
+  padding: 10px 12px;
+  border-radius: 11px;
+  border: 1px solid rgba(28,48,86,.1);
+  background: rgba(248,250,255,.9);
+  min-width: 180px;
+}
+.sp-account-card svg { width: 17px; height: 17px; flex-shrink: 0; margin-top: 2px; }
+.sp-account-card div { display: flex; flex-direction: column; gap: 2px; }
+.sp-account-card strong { font-size: 12.5px; font-weight: 800; color: var(--atext); }
+.sp-account-card span  { font-size: 11.5px; color: var(--amuted); }
+.sp-account-card em    { font-size: 10.5px; font-weight: 700; font-style: normal; letter-spacing: .04em; color: var(--afaint); }
+.sp-account-card--bank    { border-color: rgba(36,86,230,.18); }
+.sp-account-card--bank svg { color: #2456e6; }
+.sp-account-card--pi      { border-color: rgba(112,72,232,.2); background: rgba(237,233,251,.6); }
+.sp-account-card--pi svg  { color: #7048e8; }
+.sp-account-card--paypal  { border-color: rgba(0,112,186,.18); background: rgba(230,243,255,.6); }
+.sp-account-card--paypal svg { color: #003087; }
+</style>
+
+<script>
+(function () {
+  document.querySelectorAll('.sp-mark-paid-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var num    = btn.dataset.num;
+      var amount = btn.dataset.amount;
+      var url    = btn.dataset.url;
+      var noteId = btn.dataset.noteId;
+      var note   = (document.getElementById(noteId) || {}).value || '';
+      var csrf   = document.querySelector('[name=csrfmiddlewaretoken]');
+      var csrfVal = csrf ? csrf.value : '';
+
+      if (!confirm('Mark order ' + num + ' ($' + amount + ') as paid to the seller?\n\nThis creates a permanent payout record. Make sure you have already sent the money.')) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Saving…';
+
+      var body = 'note=' + encodeURIComponent(note);
+      if (csrfVal) body += '&csrfmiddlewaretoken=' + encodeURIComponent(csrfVal);
+
+      fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+        body: body,
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.ok) {
+          var row = document.getElementById('payout-row-' + btn.dataset.pk);
+          if (row) {
+            row.style.transition = 'opacity .3s';
+            row.style.opacity = '0';
+            setTimeout(function () { row.remove(); }, 320);
+          }
+          /* Flash a success message */
+          var banner = document.createElement('div');
+          banner.style.cssText = 'position:fixed;top:22px;right:22px;z-index:9999;background:#0ca678;color:#fff;padding:13px 20px;border-radius:12px;font-size:13.5px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.18)';
+          banner.textContent = '✓ Payout marked as sent for ' + num;
+          document.body.appendChild(banner);
+          setTimeout(function () { banner.remove(); }, 3500);
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Mark as paid';
+          alert('Error: ' + (data.error || 'Could not save.'));
+        }
+      })
+      .catch(function () {
+        btn.disabled = false;
+        btn.textContent = 'Mark as paid';
+        alert('Network error. Please try again.');
+      });
+    });
+  });
+
+  /* Add a CSRF token hidden input to the page for the JS fetch */
+  var t = document.createElement('input');
+  t.type = 'hidden';
+  t.name = 'csrfmiddlewaretoken';
+  t.value = '{{ csrf_token }}';
+  document.body.appendChild(t);
+})();
+</script>

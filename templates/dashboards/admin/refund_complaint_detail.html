@@ -1,0 +1,291 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Refund #{{ complaint.pk }}">
+
+<!-- Back -->
+<a class="pform-back" href="{% url 'admin_refund_complaints' %}" data-dashboard-link>
+  <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+  Back to complaints
+</a>
+
+<!-- ── Header banner ── -->
+<div class="ahead" style="margin-bottom:18px">
+  <div class="ahead__row">
+    <div>
+      <span class="ahead__chip">
+        <svg class="sic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+        Refund Complaint #{{ complaint.pk }}
+      </span>
+      <h2>{{ complaint.order.order_number }}</h2>
+      <p>Buyer: <strong>{{ complaint.buyer.username }}</strong> · {{ complaint.buyer.email }} · Submitted {{ complaint.created_at|date:"N j, Y · H:i" }}</p>
+    </div>
+    <div class="ahead__actions">
+      <span class="pill
+        {% if complaint.status == 'open' %}pill-yellow
+        {% elif complaint.status == 'in_review' %}pill-blue
+        {% elif complaint.status == 'resolved' %}pill-green
+        {% else %}pill-rose{% endif %}">
+        <i></i>{{ complaint.get_status_display }}
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="achart-row" style="align-items:start">
+
+  <!-- ── LEFT: Message thread ── -->
+  <div class="apanel" style="display:flex;flex-direction:column;gap:0;padding:0;overflow:hidden">
+
+    <div style="padding:18px 20px 14px;border-bottom:1px solid rgba(28,48,86,.08);background:#fafbff">
+      <h3 style="margin:0;font-size:15px;font-weight:800;color:var(--atext)">Message thread</h3>
+      <p style="margin:4px 0 0;font-size:12.5px;color:var(--amuted)">Messages are delivered to the buyer's order page in real time.</p>
+    </div>
+
+    <!-- Messages -->
+    <div class="rcd-messages" id="rcdMessages">
+      {% for msg in complaint.messages.all %}
+      <div class="rcd-msg {% if msg.is_admin %}rcd-msg--admin{% else %}rcd-msg--buyer{% endif %}">
+        <div class="rcd-msg__avatar">
+          {{ msg.sender.username|first|upper }}
+        </div>
+        <div class="rcd-msg__body">
+          <div class="rcd-msg__meta">
+            <strong>{{ msg.sender.username }}</strong>
+            {% if msg.is_admin %}<span class="pill pill-blue" style="font-size:10px;padding:2px 8px">Admin</span>{% endif %}
+            <small>{{ msg.created_at|date:"N j, Y · H:i" }}</small>
+          </div>
+          <div class="rcd-msg__bubble">{{ msg.body }}</div>
+        </div>
+      </div>
+      {% empty %}
+      <div style="padding:32px;text-align:center;color:var(--amuted);font-size:13.5px">
+        No messages yet. Send the first reply to the buyer below.
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Reply box -->
+    {% if complaint.status not in "resolved,rejected" %}
+    <form method="post" action="" style="border-top:1px solid rgba(28,48,86,.08);background:#fff">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="message" />
+      <div style="padding:14px 18px;display:flex;gap:10px;align-items:flex-end">
+        <textarea name="body" rows="3"
+                  placeholder="Type your message to the buyer…"
+                  style="flex:1;border:1.5px solid rgba(28,48,86,.13);border-radius:11px;padding:10px 13px;font:inherit;font-size:13.5px;background:#f8faff;resize:vertical;outline:none;box-sizing:border-box;transition:border-color .18s"
+                  required></textarea>
+        <button type="submit" class="abtn abtn--primary" style="flex-shrink:0;align-self:flex-end">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Send
+        </button>
+      </div>
+    </form>
+    {% else %}
+    <div style="padding:14px 18px;background:#f8faff;border-top:1px solid rgba(28,48,86,.08);font-size:13px;color:var(--amuted);text-align:center">
+      This complaint is <strong>{{ complaint.get_status_display }}</strong> — no further replies.
+    </div>
+    {% endif %}
+  </div><!-- /.apanel thread -->
+
+  <!-- ── RIGHT: Complaint details + actions ── -->
+  <div style="display:flex;flex-direction:column;gap:14px">
+
+    <!-- Complaint info -->
+    <div class="apanel">
+      <div class="apanel__head"><h3>Complaint details</h3></div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;padding:0 22px 20px">
+        <div class="rcd-info-row">
+          <span>Order</span>
+          <strong>{{ complaint.order.order_number }} · ${{ complaint.order.total_price }}</strong>
+        </div>
+        <!-- Product -->
+        <div class="rcd-info-row">
+          <span>Product</span>
+          <div style="display:flex;align-items:center;gap:10px">
+            {% if complaint.order.product_image %}
+            <img src="{{ complaint.order.product_image }}" alt=""
+                 style="width:38px;height:38px;border-radius:8px;object-fit:cover;border:1px solid rgba(28,48,86,.1);flex-shrink:0"
+                 onerror="this.style.display='none'" />
+            {% endif %}
+            <div>
+              <strong style="display:block;font-size:13.5px">{{ complaint.order.product_name }}</strong>
+              <small style="color:var(--amuted)">{{ complaint.order.store_name }}</small>
+            </div>
+          </div>
+        </div>
+        <!-- Seller -->
+        <div class="rcd-info-row">
+          <span>Seller</span>
+          <div>
+            <strong style="display:block">{{ complaint.order.seller.username }}</strong>
+            <small style="color:var(--amuted)">{{ complaint.order.seller.email }}</small>
+            {% with pm=complaint.order.seller.payout_methods.all|first %}
+            {% if pm %}
+            <small style="color:var(--amuted);display:block;margin-top:2px">
+              Payout:
+              {% if pm.method == 'bank' %}{{ pm.bank_name }} · {{ pm.account_number }} ({{ pm.account_name }})
+              {% elif pm.method == 'pi' %}Pi · {{ pm.wallet_address|truncatechars:24 }}
+              {% else %}PayPal · {{ pm.wallet_address|truncatechars:24 }}{% endif %}
+            </small>
+            {% else %}
+            <small style="color:#e5484d;display:block;margin-top:2px">No payout method on file</small>
+            {% endif %}
+            {% endwith %}
+          </div>
+        </div>
+        <div class="rcd-info-row">
+          <span>Payment method</span>
+          <strong>{{ complaint.order.get_payment_method_display }}</strong>
+        </div>
+        <div class="rcd-info-row">
+          <span>Order status</span>
+          <span class="pill {{ complaint.order.status_css }}"><i></i>{{ complaint.order.status_label }}</span>
+        </div>
+        <div class="rcd-info-row">
+          <span>Reason</span>
+          <p style="margin:0;font-size:13px;color:var(--atext);line-height:1.6">{{ complaint.reason }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Refund account -->
+    <div class="apanel">
+      <div class="apanel__head"><h3>Buyer's refund account</h3></div>
+      <div style="display:flex;flex-direction:column;gap:10px;padding:0 22px 20px">
+        {% if complaint.refund_method %}
+        <div class="rcd-info-row">
+          <span>Method</span>
+          <strong style="text-transform:capitalize">{{ complaint.refund_method }}</strong>
+        </div>
+        {% if complaint.refund_method == 'bank' %}
+        <div class="rcd-info-row"><span>Bank</span><strong>{{ complaint.refund_bank_name }}</strong></div>
+        <div class="rcd-info-row"><span>Account No.</span><strong>{{ complaint.refund_account_no }}</strong></div>
+        <div class="rcd-info-row"><span>Account Name</span><strong>{{ complaint.refund_account_name }}</strong></div>
+        {% else %}
+        <div class="rcd-info-row"><span>Wallet / Email</span><strong>{{ complaint.refund_wallet }}</strong></div>
+        {% endif %}
+        {% else %}
+        <p style="color:var(--amuted);font-size:13px;margin:0">Buyer did not provide refund account details.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Resolution actions -->
+    {% if complaint.status not in "resolved,rejected" %}
+    <div class="apanel">
+      <div class="apanel__head"><h3>Resolution</h3></div>
+      <div style="padding:0 22px 20px;display:flex;flex-direction:column;gap:14px">
+
+        <!-- Approve -->
+        <form method="post" action="">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="resolve" />
+          <div style="margin-bottom:10px">
+            <label style="font-size:12.5px;font-weight:700;color:var(--atext);display:block;margin-bottom:5px">Admin note (sent to buyer)</label>
+            <textarea name="admin_note" rows="2"
+                      placeholder="e.g. Refund approved — please allow 2–5 business days."
+                      style="width:100%;border:1.5px solid rgba(28,48,86,.13);border-radius:11px;padding:9px 12px;font:inherit;font-size:13px;background:#f8faff;resize:none;outline:none;box-sizing:border-box"></textarea>
+          </div>
+          <button type="submit" class="abtn abtn--primary" style="width:100%;justify-content:center"
+                  onclick="return confirm('Approve refund for order {{ complaint.order.order_number }}? This will mark the order as Refunded.')">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>
+            Approve refund
+          </button>
+        </form>
+
+        <div style="display:flex;align-items:center;gap:10px;color:var(--afaint);font-size:11.5px">
+          <div style="flex:1;height:1px;background:rgba(28,48,86,.08)"></div>or<div style="flex:1;height:1px;background:rgba(28,48,86,.08)"></div>
+        </div>
+
+        <!-- Reject -->
+        <form method="post" action="">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="reject" />
+          <div style="margin-bottom:10px">
+            <textarea name="admin_note" rows="2"
+                      placeholder="Reason for rejection (sent to buyer)…"
+                      style="width:100%;border:1.5px solid rgba(28,48,86,.13);border-radius:11px;padding:9px 12px;font:inherit;font-size:13px;background:#f8faff;resize:none;outline:none;box-sizing:border-box"></textarea>
+          </div>
+          <button type="submit" class="abtn abtn--ghost" style="width:100%;justify-content:center;border-color:rgba(229,72,77,.3);color:#b4232a"
+                  onclick="return confirm('Reject this refund complaint?')">
+            <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+            Reject complaint
+          </button>
+        </form>
+      </div>
+    </div>
+    {% elif complaint.admin_note %}
+    <div class="apanel">
+      <div class="apanel__head"><h3>Admin note</h3></div>
+      <p style="padding:0 22px 20px;font-size:13.5px;color:var(--atext);margin:0;line-height:1.6">{{ complaint.admin_note }}</p>
+    </div>
+    {% endif %}
+
+  </div><!-- /.right col -->
+</div><!-- /.achart-row -->
+
+</div><!-- /.dashboard-page -->
+
+<style>
+.rcd-messages {
+  padding: 18px 20px;
+  display: flex; flex-direction: column; gap: 16px;
+  min-height: 200px; max-height: 480px; overflow-y: auto;
+}
+.rcd-msg { display: flex; gap: 12px; align-items: flex-start; }
+.rcd-msg--admin { flex-direction: row; }
+.rcd-msg--buyer { flex-direction: row-reverse; }
+.rcd-msg__avatar {
+  width: 36px; height: 36px; flex-shrink: 0;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 14px; font-weight: 800; color: #fff;
+}
+.rcd-msg--admin .rcd-msg__avatar  { background: linear-gradient(135deg,#2456e6,#1a41b4); }
+.rcd-msg--buyer .rcd-msg__avatar  { background: linear-gradient(135deg,#7048e8,#a78bfa); }
+.rcd-msg__body { flex: 1; min-width: 0; }
+.rcd-msg--buyer .rcd-msg__body { align-items: flex-end; display: flex; flex-direction: column; }
+.rcd-msg__meta {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 5px; font-size: 12px;
+}
+.rcd-msg--buyer .rcd-msg__meta { flex-direction: row-reverse; }
+.rcd-msg__meta strong { font-size: 12.5px; color: var(--atext); font-weight: 700; }
+.rcd-msg__meta small  { color: var(--afaint); }
+.rcd-msg__bubble {
+  display: inline-block;
+  max-width: 85%;
+  padding: 11px 14px;
+  border-radius: 14px;
+  font-size: 13.5px; line-height: 1.6;
+  white-space: pre-wrap;
+}
+.rcd-msg--admin .rcd-msg__bubble {
+  background: rgba(36,86,230,.06);
+  border: 1px solid rgba(36,86,230,.14);
+  color: var(--atext);
+  border-bottom-left-radius: 4px;
+}
+.rcd-msg--buyer .rcd-msg__bubble {
+  background: #7048e8;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.rcd-info-row {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(28,48,86,.06);
+  font-size: 13px;
+}
+.rcd-info-row:last-child { border-bottom: none; }
+.rcd-info-row > span:first-child { color: var(--amuted); font-weight: 600; flex-shrink: 0; }
+</style>
+
+<script>
+/* Auto-scroll messages to bottom */
+(function () {
+  var box = document.getElementById('rcdMessages');
+  if (box) box.scrollTop = box.scrollHeight;
+})();
+</script>

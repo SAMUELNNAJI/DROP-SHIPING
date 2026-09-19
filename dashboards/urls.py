@@ -44,6 +44,16 @@ urlpatterns = [
     path("orders/<int:pk>/release-payout/", views.order_release_payout, name="order_release_payout"),
     path("orders/<int:pk>/refund/approve/", views.order_admin_refund, name="order_admin_refund"),
 
+    # ── Buyer: refund complaint reply ─────────────────────────
+    path("refund-complaints/<int:complaint_pk>/reply/", views.buyer_refund_reply, name="buyer_refund_reply"),
+
+    # ── Admin: refund complaints ──────────────────────────────
+    path("admin/refunds/", views.admin_refund_complaints, name="admin_refund_complaints"),
+    path("admin/refunds/<int:pk>/", views.admin_refund_complaint_detail, name="admin_refund_complaint_detail"),
+
+    # ── Admin: seller payouts ─────────────────────────────────
+    path("admin/seller-payouts/", views.admin_seller_payouts, name="admin_seller_payouts"),
+
     # ── Seller: payouts ───────────────────────────────────────
     path("seller/payouts/save-method/", views.seller_save_payout_method, name="seller_save_payout_method"),
     path("seller/payouts/delete-method/<int:pk>/", views.seller_delete_payout_method, name="seller_delete_payout_method"),

@@ -693,3 +693,137 @@ class PaymentIntent(models.Model):
         return self.status == self.STATUS_PI_PENDING
 
 
+
+
+# ══════════════════════════════════════════════════════════════
+#  REFUND COMPLAINTS & MESSAGING
+# ══════════════════════════════════════════════════════════════
+
+class RefundComplaint(models.Model):
+    """Created when a buyer requests a refund. Holds the complaint details
+    and acts as the parent for the admin↔buyer message thread."""
+
+    STATUS_OPEN       = "open"
+    STATUS_IN_REVIEW  = "in_review"
+    STATUS_RESOLVED   = "resolved"
+    STATUS_REJECTED   = "rejected"
+
+    STATUS_CHOICES = [
+        (STATUS_OPEN,      "Open"),
+        (STATUS_IN_REVIEW, "In Review"),
+        (STATUS_RESOLVED,  "Resolved — Refund Approved"),
+        (STATUS_REJECTED,  "Rejected"),
+    ]
+
+    order  = models.OneToOneField(
+        Order, on_delete=models.CASCADE, related_name="refund_complaint"
+    )
+    buyer  = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+        related_name="refund_complaints"
+    )
+
+    # What happened in the buyer's own words
+    reason = models.TextField()
+
+    # Refund destination filled in by the buyer at submission time
+    refund_method      = models.CharField(max_length=20, blank=True, default="")
+    refund_bank_name   = models.CharField(max_length=120, blank=True, default="")
+    refund_account_no  = models.CharField(max_length=60, blank=True, default="")
+    refund_account_name = models.CharField(max_length=120, blank=True, default="")
+    refund_wallet      = models.CharField(max_length=200, blank=True, default="")
+
+    status     = models.CharField(max_length=12, choices=STATUS_CHOICES, default=STATUS_OPEN)
+    admin_note = models.TextField(blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name        = "Refund Complaint"
+        verbose_name_plural = "Refund Complaints"
+
+    def __str__(self):
+        return f"Refund #{self.pk} — {self.order.order_number} ({self.get_status_display()})"
+
+    @property
+    def status_css(self):
+        return {
+            "open":      "statusx--warn",
+            "in_review": "statusx--ship",
+            "resolved":  "statusx--done",
+            "rejected":  "statusx--draft",
+        }.get(self.status, "statusx--held")
+
+    @property
+    def unread_by_buyer(self):
+        return self.messages.filter(is_admin=True, read_by_buyer=False).count()
+
+    @property
+    def unread_by_admin(self):
+        return self.messages.filter(is_admin=False, read_by_admin=False).count()
+
+
+class RefundMessage(models.Model):
+    """One message in the refund complaint thread.
+    Either the buyer or an admin staff member can post."""
+
+    complaint = models.ForeignKey(
+        RefundComplaint, on_delete=models.CASCADE, related_name="messages"
+    )
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+        related_name="refund_messages"
+    )
+    body        = models.TextField()
+    is_admin    = models.BooleanField(default=False)  # True when sent by staff
+    # Read receipts so the UI can show unread badges
+    read_by_buyer = models.BooleanField(default=False)
+    read_by_admin = models.BooleanField(default=False)
+    created_at  = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at"]
+
+    def __str__(self):
+        who = "Admin" if self.is_admin else "Buyer"
+        return f"{who} — {self.complaint} — {self.created_at:%Y-%m-%d %H:%M}"
+
+
+# ══════════════════════════════════════════════════════════════
+#  SELLER PAYOUT RECORDS  (admin marks paid after manual transfer)
+# ══════════════════════════════════════════════════════════════
+
+class SellerPayoutRecord(models.Model):
+    """Admin creates this when they have physically sent money to a seller
+    for a confirmed order. It appears in the seller's payout dashboard."""
+
+    order  = models.OneToOneField(
+        Order, on_delete=models.CASCADE, related_name="payout_record",
+        null=True, blank=True,
+    )
+    seller = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+        related_name="payout_records"
+    )
+    payout_method = models.ForeignKey(
+        SellerPayoutMethod, on_delete=models.SET_NULL,
+        null=True, blank=True, related_name="payout_records"
+    )
+
+    amount   = models.DecimalField(max_digits=12, decimal_places=2)
+    currency = models.CharField(max_length=10, default="USD")
+    note     = models.TextField(blank=True, default="")
+    paid_at  = models.DateTimeField(auto_now_add=True)
+    paid_by  = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
+        null=True, blank=True, related_name="payouts_marked"
+    )
+
+    class Meta:
+        ordering = ["-paid_at"]
+        verbose_name        = "Seller Payout Record"
+        verbose_name_plural = "Seller Payout Records"
+
+    def __str__(self):
+        return f"Payout #{self.pk} → {self.seller.username} ${self.amount}"

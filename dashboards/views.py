@@ -17,7 +17,7 @@ from shop.models import BlogPost, Product
 
 from . import payment_views
 from .forms import BuyerAddressForm, BoostPlanForm, SellerPayoutMethodForm, SellerVerificationForm
-from .models import BuyerAddress, BoostOrder, BoostPlan, CartItem, CurrencyRate, Order, OrderTrackingEvent, PaymentIntent, SellerPayout, SellerPayoutMethod, SellerVerification, WishlistItem
+from .models import BuyerAddress, BoostOrder, BoostPlan, CartItem, CurrencyRate, Order, OrderTrackingEvent, PaymentIntent, RefundComplaint, RefundMessage, SellerPayout, SellerPayoutMethod, SellerPayoutRecord, SellerVerification, WishlistItem
 
 
 def get_or_init_verification(user):
@@ -187,12 +187,23 @@ def admin_pi_payments(request):
     context = dashboard_context(request, "admin", "pi-payments")
     qs = PaymentIntent.objects.filter(
         method="pi", status=PaymentIntent.STATUS_PI_PENDING
-    ).order_by("-created_at")
+    ).select_related("user").order_by("-created_at")
     paginator = Paginator(qs, 20)
     page_obj = paginator.get_page(request.GET.get("page"))
+
+    recent_processed = PaymentIntent.objects.filter(
+        method="pi",
+        status__in=[PaymentIntent.STATUS_PAID, PaymentIntent.STATUS_FAILED],
+    ).select_related("user").order_by("-updated_at")[:20]
+
+    from django.conf import settings as _settings
+    pi_wallet = getattr(_settings, "PI_WALLET_ADDRESS", "") or getattr(_settings, "PI_APP_WALLET", "")
+
     context.update({
-        "pi_payments": page_obj.object_list,
-        "page_obj": page_obj,
+        "pi_payments":       page_obj.object_list,
+        "page_obj":          page_obj,
+        "recent_processed":  recent_processed,
+        "pi_wallet_address": pi_wallet,
         "dashboard_template": "dashboards/admin/pi_payments.html",
     })
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
@@ -203,38 +214,31 @@ def admin_pi_payments(request):
 @staff_member_required
 @require_POST
 def admin_pi_confirm(request, pk):
-    """Admin: verify the Pi transfer in the wallet and create the orders."""
+    """Admin: verify Pi transfer in wallet then create orders via finalize_intent."""
     intent = get_object_or_404(
         PaymentIntent, pk=pk, method="pi", status=PaymentIntent.STATUS_PI_PENDING
     )
-    cart_snapshot = (intent.provider_payload or {}).get("cart_snapshot", [])
-    if not cart_snapshot:
-        messages.error(request, f"#{intent.reference}: No cart snapshot — cannot create orders.")
-        return redirect("admin_pi_payments")
-
     try:
-        with transaction.atomic():
-            orders = create_orders_for_cart(intent.user, intent.method, intent.reference)
-    except CheckoutError as exc:
+        # finalize_intent wraps its own DB transaction and creates orders idempotently
+        payment_views.finalize_intent(intent)
+        intent.refresh_from_db()
+        intent.note = (intent.note or "") + "  ✓ Admin confirmed Pi transfer."
+        intent.provider_payload = {
+            **(intent.provider_payload or {}),
+            "admin_confirmed_at": timezone.now().isoformat(),
+            "admin_action": "confirm",
+        }
+        intent.save(update_fields=["note", "provider_payload", "updated_at"])
+        messages.success(
+            request,
+            f"#{intent.reference} confirmed — {len(intent.order_pks)} order(s) created.",
+        )
+    except payment_views.CheckoutError as exc:
         messages.error(request, f"#{intent.reference}: {exc}")
-        return redirect("admin_pi_payments")
-
-    intent.order_pks = [o.pk for o in orders]
-    intent.status = PaymentIntent.STATUS_PAID
-    intent.paid_at = timezone.now()
-    intent.note = (intent.note or "") + "  ✓ Admin confirmed Pi transfer."
-    intent.provider_payload = {
-        **(intent.provider_payload or {}),
-        "admin_confirmed_at": timezone.now().isoformat(),
-        "admin_action": "confirm",
-    }
-    intent.save(update_fields=["order_pks", "status", "paid_at", "note", "provider_payload", "updated_at"])
-    messages.success(request, f"#{intent.reference} confirmed — {len(orders)} order(s) created. Pi verified in wallet.")
+    except Exception as exc:
+        messages.error(request, f"#{intent.reference}: Unexpected error — {exc}")
     return redirect("admin_pi_payments")
 
-
-@staff_member_required
-@require_POST
 def admin_pi_reject(request, pk):
     """Admin: reject a Pi transfer claim and restore the cart for the buyer."""
     intent = get_object_or_404(
@@ -250,7 +254,7 @@ def admin_pi_reject(request, pk):
                     product_id=item["product_pk"],
                     quantity=item["quantity"],
                 )
-            except (KeyError, Product.DoesNotExist):
+            except (KeyError, Exception):
                 continue
 
     intent.status = PaymentIntent.STATUS_FAILED
@@ -339,6 +343,12 @@ def dashboard_context(request, role, section):
             SellerVerification.objects.filter(status="pending").count() if role == "admin" else 0
         ),
         "pending_pi_payments": pending_pi,
+        "open_refund_count": (
+            RefundComplaint.objects.filter(status__in=("open", "in_review")).count() if role == "admin" else 0
+        ),
+        "pending_payout_count": (
+            Order.objects.filter(status=Order.STATUS_CONFIRMED, payout_released=False).count() if role == "admin" else 0
+        ),
     }
 
 
@@ -858,6 +868,7 @@ def dashboard_page(request, role, section):
         default_method  = payout_methods.filter(is_default=True).first()
         payout_history  = SellerPayout.objects.filter(seller=seller).select_related("payout_method").order_by("-created_at")[:20]
         payout_form     = SellerPayoutMethodForm()
+        payout_records  = SellerPayoutRecord.objects.filter(seller=seller).select_related("order","payout_method").order_by("-paid_at")[:20]
 
         context.update({
             "available_balance":  available_balance,
@@ -867,6 +878,7 @@ def dashboard_page(request, role, section):
             "payout_methods":     payout_methods,
             "default_method":     default_method,
             "payout_history":     payout_history,
+            "payout_records":     payout_records,
             "payout_form":        payout_form,
         })
 
@@ -1151,32 +1163,99 @@ def order_not_delivered(request, pk):
 
 @require_POST
 @login_required
+@require_POST
+@login_required
 def order_request_refund(request, pk):
-    """Buyer requests a refund for an undelivered or disputed purchase."""
+    """Buyer submits a refund complaint via the modal form."""
     order = get_object_or_404(Order, pk=pk, buyer=request.user)
-    if order.status in (Order.STATUS_DELIVERED, Order.STATUS_DISPUTED, Order.STATUS_IN_TRANSIT):
-        order.status = Order.STATUS_DISPUTED
-        order.dispute_reason = request.POST.get("reason", "Buyer requested a refund because the item was not delivered.").strip()
-        order.disputed_at = timezone.now()
-        order.save(update_fields=["status", "dispute_reason", "disputed_at", "updated_at"])
-        OrderTrackingEvent.objects.create(order=order, status="refund_requested", message="Buyer requested a refund; admin review is required.")
-        messages.success(request, "Refund request submitted. An admin will review the protected payment.")
+    if order.status not in (Order.STATUS_DELIVERED, Order.STATUS_DISPUTED, Order.STATUS_IN_TRANSIT):
+        messages.error(request, "This order cannot be refunded at this stage.")
+        return redirect("dashboard_section", role="buyer", section="orders")
+
+    reason = request.POST.get("reason", "").strip()
+    if not reason:
+        messages.error(request, "Please describe your complaint before submitting.")
+        return redirect("dashboard_section", role="buyer", section="orders")
+
+    # Mark the order as disputed
+    order.status = Order.STATUS_DISPUTED
+    order.dispute_reason = reason
+    order.disputed_at = timezone.now()
+    order.save(update_fields=["status", "dispute_reason", "disputed_at", "updated_at"])
+
+    OrderTrackingEvent.objects.create(
+        order=order, status="refund_requested",
+        message="Buyer requested a refund; admin review is required."
+    )
+
+    # Create or update the RefundComplaint record
+    complaint, _ = RefundComplaint.objects.get_or_create(
+        order=order,
+        defaults={"buyer": request.user},
+    )
+    complaint.buyer              = request.user
+    complaint.reason             = reason
+    complaint.refund_method      = request.POST.get("refund_method", "").strip()
+    complaint.refund_bank_name   = request.POST.get("refund_bank_name", "").strip()
+    complaint.refund_account_no  = request.POST.get("refund_account_no", "").strip()
+    complaint.refund_account_name = request.POST.get("refund_account_name", "").strip()
+    complaint.refund_wallet      = request.POST.get("refund_wallet", "").strip()
+    complaint.status             = RefundComplaint.STATUS_OPEN
+    complaint.save()
+
+    # Initial message in the thread
+    RefundMessage.objects.create(
+        complaint=complaint,
+        sender=request.user,
+        body=reason,
+        is_admin=False,
+        read_by_admin=False,
+        read_by_buyer=True,
+    )
+
+    messages.success(request, "Refund complaint submitted. An admin will review and reply shortly.")
     return redirect("dashboard_section", role="buyer", section="orders")
 
 
 @require_POST
 @staff_member_required
 def order_release_payout(request, pk):
-    """Admin: release escrow payout for a confirmed order."""
+    """Admin: mark a confirmed order's escrow as paid to the seller.
+
+    Creates a SellerPayoutRecord so the seller can see it on their dashboard.
+    """
     order = get_object_or_404(Order, pk=pk)
     if order.status == Order.STATUS_CONFIRMED and not order.payout_released:
-        order.payout_released = True
+        order.payout_released    = True
         order.payout_released_at = timezone.now()
-        order.save()
+        order.save(update_fields=["payout_released", "payout_released_at", "updated_at"])
+
+        # Create a payout record visible in the seller dashboard
+        default_method = SellerPayoutMethod.objects.filter(
+            user=order.seller, is_default=True
+        ).first()
+        note = request.POST.get("note", "").strip() or f"Payout for order #{order.order_number}"
+        SellerPayoutRecord.objects.get_or_create(
+            order=order,
+            defaults={
+                "seller":        order.seller,
+                "payout_method": default_method,
+                "amount":        order.total_price,
+                "currency":      "USD",
+                "note":          note,
+                "paid_by":       request.user,
+            }
+        )
+
+        OrderTrackingEvent.objects.create(
+            order=order, status="payout_released",
+            message=f"Admin marked payout as sent to seller ({request.user.username})."
+        )
+
         if request.headers.get("x-requested-with") == "XMLHttpRequest":
             return JsonResponse({"ok": True, "order_number": order.order_number})
-        messages.success(request, f"Payout released for order #{order.order_number}.")
-    return redirect("dashboard_section", role="admin", section="orders")
+        messages.success(request, f"Payout marked as sent for order #{order.order_number}.")
+    return redirect("admin_seller_payouts")
 
 
 @require_POST
@@ -1799,13 +1878,50 @@ def checkout_success_view(request):
     pks    = request.session.pop("last_order_pks", [])
     method = request.session.pop("last_order_payment_method", "")
     awaiting = request.session.pop("last_payment_awaiting_confirmation", False)
+    intent_ref = request.session.pop("last_intent_reference", "")
 
     orders = (
         list(Order.objects.filter(pk__in=pks, buyer=request.user))
         if pks else []
     )
 
-    totals = payment_views.cart_totals(sum((o.total_price for o in orders), Decimal("0")))
+    # Pi payments awaiting admin verification have no orders yet — pull the
+    # expected subtotal total from the stored intent so the buyer sees real amounts.
+    if not orders and awaiting and method == "pi" and intent_ref:
+        try:
+            intent = PaymentIntent.objects.filter(
+                reference=intent_ref, user=request.user, method="pi"
+            ).first()
+            if intent and intent.status == PaymentIntent.STATUS_PI_PENDING:
+                subtotal = intent.subtotal_usd
+                total = intent.amount_usd
+                # Build lightweight "pending" order objects so the template's
+                # order loop still renders the cart items from the snapshot.
+                snapshot = (intent.provider_payload or {}).get("cart_snapshot", [])
+                from shop.models import Product
+                orders = []
+                for item in snapshot:
+                    try:
+                        product = Product.objects.get(pk=item["product_pk"])
+                    except Product.DoesNotExist:
+                        continue
+                    orders.append(type("PendingOrder", (), {
+                        "pk": None, "order_number": "—",
+                        "product_name": item["product_name"],
+                        "product_image": product.image_src,
+                        "store_name": product.get_store_display(),
+                        "total_price": product.price * item["quantity"],
+                        "quantity": item["quantity"],
+                        "unit_price": product.price,
+                        "payment_method": "pi",
+                        "display_price": None,
+                    })())
+                totals = payment_views.cart_totals(subtotal)
+                totals["total"] = total
+        except Exception:
+            pass
+    else:
+        totals = payment_views.cart_totals(sum((o.total_price for o in orders), Decimal("0")))
 
     # ── Show the summary in the currency the buyer actually paid with ──
     # Paystack charges Naira, Pi charges π, PayPal charges US dollars.
@@ -1938,4 +2054,191 @@ def admin_currency_rates(request):
     })
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         return render(request, "dashboards/admin/currency_rates.html", context)
+    return render(request, "dashboards/base.html", context)
+
+
+# ═══════════════════════════════════════════════════════════════
+#  BUYER: reply to refund complaint thread
+# ═══════════════════════════════════════════════════════════════
+
+@require_POST
+@login_required
+def buyer_refund_reply(request, complaint_pk):
+    """Buyer posts a reply message in their refund complaint thread."""
+    complaint = get_object_or_404(RefundComplaint, pk=complaint_pk, buyer=request.user)
+    body = request.POST.get("body", "").strip()
+    if body:
+        RefundMessage.objects.create(
+            complaint=complaint,
+            sender=request.user,
+            body=body,
+            is_admin=False,
+            read_by_buyer=True,
+            read_by_admin=False,
+        )
+        # Mark all admin messages as read by buyer while we're here
+        complaint.messages.filter(is_admin=True).update(read_by_buyer=True)
+    return redirect("dashboard_section", role="buyer", section="orders")
+
+
+# ═══════════════════════════════════════════════════════════════
+#  ADMIN: refund complaints list + detail/messaging
+# ═══════════════════════════════════════════════════════════════
+
+@staff_member_required
+def admin_refund_complaints(request):
+    """List all refund complaints with filter by status."""
+    status_filter = request.GET.get("status", "open")
+    qs = RefundComplaint.objects.select_related(
+        "order", "order__seller", "order__product", "buyer"
+    ).prefetch_related(
+        "messages", "order__seller__payout_methods"
+    )
+    if status_filter and status_filter != "all":
+        qs = qs.filter(status=status_filter)
+
+    counts = {
+        "open":      RefundComplaint.objects.filter(status="open").count(),
+        "in_review": RefundComplaint.objects.filter(status="in_review").count(),
+        "resolved":  RefundComplaint.objects.filter(status="resolved").count(),
+        "rejected":  RefundComplaint.objects.filter(status="rejected").count(),
+        "all":       RefundComplaint.objects.count(),
+    }
+
+    context = dashboard_context(request, "admin", "refunds")
+    context.update({
+        "page_title":        "Refund Complaints",
+        "section":           "refunds",
+        "complaints":        qs,
+        "status_filter":     status_filter,
+        "counts":            counts,
+        "status_choices":    RefundComplaint.STATUS_CHOICES,
+        "dashboard_template": "dashboards/admin/refund_complaints.html",
+    })
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(request, "dashboards/admin/refund_complaints.html", context)
+    return render(request, "dashboards/base.html", context)
+
+
+@login_required
+def admin_refund_complaint_detail(request, pk):
+    """Admin views and messages a single refund complaint."""
+    complaint = get_object_or_404(
+        RefundComplaint.objects.select_related(
+            "order", "order__seller", "order__product", "buyer"
+        ).prefetch_related(
+            "messages__sender", "order__seller__payout_methods"
+        ),
+        pk=pk,
+    )
+
+    if request.method == "POST":
+        action = request.POST.get("action", "message")
+
+        if action == "message" and request.user.is_staff:
+            body = request.POST.get("body", "").strip()
+            if body:
+                RefundMessage.objects.create(
+                    complaint=complaint,
+                    sender=request.user,
+                    body=body,
+                    is_admin=True,
+                    read_by_admin=True,
+                    read_by_buyer=False,
+                )
+                # Move to in_review automatically when admin first replies
+                if complaint.status == RefundComplaint.STATUS_OPEN:
+                    complaint.status = RefundComplaint.STATUS_IN_REVIEW
+                    complaint.save(update_fields=["status", "updated_at"])
+                messages.success(request, "Reply sent to buyer.")
+
+        elif action == "resolve" and request.user.is_staff:
+            complaint.status = RefundComplaint.STATUS_RESOLVED
+            complaint.admin_note = request.POST.get("admin_note", "").strip()
+            complaint.save(update_fields=["status", "admin_note", "updated_at"])
+            # Also mark order as refunded
+            order = complaint.order
+            order.status = Order.STATUS_REFUNDED
+            order.save(update_fields=["status", "updated_at"])
+            OrderTrackingEvent.objects.create(
+                order=order, status="refunded",
+                message="Admin approved refund after reviewing complaint."
+            )
+            RefundMessage.objects.create(
+                complaint=complaint,
+                sender=request.user,
+                body=f"✅ Your refund has been approved. {complaint.admin_note}".strip(),
+                is_admin=True,
+                read_by_admin=True,
+                read_by_buyer=False,
+            )
+            messages.success(request, f"Refund approved for order #{order.order_number}.")
+
+        elif action == "reject" and request.user.is_staff:
+            complaint.status = RefundComplaint.STATUS_REJECTED
+            complaint.admin_note = request.POST.get("admin_note", "").strip()
+            complaint.save(update_fields=["status", "admin_note", "updated_at"])
+            RefundMessage.objects.create(
+                complaint=complaint,
+                sender=request.user,
+                body=f"❌ Your refund request has been rejected. {complaint.admin_note}".strip(),
+                is_admin=True,
+                read_by_admin=True,
+                read_by_buyer=False,
+            )
+            messages.success(request, "Refund complaint rejected.")
+
+        return redirect("admin_refund_complaint_detail", pk=pk)
+
+    # Mark buyer messages as read by admin
+    complaint.messages.filter(is_admin=False).update(read_by_admin=True)
+
+    context = dashboard_context(request, "admin", "refunds")
+    context.update({
+        "page_title":        f"Refund #{complaint.pk}",
+        "section":           "refunds",
+        "complaint":         complaint,
+        "dashboard_template": "dashboards/admin/refund_complaint_detail.html",
+    })
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(request, "dashboards/admin/refund_complaint_detail.html", context)
+    return render(request, "dashboards/base.html", context)
+
+
+# ═══════════════════════════════════════════════════════════════
+#  ADMIN: seller payouts — confirmed orders awaiting payment
+# ═══════════════════════════════════════════════════════════════
+
+@staff_member_required
+def admin_seller_payouts(request):
+    """Admin page showing confirmed orders that need to be paid to sellers,
+    plus a history of orders already marked paid."""
+
+    pending_orders = (
+        Order.objects.filter(status=Order.STATUS_CONFIRMED, payout_released=False)
+        .select_related("seller", "product", "buyer")
+        .prefetch_related("seller__payout_methods")
+        .order_by("-confirmed_at")
+    )
+
+    paid_records = (
+        SellerPayoutRecord.objects.select_related("order", "seller", "payout_method", "paid_by")
+        .order_by("-paid_at")[:50]
+    )
+
+    # Total pending amount
+    from django.db.models import Sum as _Sum
+    pending_total = pending_orders.aggregate(t=_Sum("total_price"))["t"] or 0
+
+    context = dashboard_context(request, "admin", "seller_payouts")
+    context.update({
+        "page_title":        "Seller Payouts",
+        "section":           "seller_payouts",
+        "pending_orders":    pending_orders,
+        "paid_records":      paid_records,
+        "pending_total":     pending_total,
+        "dashboard_template": "dashboards/admin/seller_payouts.html",
+    })
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(request, "dashboards/admin/seller_payouts.html", context)
     return render(request, "dashboards/base.html", context)

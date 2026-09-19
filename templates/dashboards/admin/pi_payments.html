@@ -1,117 +1,307 @@
 {% load static %}
 <div class="dashboard-page" data-page-title="Pi Payment Verification">
 
-  <div class="ahead">
-    <div class="ahead__row">
+<!-- ══════════════════════════════════════
+     HEADER BANNER
+══════════════════════════════════════════ -->
+<div class="ahead">
+  <div class="ahead__row">
+    <div>
       <span class="ahead__chip">
-        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-        Manual wallet verification
+        <svg class="sic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.5 8h3.8a2.2 2.2 0 0 1 0 4.4H9.5V8zM9.5 12.4V16"/></svg>
+        Pi Network Payments
       </span>
+      <h2>Pi Payment Verification</h2>
+      <p>Check your Pi wallet for incoming transfers. Confirm once verified — orders are only created after you approve. Reject if no Pi was received.</p>
     </div>
-    <h2>Pi Payment Verification</h2>
-    <p>Review Pi Network transfers received in the DropHub wallet and confirm or reject each one. Only confirmed transfers create orders.</p>
-  </div>
-
-  {% if pi_payments %}
-  <section class="dashboard-panel" style="margin-top:18px">
-    <div class="panel-heading" style="flex-wrap:wrap;gap:10px">
-      <h3>Pending Pi transfers ({{ pi_payments|length }})</h3>
-      <span class="panel-meta">Awaiting wallet verification before orders are created</span>
-    </div>
-
-    <div class="dashboard-table-wrap">
-      <table class="dashboard-table dashboard-table--wide">
-        <thead>
-          <tr>
-            <th>REFERENCE</th>
-            <th>DATE CLAIMED</th>
-            <th>BUYER</th>
-            <th>AMOUNT (PI)</th>
-            <th>AMOUNT (USD)</th>
-            <th>CARDS IN CART</th>
-            <th>WALLET</th>
-            <th>STATUS</th>
-            <th>ACTIONS</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for intent in pi_payments %}
-          <tr>
-            <td class="table-link"><strong>{{ intent.reference }}</strong></td>
-            <td class="muted">{{ intent.created_at|date:"M j, Y g:i A" }}</td>
-            <td>
-              <b>{{ intent.user.username }}</b><br>
-              <span class="muted" style="font-size:11.5px">{{ intent.user.email }}</span>
-            </td>
-            <td><b>π {{ intent.amount|floatformat:2 }}</b></td>
-            <td class="muted">${{ intent.amount_usd|floatformat:2 }}</td>
-            <td class="muted" style="max-width:170px">
-              {% with items=intent.provider_payload.cart_snapshot|default:'' %}
-                {% if items %}
-                  {{ items|length }} item{{ items|length|pluralize }}<br>
-                  {% for item in items %}
-                    <span style="font-size:11px;color:#64748b">×{{ item.quantity }} {{ item.product_name }}</span><br>
-                  {% endfor %}
-                {% else %}
-                  <span style="color:#94a3b8">—</span>
-                {% endif %}
-              {% endwith %}
-            </td>
-            <td class="muted" style="font-size:11.5px;word-break:break-all">
-              {{ intent.provider_payload.wallet_address|default:"—" }}
-            </td>
-            <td>
-              <span class="pill pill-purple">Pending review</span>
-            </td>
-            <td style="white-space:nowrap">
-              <form method="post" action="/dashboards/admin/pi-payments/{{ intent.pk }}/confirm/" style="display:inline">
-                {% csrf_token %}
-                <button type="submit" class="abtn abtn--green" style="font-size:12px;padding:5px 12px">Confirm</button>
-              </form>
-              <form method="post" action="/dashboards/admin/pi-payments/{{ intent.pk }}/reject/" style="display:inline">
-                {% csrf_token %}
-                <button type="submit" class="abtn abtn--red" style="font-size:12px;padding:5px 12px">Reject</button>
-              </form>
-              {% if intent.status == 'failed' or intent.status == 'cancelled' %}
-                <form method="post" action="/dashboards/admin/pi-payments/{{ intent.pk }}/reclaim/" style="display:inline">
-                  {% csrf_token %}
-                  <button type="submit" class="abtn abtn--ghost" style="font-size:12px;padding:5px 12px">Reclaim</button>
-                </form>
-              {% endif %}
-            </td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="9" style="text-align:center;padding:40px;color:#9aa7bd">
-              No pending Pi transfers. All received Pi payments have been verified.
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <div class="dashboard-panel" style="margin-top:14px;padding:14px 18px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px">
-    <div style="display:flex;gap:10px;align-items:flex-start">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px">
-        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-      </svg>
-      <div>
-        <p style="margin:0 0 4px;font-size:13.5px;color:#9a3412">How to verify a Pi transfer</p>
-        <p style="margin:0;font-size:12.5px;color:#a16207">Open the Pi Browser wallet, find the incoming transfer that matches the <b>reference</b> above, confirm the amount is correct, then click <b>Confirm</b>. If no matching transfer is found after a reasonable time, click <b>Reject</b> to restore the buyer's cart.</p>
+    <div class="ahead__actions">
+      <div class="aokpi aokpi--purple">
+        <div class="aokpi__body">
+          <span>Pending</span>
+          <b>{{ pi_payments|length }}</b>
+        </div>
       </div>
     </div>
   </div>
 
-  {% else %}
-  <section class="dashboard-panel" style="margin-top:18px;padding:30px;text-align:center;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px">
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 10px">
-      <circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/>
-    </svg>
-    <h3 style="margin:0 0 6px;color:#1e293b">All caught up</h3>
-    <p style="margin:0;color:#64748b;font-size:13.5px">There are no pending Pi transfers right now. New ones will appear here when a buyer reports sending Pi from a normal browser.</p>
-  </section>
+  <!-- Wallet address hint -->
+  {% if pi_wallet_address %}
+  <div style="position:relative;z-index:1;margin-top:14px;display:inline-flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(112,72,232,.09);border:1px solid rgba(112,72,232,.22);border-radius:12px;font-size:13px;font-weight:600;color:#5b36d6">
+    <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex-shrink:0"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><circle cx="12" cy="14" r="2"/></svg>
+    DropHub Pi wallet:&nbsp;<strong style="letter-spacing:.03em">{{ pi_wallet_address }}</strong>
+    <button type="button" class="pi-copy-btn" data-value="{{ pi_wallet_address }}" title="Copy wallet address"
+            style="padding:4px 10px;border:1px solid rgba(112,72,232,.3);border-radius:7px;background:rgba(112,72,232,.08);color:#7048e8;font:inherit;font-size:11.5px;font-weight:700;cursor:pointer">
+      Copy
+    </button>
+  </div>
   {% endif %}
-
 </div>
+
+<!-- ══════════════════════════════════════
+     HOW-TO STRIP
+══════════════════════════════════════════ -->
+<div style="display:flex;gap:0;margin-bottom:18px;border-radius:14px;overflow:hidden;border:1px solid rgba(112,72,232,.18);background:rgba(237,233,251,.5)">
+  {% for step in "123" %}
+  <div style="flex:1;padding:14px 16px;{% if not forloop.first %}border-left:1px solid rgba(112,72,232,.14);{% endif %}">
+    <span style="display:block;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#7048e8;margin-bottom:4px">Step {{ step }}</span>
+    {% if forloop.first %}
+    <span style="font-size:13px;font-weight:600;color:#16223c">Open your Pi Browser wallet and check for an incoming transfer matching the <b>reference</b> below.</span>
+    {% elif forloop.counter == 2 %}
+    <span style="font-size:13px;font-weight:600;color:#16223c">Verify the <b>Pi amount</b> and <b>sender wallet</b> match what the buyer reported.</span>
+    {% else %}
+    <span style="font-size:13px;font-weight:600;color:#16223c">Click <b>Confirm</b> to create the orders, or <b>Reject</b> if no matching transfer was found.</span>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+<!-- ══════════════════════════════════════
+     PENDING TRANSFERS TABLE
+══════════════════════════════════════════ -->
+{% if pi_payments %}
+<div class="dashboard-panel" style="margin-bottom:18px">
+  <div class="panel-heading">
+    <h3>Pending Pi transfers</h3>
+    <span class="panel-meta">{{ pi_payments|length }} awaiting verification</span>
+  </div>
+
+  <div class="dashboard-table-wrap">
+    <table class="dashboard-table">
+      <thead>
+        <tr>
+          <th>Reference</th>
+          <th>Claimed at</th>
+          <th>Buyer</th>
+          <th>Pi amount</th>
+          <th>USD value</th>
+          <th>Cart items</th>
+          <th>Buyer's wallet</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for intent in pi_payments %}
+        <tr id="pi-row-{{ intent.pk }}">
+
+          <!-- Reference -->
+          <td>
+            <span class="table-link" style="font-family:monospace;font-size:12.5px">{{ intent.reference }}</span>
+            {% if intent.note %}
+            <br><small class="muted" style="font-size:11px">{{ intent.note|truncatechars:40 }}</small>
+            {% endif %}
+          </td>
+
+          <!-- Date -->
+          <td>
+            <span>{{ intent.created_at|date:"M j, Y" }}</span><br>
+            <small class="muted">{{ intent.created_at|date:"H:i" }}</small>
+          </td>
+
+          <!-- Buyer -->
+          <td>
+            <b>{{ intent.user.username }}</b><br>
+            <small class="muted">{{ intent.user.email|truncatechars:24 }}</small>
+          </td>
+
+          <!-- Pi amount -->
+          <td>
+            <b style="font-size:15px;color:#7048e8">π {{ intent.amount|floatformat:4 }}</b>
+          </td>
+
+          <!-- USD value -->
+          <td>
+            <span>${{ intent.amount_usd|floatformat:2 }}</span>
+          </td>
+
+          <!-- Cart items -->
+          <td style="max-width:200px">
+            {% with snap=intent.provider_payload.cart_snapshot %}
+            {% if snap %}
+              <span style="font-size:12px;font-weight:700;color:var(--atext)">{{ snap|length }} item{{ snap|length|pluralize }}</span>
+              {% for item in snap %}
+              <br><small class="muted">×{{ item.quantity }} {{ item.product_name|truncatechars:26 }}</small>
+              {% endfor %}
+            {% else %}
+              <span class="muted">—</span>
+            {% endif %}
+            {% endwith %}
+          </td>
+
+          <!-- Buyer's wallet -->
+          <td style="max-width:180px">
+            {% with wallet=intent.provider_payload.wallet_address %}
+            {% if wallet %}
+            <span style="font-size:11.5px;font-family:monospace;word-break:break-all">{{ wallet }}</span>
+            <button type="button" class="pi-copy-btn"
+                    data-value="{{ wallet }}"
+                    style="display:block;margin-top:4px;padding:3px 8px;border:1px solid rgba(112,72,232,.25);border-radius:6px;background:rgba(112,72,232,.07);color:#7048e8;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">
+              Copy
+            </button>
+            {% else %}
+            <span class="muted">Not provided</span>
+            {% endif %}
+            {% endwith %}
+          </td>
+
+          <!-- Actions -->
+          <td style="white-space:nowrap">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <form method="post" action="{% url 'admin_pi_confirm' intent.pk %}" class="pi-action-form">
+                {% csrf_token %}
+                <button type="submit" class="table-action table-action--green pi-confirm-btn"
+                        data-ref="{{ intent.reference }}"
+                        data-amount="{{ intent.amount|floatformat:4 }}">
+                  <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>
+                  Confirm
+                </button>
+              </form>
+              <form method="post" action="{% url 'admin_pi_reject' intent.pk %}" class="pi-action-form">
+                {% csrf_token %}
+                <button type="submit" class="table-action table-action--danger pi-reject-btn"
+                        data-ref="{{ intent.reference }}">
+                  <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+                  Reject
+                </button>
+              </form>
+            </div>
+          </td>
+
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if page_obj.has_other_pages %}
+  <div class="tablex-foot">
+    <div class="pager-info">{{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ page_obj.paginator.count }}</div>
+    <div class="pagerx">
+      {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" class="pagerx-btn">&laquo;</a>{% endif %}
+      {% for num in page_obj.paginator.page_range %}
+        {% if num == page_obj.number %}<button class="on">{{ num }}</button>
+        {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}<a href="?page={{ num }}" class="pagerx-btn">{{ num }}</a>{% endif %}
+      {% endfor %}
+      {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" class="pagerx-btn">&raquo;</a>{% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% else %}
+<!-- ── Empty state ── -->
+<div class="apanel" style="padding:52px 24px;text-align:center;margin-bottom:18px">
+  <div class="aempty__art" style="margin:0 auto 16px;background:linear-gradient(135deg,rgba(112,72,232,.1),rgba(112,72,232,.06));border-color:rgba(112,72,232,.25)">
+    <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.6 12.4 2.4 2.4 4.5-4.9"/></svg>
+  </div>
+  <h4 style="margin:0 0 8px;font-size:18px;color:var(--atext)">All clear</h4>
+  <p style="color:var(--amuted);font-size:14px;margin:0;max-width:42ch;margin-inline:auto">No pending Pi transfers right now. New ones appear here when a buyer reports sending Pi from a regular browser (outside the Pi Browser SDK).</p>
+</div>
+{% endif %}
+
+<!-- ══════════════════════════════════════
+     RECENTLY PROCESSED (last 20)
+══════════════════════════════════════════ -->
+{% if recent_processed %}
+<div class="dashboard-panel">
+  <div class="panel-heading">
+    <h3>Recently processed</h3>
+    <span class="panel-meta panel-meta--blue">Last 20</span>
+  </div>
+  <div class="dashboard-table-wrap">
+    <table class="dashboard-table">
+      <thead>
+        <tr>
+          <th>Reference</th>
+          <th>Buyer</th>
+          <th>Pi amount</th>
+          <th>USD</th>
+          <th>Status</th>
+          <th>Processed</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for intent in recent_processed %}
+        <tr>
+          <td><span style="font-family:monospace;font-size:12.5px">{{ intent.reference }}</span></td>
+          <td><b>{{ intent.user.username }}</b></td>
+          <td>π {{ intent.amount|floatformat:4 }}</td>
+          <td>${{ intent.amount_usd|floatformat:2 }}</td>
+          <td>
+            {% if intent.status == 'paid' %}
+            <span class="pill pill-green"><i></i>Confirmed</span>
+            {% elif intent.status == 'failed' %}
+            <span class="pill pill-rose"><i></i>Rejected</span>
+            <form method="post" action="{% url 'admin_pi_reclaim' intent.pk %}" style="display:inline;margin-left:6px">
+              {% csrf_token %}
+              <button type="submit" class="table-action table-action--soft" style="font-size:11px;padding:3px 10px"
+                      onclick="return confirm('Reset {{ intent.reference }} so buyer can retry?')">
+                Reset
+              </button>
+            </form>
+            {% else %}
+            <span class="pill pill-yellow"><i></i>{{ intent.get_status_display }}</span>
+            {% endif %}
+          </td>
+          <td><small class="muted">{{ intent.updated_at|date:"M j, Y · H:i" }}</small></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+</div><!-- /.dashboard-page -->
+
+<style>
+/* ── Pi verification page extra styles ── */
+.aokpi--purple { border-color: rgba(112,72,232,.2); background: rgba(237,233,251,.72); }
+.aokpi--purple .aokpi__body b { color: #5b36d6; }
+</style>
+
+<script>
+(function () {
+  /* Copy-to-clipboard for wallet addresses */
+  document.querySelectorAll('.pi-copy-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var val = btn.dataset.value;
+      if (!val) return;
+      navigator.clipboard.writeText(val).then(function () {
+        var orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.disabled = true;
+        setTimeout(function () { btn.textContent = orig; btn.disabled = false; }, 2000);
+      }).catch(function () {
+        prompt('Copy this wallet address:', val);
+      });
+    });
+  });
+
+  /* Confirm modal before submitting actions */
+  document.querySelectorAll('.pi-confirm-btn').forEach(function (btn) {
+    btn.closest('form').addEventListener('submit', function (e) {
+      var ref    = btn.dataset.ref;
+      var amount = btn.dataset.amount;
+      if (!confirm(
+        'Confirm Pi transfer for ' + ref + '?\n\n' +
+        'Amount: π ' + amount + '\n\n' +
+        'Make sure you have already seen this transfer in your Pi wallet before confirming. Orders will be created immediately.'
+      )) {
+        e.preventDefault();
+      }
+    });
+  });
+
+  document.querySelectorAll('.pi-reject-btn').forEach(function (btn) {
+    btn.closest('form').addEventListener('submit', function (e) {
+      var ref = btn.dataset.ref;
+      if (!confirm(
+        'Reject Pi transfer ' + ref + '?\n\n' +
+        'The buyer\'s cart will be restored and they will be notified. Only reject if no matching Pi transfer was received.'
+      )) {
+        e.preventDefault();
+      }
+    });
+  });
+})();
+</script>

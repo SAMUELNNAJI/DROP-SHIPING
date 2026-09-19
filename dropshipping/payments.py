@@ -55,6 +55,13 @@ def money(value, places='0.01'):
         raise PaymentError('Invalid amount supplied to the payment provider.') from exc
 
 
+def absolute_url(request, path):
+    """Turn a path like ``/dashboards/checkout/paystack/callback/`` into the
+    absolute URL (scheme + host + path) the provider should call back to.
+    ``build_absolute_uri`` already honours X-Forwarded-Proto behind proxies."""
+    return request.build_absolute_uri(path)
+
+
 def _provider_message(raw, status_code):
     """Pull a human-readable message out of a provider error body."""
     try:
@@ -81,6 +88,9 @@ def _request(url, *, method='GET', json_body=None, body=None, content_type=None,
 
     req = urlrequest.Request(url, data=data, method=method)
     req.add_header('Accept', 'application/json')
+    # Providers behind Cloudflare (e.g. Paystack) reject the default
+    # "Python-urllib" user agent with error 1010, so identify the app instead.
+    req.add_header('User-Agent', 'DropHub/1.0 (+https://drophub.store)')
     if content_type:
         req.add_header('Content-Type', content_type)
     for key, value in (headers or {}).items():

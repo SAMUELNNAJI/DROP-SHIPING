@@ -300,6 +300,7 @@ def dashboard_context(request, role, section):
             "in_transit": Order.objects.filter(seller=request.user, status=Order.STATUS_IN_TRANSIT).count(),
             "delivered":  Order.objects.filter(seller=request.user, status=Order.STATUS_DELIVERED).count(),
             "confirmed":  Order.objects.filter(seller=request.user, status=Order.STATUS_CONFIRMED).count(),
+            "payout_ready": Order.objects.filter(seller=request.user, status=Order.STATUS_CONFIRMED, payout_released=False).count(),
         }
 
     if request.user.is_authenticated and role == "buyer":

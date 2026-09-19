@@ -167,12 +167,11 @@
 <script>
 (function () {
   /* ── Multi-currency boost checkout.
-     Boost plan prices are stored in USD; NGN and PI amounts are derived
-     using the same rates the marketplace uses for product prices
-     (1 USD = ₦1,500 = π20,000). The order summary total always shows the
-     currency of the payment method the seller selects:
-     PayPal → USD, Pi Network → PI, Paystack → NGN. ── */
-  var NGN_RATE = 1500, PI_RATE = 20000;
+     Rates are injected by the server from the DB (CurrencyRate model,
+     admin-managed). window.DropHubRates is set in auth/header.html before
+     this script runs. Falls back to sensible defaults if missing. ── */
+  var NGN_RATE = (window.DropHubRates && window.DropHubRates.ngn_per_usd) ? parseFloat(window.DropHubRates.ngn_per_usd) : (parseFloat('{{ ngn_per_usd|default:"1600" }}') || 1600);
+  var PI_RATE  = (window.DropHubRates && window.DropHubRates.pi_per_usd)  ? parseFloat(window.DropHubRates.pi_per_usd)  : (parseFloat('{{ pi_per_usd|default:"2" }}')     || 2);
 
   function fmt(cur, usd) {
     if (cur === 'NGN') return '\u20a6' + (usd * NGN_RATE).toLocaleString(undefined, {maximumFractionDigits: 0});

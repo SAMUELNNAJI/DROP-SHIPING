@@ -1,0 +1,238 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Currency Rates">
+
+<!-- ══════════════════════════════════════════════════════
+     PAGE HEADER
+══════════════════════════════════════════════════════ -->
+<div class="ahead">
+  <div class="ahead__row">
+    <div>
+      <span class="ahead__chip">
+        <svg class="sic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.5 9.5c.5-1 1.4-1.5 2.5-1.5 1.7 0 2.5 1 2.5 2s-.8 1.5-2.5 2c-1.7.5-2.5 1-2.5 2s.8 2 2.5 2c1.1 0 2-.5 2.5-1.5"/></svg>
+        Finance settings
+      </span>
+      <h2>Currency Rates</h2>
+      <p>Set the USD → Naira and USD → Pi exchange rates used across the entire platform — checkout totals, boost pricing and payment provider charges all read from here.</p>
+    </div>
+  </div>
+
+  <!-- Live rate chips -->
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;position:relative;z-index:1">
+    <div class="aokpi aokpi--blue">
+      <span class="aokpi__ic aokpi__ic--blue">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="3"/><path d="M2.5 10h19M6 14.5h4"/></svg>
+      </span>
+      <div class="aokpi__body">
+        <span>USD → NGN</span>
+        <b>₦{{ current_ngn|floatformat:0 }}</b>
+      </div>
+    </div>
+    <div class="aokpi aokpi--purple">
+      <span class="aokpi__ic aokpi__ic--purple">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+      </span>
+      <div class="aokpi__body">
+        <span>USD → PI</span>
+        <b>π{{ current_pi|floatformat:4 }}</b>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     RATE EDITOR
+══════════════════════════════════════════════════════ -->
+<form method="post" action="{% url 'admin_currency_rates' %}">
+  {% csrf_token %}
+  <div class="achart-row" style="margin-top:0">
+
+    <!-- USD → NGN card -->
+    <div class="apanel">
+      <div class="apanel__head">
+        <div>
+          <h3>USD → Nigerian Naira</h3>
+          <p>How many Naira equal one US Dollar. Used for Paystack checkout and boost pricing shown to sellers.</p>
+        </div>
+        {% if ngn_obj %}
+        <span class="apanel__badge">Last updated {{ ngn_obj.updated_at|date:"M j, Y — H:i" }}</span>
+        {% endif %}
+      </div>
+
+      <div class="bp-field" style="margin-bottom:14px">
+        <label>Rate  <small>Naira per 1 USD</small></label>
+        <div class="bp-prefix">
+          <span class="bp-prefix__sym">₦</span>
+          <input type="number" name="{{ PAIR_USD_NGN }}" step="0.000001" min="0.000001"
+                 value="{{ ngn_obj.rate|floatformat:2|default:current_ngn|floatformat:2 }}"
+                 placeholder="e.g. 1600"
+                 class="ff-input" style="padding-left:28px" required />
+        </div>
+      </div>
+      <div class="bp-field">
+        <label>Note <small>optional — e.g. "CBN rate 18 Sep 2026"</small></label>
+        <input type="text" name="{{ PAIR_USD_NGN }}_note" maxlength="200"
+               value="{{ ngn_obj.note|default:'' }}"
+               placeholder="Reason or source for this rate"
+               class="ff-input" />
+      </div>
+
+      <div class="cr-preview" id="ngnPreview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span>$1 USD = <strong id="ngnPreviewVal">₦{{ current_ngn|floatformat:0 }}</strong></span>
+        <span style="color:#93a0bd">· $100 = <strong id="ngnPreview100">₦{{ current_ngn|floatformat:0 }}</strong></span>
+      </div>
+    </div>
+
+    <!-- USD → PI card -->
+    <div class="apanel">
+      <div class="apanel__head">
+        <div>
+          <h3>USD → Pi Network</h3>
+          <p>How many Pi equal one US Dollar. Used for Pi checkout charges and boost pricing shown in Pi.</p>
+        </div>
+        {% if pi_obj %}
+        <span class="apanel__badge">Last updated {{ pi_obj.updated_at|date:"M j, Y — H:i" }}</span>
+        {% endif %}
+      </div>
+
+      <div class="bp-field" style="margin-bottom:14px">
+        <label>Rate  <small>Pi per 1 USD</small></label>
+        <div class="bp-prefix">
+          <span class="bp-prefix__sym">π</span>
+          <input type="number" name="{{ PAIR_USD_PI }}" step="0.000001" min="0.000001"
+                 value="{{ pi_obj.rate|floatformat:6|default:current_pi|floatformat:6 }}"
+                 placeholder="e.g. 2.0"
+                 class="ff-input" style="padding-left:28px" required />
+        </div>
+      </div>
+      <div class="bp-field">
+        <label>Note <small>optional — e.g. "Pi exchange estimate Sep 2026"</small></label>
+        <input type="text" name="{{ PAIR_USD_PI }}_note" maxlength="200"
+               value="{{ pi_obj.note|default:'' }}"
+               placeholder="Reason or source for this rate"
+               class="ff-input" />
+      </div>
+
+      <div class="cr-preview" id="piPreview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span>$1 USD = <strong id="piPreviewVal">π{{ current_pi|floatformat:4 }}</strong></span>
+        <span style="color:#93a0bd">· $100 = <strong id="piPreview100">π{{ current_pi|floatformat:4 }}</strong></span>
+      </div>
+    </div>
+
+  </div><!-- /.achart-row -->
+
+  <!-- Save button -->
+  <div style="display:flex;justify-content:flex-end;margin-top:4px">
+    <button type="submit" class="abtn abtn--primary">
+      <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="m5 13 4 4L19 7"/></svg>
+      Save exchange rates
+    </button>
+  </div>
+</form>
+
+<!-- ══════════════════════════════════════════════════════
+     HOW IT WORKS INFO PANEL
+══════════════════════════════════════════════════════ -->
+<div class="apanel" style="margin-top:18px">
+  <div class="apanel__head">
+    <h3>How these rates are used</h3>
+  </div>
+  <div class="afeed">
+    <div class="afeed__row afeed--order">
+      <div class="afeed__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/></svg></div>
+      <div class="afeed__body"><b>Checkout — Paystack (Naira)</b><small>The NGN amount a buyer is charged is: <code>cart_total_USD × NGN_rate</code>. This is what Paystack receives in kobo.</small></div>
+    </div>
+    <div class="afeed__row afeed--pay">
+      <div class="afeed__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg></div>
+      <div class="afeed__body"><b>Checkout — Pi Network</b><small>The Pi amount a buyer pays is: <code>cart_total_USD × PI_rate</code>. Sent to the Pi SDK or manual wallet.</small></div>
+    </div>
+    <div class="afeed__row afeed--escrow">
+      <div class="afeed__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.6 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9-5.3-2.9-5.3 2.9 1.1-5.9L3.5 9.8l5.9-.8z"/></svg></div>
+      <div class="afeed__body"><b>Boost plan pricing</b><small>The ₦ and π equivalents shown on each boost plan card use these rates. A $10 plan at ₦1,600/$ shows as ₦16,000.</small></div>
+    </div>
+    <div class="afeed__row afeed--check">
+      <div class="afeed__ic"><svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+      <div class="afeed__body"><b>Live effect — no restart needed</b><small>Saving here updates the running process immediately. New checkout pages and boost orders use the new rates within seconds.</small></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.dashboard-page -->
+
+<style>
+.cr-preview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 12px 14px;
+  background: rgba(36,86,230,.05);
+  border: 1px solid rgba(36,86,230,.14);
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--atext,#16223c);
+}
+.cr-preview svg { width: 16px; height: 16px; color: #2456e6; flex-shrink: 0; }
+.cr-preview strong { color: #2456e6; }
+
+/* reuse bp-field styles from bpmodal (already in admin.css) */
+.bp-field { display: flex; flex-direction: column; gap: 5px; }
+.bp-field label { font-size: 12.5px; font-weight: 800; color: var(--atext,#16223c); }
+.bp-field small { font-size: 12px; color: #93a0bd; font-style: normal; }
+.bp-prefix { position: relative; }
+.bp-prefix__sym { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; font-weight: 700; color: #5d6a85; pointer-events: none; z-index: 1; }
+.ff-input {
+  width: 100%; min-height: 44px; border: 1.5px solid rgba(28,48,86,.13);
+  border-radius: 11px; padding: 0 13px; font: inherit; font-size: 13.5px;
+  background: rgba(248,250,254,.9); color: var(--atext,#16223c);
+  outline: none; box-sizing: border-box;
+  transition: border-color .18s, box-shadow .18s;
+}
+.ff-input:focus {
+  border-color: rgba(36,86,230,.5);
+  box-shadow: 0 0 0 3px rgba(36,86,230,.1);
+  background: #fff;
+}
+
+/* mini aokpi tiles in the header */
+.aokpi { display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:16px;background:rgba(255,255,255,.72);border:1px solid rgba(28,48,86,.10);backdrop-filter:blur(14px);box-shadow:0 1px 2px rgba(16,30,54,.05),0 8px 22px rgba(16,42,98,.07); }
+.aokpi__ic { width:38px;height:38px;flex-shrink:0;border-radius:11px;display:grid;place-items:center; }
+.aokpi__ic .sic { width:17px;height:17px; }
+.aokpi__ic--blue   { background:rgba(36,86,230,.1);color:#2456e6;border:1px solid rgba(36,86,230,.2); }
+.aokpi__ic--purple { background:rgba(112,72,232,.1);color:#7048e8;border:1px solid rgba(112,72,232,.22); }
+.aokpi--blue   { border-color:rgba(36,86,230,.18);background:rgba(234,240,255,.72); }
+.aokpi--blue   .aokpi__body b { color:#2456e6; }
+.aokpi--purple { border-color:rgba(112,72,232,.2);background:rgba(237,233,251,.72); }
+.aokpi--purple .aokpi__body b { color:#5b36d6; }
+.aokpi__body { display:flex;flex-direction:column;gap:2px; }
+.aokpi__body span { font-size:11px;font-weight:700;color:var(--amuted,#5d6a85);text-transform:uppercase;letter-spacing:.06em; }
+.aokpi__body b { font-size:24px;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--atext,#16223c); }
+</style>
+
+<script>
+(function () {
+  /* Live preview: recalculate as admin types */
+  function bindPreview(inputName, valId, preview100Id, symbol, decimals) {
+    var input = document.querySelector('input[name="' + inputName + '"]');
+    var valEl = document.getElementById(valId);
+    var el100 = document.getElementById(preview100Id);
+    if (!input || !valEl) return;
+    function update() {
+      var v = parseFloat(input.value) || 0;
+      var fmt = function (n) {
+        return symbol + (decimals === 0
+          ? Math.round(n).toLocaleString()
+          : n.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals }));
+      };
+      valEl.textContent = fmt(v);
+      if (el100) el100.textContent = fmt(v * 100);
+    }
+    input.addEventListener('input', update);
+    update();
+  }
+  bindPreview('{{ PAIR_USD_NGN }}', 'ngnPreviewVal', 'ngnPreview100', '₦', 0);
+  bindPreview('{{ PAIR_USD_PI }}',  'piPreviewVal',  'piPreview100',  'π', 4);
+})();
+</script>

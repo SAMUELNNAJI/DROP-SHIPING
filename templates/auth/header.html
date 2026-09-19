@@ -1,3 +1,6 @@
+{% comment %}Inject live exchange rates so cart.js?v=5 and checkout pages use consistent values.{% endcomment %}
+<script>window.DropHubRates = { ngn_per_usd: {{ drophub_ngn_per_usd|default:"1600" }}, pi_per_usd: {{ drophub_pi_per_usd|default:"2" }} };</script>
+
   <header class="navbar">
     <div class="nav-inner">
       <a href="/" class="logo" aria-label="DropHub — Shop Global · We Drop It For You"><img src="/static/Logo.png" alt="DropHub" class="logo-img" /></a>

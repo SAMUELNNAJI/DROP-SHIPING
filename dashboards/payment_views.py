@@ -96,8 +96,8 @@ def provider_config(totals=None):
             'wallet_address': settings.PI_WALLET_ADDRESS,
         },
         'rates': {
-            'ngn_per_usd': str(settings.NGN_PER_USD),
-            'pi_per_usd': str(settings.PI_PER_USD),
+            'ngn_per_usd': str(payments.usd_to_ngn(1)),   # live DB rate
+            'pi_per_usd':  str(payments.usd_to_pi(1)),    # live DB rate
         },
         'fees': {
             'escrow_pct': int(settings.CHECKOUT_ESCROW_FEE_RATE * 100),

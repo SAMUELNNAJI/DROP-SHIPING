@@ -5,6 +5,63 @@ from django.conf import settings
 from django.utils import timezone
 
 
+class CurrencyRate(models.Model):
+    """Admin-managed exchange rates used everywhere money is converted.
+
+    Only one row per ``pair`` is kept (enforced by unique_together).
+    All code that needs a live rate must call :func:`get_rate` instead of
+    reading hard-coded values so that a single admin update propagates to
+    checkout, boost pricing and Paystack/Pi charge amounts.
+
+    Supported pairs
+    ---------------
+    USD_TO_NGN  –  how many Naira one US dollar buys  (e.g. 1600)
+    USD_TO_PI   –  how many Pi one US dollar buys       (e.g. 2.0)
+    """
+
+    PAIR_USD_NGN = "USD_TO_NGN"
+    PAIR_USD_PI  = "USD_TO_PI"
+
+    PAIR_CHOICES = [
+        (PAIR_USD_NGN, "USD → NGN  (Naira per dollar)"),
+        (PAIR_USD_PI,  "USD → PI   (Pi per dollar)"),
+    ]
+
+    pair = models.CharField(max_length=20, choices=PAIR_CHOICES, unique=True)
+    rate = models.DecimalField(max_digits=18, decimal_places=6)
+    updated_at = models.DateTimeField(auto_now=True)
+    note = models.CharField(max_length=200, blank=True, default="")
+
+    class Meta:
+        ordering = ["pair"]
+        verbose_name = "Currency Rate"
+        verbose_name_plural = "Currency Rates"
+
+    def __str__(self):
+        return f"{self.get_pair_display()} = {self.rate}"
+
+    # ── Class-level helpers ────────────────────────────────────
+
+    @classmethod
+    def get_rate(cls, pair, fallback):
+        """Return the DB rate for *pair*, or *fallback* if not configured yet."""
+        try:
+            obj = cls.objects.get(pair=pair)
+            return Decimal(str(obj.rate))
+        except cls.DoesNotExist:
+            return Decimal(str(fallback))
+
+    @classmethod
+    def ngn_per_usd(cls):
+        """Naira per dollar — falls back to the settings value."""
+        return cls.get_rate(cls.PAIR_USD_NGN, settings.NGN_PER_USD)
+
+    @classmethod
+    def pi_per_usd(cls):
+        """Pi per dollar — falls back to the settings value."""
+        return cls.get_rate(cls.PAIR_USD_PI, settings.PI_PER_USD)
+
+
 class BuyerAddress(models.Model):
     """A saved delivery address belonging to a buyer."""
 
@@ -392,19 +449,20 @@ class BoostPlan(models.Model):
     def __str__(self):
         return "%s — $%s / %dd" % (self.name, self.price, self.duration_days)
 
-    # Multi-currency helpers. BoostPlan.price is stored in USD (converted on
-    # save by BoostPlanForm) — same convention as Product.price.
+    # Multi-currency helpers. BoostPlan.price is stored in USD.
     @property
     def price_ngn(self):
         try:
-            return "\u20a6{:,.0f}".format(float(self.price) * 1500)
+            rate = float(CurrencyRate.ngn_per_usd())
+            return "\u20a6{:,.0f}".format(float(self.price) * rate)
         except (TypeError, ValueError):
             return ""
 
     @property
     def price_pi(self):
         try:
-            return "\u03c0{:,.2f}".format(float(self.price) * 20000)
+            rate = float(CurrencyRate.pi_per_usd())
+            return "\u03c0{:,.2f}".format(float(self.price) * rate)
         except (TypeError, ValueError):
             return ""
 
@@ -443,8 +501,20 @@ class BoostOrder(models.Model):
 
     CURRENCY_SYMBOLS = {"USD": "$", "NGN": "\u20a6", "PI": "\u03c0"}
 
-    # USD conversion rates (match Product price_ngn / price_pi helpers).
-    RATES_TO_USD = {"USD": Decimal("1"), "NGN": Decimal("1500"), "PI": Decimal("20000")}
+    @classmethod
+    def rates_to_usd(cls):
+        """Live conversion rates: how many units of each currency equal 1 USD.
+
+        Reads from the DB (admin-managed) and falls back to settings values.
+        """
+        return {
+            "USD": Decimal("1"),
+            "NGN": CurrencyRate.ngn_per_usd(),
+            "PI":  CurrencyRate.pi_per_usd(),
+        }
+
+    # Legacy class attribute kept for backwards compatibility — prefer rates_to_usd()
+    RATES_TO_USD = {"USD": Decimal("1"), "NGN": Decimal("1600"), "PI": Decimal("2")}
 
     seller = models.ForeignKey(
         settings.AUTH_USER_MODEL,

@@ -10,8 +10,8 @@
 
   /* A new visitor begins with an empty cart. */
   var DEFAULT_ITEMS = [];
-  var NGN_PER_USD = 1500;
-  var PI_PER_USD = 20000;
+  var NGN_PER_USD = (window.DropHubRates && window.DropHubRates.ngn_per_usd) ? parseFloat(window.DropHubRates.ngn_per_usd) : 1600;
+  var PI_PER_USD  = (window.DropHubRates && window.DropHubRates.pi_per_usd)  ? parseFloat(window.DropHubRates.pi_per_usd)  : 2;
 
   function currencyLines(usd, compact) {
     var ngn = Math.round(usd * NGN_PER_USD).toLocaleString();

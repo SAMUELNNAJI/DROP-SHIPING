@@ -167,7 +167,7 @@ PI_MANUAL_TRANSFER = env_bool('PI_MANUAL_TRANSFER', default=True)
 # Shop prices are stored in USD. These rates decide how much the buyer is
 # charged when they pick a local rail (Naira) or Pi.
 NGN_PER_USD = env_decimal('NGN_PER_USD', '1600')
-PI_PER_USD = env_decimal('PI_PER_USD', '0.5')
+PI_PER_USD = env_decimal('PI_PER_USD', '2')
 
 # Timeout (seconds) for outbound calls to the payment providers.
 PAYMENT_HTTP_TIMEOUT = int(os.environ.get('PAYMENT_HTTP_TIMEOUT', '25'))
@@ -217,6 +217,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'dropshipping.context_processors.drophub_rates',
             ],
         },
     },

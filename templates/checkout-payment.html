@@ -72,7 +72,7 @@
               </button>
             </div>
             <div class="cart-items" id="cartItems">
-              <!-- Rendered dynamically by cart.js -->
+              <!-- Rendered dynamically by cart.js?v=5 -->
             </div>
             <div class="cart-foot">
               <div class="cart-subtotal"><span>Subtotal</span><strong id="ckPaySubtotal">$0.00</strong></div>
@@ -297,7 +297,7 @@
           </div>
           {% endfor %}
         {% else %}
-          {# Guest: cart.js fills this from the localStorage cart (if any). #}
+          {# Guest: cart.js?v=5 fills this from the localStorage cart (if any). #}
           <div id="ckGuestSummary"></div>
         {% endif %}
 
@@ -484,42 +484,94 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-<script src="/static/cart.js"></script>
+<script src="/static/cart.js?v=5"></script>
 <script>
-/* Checkout payment page: update subtotal from cart */
+/* Checkout payment page: sync subtotal + fees from cart/server */
 (function () {
-  function updatePaySubtotal(val) {
-    var el = document.getElementById("ckPaySubtotal");
-    if (el) el.innerHTML = "$" + val.toFixed(2);
+  /* Rates come from payment_config (already on the page) which reads
+     from the DB via CurrencyRate. Parse it early so recalculation is
+     consistent with whatever the payment JS will use. */
+  var _cfg = null;
+  try {
+    var _el = document.getElementById('paymentConfig');
+    if (_el) _cfg = JSON.parse(_el.textContent);
+  } catch (e) {}
+
+  var ESCROW_RATE   = _cfg ? (parseFloat((_cfg.fees || {}).escrow_pct   || 2) / 100) : 0.02;
+  var PLATFORM_RATE = _cfg ? (parseFloat((_cfg.fees || {}).platform_pct || 1) / 100) : 0.01;
+
+  function recalc(subtotal) {
+    var escrow   = subtotal * ESCROW_RATE;
+    var platform = subtotal * PLATFORM_RATE;
+    var total    = subtotal + escrow + platform;
+
+    /* Cart dropdown subtotal */
+    var sd = document.getElementById("ckPaySubtotal");
+    if (sd) sd.innerHTML = "$" + subtotal.toFixed(2);
+
+    /* Order summary rows */
+    var sEl = document.getElementById("paySubtotalAmt");
+    if (sEl) { sEl.textContent = "$" + subtotal.toFixed(2); sEl.setAttribute("data-usd", subtotal.toFixed(2)); }
+    var eEl = document.getElementById("payEscrowAmt");
+    if (eEl) { eEl.textContent = "$" + escrow.toFixed(2); eEl.setAttribute("data-usd", escrow.toFixed(2)); }
+    var pEl = document.getElementById("payPlatformAmt");
+    if (pEl) { pEl.textContent = "$" + platform.toFixed(2); pEl.setAttribute("data-usd", platform.toFixed(2)); }
+    var tEl = document.getElementById("payTotalAmt");
+    if (tEl) { tEl.textContent = "$" + total.toFixed(2); tEl.setAttribute("data-usd", total.toFixed(2)); }
+
+    /* Pay button amount */
     var btn = document.querySelector("#payBtn .ck-currency");
-    if (btn) { btn.textContent = "$" + val.toFixed(2); btn.setAttribute("data-usd", val.toFixed(2)); }
-    var s = document.getElementById("paySubtotalAmt");
-    if (s) s.innerHTML = "$" + val.toFixed(2);
-    var e = document.getElementById("payEscrowAmt");
-    if (e) e.innerHTML = "$" + (val * 0.02).toFixed(2);
-    var p = document.getElementById("payPlatformAmt");
-    if (p) p.innerHTML = "$" + (val * 0.01).toFixed(2);
-    var t = document.getElementById("payTotalAmt");
-    if (t) t.innerHTML = "$" + (val * 1.03).toFixed(2);
+    if (btn) { btn.textContent = "$" + total.toFixed(2); btn.setAttribute("data-usd", total.toFixed(2)); }
   }
+
   function getSubtotal() {
-    // Server subtotal for logged-in users
+    /* Server-rendered subtotal for logged-in buyers — most reliable */
     var s = parseFloat("{{ cart_subtotal|default:0 }}") || 0;
     if (s > 0) return s;
-    // Guest: read from cart.js
-    if (window.DropHubCart && window.DropHubCart.getCart) {
+    /* Guest / just-synced: read from cart.js?v=5 */
+    if (window.DropHubCart && typeof window.DropHubCart.getCart === "function") {
       var cart = window.DropHubCart.getCart();
-      if (cart && cart.length) {
-        return cart.reduce(function (a, i) { return a + (parseFloat(i.price)||0) * (parseInt(i.qty)||1); }, 0);
-      }
+      if (cart && cart.length)
+        return cart.reduce(function (a, i) { return a + (parseFloat(i.price) || 0) * (parseInt(i.qty) || 1); }, 0);
     }
     return 0;
   }
-  updatePaySubtotal(getSubtotal());
-  if (window.DropHubCart && window.DropHubCart.render) {
-    var orig = window.DropHubCart.render;
-    window.DropHubCart.render = function () { orig.call(window.DropHubCart); updatePaySubtotal(getSubtotal()); };
-  }
+
+  /* Run immediately (server-rendered subtotal is already available) */
+  recalc(getSubtotal());
+
+  /* Also re-run after cart.js?v=5 finishes rendering (guest flow) */
+  document.addEventListener("DOMContentLoaded", function () {
+    recalc(getSubtotal());
+    /* Patch cart.js?v=5 render so totals stay in sync on quantity changes */
+    if (window.DropHubCart && window.DropHubCart.render) {
+      var _orig = window.DropHubCart.render;
+      window.DropHubCart.render = function () {
+        _orig.call(window.DropHubCart);
+        recalc(getSubtotal());
+      };
+    }
+
+    /* Guest order summary items */
+    var guestSummary = document.getElementById("ckGuestSummary");
+    if (guestSummary) {
+      var cart = window.DropHubCart ? window.DropHubCart.getCart() : [];
+      var sh = "";
+      (cart || []).forEach(function (item) {
+        sh += '<div class="ck-sum-item">'
+          + '<img class="ck-sum-img" src="' + (item.img || "/static/img/headphones.jpg") + '" onerror="this.src=\'/static/img/headphones.jpg\'" />'
+          + '<div class="ck-sum-info">'
+          + '<p class="ck-sum-name">' + (item.name || "Item").substring(0, 30) + "</p>"
+          + '<p class="ck-sum-qty">&times;' + (item.qty || 1) + "</p>"
+          + "</div>"
+          + '<span class="ck-sum-price ck-mono ck-currency" data-usd="' + ((item.price || 0) * (item.qty || 1)).toFixed(2) + '">'
+          + "$" + ((item.price || 0) * (item.qty || 1)).toFixed(2)
+          + "</span>"
+          + "</div>";
+      });
+      if (sh) guestSummary.innerHTML = sh;
+    }
+  });
 })();
 </script>
 
@@ -557,7 +609,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var rates = {
       usd: 1,
       ngn: parseFloat(config.rates.ngn_per_usd) || 1600,
-      pi:  parseFloat(config.rates.pi_per_usd) || 0.5
+      pi:  parseFloat(config.rates.pi_per_usd) || 2
     };
     var methodCurrency = { pi: 'pi', paypal: 'usd', paystack: 'ngn' };
     var currencyLabels = { pi: 'Pi (π)', usd: 'US dollars (USD)', ngn: 'Nigerian Naira (NGN)' };

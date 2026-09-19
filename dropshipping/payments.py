@@ -110,14 +110,32 @@ def _request(url, *, method='GET', json_body=None, body=None, content_type=None,
 #  Currency conversion (shop prices are stored in USD)
 # ═════════════════════════════════════════════════════════════
 
+def _live_ngn_rate():
+    """Naira-per-dollar rate from the DB (admin-managed), fallback to settings."""
+    try:
+        from dashboards.models import CurrencyRate
+        return CurrencyRate.ngn_per_usd()
+    except Exception:
+        return settings.NGN_PER_USD
+
+
+def _live_pi_rate():
+    """Pi-per-dollar rate from the DB (admin-managed), fallback to settings."""
+    try:
+        from dashboards.models import CurrencyRate
+        return CurrencyRate.pi_per_usd()
+    except Exception:
+        return settings.PI_PER_USD
+
+
 def usd_to_ngn(amount_usd):
     """Naira amount for a USD total, rounded to whole Naira."""
-    return money(Decimal(amount_usd) * settings.NGN_PER_USD, '1')
+    return money(Decimal(str(amount_usd)) * _live_ngn_rate(), '1')
 
 
 def usd_to_pi(amount_usd):
     """Pi amount for a USD total (2 decimals, which the Pi SDK accepts)."""
-    return money(Decimal(amount_usd) * settings.PI_PER_USD, '0.01')
+    return money(Decimal(str(amount_usd)) * _live_pi_rate(), '0.01')
 
 
 def ngn_to_kobo(amount_ngn):
@@ -178,6 +196,7 @@ def paystack_verify(reference):
     )
     if not response.get('status') or not response.get('data'):
         raise PaymentError(response.get('message') or 'Paystack could not verify that payment.')
+    return response['data']
 # ═════════════════════════════════════════════════════════════
 #  PayPal
 # ══════════════════════════════════════════════════════════════
@@ -282,13 +301,16 @@ def paypal_captured_amount(capture):
     except (InvalidOperation, ValueError):
         return None
 
-    return response['data']
-
-
 def paystack_signature_is_valid(raw_body, signature):
     """Validate the ``x-paystack-signature`` header of a webhook call."""
     if not settings.PAYSTACK_SECRET_KEY or not signature:
         return False
+    expected = hmac.new(
+        settings.PAYSTACK_SECRET_KEY.encode('utf-8'), raw_body or b'', sha512
+    ).hexdigest()
+    return hmac.compare_digest(expected, signature.strip())
+
+
 # ═════════════════════════════════════════════════════════════
 #  Pi Network
 # ══════════════════════════════════════════════════════════════

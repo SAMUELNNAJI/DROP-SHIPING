@@ -73,7 +73,7 @@
           </div>
           {% endfor %}
         {% else %}
-          {# Guest: cart.js renders localStorage items into this container #}
+          {# Guest: cart.js?v=5 renders localStorage items into this container #}
           <div id="ckGuestItems" style="padding:0"></div>
         {% endif %}
 
@@ -123,13 +123,13 @@
               </div>
             </div>
             <div class="ck-totals-fees">
-              <div class="ck-totals-fee-row"><span>Escrow fee (2%)</span><span class="ck-mono" id="escrowFee">—</span></div>
-              <div class="ck-totals-fee-row"><span>Platform fee (1%)</span><span class="ck-mono" id="platformFee">—</span></div>
+              <div class="ck-totals-fee-row"><span>Escrow fee ({% if escrow_pct %}{{ escrow_pct }}{% else %}2{% endif %}%)</span><span class="ck-mono" id="escrowFee">—</span></div>
+              <div class="ck-totals-fee-row"><span>Platform fee ({% if platform_pct %}{{ platform_pct }}{% else %}1{% endif %}%)</span><span class="ck-mono" id="platformFee">—</span></div>
             </div>
           </div>
 
         {% else %}
-          {# Guest: totals driven by cart.js #}
+          {# Guest: totals driven by cart.js?v=5 #}
           <div id="ckGuestSummary" style="padding:4px 0"></div>
 
           <!-- ── Redesigned totals block (guest) ── -->
@@ -143,8 +143,8 @@
               </div>
             </div>
             <div class="ck-totals-fees">
-              <div class="ck-totals-fee-row"><span>Escrow fee (2%)</span><span class="ck-mono" id="escrowFee">$0.00</span></div>
-              <div class="ck-totals-fee-row"><span>Platform fee (1%)</span><span class="ck-mono" id="platformFee">$0.00</span></div>
+              <div class="ck-totals-fee-row"><span>Escrow fee ({% if escrow_pct %}{{ escrow_pct }}{% else %}2{% endif %}%)</span><span class="ck-mono" id="escrowFee">$0.00</span></div>
+              <div class="ck-totals-fee-row"><span>Platform fee ({% if platform_pct %}{{ platform_pct }}{% else %}1{% endif %}%)</span><span class="ck-mono" id="platformFee">$0.00</span></div>
             </div>
           </div>
 
@@ -269,34 +269,44 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-<script src="/static/cart.js?v=4"></script>
+<script src="/static/cart.js?v=5"></script>
 <script>
-/* ── Compute fees from server subtotal (logged-in) or cart.js (guest) ── */
+/* ── Compute fees using live server rates (DB-managed by admin) ── */
 (function () {
-  function money(v) { return '$' + v.toFixed(2); }
+  /* Rates injected by the server so the page never disagrees with what
+     the provider is actually charged. Falls back to sensible defaults
+     if the template variable is missing (guest page, no context). */
+  var NGN_PER_USD  = parseFloat('{{ ngn_per_usd|default:"1600" }}') || 1600;
+  var PI_PER_USD   = parseFloat('{{ pi_per_usd|default:"2" }}')     || 2;
+  var ESCROW_PCT   = parseFloat('{{ escrow_pct|default:"2" }}')     / 100;
+  var PLATFORM_PCT = parseFloat('{{ platform_pct|default:"1" }}')   / 100;
+
+  function money(v) { return v.toFixed(2); }
+
   function calcFees(subtotal) {
-    var escrow   = subtotal * 0.02;
-    var platform = subtotal * 0.01;
+    var escrow   = subtotal * ESCROW_PCT;
+    var platform = subtotal * PLATFORM_PCT;
     var total    = subtotal + escrow + platform;
-    var ef = document.getElementById('escrowFee');
-    var pf = document.getElementById('platformFee');
-    var ct = document.getElementById('ckTotal');
-    var pi = document.getElementById('totalPi');
+
+    var ef  = document.getElementById('escrowFee');
+    var pf  = document.getElementById('platformFee');
+    var ct  = document.getElementById('ckTotal');
     var ngn = document.getElementById('totalNgn');
-    if (ef)  ef.textContent  = money(escrow);
-    if (pf)  pf.textContent  = money(platform);
-    if (ct)  ct.textContent  = money(total);
-    /* Pi rate: $1 = 0.5 Pi  →  total / 2  (estimate) */
-    if (pi)  pi.textContent  = '\u03c0\u00a0' + (total * 0.5).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    /* Naira rate: $1 = ₦1,600 (estimate) */
-    if (ngn) ngn.textContent = '\u20a6\u00a0' + Math.round(total * 1600).toLocaleString();
+    var pi  = document.getElementById('totalPi');
+
+    if (ef)  ef.textContent  = '$' + money(escrow);
+    if (pf)  pf.textContent  = '$' + money(platform);
+    if (ct)  ct.textContent  = '$' + money(total);
+    if (ngn) ngn.textContent = '\u20a6\u00a0' + Math.round(total * NGN_PER_USD).toLocaleString();
+    if (pi)  pi.textContent  = '\u03c0\u00a0' + (total * PI_PER_USD).toLocaleString(
+                                  undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   /* Server subtotal for logged-in buyers */
   var serverSub = parseFloat('{{ cart_subtotal|default:"0" }}') || 0;
   if (serverSub > 0) { calcFees(serverSub); return; }
 
-  /* Guest: read from cart.js after it renders */
+  /* Guest: read from cart.js?v=5 after it renders */
   document.addEventListener('DOMContentLoaded', function () {
     if (!window.DropHubCart) return;
     var cart = window.DropHubCart.getCart();

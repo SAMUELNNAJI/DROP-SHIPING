@@ -3,6 +3,12 @@ from django.db import models
 from django.utils.text import slugify
 
 
+def _get_currency_rate():
+    """Lazy import to avoid circular imports."""
+    from dashboards.models import CurrencyRate
+    return CurrencyRate
+
+
 class Product(models.Model):
     """Marketplace product listed by a seller. Fields map 1:1 onto the shop card."""
 
@@ -130,14 +136,18 @@ class Product(models.Model):
     @property
     def price_ngn(self):
         try:
-            return "\u20a6{:,.0f}".format(float(self.price) * 1500)
+            from dashboards.models import CurrencyRate
+            rate = float(CurrencyRate.ngn_per_usd())
+            return "\u20a6{:,.0f}".format(float(self.price) * rate)
         except (TypeError, ValueError):
             return ""
 
     @property
     def price_pi(self):
         try:
-            return "\u03c0{:,.2f}".format(float(self.price) * 20000)
+            from dashboards.models import CurrencyRate
+            rate = float(CurrencyRate.pi_per_usd())
+            return "\u03c0{:,.2f}".format(float(self.price) * rate)
         except (TypeError, ValueError):
             return ""
 

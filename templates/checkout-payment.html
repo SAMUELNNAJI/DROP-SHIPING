@@ -500,28 +500,52 @@ document.addEventListener('DOMContentLoaded', function () {
   var ESCROW_RATE   = _cfg ? (parseFloat((_cfg.fees || {}).escrow_pct   || 2) / 100) : 0.02;
   var PLATFORM_RATE = _cfg ? (parseFloat((_cfg.fees || {}).platform_pct || 1) / 100) : 0.01;
 
+  /* Rates for formatting amounts in the currency of the rail the buyer is
+     currently on. Same server-injected rates the payment JS uses. */
+  var RATES = {
+    usd: 1,
+    ngn: _cfg ? (parseFloat((_cfg.rates || {}).ngn_per_usd) || 1600) : 1600,
+    pi:  _cfg ? (parseFloat((_cfg.rates || {}).pi_per_usd)  || 2)    : 2
+  };
+
+  function selectedCurrency() {
+    var sel = document.querySelector('.ck-pay-option.is-selected');
+    var m = sel ? (sel.getAttribute('data-method') || '') : '';
+    if (m === 'paystack') return 'ngn';
+    if (m === 'pi') return 'pi';
+    return 'usd';
+  }
+
+  function fmtAmount(usd, cur) {
+    var v = usd * RATES[cur];
+    if (cur === 'ngn') return '\u20a6' + Math.round(v).toLocaleString();
+    if (cur === 'pi')  return '\u03c0' + v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return '$' + v.toFixed(2);
+  }
+
   function recalc(subtotal) {
     var escrow   = subtotal * ESCROW_RATE;
     var platform = subtotal * PLATFORM_RATE;
     var total    = subtotal + escrow + platform;
+    var cur      = selectedCurrency();
 
     /* Cart dropdown subtotal */
     var sd = document.getElementById("ckPaySubtotal");
-    if (sd) sd.innerHTML = "$" + subtotal.toFixed(2);
+    if (sd) sd.innerHTML = fmtAmount(subtotal, cur);
 
     /* Order summary rows */
     var sEl = document.getElementById("paySubtotalAmt");
-    if (sEl) { sEl.textContent = "$" + subtotal.toFixed(2); sEl.setAttribute("data-usd", subtotal.toFixed(2)); }
+    if (sEl) { sEl.textContent = fmtAmount(subtotal, cur); sEl.setAttribute("data-usd", subtotal.toFixed(2)); }
     var eEl = document.getElementById("payEscrowAmt");
-    if (eEl) { eEl.textContent = "$" + escrow.toFixed(2); eEl.setAttribute("data-usd", escrow.toFixed(2)); }
+    if (eEl) { eEl.textContent = fmtAmount(escrow, cur); eEl.setAttribute("data-usd", escrow.toFixed(2)); }
     var pEl = document.getElementById("payPlatformAmt");
-    if (pEl) { pEl.textContent = "$" + platform.toFixed(2); pEl.setAttribute("data-usd", platform.toFixed(2)); }
+    if (pEl) { pEl.textContent = fmtAmount(platform, cur); pEl.setAttribute("data-usd", platform.toFixed(2)); }
     var tEl = document.getElementById("payTotalAmt");
-    if (tEl) { tEl.textContent = "$" + total.toFixed(2); tEl.setAttribute("data-usd", total.toFixed(2)); }
+    if (tEl) { tEl.textContent = fmtAmount(total, cur); tEl.setAttribute("data-usd", total.toFixed(2)); }
 
     /* Pay button amount */
     var btn = document.querySelector("#payBtn .ck-currency");
-    if (btn) { btn.textContent = "$" + total.toFixed(2); btn.setAttribute("data-usd", total.toFixed(2)); }
+    if (btn) { btn.textContent = fmtAmount(total, cur); btn.setAttribute("data-usd", total.toFixed(2)); }
   }
 
   function getSubtotal() {
@@ -565,7 +589,7 @@ document.addEventListener('DOMContentLoaded', function () {
           + '<p class="ck-sum-qty">&times;' + (item.qty || 1) + "</p>"
           + "</div>"
           + '<span class="ck-sum-price ck-mono ck-currency" data-usd="' + ((item.price || 0) * (item.qty || 1)).toFixed(2) + '">'
-          + "$" + ((item.price || 0) * (item.qty || 1)).toFixed(2)
+          + fmtAmount((item.price || 0) * (item.qty || 1), selectedCurrency())
           + "</span>"
           + "</div>";
       });

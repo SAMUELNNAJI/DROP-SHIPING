@@ -1684,6 +1684,33 @@ def checkout_success_view(request):
 
     totals = payment_views.cart_totals(sum((o.total_price for o in orders), Decimal("0")))
 
+    # ── Show the summary in the currency the buyer actually paid with ──
+    # Paystack charges Naira, Pi charges π, PayPal charges US dollars.
+    from dropshipping import payments as payments_mod
+
+    if method == "paystack":
+        symbol, show_cents = "\u20a6", False          # ₦ — whole Naira
+        convert = payments_mod.usd_to_ngn
+        currency_name = "Nigerian Naira (\u20a6)"
+    elif method == "pi":
+        symbol, show_cents = "\u03c0", True            # π — 2 decimals
+        convert = payments_mod.usd_to_pi
+        currency_name = "Pi Network (\u03c0)"
+    else:
+        symbol, show_cents = "$", True                 # USD — 2 decimals
+        convert = lambda value: payments_mod.money(value)
+        currency_name = "US Dollar ($)"
+
+    def paid_fmt(value):
+        amount = convert(value)
+        if show_cents:
+            return f"{symbol}{amount:,.2f}"
+        return f"{symbol}{amount:,.0f}"
+
+    # Each order line shows the amount in the paid currency too.
+    for order in orders:
+        order.display_price = paid_fmt(order.total_price)
+
     ctx = {
         "page_title":              "Order Confirmed",
         "orders":                  orders,
@@ -1693,6 +1720,13 @@ def checkout_success_view(request):
         "order_escrow_fee":        totals["escrow"],
         "order_platform_fee":      totals["platform"],
         "order_total":             totals["total"],
+        # Amounts already converted into the currency the buyer paid with.
+        "paid_currency_name":      currency_name,
+        "paid_symbol":             symbol,
+        "paid_subtotal":           paid_fmt(totals["subtotal"]),
+        "paid_escrow_fee":         paid_fmt(totals["escrow"]),
+        "paid_platform_fee":       paid_fmt(totals["platform"]),
+        "paid_total":              paid_fmt(totals["total"]),
     }
     return render(request, "checkout-success.html", ctx)
 

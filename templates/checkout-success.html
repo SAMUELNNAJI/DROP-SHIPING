@@ -137,28 +137,28 @@
               <p class="ck-sum-name">{{ order.product_name|truncatechars:30 }}</p>
               <p class="ck-sum-qty">&times;{{ order.quantity }}</p>
             </div>
-            <span class="ck-sum-price ck-mono">${{ order.total_price|floatformat:2 }}</span>
+            <span class="ck-sum-price ck-mono">{{ order.display_price }}</span>
           </div>
           {% endfor %}
 
           <div class="ck-sum-rows">
             <div class="ck-sum-row">
               <span>Subtotal</span>
-              <span class="ck-mono">${{ order_subtotal|floatformat:2 }}</span>
+              <span class="ck-mono">{{ paid_subtotal }}</span>
             </div>
             <div class="ck-sum-row">
               <span>Escrow Fee (2%)</span>
-              <span class="ck-mono">${{ order_escrow_fee|floatformat:2 }}</span>
+              <span class="ck-mono">{{ paid_escrow_fee }}</span>
             </div>
             <div class="ck-sum-row">
               <span>Platform Fee (1%)</span>
-              <span class="ck-mono">${{ order_platform_fee|floatformat:2 }}</span>
+              <span class="ck-mono">{{ paid_platform_fee }}</span>
             </div>
           </div>
 
           <div class="ck-sum-total">
             <span class="ck-sum-total-label">Total</span>
-            <span class="ck-sum-total-val ck-mono">${{ order_total|floatformat:2 }}</span>
+            <span class="ck-sum-total-val ck-mono">{{ paid_total }}</span>
           </div>
 
         {% else %}
@@ -346,5 +346,22 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <script src="/static/cart.js?v=6"></script>
+<script>
+/* Payment succeeded — the server cart is cleared when the orders are created,
+   so empty the browser's localStorage cart as well. This guarantees the header
+   badge reads 0 and the dropdown shows "Your cart is empty" on arrival, even
+   if the buyer reached this page without the payment page doing it first. */
+(function () {
+  function resetCart() {
+    if (!window.DropHubCart) return;
+    try {
+      window.DropHubCart.clearCart();
+      window.DropHubCart.render();
+    } catch (e) {}
+  }
+  if (window.DropHubCart) resetCart();
+  else document.addEventListener('DOMContentLoaded', resetCart);
+})();
+</script>
 </body>
 </html>

@@ -722,6 +722,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function goToSuccess(data) {
+      /* Payment confirmed — empty the browser cart right away so the header
+         badge and dropdown reset the moment the buyer lands on the success
+         page. The server cart was already cleared when the orders were
+         created. */
+      try {
+        if (window.DropHubCart) {
+          window.DropHubCart.clearCart();
+          window.DropHubCart.render();
+        }
+      } catch (e) {}
       setStatus('Payment confirmed — taking you to your order…', 'ok');
       window.location.href = (data && data.redirect) || '/checkout-success/';
     }

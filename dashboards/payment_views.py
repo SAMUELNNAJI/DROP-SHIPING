@@ -234,6 +234,26 @@ def _remember_for_success_page(request, intent):
 #  Orders + settlement
 # ══════════════════════════════════════════════════════════════
 
+def _item_unavailable(item):
+    """True when a cart item can no longer be fulfilled (status/stock/verified seller)."""
+    product = item.product
+    verification = getattr(product.seller, 'seller_verification', None)
+    return (product.status != 'live' or product.stock < item.quantity
+            or not product.seller.is_active
+            or not verification or verification.status != 'verified')
+
+
+def cart_issues(user):
+    """Names of cart items that would fail order creation.
+
+    Checked *before* any money moves so a buyer is never charged for an
+    unfulfillable order (create_orders_for_cart re-checks as a last line of
+    defence inside the settlement transaction).
+    """
+    items = CartItem.objects.filter(user=user).select_related('product', 'product__seller')
+    return [item.product.name for item in items if _item_unavailable(item)]
+
+
 def create_orders_for_cart(user, method, reference):
     """Turn the buyer's DB cart into protected orders.
 
@@ -252,10 +272,7 @@ def create_orders_for_cart(user, method, reference):
     created = []
     for item in items:
         product = item.product
-        verification = getattr(product.seller, 'seller_verification', None)
-        if (product.status != 'live' or product.stock < item.quantity
-                or not product.seller.is_active
-                or not verification or verification.status != 'verified'):
+        if _item_unavailable(item):
             raise CheckoutError('%s is no longer available from a verified seller.' % product.name)
 
         order = Order.objects.create(
@@ -437,6 +454,12 @@ def payment_start(request):
         items, _subtotal, totals = cart_snapshot(request.user)
         if not items:
             raise CheckoutError('Your cart is empty.')
+        blocked = cart_issues(request.user)
+        if blocked:
+            raise CheckoutError(
+                'Before you pay: %s is no longer available from a verified seller. '
+                'Please remove it from your cart and try again.' % ', '.join(blocked)
+            )
         intent = _new_intent(request.user, method, totals)
 
         if method == 'paystack':

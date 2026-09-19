@@ -1567,9 +1567,12 @@ def checkout_view(request):
     get_token(request)
     ctx = {"page_title": "Checkout", "slug": "checkout"}
     ctx.update(cart_context(request))
-    # saved addresses for logged-in buyers
+    # Flag cart items that can no longer be fulfilled so the buyer sees the
+    # problem here — before paying (see payment_views.cart_issues).
     if request.user.is_authenticated:
         ctx["addresses"] = BuyerAddress.objects.filter(user=request.user)
+        from .payment_views import cart_issues
+        ctx["cart_issues"] = cart_issues(request.user)
     return render(request, "checkout.html", ctx)
 
 
@@ -1589,6 +1592,10 @@ def checkout_payment(request):
     # Real cart, real totals and the payment rails that are actually configured
     # (see dashboards/payment_views.py — nothing is charged without one of them).
     ctx.update(payment_views.checkout_context(request))
+    # Same pre-payment availability check as /checkout/ — Pay itself will also
+    # refuse to start while any item is unfulfillable.
+    if request.user.is_authenticated:
+        ctx["cart_issues"] = payment_views.cart_issues(request.user)
 
     return render(request, "checkout-payment.html", ctx)
 

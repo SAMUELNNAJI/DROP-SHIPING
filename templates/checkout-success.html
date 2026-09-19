@@ -57,14 +57,29 @@
           <div class="ck-success-check">
             <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
-          <h1 class="ck-success-title">Payment Successful!</h1>
+          <h1 class="ck-success-title">{% if payment_awaiting_review %}Payment Received — Awaiting Confirmation{% else %}Payment Successful!{% endif %}</h1>
           {% if orders %}
-            <p class="ck-success-sub">
-              {{ orders|length }} order{{ orders|length|pluralize }} placed and secured in DropHub escrow.
-              The seller{{ orders|length|pluralize:" has,s have" }} been notified to ship.
-            </p>
+            {% if payment_awaiting_review %}
+              <p class="ck-success-sub">
+                You have sent your Pi to the DropHub wallet. Our team is verifying the transfer
+                against the wallet and will confirm your order within 24 hours. The seller has
+                been notified and will ship once your payment clears.
+              </p>
+            {% else %}
+              <p class="ck-success-sub">
+                {{ orders|length }} order{{ orders|length|pluralize }} placed and secured in DropHub escrow.
+                The seller{{ orders|length|pluralize:" has,s have" }} been notified to ship.
+              </p>
+            {% endif %}
           {% else %}
-            <p class="ck-success-sub">Your payment is held safely in DropHub escrow. The seller has been notified to ship your order.</p>
+            <p class="ck-success-sub">
+              {% if payment_awaiting_review %}
+                Your Pi transfer details are recorded. We are verifying the wallet transfer and
+                will confirm your order within 24 hours. The seller will ship once your payment clears.
+              {% else %}
+                Your payment is held safely in DropHub escrow. The seller has been notified to ship your order.
+              {% endif %}
+            </p>
           {% endif %}
         </div>
 
@@ -75,14 +90,15 @@
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
             <div style="flex:1;min-width:0;">
               <p class="ck-status-title">Order {{ order.order_number }}</p>
-              <p class="ck-status-sub">{{ order.product_name|truncatechars:50 }} &middot; &times;{{ order.quantity }} &middot; ${{ order.total_price|floatformat:2 }}</p>
+              <p class="ck-status-sub">{{ order.product_name|truncatechars:50 }} &middot; &times;{{ order.quantity }} &middot; {% if order.display_price %}{{ order.display_price }}{% else %}${{ order.total_price|floatformat:2 }}{% endif %}</p>
             </div>
-            <span style="flex-shrink:0;font-size:11.5px;font-weight:700;padding:4px 12px;border-radius:999px;background:#f0fdf4;color:#16a34a;letter-spacing:.02em;">Paid</span>
+                        <span style="flex-shrink:0;font-size:11.5px;font-weight:700;padding:4px 12px;border-radius:999px;background:{% if payment_awaiting_review %}#fff7ed;color:#b45309;{% else %}#f0fdf4;color:#16a34a;{% endif %}letter-spacing:.02em;">{% if payment_awaiting_review %}Awaiting{% else %}Paid{% endif %}</span>
           </div>
           {% endfor %}
         {% endif %}
 
-        <!-- Status timeline -->
+                <!-- Status timeline — only for fully confirmed payments -->
+        {% if not payment_awaiting_review %}
         <div class="ck-status">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1F64FF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
           <div>
@@ -106,6 +122,16 @@
             <p class="ck-status-sub">Track your delivery via email and your buyer dashboard</p>
           </div>
         </div>
+        {% else %}
+        <!-- Awaiting confirmation timeline (Pi pending) -->
+        <div class="ck-status">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div>
+            <p class="ck-status-title">Awaiting Admin Confirmation</p>
+            <p class="ck-status-sub">We are verifying your Pi transfer in the wallet (up to 24 hours)</p>
+          </div>
+        </div>
+        {% endif %}
 
         <!-- Actions -->
         <div class="ck-actions--even ck-success-actions">

@@ -349,6 +349,14 @@ def dashboard_context(request, role, section):
         "pending_payout_count": (
             Order.objects.filter(status=Order.STATUS_CONFIRMED, payout_released=False).count() if role == "admin" else 0
         ),
+        "new_users_count": (
+            User.objects.filter(
+                date_joined__gte=timezone.now() - timezone.timedelta(days=7)
+            ).count() if role == "admin" else 0
+        ),
+        "draft_products_count": (
+            Product.objects.filter(status="draft").count() if role == "admin" else 0
+        ),
     }
 
 

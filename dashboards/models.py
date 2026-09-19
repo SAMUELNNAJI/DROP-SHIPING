@@ -621,16 +621,18 @@ class PaymentIntent(models.Model):
     never produce a protected order.
     """
 
-    STATUS_PENDING   = "pending"    # started, waiting for the provider
-    STATUS_PAID      = "paid"       # provider confirmed the money
-    STATUS_FAILED    = "failed"     # provider rejected it
-    STATUS_CANCELLED = "cancelled"  # buyer closed the window / went back
+    STATUS_PENDING   = "pending"         # started, waiting for the provider
+    STATUS_PAID      = "paid"            # provider confirmed the money
+    STATUS_FAILED    = "failed"          # provider rejected it
+    STATUS_CANCELLED = "cancelled"       # buyer closed the window / went back
+    STATUS_PI_PENDING = "pi_pending"     # manual Pi transfer reported, awaiting admin verification
 
     STATUS_CHOICES = [
-        (STATUS_PENDING,   "Awaiting payment"),
-        (STATUS_PAID,      "Paid"),
-        (STATUS_FAILED,    "Failed"),
-        (STATUS_CANCELLED, "Cancelled"),
+        (STATUS_PENDING,    "Awaiting payment"),
+        (STATUS_PAID,       "Paid"),
+        (STATUS_FAILED,     "Failed"),
+        (STATUS_CANCELLED,  "Cancelled"),
+        (STATUS_PI_PENDING, "Pi transfer pending review"),
     ]
 
     PURPOSE_CHECKOUT = "checkout"
@@ -685,5 +687,9 @@ class PaymentIntent(models.Model):
     @property
     def is_paid(self):
         return self.status == self.STATUS_PAID
+
+    @property
+    def is_pi_pending(self):
+        return self.status == self.STATUS_PI_PENDING
 
 

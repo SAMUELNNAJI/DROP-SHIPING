@@ -78,6 +78,12 @@ urlpatterns = [
     # ── Admin: currency rates ─────────────────────────────────
     path("admin/currency-rates/", views.admin_currency_rates, name="admin_currency_rates"),
 
+    # ── Admin: Pi payment verification ───────────────────────
+    path("admin/pi-payments/", views.admin_pi_payments, name="admin_pi_payments"),
+    path("admin/pi-payments/<int:pk>/confirm/", views.admin_pi_confirm, name="admin_pi_confirm"),
+    path("admin/pi-payments/<int:pk>/reject/", views.admin_pi_reject, name="admin_pi_reject"),
+    path("admin/pi-payments/<int:pk>/reclaim/", views.admin_pi_reclaim, name="admin_pi_reclaim"),
+
     # ── Cart API ──────────────────────────────────────────────
     path("cart/add/<int:product_pk>/", views.cart_add, name="cart_add"),
     path("cart/update/<int:product_pk>/", views.cart_update, name="cart_update"),

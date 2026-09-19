@@ -17,7 +17,7 @@ from shop.models import BlogPost, Product
 
 from . import payment_views
 from .forms import BuyerAddressForm, BoostPlanForm, SellerPayoutMethodForm, SellerVerificationForm
-from .models import BuyerAddress, BoostOrder, BoostPlan, CartItem, CurrencyRate, Order, OrderTrackingEvent, SellerPayout, SellerPayoutMethod, SellerVerification, WishlistItem
+from .models import BuyerAddress, BoostOrder, BoostPlan, CartItem, CurrencyRate, Order, OrderTrackingEvent, PaymentIntent, SellerPayout, SellerPayoutMethod, SellerVerification, WishlistItem
 
 
 def get_or_init_verification(user):
@@ -71,6 +71,7 @@ SECTION_TITLES = {
         "payments": "Payments",
         "verifications": "Seller Verifications",
         "posts": "Blog Posts",
+        "pi-payments": "Pi Payment Verification",
     },
     "seller": {
         "overview": "Seller Overview",
@@ -176,6 +177,105 @@ def _run_auto_confirm():
     )
 
 
+# ═══════════════════════════════════════════════════════════════
+#  ADMIN: Pi payment verification (manual wallet transfers)
+# ═══════════════════════════════════════════════════════════════
+
+@staff_member_required
+def admin_pi_payments(request):
+    """Admin: list all Pi payments awaiting manual wallet verification."""
+    context = dashboard_context(request, "admin", "pi-payments")
+    qs = PaymentIntent.objects.filter(
+        method="pi", status=PaymentIntent.STATUS_PI_PENDING
+    ).order_by("-created_at")
+    paginator = Paginator(qs, 20)
+    page_obj = paginator.get_page(request.GET.get("page"))
+    context.update({
+        "pi_payments": page_obj.object_list,
+        "page_obj": page_obj,
+        "dashboard_template": "dashboards/admin/pi_payments.html",
+    })
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(request, "dashboards/admin/pi_payments.html", context)
+    return render(request, "dashboards/base.html", context)
+
+
+@staff_member_required
+@require_POST
+def admin_pi_confirm(request, pk):
+    """Admin: verify the Pi transfer in the wallet and create the orders."""
+    intent = get_object_or_404(
+        PaymentIntent, pk=pk, method="pi", status=PaymentIntent.STATUS_PI_PENDING
+    )
+    cart_snapshot = (intent.provider_payload or {}).get("cart_snapshot", [])
+    if not cart_snapshot:
+        messages.error(request, f"#{intent.reference}: No cart snapshot — cannot create orders.")
+        return redirect("admin_pi_payments")
+
+    try:
+        with transaction.atomic():
+            orders = create_orders_for_cart(intent.user, intent.method, intent.reference)
+    except CheckoutError as exc:
+        messages.error(request, f"#{intent.reference}: {exc}")
+        return redirect("admin_pi_payments")
+
+    intent.order_pks = [o.pk for o in orders]
+    intent.status = PaymentIntent.STATUS_PAID
+    intent.paid_at = timezone.now()
+    intent.note = (intent.note or "") + "  ✓ Admin confirmed Pi transfer."
+    intent.provider_payload = {
+        **(intent.provider_payload or {}),
+        "admin_confirmed_at": timezone.now().isoformat(),
+        "admin_action": "confirm",
+    }
+    intent.save(update_fields=["order_pks", "status", "paid_at", "note", "provider_payload", "updated_at"])
+    messages.success(request, f"#{intent.reference} confirmed — {len(orders)} order(s) created. Pi verified in wallet.")
+    return redirect("admin_pi_payments")
+
+
+@staff_member_required
+@require_POST
+def admin_pi_reject(request, pk):
+    """Admin: reject a Pi transfer claim and restore the cart for the buyer."""
+    intent = get_object_or_404(
+        PaymentIntent, pk=pk, method="pi", status=PaymentIntent.STATUS_PI_PENDING
+    )
+    cart_snapshot = (intent.provider_payload or {}).get("cart_snapshot", [])
+    if cart_snapshot:
+        CartItem.objects.filter(user=intent.user).delete()
+        for item in cart_snapshot:
+            try:
+                CartItem.objects.create(
+                    user=intent.user,
+                    product_id=item["product_pk"],
+                    quantity=item["quantity"],
+                )
+            except (KeyError, Product.DoesNotExist):
+                continue
+
+    intent.status = PaymentIntent.STATUS_FAILED
+    intent.note = (intent.note or "") + "  ✗ Admin rejected — no Pi received."
+    intent.save(update_fields=["status", "note", "updated_at"])
+    messages.success(request, f"#{intent.reference} rejected — cart restored for buyer.")
+    return redirect("admin_pi_payments")
+
+
+@staff_member_required
+@require_POST
+def admin_pi_reclaim(request, pk):
+    """Admin: reset a failed/cancelled Pi intent back to pending so buyer can retry."""
+    intent = get_object_or_404(
+        PaymentIntent, pk=pk, method="pi",
+        status__in=[PaymentIntent.STATUS_FAILED, PaymentIntent.STATUS_CANCELLED]
+    )
+    intent.status = PaymentIntent.STATUS_PENDING
+    intent.order_pks = []
+    intent.note = (intent.note or "") + "  ↻ Reset to pending by admin."
+    intent.save(update_fields=["status", "order_pks", "note", "updated_at"])
+    messages.success(request, f"#{intent.reference} reset to pending — buyer can claim again.")
+    return redirect("admin_pi_payments")
+
+
 def dashboard_context(request, role, section):
     # Run auto-confirm on every dashboard page load (lightweight — indexed query)
     _run_auto_confirm()
@@ -216,6 +316,11 @@ def dashboard_context(request, role, section):
             "in_transit":    Order.objects.filter(status=Order.STATUS_IN_TRANSIT).count(),
             "delivered":     Order.objects.filter(status=Order.STATUS_DELIVERED).count(),
         }
+        pending_pi = PaymentIntent.objects.filter(
+            status=PaymentIntent.STATUS_PI_PENDING
+        ).count()
+    else:
+        pending_pi = 0
 
     return {
         "user": request.user,
@@ -233,6 +338,7 @@ def dashboard_context(request, role, section):
         "pending_verifications": (
             SellerVerification.objects.filter(status="pending").count() if role == "admin" else 0
         ),
+        "pending_pi_payments": pending_pi,
     }
 
 

@@ -778,12 +778,12 @@ def pi_complete(request):
 @require_POST
 @login_required
 def pi_manual_claim(request):
-    """Buyer paid Pi from a normal browser: record the order for confirmation.
+    """Buyer paid Pi from a normal browser: record the claim for admin verification.
 
     The Pi SDK only runs inside the Pi Browser, so buyers elsewhere send Pi to
     the wallet in ``PI_WALLET_ADDRESS`` quoting the payment reference.  The
-    orders are created straight away but stay *pending* while an admin checks
-    the wallet, so nobody ships against an unconfirmed transfer.
+    intent is marked ``pi_pending`` (not ``paid``) so an admin can verify the
+    transfer in the wallet before orders are created and stock is deducted.
     """
     payload = _request_payload(request)
     reference = str(payload.get('reference') or '').strip()
@@ -796,24 +796,32 @@ def pi_manual_claim(request):
     if intent.status != PaymentIntent.STATUS_PENDING:
         return JsonResponse({'error': 'This Pi payment is no longer open.'}, status=409)
 
-    try:
-        with transaction.atomic():
-            orders = create_orders_for_cart(request.user, intent.method, intent.reference)
-    except CheckoutError as exc:
-        return JsonResponse({'error': str(exc)}, status=409)
-
-    intent.order_pks = [order.pk for order in orders]
-    intent.note = ('Buyer reports a manual Pi transfer to %s — awaiting confirmation'
+    intent.status = PaymentIntent.STATUS_PI_PENDING
+    intent.note = ('Buyer reports a manual Pi transfer to %s — awaiting admin verification'
                    % settings.PI_WALLET_ADDRESS)[:200]
+    # Snapshot the cart so the admin can recreate orders when confirming.
+    cart_items = list(CartItem.objects.filter(user=request.user)
+                      .select_related('product', 'product__seller'))
+    cart_snapshot = [
+        {'product_pk': item.product_id, 'quantity': item.quantity,
+         'product_name': item.product.name, 'unit_price': str(item.product.price)}
+        for item in cart_items
+    ]
     intent.provider_payload = {
         **(intent.provider_payload or {}),
         'manual_claim': True,
         'claimed_at': timezone.now().isoformat(),
+        'cart_snapshot': cart_snapshot,
+        'wallet_address': settings.PI_WALLET_ADDRESS,
     }
-    intent.save(update_fields=['order_pks', 'note', 'provider_payload', 'updated_at'])
+    intent.save(update_fields=['status', 'note', 'provider_payload', 'updated_at'])
+
+    # Clear the cart now so the buyer can't place a duplicate order while
+    # waiting for admin verification.
+    CartItem.objects.filter(user=request.user).delete()
 
     _remember_for_success_page(request, intent)
-    logger.info('Manual Pi transfer claimed for intent %s', intent.reference)
+    logger.info('Manual Pi transfer claimed for intent %s (pending admin review)', intent.reference)
     return JsonResponse({
         'ok': True,
         'redirect': reverse('checkout-success'),

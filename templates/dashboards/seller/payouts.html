@@ -188,9 +188,9 @@
   </div>
 </div>
 
-<!-- ── Add payout method modal — redesigned ── -->
+<!-- ── Add payout method modal — currency-first design ── -->
 <div class="smodal" id="addMethodModal" role="dialog" aria-modal="true" aria-labelledby="pmModalTitle">
-  <div class="smodal__box pmmodal" style="max-width:500px">
+  <div class="smodal__box pmmodal" style="max-width:520px">
 
     <div class="pmmodal__stripe"></div>
 
@@ -199,75 +199,132 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
       </div>
       <div class="pmmodal__titles">
-        <h3 id="pmModalTitle">Add payout method</h3>
-        <p>Where you'd like to receive your earnings.</p>
+        <h3 id="pmModalTitle">Add payout account</h3>
+        <p>Choose a currency then fill in your account details.</p>
       </div>
       <button class="pmmodal__close" id="closeAddMethodModal" type="button" aria-label="Close">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
       </button>
     </div>
 
-    <form method="post" action="{% url 'seller_save_payout_method' %}">
+    <form method="post" action="{% url 'seller_save_payout_method' %}" id="pmForm">
       {% csrf_token %}
 
-      <!-- Method tab switcher (visual — synced to hidden select) -->
-      <div class="pmmodal__tabs" role="group" aria-label="Payment method">
-        <button type="button" class="pmmodal__tab is-active" data-method="bank">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22h18M5 10v12M9.5 10v12M14.5 10v12M19 10v12M12 3 3 10h18z"/></svg>
-          Bank
+      <!-- Hidden real fields (synced by JS) -->
+      <div style="display:none">
+        {{ payout_form.method }}
+        {{ payout_form.currency }}
+      </div>
+
+      <!-- ── Currency picker tabs ── -->
+      <div class="pmmodal__curtabs" role="group" aria-label="Currency">
+        <button type="button" class="pmmodal__curtab is-active" data-cur="NGN" data-method="bank">
+          <span class="pmmodal__curtab-sym">₦</span>
+          <span class="pmmodal__curtab-label">Naira<small>NGN Bank</small></span>
         </button>
-        <button type="button" class="pmmodal__tab" data-method="paypal">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-          PayPal
+        <button type="button" class="pmmodal__curtab" data-cur="USD" data-method="bank">
+          <span class="pmmodal__curtab-sym">$</span>
+          <span class="pmmodal__curtab-label">Dollar<small>USD Bank / PayPal</small></span>
         </button>
-        <button type="button" class="pmmodal__tab" data-method="pi">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 8h3.8a2.2 2.2 0 0 1 0 4.4H9.5V8zM9.5 12.4V16"/></svg>
-          Pi Wallet
+        <button type="button" class="pmmodal__curtab" data-cur="PI" data-method="pi">
+          <span class="pmmodal__curtab-sym">π</span>
+          <span class="pmmodal__curtab-label">Pi<small>Pi Network</small></span>
         </button>
       </div>
-      <!-- Hidden real select (submitted with form) -->
-      <div style="display:none">{{ payout_form.method }}</div>
 
       <div class="pmmodal__body">
 
-        <!-- Bank fields -->
-        <div id="pmBankFields">
+        <!-- ══ NGN PANEL ══ -->
+        <div class="pm-panel" id="pmPanel-NGN">
+          <div class="pm-panel__header">
+            <span class="pm-panel__badge pm-panel__badge--ngn">₦ Nigerian Naira — Bank Transfer</span>
+          </div>
           <div class="pm-row">
-            <div class="pm-field">
-              <label>{{ payout_form.bank_name.label }}</label>
-              {{ payout_form.bank_name }}
-            </div>
-            <div class="pm-field">
-              <label>{{ payout_form.currency.label }}</label>
-              {{ payout_form.currency }}
+            <div class="pm-field pm-field--full">
+              <label for="id_bank_name_ngn">Bank name <span class="pm-req">*</span></label>
+              <input type="text" id="id_bank_name_ngn" name="bank_name" class="ff-inp" placeholder="e.g. First Bank, GTBank, Access Bank" maxlength="120" />
             </div>
           </div>
-          <div class="pm-row" style="margin-top:14px">
+          <div class="pm-row" style="margin-top:12px">
             <div class="pm-field">
-              <label>{{ payout_form.account_number.label }}</label>
-              {{ payout_form.account_number }}
+              <label for="id_account_number_ngn">Account number <span class="pm-req">*</span></label>
+              <input type="text" id="id_account_number_ngn" name="account_number" class="ff-inp" placeholder="10-digit NUBAN" maxlength="30" pattern="\d{10}" />
             </div>
             <div class="pm-field">
-              <label>{{ payout_form.account_name.label }}</label>
-              {{ payout_form.account_name }}
+              <label for="id_account_name_ngn">Account name <span class="pm-req">*</span></label>
+              <input type="text" id="id_account_name_ngn" name="account_name" class="ff-inp" placeholder="As it appears on your statement" maxlength="120" />
             </div>
+          </div>
+          <p class="pm-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg> Payouts will be sent in Nigerian Naira (₦) to this account.</p>
+        </div>
+
+        <!-- ══ USD PANEL ══ -->
+        <div class="pm-panel" id="pmPanel-USD" style="display:none">
+          <!-- Sub-tabs: Bank vs PayPal -->
+          <div class="pm-subtabs" role="group">
+            <button type="button" class="pm-subtab is-active" data-sub="usd_bank">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22h18M5 10v12M9.5 10v12M14.5 10v12M19 10v12M12 3 3 10h18z"/></svg>
+              Bank Transfer
+            </button>
+            <button type="button" class="pm-subtab" data-sub="usd_paypal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+              PayPal
+            </button>
+          </div>
+
+          <!-- USD Bank -->
+          <div id="pmSub-usd_bank">
+            <div class="pm-panel__header">
+              <span class="pm-panel__badge pm-panel__badge--usd">$ US Dollar — International Bank</span>
+            </div>
+            <div class="pm-field pm-field--full" style="margin-bottom:12px">
+              <label for="id_bank_name_usd">Bank name <span class="pm-req">*</span></label>
+              <input type="text" id="id_bank_name_usd" name="bank_name" class="ff-inp" placeholder="e.g. Chase, Citibank, Domiciliary account" maxlength="120" />
+            </div>
+            <div class="pm-row">
+              <div class="pm-field">
+                <label for="id_account_number_usd">Account / IBAN <span class="pm-req">*</span></label>
+                <input type="text" id="id_account_number_usd" name="account_number" class="ff-inp" placeholder="Account number or IBAN" maxlength="30" />
+              </div>
+              <div class="pm-field">
+                <label for="id_account_name_usd">Account holder name <span class="pm-req">*</span></label>
+                <input type="text" id="id_account_name_usd" name="account_name" class="ff-inp" placeholder="Full name on account" maxlength="120" />
+              </div>
+            </div>
+            <p class="pm-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg> Payouts will be converted and sent in USD to this bank account.</p>
+          </div>
+
+          <!-- USD PayPal -->
+          <div id="pmSub-usd_paypal" style="display:none">
+            <div class="pm-panel__header">
+              <span class="pm-panel__badge pm-panel__badge--paypal">PayPal — USD</span>
+            </div>
+            <div class="pm-field pm-field--full">
+              <label for="id_wallet_paypal">PayPal email address <span class="pm-req">*</span></label>
+              <input type="email" id="id_wallet_paypal" name="wallet_address" class="ff-inp" placeholder="your-paypal@email.com" maxlength="200" />
+            </div>
+            <p class="pm-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg> We send USD directly to your PayPal account.</p>
           </div>
         </div>
 
-        <!-- Wallet fields (Pi / PayPal) -->
-        <div id="pmWalletFields" style="display:none">
-          <div class="pm-field">
-            <label>{{ payout_form.wallet_address.label }}</label>
-            {{ payout_form.wallet_address }}
+        <!-- ══ PI PANEL ══ -->
+        <div class="pm-panel" id="pmPanel-PI" style="display:none">
+          <div class="pm-panel__header">
+            <span class="pm-panel__badge pm-panel__badge--pi">π Pi Network Wallet</span>
           </div>
+          <div class="pm-field pm-field--full">
+            <label for="id_wallet_pi">Pi wallet address or username <span class="pm-req">*</span></label>
+            <input type="text" id="id_wallet_pi" name="wallet_address" class="ff-inp" placeholder="Your Pi Network username or wallet address" maxlength="200" />
+          </div>
+          <p class="pm-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg> Payouts are sent in Pi (π) directly to your Pi Network wallet.</p>
         </div>
 
-        <!-- Default checkbox -->
-        <label class="pm-check-row" for="{{ payout_form.is_default.id_for_label }}">
-          {{ payout_form.is_default }}
+        <!-- Default checkbox — always visible -->
+        <label class="pm-check-row" style="margin-top:14px">
+          <input type="checkbox" name="is_default" id="id_is_default_pm" />
           <span>
-            <strong>{{ payout_form.is_default.label }}</strong>
-            <em>Payouts will automatically go to this account.</em>
+            <strong>Set as default payout account</strong>
+            <em>Withdrawals will automatically go to this account.</em>
           </span>
         </label>
 
@@ -282,12 +339,147 @@
         <button class="pmmodal__btn-cancel" type="button" id="closeAddMethodModal2">Cancel</button>
         <button class="pmmodal__btn-save" type="submit">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>
-          Save method
+          Save account
         </button>
       </div>
     </form>
   </div>
 </div>
+
+<style>
+/* ── Currency-first payout modal ── */
+.pmmodal__curtabs {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 0;
+  border-bottom: 2px solid #f0f3f8;
+  background: #fafbff;
+}
+.pmmodal__curtab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 8px 12px;
+  border: none;
+  border-bottom: 3px solid transparent;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .15s, border-color .15s;
+  margin-bottom: -2px;
+}
+.pmmodal__curtab:hover { background: rgba(36,86,230,.04); }
+.pmmodal__curtab.is-active {
+  border-bottom-color: #2456e6;
+  background: #fff;
+}
+.pmmodal__curtab-sym {
+  width: 38px; height: 38px;
+  border-radius: 12px;
+  display: grid; place-items: center;
+  font-size: 18px; font-weight: 900;
+  background: rgba(28,48,86,.07);
+  color: #5d6a85;
+  transition: background .15s, color .15s;
+}
+.pmmodal__curtab.is-active .pmmodal__curtab-sym {
+  background: linear-gradient(135deg,#2456e6,#1a41b4);
+  color: #fff;
+}
+.pmmodal__curtab-label {
+  font-size: 13px; font-weight: 700;
+  color: #5d6a85; line-height: 1.1;
+  text-align: center;
+}
+.pmmodal__curtab-label small { display: block; font-size: 10.5px; font-weight: 500; color: #93a0bd; margin-top: 2px; }
+.pmmodal__curtab.is-active .pmmodal__curtab-label { color: #2456e6; }
+
+/* Sub-tabs (USD: Bank vs PayPal) */
+.pm-subtabs {
+  display: flex; gap: 8px;
+  margin-bottom: 16px;
+}
+.pm-subtab {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px;
+  border: 1.5px solid rgba(28,48,86,.12);
+  border-radius: 10px;
+  background: #f8faff;
+  font: inherit; font-size: 13px; font-weight: 600;
+  color: #5d6a85; cursor: pointer;
+  transition: all .15s;
+}
+.pm-subtab svg { width:15px;height:15px; }
+.pm-subtab.is-active {
+  background: rgba(36,86,230,.08);
+  border-color: rgba(36,86,230,.3);
+  color: #2456e6;
+}
+
+/* Panel header badge */
+.pm-panel__header { margin-bottom: 14px; }
+.pm-panel__badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 11.5px; font-weight: 800;
+  letter-spacing: .03em;
+}
+.pm-panel__badge--ngn    { background: rgba(12,166,120,.1);  color: #0a7a57; border: 1px solid rgba(12,166,120,.22); }
+.pm-panel__badge--usd    { background: rgba(36,86,230,.08);  color: #1a41b4; border: 1px solid rgba(36,86,230,.2);  }
+.pm-panel__badge--paypal { background: rgba(0,112,186,.1);   color: #004e83; border: 1px solid rgba(0,112,186,.22); }
+.pm-panel__badge--pi     { background: rgba(112,72,232,.1);  color: #5b36d6; border: 1px solid rgba(112,72,232,.22);}
+
+/* Hint text */
+.pm-hint {
+  display: flex; align-items: flex-start; gap: 7px;
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  background: rgba(36,86,230,.04);
+  border: 1px solid rgba(36,86,230,.1);
+  border-radius: 10px;
+  font-size: 12.5px; color: #5d6a85; line-height: 1.5;
+}
+.pm-hint svg { width:15px;height:15px;flex-shrink:0;margin-top:1px;color:#2456e6; }
+
+/* input */
+.ff-inp {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 13px;
+  border: 1.5px solid rgba(28,48,86,.13);
+  border-radius: 11px;
+  font: inherit; font-size: 13.5px;
+  color: #16223c;
+  background: #f8faff;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color .18s, box-shadow .18s, background .18s;
+}
+.ff-inp:focus {
+  border-color: rgba(36,86,230,.5);
+  box-shadow: 0 0 0 3px rgba(36,86,230,.1);
+  background: #fff;
+}
+.pm-field { display: flex; flex-direction: column; gap: 5px; }
+.pm-field--full { grid-column: 1/-1; }
+.pm-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pm-field label { font-size: 12.5px; font-weight: 700; color: #16223c; }
+.pm-req { color: #e5484d; }
+
+.pm-check-row {
+  display: flex; align-items: flex-start; gap: 12px;
+  cursor: pointer;
+  padding: 12px 14px;
+  border-radius: 13px;
+  background: #f8faff;
+  border: 1.5px solid rgba(28,48,86,.09);
+}
+.pm-check-row input[type=checkbox] { width:17px;height:17px;margin-top:3px;flex-shrink:0;accent-color:#2456e6; }
+.pm-check-row strong { display:block;font-size:13px;color:#16223c; }
+.pm-check-row em { display:block;font-size:12px;color:#93a0bd;font-style:normal;margin-top:2px; }
+</style>
 
 <script>
 (function () {
@@ -307,28 +499,108 @@
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
   modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
 
-  /* ── Method tab switcher ── */
-  var tabs        = modal.querySelectorAll('.pmmodal__tab');
-  var methodSel   = document.getElementById('pmMethod');
-  var bankFields  = document.getElementById('pmBankFields');
-  var walletFields = document.getElementById('pmWalletFields');
+  /* ── Hidden form selects (submitted to Django view) ── */
+  var methodSel   = document.getElementById('id_method');
+  var currencySel = document.getElementById('id_currency');
 
-  function applyMethod(val) {
-    tabs.forEach(function (t) { t.classList.toggle('is-active', t.dataset.method === val); });
-    if (methodSel) methodSel.value = val;
-    var isWallet = val === 'pi' || val === 'paypal';
-    if (bankFields)   bankFields.style.display   = isWallet ? 'none' : '';
-    if (walletFields) walletFields.style.display  = isWallet ? ''     : 'none';
+  /* All currency-tab panels */
+  var curtabs = modal.querySelectorAll('.pmmodal__curtab');
+  var panels  = { NGN: 'pmPanel-NGN', USD: 'pmPanel-USD', PI: 'pmPanel-PI' };
+
+  /* Current state */
+  var activeCur = 'NGN';
+  var activeUsdSub = 'usd_bank';
+
+  function syncHiddenFields() {
+    /* method */
+    var method = 'bank';
+    if (activeCur === 'PI') method = 'pi';
+    else if (activeCur === 'USD' && activeUsdSub === 'usd_paypal') method = 'paypal';
+    if (methodSel) methodSel.value = method;
+
+    /* currency */
+    var cur = activeCur === 'PI' ? 'USD' : activeCur; /* Pi stored as USD internally, method=pi */
+    if (activeCur === 'PI') cur = 'USD'; /* model stores Pi wallet under currency USD */
+    if (currencySel) currencySel.value = cur;
   }
 
-  tabs.forEach(function (tab) {
-    tab.addEventListener('click', function () { applyMethod(tab.dataset.method); });
+  function clearWalletInputs() {
+    /* Clear wallet fields that don't belong to the active panel to avoid
+       submitting stale data from a different tab */
+    var allWallets = modal.querySelectorAll('input[name="wallet_address"]');
+    allWallets.forEach(function (el) { el.value = ''; });
+    var allBankNames = modal.querySelectorAll('input[name="bank_name"]');
+    allBankNames.forEach(function (el) { el.value = ''; });
+    var allAccNums = modal.querySelectorAll('input[name="account_number"]');
+    allAccNums.forEach(function (el) { el.value = ''; });
+    var allAccNames = modal.querySelectorAll('input[name="account_name"]');
+    allAccNames.forEach(function (el) { el.value = ''; });
+  }
+
+  function switchCurrency(cur) {
+    activeCur = cur;
+    clearWalletInputs();
+
+    /* Tab active state */
+    curtabs.forEach(function (t) {
+      t.classList.toggle('is-active', t.dataset.cur === cur);
+    });
+
+    /* Show correct panel */
+    Object.keys(panels).forEach(function (key) {
+      var el = document.getElementById(panels[key]);
+      if (el) el.style.display = key === cur ? '' : 'none';
+    });
+
+    syncHiddenFields();
+  }
+
+  curtabs.forEach(function (tab) {
+    tab.addEventListener('click', function () { switchCurrency(tab.dataset.cur); });
   });
 
-  /* sync if Django renders the select with a value */
-  if (methodSel) {
-    methodSel.addEventListener('change', function () { applyMethod(methodSel.value); });
-    applyMethod(methodSel.value || 'bank');
+  /* ── USD sub-tabs (Bank vs PayPal) ── */
+  var subtabs = modal.querySelectorAll('.pm-subtab');
+  subtabs.forEach(function (stab) {
+    stab.addEventListener('click', function () {
+      activeUsdSub = stab.dataset.sub;
+      subtabs.forEach(function (s) { s.classList.toggle('is-active', s.dataset.sub === activeUsdSub); });
+      var bankDiv   = document.getElementById('pmSub-usd_bank');
+      var paypalDiv = document.getElementById('pmSub-usd_paypal');
+      if (bankDiv)   bankDiv.style.display   = activeUsdSub === 'usd_bank'   ? '' : 'none';
+      if (paypalDiv) paypalDiv.style.display  = activeUsdSub === 'usd_paypal' ? '' : 'none';
+      clearWalletInputs();
+      syncHiddenFields();
+    });
+  });
+
+  /* ── Before submit: copy the active visible inputs into the canonical
+     name= fields so the Django view receives exactly one value per field ── */
+  var form = document.getElementById('pmForm');
+  if (form) {
+    form.addEventListener('submit', function () {
+      /* For NGN bank */
+      if (activeCur === 'NGN') {
+        copy('id_bank_name_ngn',       'id_bank_name_ngn');
+        copy('id_account_number_ngn',  'id_account_number_ngn');
+        copy('id_account_name_ngn',    'id_account_name_ngn');
+      }
+      /* For USD bank */
+      if (activeCur === 'USD' && activeUsdSub === 'usd_bank') {
+        copy('id_bank_name_usd',       'id_bank_name_ngn'); /* map to same field */
+        copy('id_account_number_usd',  'id_account_number_ngn');
+        copy('id_account_name_usd',    'id_account_name_ngn');
+      }
+      syncHiddenFields();
+    });
   }
+  function copy(fromId, toId) {
+    var f = document.getElementById(fromId);
+    var t = document.getElementById(toId);
+    if (f && t && f !== t) t.value = f.value;
+  }
+
+  /* Initialise */
+  switchCurrency('NGN');
 })();
 </script>

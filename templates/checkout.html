@@ -73,7 +73,7 @@
           </div>
           {% endfor %}
         {% else %}
-          {# Guest: cart.js?v=5 renders localStorage items into this container #}
+          {# Guest: cart.js?v=6 renders localStorage items into this container #}
           <div id="ckGuestItems" style="padding:0"></div>
         {% endif %}
 
@@ -129,7 +129,7 @@
           </div>
 
         {% else %}
-          {# Guest: totals driven by cart.js?v=5 #}
+          {# Guest: totals driven by cart.js?v=6 #}
           <div id="ckGuestSummary" style="padding:4px 0"></div>
 
           <!-- ── Redesigned totals block (guest) ── -->
@@ -269,15 +269,15 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-<script src="/static/cart.js?v=5"></script>
+<script src="/static/cart.js?v=6"></script>
 <script>
 /* ── Compute fees using live server rates (DB-managed by admin) ── */
 (function () {
   /* Rates injected by the server so the page never disagrees with what
      the provider is actually charged. Falls back to sensible defaults
      if the template variable is missing (guest page, no context). */
-  var NGN_PER_USD  = parseFloat('{{ ngn_per_usd|default:"1600" }}') || 1600;
-  var PI_PER_USD   = parseFloat('{{ pi_per_usd|default:"2" }}')     || 2;
+  var NGN_PER_USD  = parseFloat('{{ drophub_ngn_per_usd|default:"1600" }}') || 1600;
+  var PI_PER_USD   = parseFloat('{{ drophub_pi_per_usd|default:"2" }}')     || 2;
   var ESCROW_PCT   = parseFloat('{{ escrow_pct|default:"2" }}')     / 100;
   var PLATFORM_PCT = parseFloat('{{ platform_pct|default:"1" }}')   / 100;
 
@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var serverSub = parseFloat('{{ cart_subtotal|default:"0" }}') || 0;
   if (serverSub > 0) { calcFees(serverSub); return; }
 
-  /* Guest: read from cart.js?v=5 after it renders */
+  /* Guest: read from cart.js?v=6 after it renders */
   document.addEventListener('DOMContentLoaded', function () {
     if (!window.DropHubCart) return;
     var cart = window.DropHubCart.getCart();

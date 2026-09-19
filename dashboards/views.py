@@ -17,7 +17,7 @@ from shop.models import BlogPost, Product
 
 from . import payment_views
 from .forms import BuyerAddressForm, BoostPlanForm, SellerPayoutMethodForm, SellerVerificationForm
-from .models import BuyerAddress, BoostOrder, BoostPlan, CartItem, Order, OrderTrackingEvent, SellerPayout, SellerPayoutMethod, SellerVerification, WishlistItem
+from .models import BuyerAddress, BoostOrder, BoostPlan, CartItem, CurrencyRate, Order, OrderTrackingEvent, SellerPayout, SellerPayoutMethod, SellerVerification, WishlistItem
 
 
 def get_or_init_verification(user):
@@ -1442,7 +1442,8 @@ def seller_boost_checkout(request, product_pk):
         # The seller pays in the currency of the payment method they chose
         # (PayPal → USD, Pi Network → PI, Paystack → NGN).
         currency = BoostOrder.PAYMENT_CURRENCY.get(payment_method, "USD")
-        amount   = plan.price * BoostOrder.RATES_TO_USD[currency]
+        live_rates = BoostOrder.rates_to_usd()
+        amount   = plan.price * live_rates[currency]
         amount   = amount.quantize(Decimal("0.01"))
 
         boost = BoostOrder.objects.create(
@@ -1467,9 +1468,11 @@ def seller_boost_checkout(request, product_pk):
 
     context = dashboard_context(request, "seller", "products")
     context.update({
-        "product":    product,
-        "plans":      plans,
-        "page_title": f"Boost: {product.name}",
+        "product":        product,
+        "plans":          plans,
+        "page_title":     f"Boost: {product.name}",
+        "ngn_per_usd":    float(CurrencyRate.ngn_per_usd()),
+        "pi_per_usd":     float(CurrencyRate.pi_per_usd()),
         "dashboard_template": "boost_checkout.html",
     })
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
@@ -1531,15 +1534,31 @@ def cart_remove(request, product_pk):
 
 def cart_context(request):
     """Return cart items + totals for a logged-in buyer (used in checkout view)."""
+    from dropshipping import payments as _pay
     if request.user.is_authenticated:
-        items = CartItem.objects.filter(user=request.user).select_related("product")
+        items    = CartItem.objects.filter(user=request.user).select_related("product")
         subtotal = sum(it.line_total for it in items)
         count    = sum(it.quantity for it in items)
     else:
         items    = []
         subtotal = 0
         count    = 0
-    return {"cart_items": items, "cart_subtotal": subtotal, "cart_count": count}
+    # Live exchange rates (from DB via CurrencyRate, fall back to settings)
+    ngn_per_usd = float(_pay.usd_to_ngn(1))
+    pi_per_usd  = float(_pay.usd_to_pi(1))
+    escrow_pct  = int(getattr(__import__('django.conf', fromlist=['settings']).settings,
+                               'CHECKOUT_ESCROW_FEE_RATE', Decimal('0.02')) * 100)
+    platform_pct = int(getattr(__import__('django.conf', fromlist=['settings']).settings,
+                                'CHECKOUT_PLATFORM_FEE_RATE', Decimal('0.01')) * 100)
+    return {
+        "cart_items":    items,
+        "cart_subtotal": subtotal,
+        "cart_count":    count,
+        "ngn_per_usd":   ngn_per_usd,
+        "pi_per_usd":    pi_per_usd,
+        "escrow_pct":    escrow_pct,
+        "platform_pct":  platform_pct,
+    }
 
 
 def checkout_view(request):
@@ -1599,22 +1618,37 @@ def cart_sync(request):
 
     synced = 0
     for entry in payload:
+        raw = str(entry.get("product_pk") or entry.get("pk") or entry.get("id") or "").strip()
         try:
-            pk  = int(entry.get("product_pk") or entry.get("pk") or 0)
             qty = max(1, int(entry.get("quantity") or entry.get("qty") or 1))
         except (ValueError, TypeError):
             continue
-        if not pk:
+
+        # Resolve the product: numeric PK first, then name/slug (older
+        # localStorage carts stored a slugified name as the id, which used
+        # to leave the DB cart empty and made payment fail with
+        # "Your cart is empty.")
+        product = None
+        if raw.isdigit():
+            product = Product.objects.filter(pk=int(raw), status="live").first()
+        if product is None and raw and not raw.isdigit():
+            import re as _re
+            target = _re.sub(r"[^a-z0-9]+", "_", raw.lower()).strip("_")
+            for prod in Product.objects.filter(status="live").only("id", "name"):
+                candidate = _re.sub(r"[^a-z0-9]+", "_", (prod.name or "").lower()).strip("_")
+                if candidate == target:
+                    product = prod
+                    break
+        if product is None:
             continue
         try:
-            product = Product.objects.get(pk=pk, status="live")
-        except Product.DoesNotExist:
+            item, created = CartItem.objects.get_or_create(
+                user=request.user,
+                product=product,
+                defaults={"quantity": qty},
+            )
+        except Exception:
             continue
-        item, created = CartItem.objects.get_or_create(
-            user=request.user,
-            product=product,
-            defaults={"quantity": qty},
-        )
         if not created:
             # merge: keep whichever quantity is larger to avoid duplicate adds
             if qty > item.quantity:
@@ -1679,4 +1713,72 @@ def admin_verification_detail(request, pk):
     })
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         return render(request, "dashboards/admin/verification_detail.html", context)
+    return render(request, "dashboards/base.html", context)
+
+
+# ═══════════════════════════════════════════════════════════════
+#  ADMIN: CURRENCY RATES
+# ═══════════════════════════════════════════════════════════════
+
+@staff_member_required
+def admin_currency_rates(request):
+    """Admin page to view and update USD→NGN and USD→PI exchange rates.
+
+    The rates stored here are the single source of truth for all money
+    conversions across checkout, boost pricing and payment provider charges.
+    They override the env-var defaults in settings.py.
+    """
+    if request.method == "POST":
+        errors = []
+        for pair in (CurrencyRate.PAIR_USD_NGN, CurrencyRate.PAIR_USD_PI):
+            raw = request.POST.get(pair, "").strip()
+            if not raw:
+                continue
+            try:
+                from decimal import Decimal as _D, InvalidOperation
+                value = _D(raw)
+                if value <= 0:
+                    raise ValueError("Rate must be positive.")
+                note = request.POST.get(f"{pair}_note", "").strip()
+                obj, _ = CurrencyRate.objects.update_or_create(
+                    pair=pair,
+                    defaults={"rate": value, "note": note},
+                )
+            except (InvalidOperation, ValueError) as exc:
+                errors.append(f"{pair}: {exc}")
+
+        # After saving rates, sync them into the live settings so the
+        # running process uses them immediately (no restart needed).
+        try:
+            from django.conf import settings as _settings
+            _settings.NGN_PER_USD = CurrencyRate.ngn_per_usd()
+            _settings.PI_PER_USD  = CurrencyRate.pi_per_usd()
+        except Exception:
+            pass  # settings sync is best-effort — DB values are authoritative
+
+        if errors:
+            for e in errors:
+                messages.error(request, e)
+        else:
+            messages.success(request, "Exchange rates updated successfully.")
+        return redirect("admin_currency_rates")
+
+    rates = {obj.pair: obj for obj in CurrencyRate.objects.all()}
+    ngn_obj = rates.get(CurrencyRate.PAIR_USD_NGN)
+    pi_obj  = rates.get(CurrencyRate.PAIR_USD_PI)
+
+    context = dashboard_context(request, "admin", "currency_rates")
+    context.update({
+        "page_title":        "Currency Rates",
+        "section":           "currency_rates",
+        "ngn_obj":           ngn_obj,
+        "pi_obj":            pi_obj,
+        "current_ngn":       CurrencyRate.ngn_per_usd(),
+        "current_pi":        CurrencyRate.pi_per_usd(),
+        "PAIR_USD_NGN":      CurrencyRate.PAIR_USD_NGN,
+        "PAIR_USD_PI":       CurrencyRate.PAIR_USD_PI,
+        "dashboard_template": "dashboards/admin/currency_rates.html",
+    })
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(request, "dashboards/admin/currency_rates.html", context)
     return render(request, "dashboards/base.html", context)

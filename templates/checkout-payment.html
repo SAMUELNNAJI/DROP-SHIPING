@@ -72,7 +72,7 @@
               </button>
             </div>
             <div class="cart-items" id="cartItems">
-              <!-- Rendered dynamically by cart.js?v=5 -->
+              <!-- Rendered dynamically by cart.js?v=6 -->
             </div>
             <div class="cart-foot">
               <div class="cart-subtotal"><span>Subtotal</span><strong id="ckPaySubtotal">$0.00</strong></div>
@@ -297,7 +297,7 @@
           </div>
           {% endfor %}
         {% else %}
-          {# Guest: cart.js?v=5 fills this from the localStorage cart (if any). #}
+          {# Guest: cart.js?v=6 fills this from the localStorage cart (if any). #}
           <div id="ckGuestSummary"></div>
         {% endif %}
 
@@ -484,7 +484,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-<script src="/static/cart.js?v=5"></script>
+<script src="/static/cart.js?v=6"></script>
 <script>
 /* Checkout payment page: sync subtotal + fees from cart/server */
 (function () {
@@ -528,7 +528,7 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Server-rendered subtotal for logged-in buyers — most reliable */
     var s = parseFloat("{{ cart_subtotal|default:0 }}") || 0;
     if (s > 0) return s;
-    /* Guest / just-synced: read from cart.js?v=5 */
+    /* Guest / just-synced: read from cart.js?v=6 */
     if (window.DropHubCart && typeof window.DropHubCart.getCart === "function") {
       var cart = window.DropHubCart.getCart();
       if (cart && cart.length)
@@ -540,10 +540,10 @@ document.addEventListener('DOMContentLoaded', function () {
   /* Run immediately (server-rendered subtotal is already available) */
   recalc(getSubtotal());
 
-  /* Also re-run after cart.js?v=5 finishes rendering (guest flow) */
+  /* Also re-run after cart.js?v=6 finishes rendering (guest flow) */
   document.addEventListener("DOMContentLoaded", function () {
     recalc(getSubtotal());
-    /* Patch cart.js?v=5 render so totals stay in sync on quantity changes */
+    /* Patch cart.js?v=6 render so totals stay in sync on quantity changes */
     if (window.DropHubCart && window.DropHubCart.render) {
       var _orig = window.DropHubCart.render;
       window.DropHubCart.render = function () {
@@ -737,7 +737,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var items = [];
       if (window.DropHubCart && typeof window.DropHubCart.getCart === 'function') {
         items = window.DropHubCart.getCart().map(function (i) {
-          return { product_pk: i.pk || i.id || i.product_pk, quantity: i.qty || i.quantity || 1 };
+          return { product_pk: i.product_pk || i.pk || i.id, quantity: i.qty || i.quantity || 1 };
         }).filter(function (i) { return i.product_pk; });
       }
       if (!items.length) return Promise.resolve();

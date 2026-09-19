@@ -268,3 +268,25 @@
           Add to cart
         </button>
         <button type="button" class="pdp-buy-now-btn" data-product-pk="{{ product.pk }}" data-id="{{ product.slug }}" data-name="{{ product.name|escapejs }}" data-price="{{ product.price }}" data-store="{{ product.get_store_display|escapejs }}" data-img="{{ product.image_src }}" data-role-blocked="{% if viewer_state == 'seller' or viewer_state == 'admin' %}1{% endif %}" data-role-kind="{{ viewer_state|default:'guest' }}">Buy now</button>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Live admin currency rates for cart.js (DB-backed CurrencyRate) -->
+  <script>window.DropHubRates = { ngn_per_usd: {{ drophub_ngn_per_usd|default:"1600" }}, pi_per_usd: {{ drophub_pi_per_usd|default:"2" }} };</script>
+  <script>
+    /* Quantity stepper on the product detail page */
+    (function () {
+      var val = document.getElementById('pdQtyVal');
+      var minus = document.getElementById('pdQtyMinus');
+      var plus = document.getElementById('pdQtyPlus');
+      if (!val) return;
+      function set(v) { val.textContent = Math.max(1, Math.min(99, v)); }
+      if (minus) minus.addEventListener('click', function () { set((parseInt(val.textContent, 10) || 1) - 1); });
+      if (plus) plus.addEventListener('click', function () { set((parseInt(val.textContent, 10) || 1) + 1); });
+    })();
+  </script>
+  <script src="/static/cart.js?v=6"></script>
+</body>
+</html>

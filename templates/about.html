@@ -55,7 +55,7 @@
               </button>
             </div>
             <div class="cart-items" id="cartItems">
-              <!-- Rendered dynamically by cart.js -->
+              <!-- Rendered dynamically by cart.js?v=6 -->
             </div>
             <div class="cart-foot">
               <div class="cart-subtotal"><span>Subtotal</span><strong>$0.00</strong></div>
@@ -446,6 +446,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-<script src="/static/cart.js"></script>
+<script>window.DropHubRates = { ngn_per_usd: {{ drophub_ngn_per_usd|default:"1600" }}, pi_per_usd: {{ drophub_pi_per_usd|default:"2" }} };</script>
+<script src="/static/cart.js?v=6"></script>
 </body>
 </html>

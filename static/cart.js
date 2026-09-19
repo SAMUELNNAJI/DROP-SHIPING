@@ -57,7 +57,7 @@
     var cart = getCart();
     var existingIndex = -1;
     for (var i = 0; i < cart.length; i++) {
-      if (cart[i].id === item.id || cart[i].name === item.name) {
+      if (cart[i].id === item.id || cart[i].slug === item.slug) {
         existingIndex = i;
         break;
       }
@@ -65,14 +65,17 @@
 
     if (existingIndex > -1) {
       cart[existingIndex].qty += (item.qty || 1);
+      cart[existingIndex].product_pk = item.product_pk;  // Update product_pk if available
     } else {
       cart.push({
         id: item.id || ('prod_' + Date.now()),
+        slug: item.slug || (item.name || 'DropHub Product').toLowerCase().replace(/[^a-z0-9]+/g, '_'),
         name: item.name || 'DropHub Product',
         store: item.store || 'DropHub Verified',
         price: parseFloat(item.price) || 29.99,
         img: item.img || '/static/img/headphones.jpg',
-        qty: item.qty || 1
+        qty: item.qty || 1,
+        product_pk: item.product_pk || null  // Store database product ID for sync
       });
     }
 
@@ -245,26 +248,38 @@
       return;
     }
 
-    /* Add to Cart button on product cards (.pc-add or .btn-add-cart) */
-    var addBtn = e.target.closest('.pc-add, .btn-add-cart');
+    /* Add to Cart button on product cards (.pc-add, .btn-add-cart) and the
+       product-detail page (.pdp-add-btn). Reads data-product-pk so the item
+       can be synced to the DB cart on checkout — without it the server cart
+       stays empty and payment fails with "Your cart is empty." */
+    var addBtn = e.target.closest('.pc-add, .btn-add-cart, .pdp-add-btn');
     if (addBtn) {
       e.preventDefault();
+      if (addBtn.getAttribute('data-role-blocked') === '1') {
+        showToast('Sellers and admins cannot buy — please use a buyer account.');
+        return;
+      }
       var card = addBtn.closest('.product-card, .shop-card, [data-name]');
       if (card) {
         var name = card.getAttribute('data-name') || card.querySelector('.pc-name, h3')?.textContent?.trim() || 'DropHub Product';
         var price = card.getAttribute('data-price') || card.querySelector('.pc-price')?.textContent?.replace(/[^0-9.]/g, '') || '49.99';
-        var store = card.querySelector('.pc-store')?.textContent?.trim() || 'Verified Store';
+        var store = addBtn.getAttribute('data-store') || card.querySelector('.pc-store')?.textContent?.trim() || 'Verified Store';
         var imgEl = card.querySelector('img');
-        var img = imgEl ? imgEl.getAttribute('src') : '/static/img/headphones.jpg';
-        var id = card.getAttribute('data-id') || name.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+        var img = addBtn.getAttribute('data-img') || (imgEl ? imgEl.getAttribute('src') : '/static/img/headphones.jpg');
+        var productPk = addBtn.getAttribute('data-product-pk') || card.getAttribute('data-product-pk') || '';
+        var id = productPk || card.getAttribute('data-id') || name.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+        var qty = 1;
+        var qtyVal = document.getElementById('pdQtyVal');
+        if (qtyVal) qty = parseInt(qtyVal.textContent, 10) || 1;
 
         addToCart({
           id: id,
+          product_pk: productPk ? (parseInt(productPk, 10) || null) : null,
           name: name,
           price: parseFloat(price),
           store: store,
           img: img,
-          qty: 1
+          qty: qty
         });
 
         /* Visual feedback on button */
@@ -291,7 +306,8 @@
       var qtyVal = document.getElementById('pdQtyVal');
       if (qtyVal) qty = parseInt(qtyVal.textContent) || 1;
       var productData = {
-        id: buyNowBtn.dataset.id,
+        id: buyNowBtn.dataset.productPk || buyNowBtn.dataset.id,
+        product_pk: parseInt(buyNowBtn.dataset.productPk) || null,
         name: buyNowBtn.dataset.name,
         price: parseFloat(buyNowBtn.dataset.price),
         store: buyNowBtn.dataset.store,

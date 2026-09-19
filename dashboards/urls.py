@@ -75,6 +75,9 @@ urlpatterns = [
     path("admin/boost-plans/<int:pk>/delete/", views.admin_boost_plan_delete, name="admin_boost_plan_delete"),
     path("admin/boost-orders/<int:pk>/remove/", views.admin_boost_order_remove, name="admin_boost_order_remove"),
 
+    # ── Admin: currency rates ─────────────────────────────────
+    path("admin/currency-rates/", views.admin_currency_rates, name="admin_currency_rates"),
+
     # ── Cart API ──────────────────────────────────────────────
     path("cart/add/<int:product_pk>/", views.cart_add, name="cart_add"),
     path("cart/update/<int:product_pk>/", views.cart_update, name="cart_update"),

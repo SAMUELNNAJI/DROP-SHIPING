@@ -588,6 +588,7 @@
     })();
   </script>
 
-  <script src="/static/cart.js"></script>
+  <script>window.DropHubRates = { ngn_per_usd: {{ drophub_ngn_per_usd|default:"1600" }}, pi_per_usd: {{ drophub_pi_per_usd|default:"2" }} };</script>
+<script src="/static/cart.js?v=6"></script>
 </body>
 </html>

@@ -263,4 +263,27 @@ Useful commands: `systemctl status drophub`, `journalctl -u drophub -f`,
   the classic formula), or move media to S3/Cloudinary and set
   `SERVE_MEDIA=false`.
 
+---
+
+## Appendix: RHEL-family servers (CentOS / AlmaLinux / Rocky Linux)
+
+On Red Hat-family systems `apt` and `ufw` do not exist — use `dnf` and
+`firewalld`. Django 6.1 also needs **Python ≥ 3.12**, which these images ship
+as a separate package. The differences, step by step:
+
+| Step | Ubuntu (main guide) | RHEL-family replacement |
+|---|---|---|
+| 1. Packages | `apt -y install nginx postgresql python3-venv …` | `dnf -y install epel-release && dnf -y install nginx postgresql-server postgresql-contrib git firewalld policycoreutils-python-utils python3.12 python3.12-pip certbot python3-certbot-nginx` |
+| 1b. Firewall | `ufw allow …; ufw enable` | `systemctl enable --now firewalld && firewall-cmd --permanent --add-service={ssh,http,https} && firewall-cmd --reload` |
+| 1c. Allow Nginx→Gunicorn (SELinux) | not needed | `setsebool -P httpd_can_network_connect 1` |
+| 2. Postgres | ready to use | `postgresql-setup --initdb && systemctl enable --now postgresql` — if the app can't log in, set the `127.0.0.1/32` line in `/var/lib/pgsql/data/pg_hba.conf` to `scram-sha-256` and restart postgresql |
+| 3. App user | `adduser drophub; usermod -aG sudo drophub` | `useradd -m drophub && passwd drophub && usermod -aG wheel drophub` |
+| 4. Virtualenv | `python3 -m venv venv` | `python3.12 -m venv venv` |
+| 6. Nginx site | `sites-available` + symlink, remove `sites-enabled/default` | `sudo cp deploy/nginx-drophub.conf /etc/nginx/conf.d/drophub.conf && sudo mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak`, then `sudo systemctl enable --now nginx` |
+| 6b. SELinux file labels | not needed | `sudo semanage fcontext -a -t httpd_sys_content_t "/opt/drophub/staticfiles(/.*)?" && sudo restorecon -R /opt/drophub/staticfiles` — repeat for `/opt/drophub/media` |
+| 7. Certbot | same | same |
+
+The systemd unit and `deploy.sh` work unchanged: the unit deliberately sets no
+`Group=`, so it runs on both distribution families.
+
 

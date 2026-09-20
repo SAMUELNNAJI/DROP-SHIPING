@@ -19,7 +19,8 @@ Wants=postgresql.service
 
 [Service]
 User=drophub
-Group=www-data
+# No explicit Group=: systemd uses the user's primary group, which works on
+# both Ubuntu and RHEL-family servers (www-data only exists on Debian/Ubuntu).
 WorkingDirectory=/opt/drophub
 ExecStart=/opt/drophub/venv/bin/gunicorn dropshipping.wsgi:application \
     --bind 127.0.0.1:8000 \

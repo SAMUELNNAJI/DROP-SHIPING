@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" /></noscript>
   <link rel="icon" type="image/png" href="/static/Logo.png" />
-  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/style.css?v=2" />
   <link rel="stylesheet" href="/static/shop.css" />
   <link rel="stylesheet" href="/static/pdp.css?v=1" />
 </head>
@@ -275,6 +275,36 @@
   </div>
 
   <!-- Live admin currency rates for cart.js (DB-backed CurrencyRate) -->
+  <script>
+    /* ── Site nav wiring: mobile drawer + scrolled header (same as base_js.html) ── */
+    (function () {
+      var burger = document.getElementById('navBurger');
+      var menu = document.getElementById('mobileMenu');
+      if (!burger || !menu) return;
+      function openMenu() {
+        menu.classList.add('mmenu--open');
+        menu.setAttribute('aria-hidden', 'false');
+        burger.classList.add('is-active');
+        burger.setAttribute('aria-expanded', 'true');
+        document.body.classList.add('mmenu-locked');
+      }
+      function closeMenu() {
+        if (!menu.classList.contains('mmenu--open')) return;
+        menu.classList.remove('mmenu--open');
+        menu.setAttribute('aria-hidden', 'true');
+        burger.classList.remove('is-active');
+        burger.setAttribute('aria-expanded', 'false');
+        document.body.classList.remove('mmenu-locked');
+      }
+      burger.addEventListener('click', function () { if (menu.classList.contains('mmenu--open')) closeMenu(); else openMenu(); });
+      menu.querySelectorAll('[data-mmenu-close], .mmenu-link, .mmenu-cta, .mmenu-signin').forEach(function (el) { el.addEventListener('click', closeMenu); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
+    })();
+    (function () {
+      var nav = document.querySelector('.navbar');
+      if (nav) window.addEventListener('scroll', function () { nav.classList.toggle('scrolled', window.scrollY > 12); }, { passive: true });
+    })();
+  </script>
   <script>window.DropHubRates = { ngn_per_usd: {{ drophub_ngn_per_usd|default:"1600" }}, pi_per_usd: {{ drophub_pi_per_usd|default:"2" }} };</script>
   <script>
     /* Quantity stepper on the product detail page */
@@ -288,6 +318,6 @@
       if (plus) plus.addEventListener('click', function () { set((parseInt(val.textContent, 10) || 1) + 1); });
     })();
   </script>
-  <script src="/static/cart.js?v=6"></script>
+  <script src="/static/cart.js?v=7"></script>
 </body>
 </html>

@@ -73,7 +73,7 @@
           </div>
           {% endfor %}
         {% else %}
-          {# Guest: cart.js?v=6 renders localStorage items into this container #}
+          {# Guest: cart.js?v=7 renders localStorage items into this container #}
           <div id="ckGuestItems" style="padding:0"></div>
         {% endif %}
 
@@ -139,7 +139,7 @@
           </div>
 
         {% else %}
-          {# Guest: totals driven by cart.js?v=6 #}
+          {# Guest: totals driven by cart.js?v=7 #}
           <div id="ckGuestSummary" style="padding:4px 0"></div>
 
           <!-- ── Redesigned totals block (guest) ── -->
@@ -279,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-<script src="/static/cart.js?v=6"></script>
+<script src="/static/cart.js?v=7"></script>
 <script>
 /* ── Keep the server cart in step with the browser cart ──
    The dropdown/localStorage cart is the source of truth. Push it to the
@@ -353,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var serverSub = parseFloat('{{ cart_subtotal|default:"0" }}') || 0;
   if (serverSub > 0) { calcFees(serverSub); return; }
 
-  /* Guest: read from cart.js?v=6 after it renders */
+  /* Guest: read from cart.js?v=7 after it renders */
   document.addEventListener('DOMContentLoaded', function () {
     if (!window.DropHubCart) return;
     var cart = window.DropHubCart.getCart();

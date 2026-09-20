@@ -261,9 +261,12 @@
       }
       var card = addBtn.closest('.product-card, .shop-card, [data-name]');
       if (card) {
-        var name = card.getAttribute('data-name') || card.querySelector('.pc-name, h3')?.textContent?.trim() || 'DropHub Product';
-        var price = card.getAttribute('data-price') || card.querySelector('.pc-price')?.textContent?.replace(/[^0-9.]/g, '') || '49.99';
-        var store = addBtn.getAttribute('data-store') || card.querySelector('.pc-store')?.textContent?.trim() || 'Verified Store';
+        var nameEl = card.querySelector('.pc-name, h3');
+        var priceEl = card.querySelector('.pc-price');
+        var storeEl = card.querySelector('.pc-store');
+        var name = card.getAttribute('data-name') || (nameEl ? nameEl.textContent.trim() : '') || 'DropHub Product';
+        var price = card.getAttribute('data-price') || (priceEl ? priceEl.textContent.replace(/[^0-9.]/g, '') : '') || '49.99';
+        var store = addBtn.getAttribute('data-store') || (storeEl ? storeEl.textContent.trim() : '') || 'Verified Store';
         var imgEl = card.querySelector('img');
         var img = addBtn.getAttribute('data-img') || (imgEl ? imgEl.getAttribute('src') : '/static/img/headphones.jpg');
         var productPk = addBtn.getAttribute('data-product-pk') || card.getAttribute('data-product-pk') || '';

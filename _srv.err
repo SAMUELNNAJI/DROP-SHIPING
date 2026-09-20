@@ -1,0 +1,8 @@
+[20/Sep/2026 04:09:25] "GET /products/15/ HTTP/1.1" 200 18109
+[20/Sep/2026 04:10:05] "GET /products/15/ HTTP/1.1" 200 18109
+[20/Sep/2026 04:10:05] "GET /media/products/1002342537.jpg HTTP/1.1" 404 6252
+[20/Sep/2026 04:10:06] "GET /static/shop.css HTTP/1.1" 200 34959
+[20/Sep/2026 04:10:06] "GET /static/pdp.css?v=1 HTTP/1.1" 200 11159
+[20/Sep/2026 04:10:06] "GET /static/cart.js?v=7 HTTP/1.1" 200 14825
+[20/Sep/2026 04:10:06] "GET /static/style.css?v=2 HTTP/1.1" 200 76541
+[20/Sep/2026 04:10:06] "GET /static/Logo.png HTTP/1.1" 200 388688

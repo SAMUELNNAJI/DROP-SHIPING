@@ -321,10 +321,13 @@ body { padding-top: 0; }
 /* ── CART DROPDOWN (matches reference card) ── */
 .cart-wrap { position: relative; }
 .cart-dropdown {
-  position: absolute;
-  top: calc(100% + 14px);
-  right: 0;
-  width: min(430px, 92vw);
+  /* position:fixed escapes .nav-inner's overflow:hidden clip (the dropdown
+     hangs below the 68px header). The navbar is pinned to the viewport top,
+     so anchoring to the viewport lands it exactly under the cart button. */
+  position: fixed;
+  top: calc(var(--header-h) + 10px);
+  right: max(12px, calc((100vw - 1400px) / 2 + 28px));
+  width: min(430px, calc(100vw - 24px));
   background: rgba(255,255,255,.92);
   -webkit-backdrop-filter: blur(20px) saturate(170%);
   backdrop-filter: blur(20px) saturate(170%);

@@ -1,0 +1,38 @@
+# systemd service that runs DropHub with Gunicorn on 127.0.0.1:8000.
+#
+# Install (see DEPLOY_VPS.md):
+#   sudo cp deploy/drophub.service /etc/systemd/system/drophub.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now drophub
+#
+# Live logs:
+#   journalctl -u drophub -f
+#
+# No EnvironmentFile is needed here: dropshipping/settings.py loads the
+# project's own /opt/drophub/.env at boot (real environment variables still
+# win over it), so this unit stays simple and cannot break on quoting.
+
+[Unit]
+Description=DropHub Django app (Gunicorn)
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+User=drophub
+Group=www-data
+WorkingDirectory=/opt/drophub
+ExecStart=/opt/drophub/venv/bin/gunicorn dropshipping.wsgi:application \
+    --bind 127.0.0.1:8000 \
+    --workers 2 --threads 4 \
+    --access-logfile - --error-logfile -
+Restart=always
+RestartSec=3
+TimeoutStopSec=20
+
+# Light sandboxing: the app may only write inside the project directory
+# (media uploads, SQLite fallback) and /tmp.
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

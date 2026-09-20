@@ -200,3 +200,23 @@ Remove-Item Env:\DATABASE_URL
       `DJANGO_CSRF_TRUSTED_ORIGINS`
 - [ ] Optionally set `SECURE_HSTS_SECONDS=31536000` once the domain is stable
 
+---
+
+# Deploying to your own VPS (Ubuntu + Nginx + Gunicorn)
+
+Prefer to self-host? The same app runs on any Ubuntu VPS with no code changes —
+`dropshipping/settings.py` is fully environment-driven. A complete step-by-step
+guide (server prep, Postgres, systemd, Nginx, HTTPS via Certbot, backups,
+updates) lives in **`DEPLOY_VPS.md`**:
+
+| File | Purpose |
+|---|---|
+| `DEPLOY_VPS.md` | Step-by-step VPS deployment guide |
+| `deploy/env.vps.example` | Production `.env` template for a VPS |
+| `deploy/drophub.service` | systemd unit that runs Gunicorn on 127.0.0.1:8000 |
+| `deploy/nginx-drophub.conf` | Nginx site: static/media serving + reverse proxy |
+| `deploy/deploy.sh` | One-command future deploys (`git pull` + `build.sh` + restart) |
+
+After switching your domain's traffic to the VPS, pause the Render service so
+only one front-end writes to the database.
+

@@ -1,4 +1,4 @@
-﻿/* ═══════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    DROPB.IT – HOMEPAGE CLONE
    ═══════════════════════════════════════════════════ */
 
@@ -1451,20 +1451,21 @@ body { padding-top: 0; }
 }
 .buyers-section {
   background: #fff;
-  padding: 64px 0;
+  padding: 36px 0 48px;
   overflow: clip;
 }
 
 /* ── compact layout so the whole TOP RATED grid fits a desktop viewport ── */
-.buyers-section .buyers-header { margin-bottom: 22px; }
-.buyers-section .buyers-heading { font-size: 36px; }
-.buyers-section .buyers-eyebrow { margin-bottom: 14px; }
+.buyers-section .buyers-header { margin-bottom: 16px; }
+.buyers-section .buyers-heading { font-size: 34px; }
+.buyers-section .buyers-eyebrow { margin-bottom: 10px; }
 .buyers-section .buyers-grid { gap: 12px; }
-.buyers-section .b-media { height: 148px; }
-.buyers-section .b-media--tumbler { height: 152px; }
+.buyers-section .b-media { height: 136px; }
+.buyers-section .b-media--tumbler { height: 140px; }
 .buyers-section .b-card--tall { min-height: 0; }
-.buyers-section .b-info { padding: 11px 14px 13px; }
-.buyers-section .b-card--cta { padding: 24px 20px; }
+.buyers-section .b-info { padding: 10px 14px 12px; }
+.buyers-section .b-info--wide { padding: 12px 18px; }
+.buyers-section .b-card--cta { padding: 20px 18px; }
 
 .buyers-header {
   display: flex;
@@ -1658,7 +1659,11 @@ a.b-card { text-decoration: none; color: inherit; display: block; }
 .b-pay-pill { background: #EEF3FE; color: #4F6EF7; border: 1px solid #DCE6FB; }
 
 /* chair wide card */
-.b-card--wide { display: flex; align-items: stretch; }
+.b-card--wide,
+a.b-card.b-card--wide {
+  display: flex !important;
+  align-items: stretch;
+}
 .b-info--wide { flex: 1; display: flex; flex-direction: column; justify-content: center; }
 .b-tags { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .b-cat-tag { font-size: 9px; font-weight: 700; letter-spacing: .12em; color: var(--text-light); }

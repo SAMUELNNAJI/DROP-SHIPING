@@ -240,6 +240,13 @@ body.ip .hero-wrapper {
   height: auto;
   min-height: 0;
   overflow: visible;
+  /* Keep the horizontal axis clipped: the decorative aurora blobs
+     (.hero-wrapper::before/::after) are parked ~180-200px past the right
+     edge on purpose and rely on clipping — with a fully visible wrapper
+     they pushed the page ~200px sideways on phones (worst on the auth
+     pages). overflow-x: clip + overflow-y: visible is a valid pair, so
+     tall content still flows downward untouched. */
+  overflow-x: clip;
   display: block;
 }
 body.ip .hero-wrapper > .hero-stars {

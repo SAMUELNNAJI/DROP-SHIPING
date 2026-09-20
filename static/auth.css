@@ -51,22 +51,16 @@
   z-index: 0;
 }
 
-/* ── EXACT SITE HEADER, pinned like every other page (fixed) ──
-   (same markup as every other page — glassy white here from the start) */
-.auth-page .navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 400;
-  background: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.72);
-  box-shadow: 0 2px 18px rgba(31, 100, 255, 0.07);
-  overflow: hidden;        /* hard-clip — nothing bleeds sideways */
-  max-width: 100vw;        /* belt-and-braces on iOS */
-}
+/* ── SITE HEADER — identical to every other page ──
+   No overrides here on purpose: style.css already pins .navbar (position:fixed,
+   top 0, transparent at rest) and adds the glass treatment on .navbar.scrolled
+   — the same as the home page.
+   ⚠ Never put `backdrop-filter` (or a transform/filter) together with
+   `overflow: hidden` on this header: a backdrop-filtered ancestor becomes the
+   containing block for position:fixed descendants, so the fixed-position cart
+   dropdown would be positioned relative to the navbar AND clipped away by
+   overflow:hidden — the dropdown then never shows (this is exactly what broke
+   the cart dropdown on /signin/, /signup/ and /checkout/ before). */
 
 /* ── Main area: right column of the split layout; flows naturally ── */
 .auth-main {
@@ -652,7 +646,7 @@
   .auth-main {
     padding: var(--header-h) 12px 40px;
   }
-  /* nav-inner responsive sizing handled in the 760px block below */
+  /* navbar sizing comes from the shared style.css rules (same as home) */
   .auth-card {
     border-radius: 22px;
     max-width: 100%;
@@ -1064,48 +1058,21 @@
   .auth-side  { display: none !important; }
   .auth-main  { padding-top: calc(var(--header-h) + 6px); }
 
-  /* ── Navbar: prevent horizontal overflow on narrow phones ──
-     Hard-contain the navbar; hide the text-heavy nav items;
-     keep logo, cart icon and burger only. */
-  .auth-page .navbar    { overflow: hidden; }
-  .auth-page .nav-inner {
-    padding: 0 12px;
-    gap: 10px;
-    overflow: hidden;
-  }
-  .auth-page .nav-links  { display: none; }
-  .auth-page .nav-signin { display: none; }
-  .auth-page .btn-sell   { display: none; }
-  .auth-page .nav-actions { gap: 8px; flex-shrink: 0; }
-  .auth-page .cart-wrap  { display: flex; }
-  .auth-page .nav-burger { display: inline-flex !important; flex-shrink: 0; }
-  .auth-page .logo       { flex-shrink: 0; min-width: 0; overflow: hidden; }
-  .auth-page .logo-img   { height: 32px; width: auto; flex-shrink: 0; }
+  /* ── Navbar intentionally NOT overridden here ──
+     The shared style.css rules the home page uses apply unchanged, so the
+     mobile header matches the home page exactly (style.css hides .nav-links
+     ≤1100px and .nav-signin/.btn-sell ≤600px on its own). */
 
   .auth-card  { max-width: 100%; border-radius: 20px; }
   .auth-main  { padding-left: 16px; padding-right: 16px; }
 }
 
 @media (max-width: 480px) {
-  .auth-page .navbar    { overflow: hidden; }
-  .auth-page .nav-inner { padding: 0 8px; gap: 8px; overflow: hidden; }
-  .auth-page .logo-img  { height: 30px; }
-  .auth-page .nav-actions { gap: 6px; }
-  .auth-page .nav-cart, .auth-page .nav-burger { width: 38px; height: 38px; flex-shrink: 0; }
-
   .auth-card  { max-width: 100%; border-radius: 20px; }
   .auth-main  { padding-left: 14px; padding-right: 14px; }
 }
 
 @media (max-width: 360px) {
-  .auth-page .navbar    { overflow: hidden; }
-  .auth-page .nav-inner { padding: 0 6px; gap: 6px; overflow: hidden; }
-  .auth-page .logo-img  { height: 26px; }
-  .auth-page .nav-actions { gap: 5px; }
-  .auth-page .nav-cart, .auth-page .nav-burger { width: 34px; height: 34px; flex-shrink: 0; }
-  /* Shrink cart badge so it doesn't bleed out of the button */
-  .auth-page .cart-badge { min-width: 18px; width: 18px; height: 18px; font-size: 10px; top: -3px; right: -4px; }
-
   .auth-card  { max-width: 100%; border-radius: 18px; }
   .auth-main  { padding-left: 10px; padding-right: 10px; }
 }

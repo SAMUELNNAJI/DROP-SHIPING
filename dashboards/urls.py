@@ -27,6 +27,12 @@ urlpatterns = [
     path("seller/products/<int:pk>/edit/", views.seller_product_edit, name="seller_product_edit"),
     path("seller/products/<int:product_pk>/boost/", views.seller_boost_checkout, name="seller_boost_checkout"),
 
+    # ── Seller: boost payment callbacks ──────────────────────
+    path("boost/paypal/return/<int:boost_pk>/",    views.boost_paypal_return,    name="boost_paypal_return"),
+    path("boost/paypal/cancel/<int:boost_pk>/",    views.boost_paypal_cancel,    name="boost_paypal_cancel"),
+    path("boost/paystack/callback/<int:boost_pk>/",views.boost_paystack_callback,name="boost_paystack_callback"),
+    path("boost/pi/claim/<int:boost_pk>/",         views.boost_pi_claim,         name="boost_pi_claim"),
+
     # ── Seller: orders ────────────────────────────────────────
     path("seller/orders/", views.seller_orders_view, name="seller_orders"),
     path("orders/<int:pk>/transit/", views.order_mark_in_transit, name="order_mark_in_transit"),

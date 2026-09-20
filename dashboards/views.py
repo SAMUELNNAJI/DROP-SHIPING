@@ -214,25 +214,47 @@ def admin_pi_payments(request):
 @staff_member_required
 @require_POST
 def admin_pi_confirm(request, pk):
-    """Admin: verify Pi transfer in wallet then create orders via finalize_intent."""
+    """Admin: verify Pi transfer in wallet then create orders via finalize_intent
+    (checkout) or activate a boost order (boost purpose)."""
     intent = get_object_or_404(
         PaymentIntent, pk=pk, method="pi", status=PaymentIntent.STATUS_PI_PENDING
     )
     try:
-        # finalize_intent wraps its own DB transaction and creates orders idempotently
-        payment_views.finalize_intent(intent)
-        intent.refresh_from_db()
-        intent.note = (intent.note or "") + "  ✓ Admin confirmed Pi transfer."
-        intent.provider_payload = {
-            **(intent.provider_payload or {}),
-            "admin_confirmed_at": timezone.now().isoformat(),
-            "admin_action": "confirm",
-        }
-        intent.save(update_fields=["note", "provider_payload", "updated_at"])
-        messages.success(
-            request,
-            f"#{intent.reference} confirmed — {len(intent.order_pks)} order(s) created.",
-        )
+        if intent.purpose == PaymentIntent.PURPOSE_BOOST:
+            # Activate the linked BoostOrder
+            boost_pk = (intent.provider_payload or {}).get("boost_pk")
+            if not boost_pk:
+                raise Exception("No boost_pk in payload — cannot activate boost.")
+            boost = get_object_or_404(BoostOrder, pk=boost_pk)
+            if boost.status != BoostOrder.STATUS_PAID:
+                boost.status     = BoostOrder.STATUS_PAID
+                boost.paid_at    = timezone.now()
+                boost.expires_at = timezone.now() + timezone.timedelta(days=boost.duration_days)
+                boost.save(update_fields=["status", "paid_at", "expires_at", "updated_at"])
+            intent.status  = PaymentIntent.STATUS_PAID
+            intent.paid_at = timezone.now()
+            intent.note    = (intent.note or "") + "  ✓ Admin confirmed Pi boost transfer."
+            intent.save(update_fields=["status", "paid_at", "note", "updated_at"])
+            messages.success(
+                request,
+                f"#{intent.reference} confirmed — boost activated for "
+                f'"{boost.product.name}" ({boost.plan_name}).',
+            )
+        else:
+            # Normal checkout flow
+            payment_views.finalize_intent(intent)
+            intent.refresh_from_db()
+            intent.note = (intent.note or "") + "  ✓ Admin confirmed Pi transfer."
+            intent.provider_payload = {
+                **(intent.provider_payload or {}),
+                "admin_confirmed_at": timezone.now().isoformat(),
+                "admin_action": "confirm",
+            }
+            intent.save(update_fields=["note", "provider_payload", "updated_at"])
+            messages.success(
+                request,
+                f"#{intent.reference} confirmed — {len(intent.order_pks)} order(s) created.",
+            )
     except payment_views.CheckoutError as exc:
         messages.error(request, f"#{intent.reference}: {exc}")
     except Exception as exc:
@@ -301,6 +323,7 @@ def dashboard_context(request, role, section):
             "delivered":  Order.objects.filter(seller=request.user, status=Order.STATUS_DELIVERED).count(),
             "confirmed":  Order.objects.filter(seller=request.user, status=Order.STATUS_CONFIRMED).count(),
             "payout_ready": Order.objects.filter(seller=request.user, status=Order.STATUS_CONFIRMED, payout_released=False).count(),
+            "new_payouts":  SellerPayoutRecord.objects.filter(seller=request.user).order_by("-paid_at").count(),
         }
 
     if request.user.is_authenticated and role == "buyer":
@@ -1633,13 +1656,11 @@ def seller_boost_checkout(request, product_pk):
         payment_method = request.POST.get("payment_method", "paypal")
         plan = get_object_or_404(BoostPlan, pk=plan_pk, is_active=True)
 
-        # The seller pays in the currency of the payment method they chose
-        # (PayPal → USD, Pi Network → PI, Paystack → NGN).
-        currency = BoostOrder.PAYMENT_CURRENCY.get(payment_method, "USD")
+        currency   = BoostOrder.PAYMENT_CURRENCY.get(payment_method, "USD")
         live_rates = BoostOrder.rates_to_usd()
-        amount   = plan.price * live_rates[currency]
-        amount   = amount.quantize(Decimal("0.01"))
+        amount     = (plan.price * live_rates[currency]).quantize(Decimal("0.01"))
 
+        # Create a PENDING boost order — activated only after provider confirms
         boost = BoostOrder.objects.create(
             seller         = request.user,
             product        = product,
@@ -1648,17 +1669,72 @@ def seller_boost_checkout(request, product_pk):
             amount         = amount,
             currency       = currency,
             duration_days  = plan.duration_days,
-            status         = BoostOrder.STATUS_PAID,   # demo: instant activation
+            status         = BoostOrder.STATUS_PENDING,
             payment_method = payment_method,
-            paid_at        = timezone.now(),
-            expires_at     = timezone.now() + timezone.timedelta(days=plan.duration_days),
         )
-        messages.success(
-            request,
-            f'"{product.name}" is now boosted with {plan.name} for {plan.duration_days} days — '
-            f'{boost.amount_display} charged via {boost.get_payment_method_display()}.'
-        )
-        return redirect("seller_products")
+
+        from dropshipping import payments as _pay
+
+        if payment_method == "paypal":
+            try:
+                order_data = _pay.paypal_create_order(
+                    amount_usd=float(plan.price),
+                    reference=boost.reference,
+                    description=f"DropHub Boost — {plan.name} ({plan.duration_days}d)",
+                    return_url=request.build_absolute_uri(
+                        f"/dashboards/boost/paypal/return/{boost.pk}/"
+                    ),
+                    cancel_url=request.build_absolute_uri(
+                        f"/dashboards/boost/paypal/cancel/{boost.pk}/"
+                    ),
+                )
+                approve_url = next(
+                    (lnk["href"] for lnk in order_data.get("links", [])
+                     if lnk.get("rel") == "approve"),
+                    None,
+                )
+                if not approve_url:
+                    raise Exception("PayPal returned no approval URL.")
+                boost.provider_reference = order_data.get("id", "")
+                boost.save(update_fields=["provider_reference"])
+                return redirect(approve_url)
+            except Exception as exc:
+                boost.delete()
+                messages.error(request, f"PayPal error: {exc}")
+                return redirect("seller_boost_checkout", product_pk=product.pk)
+
+        elif payment_method == "paystack":
+            try:
+                ngn_kobo = int(float(plan.price) * float(CurrencyRate.ngn_per_usd()) * 100)
+                init_data = _pay.paystack_init(
+                    email=request.user.email,
+                    amount_kobo=ngn_kobo,
+                    reference=boost.reference,
+                    callback_url=request.build_absolute_uri(
+                        f"/dashboards/boost/paystack/callback/{boost.pk}/"
+                    ),
+                    metadata={
+                        "boost_pk": boost.pk,
+                        "plan_name": plan.name,
+                        "seller": request.user.username,
+                    },
+                )
+                boost.provider_reference = init_data.get("reference", boost.reference)
+                boost.save(update_fields=["provider_reference"])
+                return redirect(init_data["authorization_url"])
+            except Exception as exc:
+                boost.delete()
+                messages.error(request, f"Paystack error: {exc}")
+                return redirect("seller_boost_checkout", product_pk=product.pk)
+
+        elif payment_method == "pi":
+            # Pi: same manual-transfer flow as checkout
+            return redirect("boost_pi_claim", boost_pk=boost.pk)
+
+        else:
+            boost.delete()
+            messages.error(request, "Unknown payment method.")
+            return redirect("seller_boost_checkout", product_pk=product.pk)
 
     context = dashboard_context(request, "seller", "products")
     context.update({
@@ -2250,4 +2326,143 @@ def admin_seller_payouts(request):
     })
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         return render(request, "dashboards/admin/seller_payouts.html", context)
+    return render(request, "dashboards/base.html", context)
+
+
+# ═══════════════════════════════════════════════════════════════
+#  BOOST PAYMENT CALLBACKS
+# ═══════════════════════════════════════════════════════════════
+
+def _activate_boost(boost):
+    """Mark a BoostOrder as PAID and set expiry. Idempotent."""
+    if boost.status == BoostOrder.STATUS_PAID:
+        return
+    boost.status     = BoostOrder.STATUS_PAID
+    boost.paid_at    = timezone.now()
+    boost.expires_at = timezone.now() + timezone.timedelta(days=boost.duration_days)
+    boost.save(update_fields=["status", "paid_at", "expires_at", "updated_at"])
+
+
+# ── PayPal return (buyer approved the order) ─────────────────
+@login_required
+def boost_paypal_return(request, boost_pk):
+    boost = get_object_or_404(BoostOrder, pk=boost_pk, seller=request.user)
+    paypal_order_id = request.GET.get("token") or boost.provider_reference
+    if not paypal_order_id:
+        messages.error(request, "PayPal order ID missing.")
+        return redirect("seller_products")
+    try:
+        from dropshipping import payments as _pay
+        capture = _pay.paypal_capture_order(paypal_order_id)
+        if capture.get("status") == "COMPLETED":
+            boost.provider_reference = paypal_order_id
+            boost.save(update_fields=["provider_reference"])
+            _activate_boost(boost)
+            messages.success(
+                request,
+                f'"{boost.product.name}" is now boosted with {boost.plan_name} for '
+                f'{boost.duration_days} days — paid via PayPal.',
+            )
+        else:
+            messages.warning(request, f"PayPal payment not completed (status: {capture.get('status')}).")
+    except Exception as exc:
+        messages.error(request, f"PayPal capture failed: {exc}")
+    return redirect("seller_products")
+
+
+@login_required
+def boost_paypal_cancel(request, boost_pk):
+    boost = get_object_or_404(BoostOrder, pk=boost_pk, seller=request.user)
+    if boost.status == BoostOrder.STATUS_PENDING:
+        boost.delete()
+    messages.info(request, "Boost payment was cancelled. Your product has not been boosted.")
+    return redirect("seller_boost_checkout", product_pk=boost.product_id if boost.pk else 0)
+
+
+# ── Paystack callback ─────────────────────────────────────────
+@login_required
+def boost_paystack_callback(request, boost_pk):
+    boost = get_object_or_404(BoostOrder, pk=boost_pk, seller=request.user)
+    reference = request.GET.get("reference") or boost.provider_reference or boost.reference
+    try:
+        from dropshipping import payments as _pay
+        data = _pay.paystack_verify(reference)
+        if data.get("status") == "success":
+            paid_kobo = data.get("amount", 0)
+            expected  = int(float(boost.amount) * 100)
+            if paid_kobo < expected * 0.98:   # allow 2% tolerance
+                raise Exception(
+                    f"Amount mismatch: paid ₦{paid_kobo/100:.2f}, expected ₦{expected/100:.2f}"
+                )
+            _activate_boost(boost)
+            messages.success(
+                request,
+                f'"{boost.product.name}" is now boosted with {boost.plan_name} for '
+                f'{boost.duration_days} days — paid via Paystack.',
+            )
+        else:
+            messages.warning(request, f"Paystack: payment not successful ({data.get('gateway_response', '')}).")
+    except Exception as exc:
+        messages.error(request, f"Paystack verification failed: {exc}")
+    return redirect("seller_products")
+
+
+# ── Pi Network: manual claim page ────────────────────────────
+@login_required
+def boost_pi_claim(request, boost_pk):
+    """Show the seller the DropHub Pi wallet address to transfer to,
+    and let them report the transfer so admin can confirm it."""
+    boost = get_object_or_404(BoostOrder, pk=boost_pk, seller=request.user,
+                               status=BoostOrder.STATUS_PENDING)
+    from django.conf import settings as _settings
+    pi_wallet = getattr(_settings, "PI_WALLET_ADDRESS", "")
+
+    if request.method == "POST":
+        # Seller reports they've sent the Pi — mark as pi_pending (admin confirms)
+        sender_wallet = request.POST.get("sender_wallet", "").strip()
+        tx_id         = request.POST.get("tx_id", "").strip()
+        boost.provider_reference = tx_id or boost.reference
+        boost.save(update_fields=["provider_reference", "updated_at"])
+        # Store claim details in a PaymentIntent so admin Pi panel picks it up
+        from .models import PaymentIntent
+        PaymentIntent.objects.get_or_create(
+            reference=boost.reference,
+            defaults={
+                "user":          request.user,
+                "method":        "pi",
+                "purpose":       PaymentIntent.PURPOSE_BOOST,
+                "subtotal_usd":  boost.amount if boost.currency == "USD" else (
+                    boost.amount / CurrencyRate.pi_per_usd()
+                ),
+                "amount_usd":    boost.amount if boost.currency == "USD" else (
+                    boost.amount / CurrencyRate.pi_per_usd()
+                ),
+                "currency":      "PI",
+                "amount":        boost.amount,
+                "status":        PaymentIntent.STATUS_PI_PENDING,
+                "provider_reference": tx_id,
+                "provider_payload": {
+                    "wallet_address": sender_wallet,
+                    "boost_pk":       boost.pk,
+                    "boost_reference": boost.reference,
+                    "plan_name":      boost.plan_name,
+                },
+                "note": f"Pi boost for {boost.product.name}",
+            }
+        )
+        messages.success(
+            request,
+            "Pi transfer reported — admin will verify and activate your boost within 24 hours.",
+        )
+        return redirect("seller_products")
+
+    context = dashboard_context(request, "seller", "products")
+    context.update({
+        "boost":             boost,
+        "pi_wallet_address": pi_wallet,
+        "page_title":        "Pay with Pi",
+        "dashboard_template": "dashboards/seller/boost_pi_claim.html",
+    })
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(request, "dashboards/seller/boost_pi_claim.html", context)
     return render(request, "dashboards/base.html", context)

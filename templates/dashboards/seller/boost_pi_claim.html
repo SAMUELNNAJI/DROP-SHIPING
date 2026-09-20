@@ -1,0 +1,204 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Pay with Pi — Boost">
+
+  <a class="pform-back" href="/dashboards/seller/products/" data-dashboard-link>
+    <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Back to products
+  </a>
+
+  <!-- Header -->
+  <div class="boost-hero" style="margin-bottom:24px">
+    <div class="boost-hero__left">
+      <img src="{{ boost.product.image_src }}" alt="{{ boost.product.name }}"
+           onerror="this.style.display='none'" />
+      <div>
+        <span style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6)">Boosting</span>
+        <h2>{{ boost.product.name }}</h2>
+        <p>{{ boost.plan_name }} · {{ boost.duration_days }} day{{ boost.duration_days|pluralize }} · π{{ boost.amount|floatformat:4 }}</p>
+      </div>
+    </div>
+    <div class="boost-hero__right">
+      <span class="boost-hero__badge">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 8h3.8a2.2 2.2 0 0 1 0 4.4H9.5V8zM9.5 12.4V16"/></svg>
+        Pi Network payment
+      </span>
+    </div>
+  </div>
+
+  <div class="boost-checkout-grid">
+
+    <!-- LEFT: Instructions -->
+    <div class="boost-checkout-left">
+
+      <!-- Step 1 -->
+      <div class="pi-step">
+        <span class="pi-step__num">1</span>
+        <div class="pi-step__body">
+          <strong>Open Pi Browser wallet</strong>
+          <p>Go to your Pi Browser app and tap <b>Send</b>.</p>
+        </div>
+      </div>
+
+      <!-- Step 2: Wallet address -->
+      <div class="pi-step">
+        <span class="pi-step__num">2</span>
+        <div class="pi-step__body">
+          <strong>Send <b>π{{ boost.amount|floatformat:4 }}</b> to this wallet</strong>
+          {% if pi_wallet_address %}
+          <div class="pi-wallet-box">
+            <code id="piWalletAddr">{{ pi_wallet_address }}</code>
+            <button type="button" class="pi-copy-btn" data-value="{{ pi_wallet_address }}">
+              <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Copy
+            </button>
+          </div>
+          {% else %}
+          <p style="color:#e5484d;font-size:13px">Pi wallet address not configured — contact support.</p>
+          {% endif %}
+          <p style="font-size:12.5px;color:#6b7a90;margin-top:8px">Use <b>{{ boost.reference }}</b> as the payment memo/note so we can match it.</p>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="pi-step">
+        <span class="pi-step__num">3</span>
+        <div class="pi-step__body">
+          <strong>Fill in the form and submit</strong>
+          <p>Once you've sent the Pi, enter your wallet address and the transaction ID below. Admin will verify and activate your boost within 24 hours.</p>
+        </div>
+      </div>
+
+    </div><!-- /.boost-checkout-left -->
+
+    <!-- RIGHT: Claim form -->
+    <div class="boost-summary">
+      <h3>Report your Pi transfer</h3>
+
+      <form method="post" action="">
+        {% csrf_token %}
+
+        <div class="bp-field" style="margin-bottom:14px">
+          <label for="bpiRef">Boost reference</label>
+          <input type="text" id="bpiRef" class="ff-input" value="{{ boost.reference }}" disabled
+                 style="background:#f0f4ff;color:#2456e6;font-family:monospace;font-weight:700" />
+          <small>Use this as the memo/note in your Pi wallet</small>
+        </div>
+
+        <div class="bp-field" style="margin-bottom:14px">
+          <label for="bpiWallet">Your Pi wallet address <span style="color:#e5484d">*</span></label>
+          <input type="text" id="bpiWallet" name="sender_wallet"
+                 class="ff-input" placeholder="Your Pi username or wallet address"
+                 required />
+        </div>
+
+        <div class="bp-field" style="margin-bottom:20px">
+          <label for="bpiTxId">Transaction ID <span style="color:#93a0bd;font-weight:500;font-size:12px">(optional but speeds up verification)</span></label>
+          <input type="text" id="bpiTxId" name="tx_id"
+                 class="ff-input" placeholder="Pi transaction ID from your wallet history" />
+        </div>
+
+        <button type="submit" class="boost-submit-btn"
+                onclick="return confirm('Confirm you have already sent π{{ boost.amount|floatformat:4 }} to the DropHub wallet?')">
+          <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 8h3.8a2.2 2.2 0 0 1 0 4.4H9.5V8zM9.5 12.4V16"/></svg>
+          I've sent the Pi — submit claim
+        </button>
+      </form>
+
+      <p class="boost-summary__note" style="margin-top:14px">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="#2456e6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Admin verifies Pi transfers manually. Your boost will be activated once the payment is confirmed — usually within a few hours.
+      </p>
+    </div>
+
+  </div><!-- /.boost-checkout-grid -->
+
+</div>
+
+<style>
+/* Pi claim step list */
+.pi-step {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(28,48,86,.07);
+}
+.pi-step:last-child { border-bottom: none; }
+.pi-step__num {
+  width: 32px; height: 32px; flex-shrink: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7048e8, #a78bfa);
+  color: #fff;
+  font-size: 14px; font-weight: 800;
+  display: grid; place-items: center;
+}
+.pi-step__body { flex: 1; min-width: 0; }
+.pi-step__body strong { display: block; font-size: 14.5px; font-weight: 800; color: #16223c; margin-bottom: 4px; }
+.pi-step__body p { margin: 0; font-size: 13.5px; color: #6b7a90; line-height: 1.6; }
+
+/* Wallet display box */
+.pi-wallet-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: rgba(112,72,232,.06);
+  border: 1.5px solid rgba(112,72,232,.2);
+  border-radius: 12px;
+}
+.pi-wallet-box code {
+  flex: 1; font-size: 13px; font-family: monospace;
+  color: #5b36d6; word-break: break-all;
+  font-weight: 700;
+}
+.pi-copy-btn {
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 12px;
+  border: 1px solid rgba(112,72,232,.3);
+  border-radius: 8px;
+  background: rgba(112,72,232,.08);
+  color: #7048e8;
+  font: inherit; font-size: 12.5px; font-weight: 700;
+  cursor: pointer;
+  transition: background .15s;
+}
+.pi-copy-btn:hover { background: rgba(112,72,232,.16); }
+.pi-copy-btn svg { width: 14px; height: 14px; }
+
+/* reuse bp-field + ff-input from bpmodal (already in admin.css/seller.css) */
+.bp-field { display: flex; flex-direction: column; gap: 5px; }
+.bp-field label { font-size: 12.5px; font-weight: 700; color: #16223c; }
+.bp-field small { font-size: 12px; color: #93a0bd; font-style: normal; }
+.ff-input {
+  width: 100%; min-height: 44px;
+  border: 1.5px solid rgba(28,48,86,.13);
+  border-radius: 11px;
+  padding: 0 13px; font: inherit; font-size: 13.5px;
+  background: #f8fafe; color: #16223c;
+  outline: none; box-sizing: border-box;
+  transition: border-color .18s, box-shadow .18s;
+}
+.ff-input:focus {
+  border-color: rgba(112,72,232,.5);
+  box-shadow: 0 0 0 3px rgba(112,72,232,.1);
+  background: #fff;
+}
+</style>
+
+<script>
+(function () {
+  document.querySelectorAll('.pi-copy-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var val = btn.dataset.value || document.getElementById('piWalletAddr').textContent.trim();
+      navigator.clipboard.writeText(val).then(function () {
+        var orig = btn.innerHTML;
+        btn.textContent = 'Copied!';
+        btn.disabled = true;
+        setTimeout(function () { btn.innerHTML = orig; btn.disabled = false; }, 2000);
+      }).catch(function () { prompt('Copy wallet address:', val); });
+    });
+  });
+})();
+</script>

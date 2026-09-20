@@ -1,0 +1,103 @@
+Watching for file changes with StatReloader
+INFO 2026-09-20 02:10:58,919 django.utils.autoreload Watching for file changes with StatReloader
+[20/Sep/2026 02:15:24] "GET / HTTP/1.1" 200 71470
+[20/Sep/2026 02:15:44] "GET / HTTP/1.1" 200 71470
+[20/Sep/2026 02:15:46] "GET /static/cart.js?v=6 HTTP/1.1" 200 14687
+[20/Sep/2026 02:15:46] "GET /media/products/1002342537.jpg HTTP/1.1" 404 6252
+[20/Sep/2026 02:15:47] "GET /static/Logo.png HTTP/1.1" 200 388688
+[20/Sep/2026 02:15:47] "GET /static/img/chair.jpg HTTP/1.1" 200 12490
+[20/Sep/2026 02:15:47] "GET /static/style.css HTTP/1.1" 200 71586
+[20/Sep/2026 02:15:47] "GET /static/img/headphones.jpg HTTP/1.1" 200 25418
+[20/Sep/2026 02:15:47] "GET /static/img/backpack.jpg HTTP/1.1" 200 51955
+[20/Sep/2026 02:16:23] "GET / HTTP/1.1" 200 71470
+[20/Sep/2026 02:16:24] "GET /static/style.css HTTP/1.1" 200 71586
+[20/Sep/2026 02:16:24] "GET /static/Logo.png HTTP/1.1" 200 388688
+[20/Sep/2026 02:16:24] "GET /static/img/headphones.jpg HTTP/1.1" 200 25418
+[20/Sep/2026 02:16:24] "GET /static/img/backpack.jpg HTTP/1.1" 200 51955
+[20/Sep/2026 02:16:24] "GET /static/cart.js?v=6 HTTP/1.1" 200 14687
+[20/Sep/2026 02:16:24] "GET /static/img/chair.jpg HTTP/1.1" 200 12490
+[20/Sep/2026 02:16:24] "GET /media/products/1002342537.jpg HTTP/1.1" 404 6252
+[20/Sep/2026 02:16:58] "GET / HTTP/1.1" 200 71470
+[20/Sep/2026 02:16:58] "GET /static/style.css HTTP/1.1" 200 71586
+[20/Sep/2026 02:16:58] "GET /media/products/1002342537.jpg HTTP/1.1" 404 6252
+[20/Sep/2026 02:16:58] "GET /static/Logo.png HTTP/1.1" 200 388688
+[20/Sep/2026 02:16:58] "GET /static/img/headphones.jpg HTTP/1.1" 200 25418
+[20/Sep/2026 02:16:58] "GET /static/img/backpack.jpg HTTP/1.1" 200 51955
+[20/Sep/2026 02:16:58] "GET /static/img/chair.jpg HTTP/1.1" 200 12490
+[20/Sep/2026 02:16:58] "GET /static/cart.js?v=6 HTTP/1.1" 200 14687
+C:\Users\ADMIN\Desktop\DROP SHIPING\dashboards\views.py changed, reloading.
+INFO 2026-09-20 02:17:48,787 django.utils.autoreload C:\Users\ADMIN\Desktop\DROP SHIPING\dashboards\views.py changed, reloading.
+Watching for file changes with StatReloader
+INFO 2026-09-20 02:17:56,148 django.utils.autoreload Watching for file changes with StatReloader
+[20/Sep/2026 02:18:16] "GET / HTTP/1.1" 200 71470
+[20/Sep/2026 02:18:18] "GET /static/style.css HTTP/1.1" 200 71586
+[20/Sep/2026 02:18:18] "GET /static/img/headphones.jpg HTTP/1.1" 200 25418
+[20/Sep/2026 02:18:18] "GET /static/Logo.png HTTP/1.1" 200 388688
+[20/Sep/2026 02:18:18] "GET /static/img/backpack.jpg HTTP/1.1" 200 51955
+[20/Sep/2026 02:18:18] "GET /media/products/1002342537.jpg HTTP/1.1" 404 6252
+[20/Sep/2026 02:18:19] "GET /static/img/chair.jpg HTTP/1.1" 200 12490
+[20/Sep/2026 02:18:19] "GET /static/cart.js?v=6 HTTP/1.1" 200 14687
+C:\Users\ADMIN\Desktop\DROP SHIPING\dashboards\views.py changed, reloading.
+INFO 2026-09-20 02:18:27,354 django.utils.autoreload C:\Users\ADMIN\Desktop\DROP SHIPING\dashboards\views.py changed, reloading.
+Watching for file changes with StatReloader
+INFO 2026-09-20 02:18:36,631 django.utils.autoreload Watching for file changes with StatReloader
+[20/Sep/2026 02:19:19] "GET / HTTP/1.1" 200 71470
+[20/Sep/2026 02:19:21] "GET /static/style.css HTTP/1.1" 200 71586
+[20/Sep/2026 02:19:21] "GET /static/Logo.png HTTP/1.1" 200 388688
+[20/Sep/2026 02:19:21] "GET /media/products/1002342537.jpg HTTP/1.1" 404 6252
+[20/Sep/2026 02:19:21] "GET /static/img/headphones.jpg HTTP/1.1" 200 25418
+[20/Sep/2026 02:19:21] "GET /static/img/backpack.jpg HTTP/1.1" 200 51955
+[20/Sep/2026 02:19:21] "GET /static/cart.js?v=6 HTTP/1.1" 200 14687
+[20/Sep/2026 02:19:21] "GET /static/img/chair.jpg HTTP/1.1" 200 12490
+C:\Users\ADMIN\Desktop\DROP SHIPING\dashboards\urls.py changed, reloading.
+INFO 2026-09-20 02:20:11,319 django.utils.autoreload C:\Users\ADMIN\Desktop\DROP SHIPING\dashboards\urls.py changed, reloading.
+Watching for file changes with StatReloader
+INFO 2026-09-20 02:20:14,973 django.utils.autoreload Watching for file changes with StatReloader
+C:\Users\ADMIN\Desktop\DROP SHIPING\dashboards\views.py changed, reloading.
+INFO 2026-09-20 02:20:30,106 django.utils.autoreload C:\Users\ADMIN\Desktop\DROP SHIPING\dashboards\views.py changed, reloading.
+Watching for file changes with StatReloader
+INFO 2026-09-20 02:20:40,298 django.utils.autoreload Watching for file changes with StatReloader
+[20/Sep/2026 02:22:03] "GET / HTTP/1.1" 200 71470
+[20/Sep/2026 02:22:04] "GET /static/style.css HTTP/1.1" 200 71586
+[20/Sep/2026 02:22:04] "GET /static/Logo.png HTTP/1.1" 200 388688
+[20/Sep/2026 02:22:04] "GET /static/img/headphones.jpg HTTP/1.1" 200 25418
+[20/Sep/2026 02:22:04] "GET /static/cart.js?v=6 HTTP/1.1" 200 14687
+[20/Sep/2026 02:22:04] "GET /static/img/chair.jpg HTTP/1.1" 200 12490
+[20/Sep/2026 02:22:04] "GET /static/img/backpack.jpg HTTP/1.1" 200 51955
+[20/Sep/2026 02:22:05] "GET /media/products/1002342537.jpg HTTP/1.1" 404 6252
+[20/Sep/2026 02:22:45] "GET / HTTP/1.1" 200 71470
+[20/Sep/2026 02:22:45] "GET /static/img/headphones.jpg HTTP/1.1" 200 25418
+[20/Sep/2026 02:22:45] "GET /static/Logo.png HTTP/1.1" 200 388688
+[20/Sep/2026 02:22:45] "GET /static/style.css HTTP/1.1" 200 71586
+[20/Sep/2026 02:22:45] "GET /static/img/chair.jpg HTTP/1.1" 200 12490
+[20/Sep/2026 02:22:45] "GET /static/img/backpack.jpg HTTP/1.1" 200 51955
+[20/Sep/2026 02:22:45] "GET /static/cart.js?v=6 HTTP/1.1" 200 14687
+[20/Sep/2026 02:28:29] "GET / HTTP/1.1" 200 71470
+[20/Sep/2026 02:28:29] "GET /static/img/headphones.jpg HTTP/1.1" 200 25418
+[20/Sep/2026 02:28:29] "GET /static/style.css HTTP/1.1" 200 71586
+[20/Sep/2026 02:28:29] "GET /static/Logo.png HTTP/1.1" 200 388688
+[20/Sep/2026 02:28:29] "GET /static/img/backpack.jpg HTTP/1.1" 200 51955
+[20/Sep/2026 02:28:29] "GET /static/img/chair.jpg HTTP/1.1" 200 12490
+[20/Sep/2026 02:28:29] "GET /static/cart.js?v=6 HTTP/1.1" 200 14687
+[20/Sep/2026 02:46:37] "GET / HTTP/1.1" 200 74578
+[20/Sep/2026 02:46:37] "GET / HTTP/1.1" 200 74578
+[20/Sep/2026 02:46:37] "GET /static/img/headphones.jpg HTTP/1.1" 200 25418
+[20/Sep/2026 02:46:37] "GET /static/Logo.png HTTP/1.1" 200 388688
+[20/Sep/2026 02:46:37] "GET /static/style.css HTTP/1.1" 200 76152
+[20/Sep/2026 02:46:37] "GET /static/img/chair.jpg HTTP/1.1" 200 12490
+[20/Sep/2026 02:46:37] "GET /static/cart.js?v=6 HTTP/1.1" 200 14687
+[20/Sep/2026 02:46:37] "GET /static/img/backpack.jpg HTTP/1.1" 200 51955
+[20/Sep/2026 02:47:38] "GET / HTTP/1.1" 200 74578
+[20/Sep/2026 02:47:39] "GET /static/style.css HTTP/1.1" 200 76152
+[20/Sep/2026 02:47:40] "GET /static/Logo.png HTTP/1.1" 200 388688
+[20/Sep/2026 02:47:40] "GET /static/img/headphones.jpg HTTP/1.1" 200 25418
+[20/Sep/2026 02:47:40] "GET /static/img/backpack.jpg HTTP/1.1" 200 51955
+[20/Sep/2026 02:47:40] "GET /static/img/chair.jpg HTTP/1.1" 200 12490
+[20/Sep/2026 02:47:40] "GET /static/cart.js?v=6 HTTP/1.1" 200 14687
+[20/Sep/2026 02:48:46] "GET / HTTP/1.1" 200 74578
+[20/Sep/2026 02:48:46] "GET /static/style.css HTTP/1.1" 200 76152
+[20/Sep/2026 02:48:46] "GET /static/img/headphones.jpg HTTP/1.1" 200 25418
+[20/Sep/2026 02:48:46] "GET /static/img/backpack.jpg HTTP/1.1" 200 51955
+[20/Sep/2026 02:48:46] "GET /static/img/chair.jpg HTTP/1.1" 200 12490
+[20/Sep/2026 02:48:46] "GET /static/Logo.png HTTP/1.1" 200 388688
+[20/Sep/2026 02:48:46] "GET /static/cart.js?v=6 HTTP/1.1" 200 14687

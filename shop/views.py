@@ -2,7 +2,8 @@ import re
 
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render
-from django.db.models import Case, IntegerField, Q, When
+from django.db.models import Case, IntegerField, Q, Sum, When
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from django.template.loader import render_to_string
 
@@ -53,6 +54,66 @@ PAGES = {
 }
 
 
+HOME_GRID_SLOTS = 5   # grid cards 1-5 are products; card 6 is the static boost CTA
+
+
+def home_grid_products(limit=HOME_GRID_SLOTS):
+    """Products for the homepage "Buyers Love These" (TOP RATED) grid.
+
+    Ordering rule:
+      1. Products with a running boost (paid BoostOrder that has not expired)
+         lead the grid — the seller paid to be featured there.
+      2. Every remaining slot is filled by the marketplace's best sellers
+         (most units bought across real orders), so when no boost is running
+         the grid is simply the most-bought products.
+
+    Each returned product carries two extra template flags:
+      ``home_boosted`` -> True when it is currently boosted.
+      ``home_note``    -> the boost plan name (empty for best sellers).
+    """
+    from dashboards.models import BoostOrder, Order
+
+    products, seen = [], set()
+
+    running = (
+        BoostOrder.objects.filter(status=BoostOrder.STATUS_PAID, expires_at__gt=timezone.now())
+        .select_related("product", "plan")
+        .order_by("-plan__price", "-paid_at", "-created_at")   # richest plan leads
+    )
+    for boost in running:
+        product = boost.product
+        if product is None or product.pk in seen or product.status != "live":
+            continue
+        seen.add(product.pk)
+        product.home_boosted = True
+        product.home_note = boost.plan_name or "Boost"
+        products.append(product)
+        if len(products) >= limit:
+            break
+
+    if len(products) < limit:
+        best_sellers = (
+            Product.objects.filter(status="live")
+            .exclude(pk__in=seen)
+            .annotate(
+                units_sold=Coalesce(
+                    Sum(
+                        "orders__quantity",
+                        filter=~Q(orders__status__in=[Order.STATUS_CANCELLED, Order.STATUS_REFUNDED]),
+                    ),
+                    0,
+                )
+            )
+            .order_by("-units_sold", "-sold", "-rating", "-created_at")[: limit - len(products)]
+        )
+        for product in best_sellers:
+            product.home_boosted = False
+            product.home_note = ""
+            products.append(product)
+
+    return products
+
+
 def page(request, slug):
     """Generic view for static store pages.  The shop page is handled separately."""
     if slug == "shop":
@@ -64,6 +125,10 @@ def page(request, slug):
         raise Http404(f'Unknown page: {slug}')
 
     context = {'page_title': PAGES[slug], 'slug': slug}
+    if slug == 'index':
+        # Boosted products lead the homepage "TOP RATED PRODUCTS" grid; the
+        # remaining slots fall back to the most-bought products.
+        context['home_products'] = home_grid_products()
     html = render_to_string(f'{slug}.html', context, request=request)
 
     # Store pages currently carry their own navbar markup.  Replace their

@@ -538,6 +538,10 @@ class BoostOrder(models.Model):
     # Currency of `amount` — derived from the payment method used.
     currency = models.CharField(max_length=5, choices=CURRENCY_CHOICES, default="USD")
     reference = models.CharField(max_length=20, unique=True, blank=True)
+    # Link back to the verified PaymentIntent (PAY-XXXX…) that funded this
+    # boost, so the admin can reconcile every boost against a real provider
+    # transaction (``PaymentIntent.provider_reference`` + payload).
+    payment_reference = models.CharField(max_length=40, blank=True, default="")
 
     paid_at = models.DateTimeField(null=True, blank=True)
     expires_at = models.DateTimeField(null=True, blank=True)

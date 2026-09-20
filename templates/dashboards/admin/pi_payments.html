@@ -74,7 +74,7 @@
           <th>Buyer</th>
           <th>Pi amount</th>
           <th>USD value</th>
-          <th>Cart items</th>
+          <th>Items / Boost</th>
           <th>Buyer's wallet</th>
           <th>Actions</th>
         </tr>
@@ -113,10 +113,14 @@
             <span>${{ intent.amount_usd|floatformat:2 }}</span>
           </td>
 
-          <!-- Cart items -->
+          <!-- Cart items / boost info -->
           <td style="max-width:200px">
             {% with snap=intent.provider_payload.cart_snapshot %}
-            {% if snap %}
+            {% if intent.purpose == 'boost' %}
+              <span class="pill pill-purple" style="font-size:11px">Boost</span><br>
+              <small class="muted">{{ intent.provider_payload.plan_name|default:"—" }}</small><br>
+              <small class="muted">{{ intent.provider_payload.boost_reference|default:"" }}</small>
+            {% elif snap %}
               <span style="font-size:12px;font-weight:700;color:var(--atext)">{{ snap|length }} item{{ snap|length|pluralize }}</span>
               {% for item in snap %}
               <br><small class="muted">×{{ item.quantity }} {{ item.product_name|truncatechars:26 }}</small>

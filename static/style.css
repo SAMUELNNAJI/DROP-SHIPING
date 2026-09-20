@@ -1295,17 +1295,182 @@ body { padding-top: 0; }
 /* ═══════════════════════════════════════
    BUYERS LOVE THESE
 ═══════════════════════════════════════ */
+/* BOOST HOW-TO MODAL (homepage). Centered dialog with blurred backdrop —
+   same interaction pattern as the shop wishlist modal (.wl-modal in shop.css),
+   scoped as .boost-modal so the homepage keeps its styles in style.css.
+   Opened by [data-boost-modal-open]; closes on x, backdrop click, or Esc. */
+.boost-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(10, 14, 43, 0.55);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s ease;
+}
+.boost-modal-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.boost-modal {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 24px;
+  padding: 40px 32px 30px;
+  box-shadow: 0 32px 80px rgba(10, 14, 43, 0.22), 0 2px 8px rgba(10, 14, 43, 0.08);
+  text-align: center;
+  transform: translateY(18px) scale(.97);
+  transition: transform .25s cubic-bezier(.34,1.48,.64,1), opacity .22s ease;
+  opacity: 0;
+}
+.boost-modal-backdrop.is-open .boost-modal {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+.boost-modal__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid #e5e9f0;
+  background: #f5f7fa;
+  color: #6b7280;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.boost-modal__close:hover { background: #ffe4e6; color: #e11d48; border-color: #fecdd3; }
+.boost-modal__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #eef3ff, #e0eaff);
+  border: 2px solid #c9d9f9;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 16px;
+}
+.boost-modal__title {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: #0f172a;
+}
+.boost-modal__sub {
+  margin: 0 0 22px;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.6;
+}
+.boost-modal__sub b { color: #1f2937; }
+.boost-steps {
+  list-style: none;
+  margin: 0 0 24px;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  text-align: left;
+}
+.boost-steps li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: #f6f9ff;
+  border: 1px solid #e3ecfd;
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+.boost-steps__num {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2f7cf6, #1e5fd6);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+}
+.boost-steps li b { display: block; font-size: 13.5px; color: #0f172a; }
+.boost-steps li div span { display: block; font-size: 12.5px; color: #64748b; margin-top: 2px; line-height: 1.5; }
+.boost-modal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.boost-modal__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 48px;
+  border-radius: 14px;
+  font-size: 14.5px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform .15s, box-shadow .15s, opacity .15s;
+}
+.boost-modal__btn:hover { transform: translateY(-1px); }
+.boost-modal__btn:active { transform: translateY(0); opacity: .88; }
+.boost-modal__btn--primary {
+  background: linear-gradient(135deg, #1f64ff, #3b7eff);
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(31, 100, 255, .30);
+}
+.boost-modal__btn--primary:hover { box-shadow: 0 12px 30px rgba(31, 100, 255, .40); }
+.boost-modal__btn--secondary {
+  background: #f5f7fa;
+  color: #1f2937;
+  border: 1px solid #e5e9f0;
+}
+.boost-modal__btn--secondary:hover { background: #eef2ff; border-color: #c7d2fe; color: #1f64ff; }
+.boost-modal__note {
+  margin: 18px 0 0;
+  font-size: 12px;
+  color: #9ca3af;
+  line-height: 1.55;
+}
+@media (max-width: 480px) {
+  .boost-modal { padding: 32px 20px 24px; border-radius: 20px; }
+  .boost-modal__title { font-size: 19px; }
+}
 .buyers-section {
   background: #fff;
-  padding: 80px 0;
+  padding: 64px 0;
   overflow: clip;
 }
+
+/* ── compact layout so the whole TOP RATED grid fits a desktop viewport ── */
+.buyers-section .buyers-header { margin-bottom: 22px; }
+.buyers-section .buyers-heading { font-size: 36px; }
+.buyers-section .buyers-eyebrow { margin-bottom: 14px; }
+.buyers-section .buyers-grid { gap: 12px; }
+.buyers-section .b-media { height: 148px; }
+.buyers-section .b-media--tumbler { height: 152px; }
+.buyers-section .b-card--tall { min-height: 0; }
+.buyers-section .b-info { padding: 11px 14px 13px; }
+.buyers-section .b-card--cta { padding: 24px 20px; }
 
 .buyers-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
   gap: 20px;
 }
 
@@ -1417,6 +1582,15 @@ body { padding-top: 0; }
 .b-media--camera     { background: linear-gradient(165deg, #E2E6ED 0%, #C2CBDA 100%); }
 .b-media--tumbler    { background: linear-gradient(165deg, #F4F7FC 0%, #E1E9F6 100%); height: 180px; }
 .b-media--chair      { background: linear-gradient(165deg, #FFFFFF 0%, #F1F5FB 100%); height: auto; width: 30%; flex-shrink: 0; border-right: 1px solid #EEF2FA; }
+
+/* ── dynamic homepage cards (running boosts lead, best sellers fill the rest) ──
+   The tiles are anchors so the whole card links to the product page; grid items
+   are blockified by CSS and .b-card--wide already sets display:flex, so each tile
+   keeps the exact same box as the original design. */
+a.b-card { text-decoration: none; color: inherit; display: block; }
+.b-media--product { background: linear-gradient(165deg, #F4F7FC 0%, #E1E9F6 100%); }
+/* slot 5 wide card media — same 30% rail as the static chair card */
+.b-media--wide { height: auto; width: 30%; flex-shrink: 0; border-right: 1px solid #EEF2FA; }
 
 /* tall headphones card — image fills card, info overlaid */
 .b-card--tall { min-height: 306px; }
@@ -2297,6 +2471,7 @@ body.mmenu-locked { overflow: hidden; }
   /* chair card: keep media + info side-by-side on tablet */
   .b-card--wide { flex-direction: row; }
   .b-card--wide .b-media--chair { width: 38%; height: auto; min-height: 220px; border-right: 1px solid #EEF2FA; }
+  .b-card--wide .b-media--wide  { width: 38%; height: auto; min-height: 220px; border-right: 1px solid #EEF2FA; }
   .b-card--wide .b-info--wide { padding: 18px; }
   /* header stacks neatly instead of squeezing */
   .buyers-header { flex-direction: column; align-items: flex-start; }
@@ -2418,6 +2593,24 @@ body.mmenu-locked { overflow: hidden; }
     flex-shrink: 0;
   }
   .b-media--chair img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    border-radius: 0;
+  }
+  /* dynamic wide card media stacks full-width on phones */
+  .b-media--wide {
+    width: 100%;
+    height: 260px;
+    min-height: 260px;
+    border-right: none;
+    border-bottom: 1px solid #EEF2FA;
+    border-radius: 0;
+    flex-shrink: 0;
+  }
+  .b-media--wide img {
     width: 100%;
     height: 100%;
     object-fit: cover;

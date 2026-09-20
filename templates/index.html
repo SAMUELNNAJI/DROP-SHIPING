@@ -694,16 +694,82 @@
             <p class="boost-note-title">Want to feature your product?</p>
             <p class="boost-note-sub">Boost from $9.99/week &rarr;</p>
           </div>
-          <a href="/contact/" class="btn-primary btn-sm boost-btn">
+          <button type="button" class="btn-primary btn-sm boost-btn" data-boost-modal-open>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="#fff"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             Boost Product
-          </a>
+          </button>
         </div>
       </div>
 
-      <!-- Product grid -->
+      <!-- Product grid — running boosts lead, most-bought products fill the rest -->
       <div class="buyers-grid">
 
+{% for product in home_products %}
+        {% if forloop.counter == 1 %}
+        <!-- 01 · lead card — tall, media fills the card, info overlaid -->
+        <a class="b-card b-card--tall" href="{% url 'product_detail' product.pk %}" aria-label="{{ product.name }}">
+          <span class="b-badge b-badge--orange">{% if product.home_boosted %}BOOSTED{% else %}{{ product.badge_label|default:"TOP RATED" }}{% endif %}</span>
+          <div class="b-media b-media--product">
+            <img src="{{ product.image_src }}" alt="{{ product.name }}" loading="lazy" onerror="this.onerror=null;this.src='/static/img/headphones.jpg'">
+          </div>
+          <div class="b-overlay">
+            <p class="b-cat">{{ product.category_label|upper }}</p>
+            <p class="b-name b-name--light">{{ product.name }}</p>
+            <div class="b-rating b-rating--light"><span class="stars">{{ product.stars }}</span><span class="b-count">({{ product.reviews_display }})</span></div>
+            <div class="b-price-row">
+              <div>
+                <p class="b-price b-price--light">${{ product.price|floatformat:2 }}</p>
+                {% if product.old_price %}<p class="b-old">${{ product.old_price|floatformat:2 }}</p>{% endif %}
+              </div>
+              <div class="b-pay-pills">
+                <span class="pill-pi">Pi</span>
+                <span>PayPal</span>
+              </div>
+            </div>
+          </div>
+        </a>
+        {% elif forloop.counter == 5 %}
+        <!-- 05 · wide horizontal card (spans cols 2-3) -->
+        <a class="b-card b-card--wide" href="{% url 'product_detail' product.pk %}" aria-label="{{ product.name }}">
+          <div class="b-media b-media--product b-media--wide">
+            <img src="{{ product.image_src }}" alt="{{ product.name }}" loading="lazy" onerror="this.onerror=null;this.src='/static/img/headphones.jpg'">
+          </div>
+          <div class="b-info b-info--wide">
+            <div class="b-tags">
+              <span class="b-badge b-badge--orange b-badge--static">{% if product.home_boosted %}BOOSTED{% else %}{{ product.badge_label|default:"BEST SELLER" }}{% endif %}</span>
+              <span class="b-cat-tag">{{ product.category_label|upper }}</span>
+            </div>
+            <p class="b-name">{{ product.name }}</p>
+            <div class="b-rating"><span class="stars">{{ product.stars }}</span><span class="b-count">({{ product.reviews_display }} reviews)</span></div>
+            <p class="b-shop">by {{ product.get_store_display }}</p>
+            <div class="b-info-row b-info-row--push">
+              <p class="b-price b-price--blue">${{ product.price|floatformat:2 }}</p>
+              <span class="b-pay-pill">PayPal</span>
+            </div>
+          </div>
+        </a>
+        {% else %}
+        <!-- standard card -->
+        <a class="b-card" href="{% url 'product_detail' product.pk %}" aria-label="{{ product.name }}">
+          <span class="b-badge b-badge--blue">{% if product.home_boosted %}BOOSTED{% else %}{{ product.badge_label|default:"BEST SELLER" }}{% endif %}</span>
+          <div class="b-media b-media--product">
+            <img src="{{ product.image_src }}" alt="{{ product.name }}" loading="lazy" onerror="this.onerror=null;this.src='/static/img/headphones.jpg'">
+            <div class="b-overlay b-overlay--soft">
+              <p class="b-cat">{{ product.category_label|upper }}</p>
+              <p class="b-name b-name--light">{{ product.name }}</p>
+            </div>
+          </div>
+          <div class="b-info">
+            <div class="b-rating"><span class="stars">{{ product.stars }}</span><span class="b-count">({{ product.reviews_display }})</span></div>
+            <div class="b-info-row">
+              <p class="b-shop">{{ product.get_store_display }}</p>
+              <p class="b-price">${{ product.price|floatformat:2 }}</p>
+            </div>
+          </div>
+        </a>
+        {% endif %}
+{% empty %}
+        <!-- No live products yet — fall back to the original showcase cards -->
         <!-- 01 · Headphones — tall card with overlay info -->
         <div class="b-card b-card--tall">
           <span class="b-badge b-badge--orange">TOP RATED</span>
@@ -804,6 +870,8 @@
           </div>
         </div>
 
+{% endfor %}
+
         <!-- 06 · Boost CTA -->
         <div class="b-card b-card--cta">
           <div class="cta-bolt">
@@ -811,15 +879,54 @@
           </div>
           <p class="cta-title">Feature Your Product Here</p>
           <p class="cta-sub">Get seen by thousands of buyers. Starting at $9.99/week.</p>
-          <a href="/contact/" class="btn-primary btn-sm boost-btn">
+          <button type="button" class="btn-primary btn-sm boost-btn" data-boost-modal-open>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             Boost My Product
-          </a>
+          </button>
         </div>
 
       </div>
     </div>
   </section>
+
+  <!-- ═══════════════════════════════════════
+       BOOST HOW-TO MODAL (homepage)
+  ═══════════════════════════════════════ -->
+  <div class="boost-modal-backdrop" id="boostModalBackdrop" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="boostModalTitle">
+    <div class="boost-modal">
+      <button type="button" class="boost-modal__close" id="boostModalClose" aria-label="Close">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+      </button>
+      <div class="boost-modal__icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="#4F6EF7"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      </div>
+      <h2 class="boost-modal__title" id="boostModalTitle">Boost your product as a seller</h2>
+      <p class="boost-modal__sub">Boosted products jump to the front of the <b>Top Rated Products</b> grid with a <b>BOOSTED</b> badge. Plans start from <b>$9.99/week</b>.</p>
+      <ol class="boost-steps">
+        <li>
+          <span class="boost-steps__num">1</span>
+          <div><b>Become a seller</b><span>Sign in or create a free seller account.</span></div>
+        </li>
+        <li>
+          <span class="boost-steps__num">2</span>
+          <div><b>Add a product</b><span>Open the seller dashboard → Products → Add product.</span></div>
+        </li>
+        <li>
+          <span class="boost-steps__num">3</span>
+          <div><b>Tap “Boost” beside it</b><span>Pick a boost plan and pay — Pi, PayPal or Paystack.</span></div>
+        </li>
+        <li>
+          <span class="boost-steps__num">4</span>
+          <div><b>Get featured</b><span>Your BOOSTED badge shows here until the plan expires.</span></div>
+        </li>
+      </ol>
+      <div class="boost-modal__actions">
+        <a href="/dashboards/seller/" class="boost-modal__btn boost-modal__btn--primary">Open seller dashboard</a>
+        <a href="/signin/#signup" class="boost-modal__btn boost-modal__btn--secondary">Create seller account</a>
+      </div>
+      <p class="boost-modal__note">Boosts run per product, per plan period — you can boost several products at once.</p>
+    </div>
+  </div>
 
   <!-- ═══════════════════════════════════════
        START SELLING CTA
@@ -1413,6 +1520,40 @@
       counterObs.observe(el);
     });
 
+  }());
+  /* ── BOOST HOW-TO MODAL: open from any [data-boost-modal-open] button;
+     close on ×, backdrop click, or Esc. Focus moves into the modal on open
+     and returns to the triggering button on close; body scroll locks. ── */
+  (function () {
+    var backdrop = document.getElementById('boostModalBackdrop');
+    if (!backdrop) return;
+    var closeBtn = document.getElementById('boostModalClose');
+    var lastFocus = null;
+
+    function openModal(trigger) {
+      lastFocus = trigger || document.activeElement;
+      backdrop.classList.add('is-open');
+      backdrop.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      if (closeBtn) closeBtn.focus();
+    }
+    function closeModal() {
+      backdrop.classList.remove('is-open');
+      backdrop.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+
+    document.querySelectorAll('[data-boost-modal-open]').forEach(function (btn) {
+      btn.addEventListener('click', function () { openModal(btn); });
+    });
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', function (e) {
+      if (e.target === backdrop) closeModal();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && backdrop.classList.contains('is-open')) closeModal();
+    });
   }());
   </script>
 </body>

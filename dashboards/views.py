@@ -2493,6 +2493,8 @@ def boost_pi_pay(request, boost_pk):
         "intent_reference":  intent.reference,
         "pi_amount":         str(intent.amount),
         "pi_sandbox":        bool(_settings.PI_SANDBOX),
+        # Where a seller outside the Pi Browser is sent to get the app.
+        "pi_app_url":        _settings.PI_BROWSER_APP_URL,
         "page_title":        "Pay with Pi",
         "dashboard_template": "dashboards/seller/boost_pi_pay.html",
     })

@@ -76,6 +76,13 @@
         Tap the button below to open Pi's payment sheet.
       </div>
 
+      {# Shown only when this page is not in the Pi Browser. #}
+      <div class="bpi-install" id="bpiInstall" hidden>
+        <p>Pi payments run inside the Pi Browser app on your phone.
+           Open this page there and tap the button to pay — nothing has been charged.</p>
+        <a class="pi-install-link" id="bpiAppLink" href="#" target="_blank" rel="noopener noreferrer">Get Pi Browser</a>
+      </div>
+
       <button class="boost-submit-btn" type="button" id="bpiPayBtn"
               data-reference="{{ intent_reference }}" data-amount="{{ pi_amount }}">
         <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.6 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9-5.3-2.9-5.3 2.9 1.1-5.9L3.5 9.8l5.9-.8z"/></svg>
@@ -115,6 +122,7 @@
   var PI_AMOUNT    = parseFloat('{{ pi_amount|escapejs }}');
   var REFERENCE    = '{{ intent_reference|escapejs }}';
   var BOOST_PK     = {{ boost.pk }};
+  var APP_URL      = '{{ pi_app_url|escapejs }}';
   var SANDBOX      = {% if pi_sandbox %}true{% else %}false{% endif %};
   var APPROVE_URL  = '/dashboards/checkout/pi/approve/';
   var COMPLETE_URL = '/dashboards/checkout/pi/complete/';
@@ -122,7 +130,18 @@
   var statusEl = document.getElementById('bpiStatus');
   var payBtn   = document.getElementById('bpiPayBtn');
   var btnLabel = document.getElementById('bpiBtnLabel');
+  var installBox = document.getElementById('bpiInstall');
+  var appLink  = document.getElementById('bpiAppLink');
   var idleLabel = 'Pay π' + PI_AMOUNT.toFixed(2) + ' with Pi';
+
+  /* Outside the Pi Browser the SDK cannot reach the wallet, so point the seller
+     at the app. The Pi SDK only authenticates inside Pi Browser, so this hands
+     them to the app to finish the payment — it cannot jump straight into this
+     payment session. */
+  function showInstallHelp() {
+    if (appLink && APP_URL) appLink.href = APP_URL;
+    if (installBox) installBox.hidden = false;
+  }
 
   function say(message, kind) {
     statusEl.textContent = message;
@@ -194,6 +213,9 @@
 
   function pay() {
     if (!isPiBrowser()) {
+      /* A normal browser cannot talk to the Pi wallet — send the seller to the
+         Pi Browser app instead of leaving the button stuck on "Waiting for Pi". */
+      showInstallHelp();
       say('Pi payments open inside the Pi Browser. Open this page in Pi Browser, then tap the button again.', 'warn');
       return;
     }
@@ -265,4 +287,22 @@
 .bpi-status--warn { background: rgba(234,179,60,.10); border-color: rgba(234,179,60,.32); color: #b45309; }
 .bpi-status--err  { background: rgba(229,72,77,.08);  border-color: rgba(229,72,77,.28);  color: #c02a2f; }
 .boost-submit-btn[disabled] { opacity: .6; pointer-events: none; }
+
+/* Shown only outside the Pi Browser */
+.bpi-install {
+  margin: 10px 0 0; padding: 13px 15px;
+  border-radius: 12px;
+  background: rgba(112,72,232,.06);
+  border: 1px solid rgba(112,72,232,.2);
+}
+.bpi-install[hidden] { display: none; }
+.bpi-install p { margin: 0 0 9px; font-size: 13px; line-height: 1.55; color: #5b36d6; }
+.pi-install-link {
+  display: inline-flex; align-items: center;
+  padding: 8px 14px; border-radius: 9px;
+  background: linear-gradient(135deg, #7048e8, #a78bfa);
+  color: #fff; font-size: 13px; font-weight: 700;
+  text-decoration: none;
+}
+.pi-install-link:hover { filter: brightness(1.05); }
 </style>

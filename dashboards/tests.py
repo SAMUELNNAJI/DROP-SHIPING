@@ -386,6 +386,126 @@ class BoostPiPaymentTests(PiPaymentTestBase):
         )
 
 
+class PiBrowserHandoffTests(PiPaymentTestBase):
+    """The out-of-Pi-Browser handoff must offer a real, working link.
+
+    A plain browser cannot be redirected into a live Pi payment (the SDK only
+    authenticates inside Pi Browser), so the page's job is to hand the buyer to
+    the app. That link has to exist, point somewhere real, and stay hidden until
+    it is actually needed.
+    """
+
+    def _checkout_page(self):
+        self.client.force_login(self.buyer)
+        return self.client.get(reverse('checkout-payment'))
+
+    def test_checkout_page_hides_the_link_until_it_is_needed(self):
+        response = self._checkout_page()
+        self.assertContains(response, 'id="piPiBrowserLink"')
+        # The hidden attribute alone is not enough: .ck-btn-ghost sets
+        # display:inline-flex, so the page must carry the [hidden] override or
+        # the link is visible on every load.
+        self.assertContains(response, '.ck-btn-ghost[hidden]')
+
+    def test_checkout_config_exposes_a_real_app_url(self):
+        response = self._checkout_page()
+        config = response.context['payment_config']
+        app_url = config['pi']['app_url']
+        self.assertTrue(app_url.startswith('https://'), app_url)
+        self.assertTrue(config['pi']['require_browser'])
+
+    def test_app_url_is_configurable(self):
+        with self.settings(PI_BROWSER_APP_URL='https://example.test/pi-browser'):
+            self.assertEqual(
+                self._checkout_page().context['payment_config']['pi']['app_url'],
+                'https://example.test/pi-browser',
+            )
+
+    def test_boost_page_offers_the_same_handoff(self):
+        plan = BoostPlan.objects.create(
+            name='Gold', price=Decimal('20.00'), duration_days=7, is_active=True
+        )
+        self.client.force_login(self.seller)
+        self.client.post(
+            reverse('seller_boost_checkout', args=[self.product.pk]),
+            data={'plan': plan.pk, 'payment_method': 'pi'},
+        )
+        boost = BoostOrder.objects.get()
+        response = self.client.get(reverse('boost_pi_pay', args=[boost.pk]))
+        self.assertContains(response, 'id="bpiAppLink"')
+        self.assertContains(response, 'bpiInstall')
+        self.assertTrue(response.context['pi_app_url'].startswith('https://'))
+
+
+class PiResumeAfterAppSwitchTests(PiPaymentTestBase):
+    """Coming back from the Pi Browser app must not lose the payment.
+
+    Pi Browser has its own cookie jar, so a buyer who installs it is signed out
+    when they return. The cart survives (it is in the DB) but the pending Pi
+    intent would not, which is what these tests pin down.
+    """
+
+    def _start_pi(self):
+        self.client.force_login(self.buyer)
+        response = self.client.post(
+            reverse('payment_start'),
+            data={'payment_method': 'pi'},
+            content_type='application/json',
+        )
+        return response.json()['reference']
+
+    def test_resume_endpoint_parks_the_payment_and_redirects_to_the_app(self):
+        reference = self._start_pi()
+        response = self.client.get(reverse('pi_resume'), {'reference': reference})
+
+        self.assertRedirects(
+            response,
+            'https://play.google.com/store/apps/details?id=com.pi.browser',
+            fetch_redirect_response=False,
+        )
+        self.assertEqual(response.cookies['drophub_pi_resume'].value, reference)
+
+    def test_checkout_recognises_the_payment_after_the_switch(self):
+        reference = self._start_pi()
+        self.client.get(reverse('pi_resume'), {'reference': reference})
+
+        # Same user, fresh visit (as if they came back in the app).
+        response = self.client.get(reverse('checkout-payment'))
+        self.assertEqual(response.context['pi_resume_reference'], reference)
+        self.assertContains(response, 'piResumeBanner')
+        self.assertContains(response, reference)
+
+    def test_a_settled_payment_is_not_offered_for_resume(self):
+        reference = self._start_pi()
+        intent = PaymentIntent.objects.get(reference=reference)
+        intent.status = PaymentIntent.STATUS_PAID
+        intent.save(update_fields=['status'])
+
+        self.client.get(reverse('pi_resume'), {'reference': reference})
+        response = self.client.get(reverse('checkout-payment'))
+        self.assertEqual(response.context['pi_resume_reference'], '')
+
+    def test_tampered_cookie_cannot_expose_another_buyers_payment(self):
+        reference = self._start_pi()
+
+        # Re-open the page as a *different* buyer, carrying the cookie.
+        intruder = User.objects.create_user(username='intruder2', password='pw', role='buyer')
+        self.client.force_login(intruder)
+        self.client.cookies['drophub_pi_resume'] = reference
+
+        response = self.client.get(reverse('checkout-payment'))
+        # The hint is ignored because the intent belongs to somebody else.
+        self.assertEqual(response.context['pi_resume_reference'], '')
+
+    def test_resume_ignores_a_reference_that_is_not_the_callers(self):
+        reference = self._start_pi()
+        self.client.force_login(self.seller)
+
+        response = self.client.get(reverse('pi_resume'), {'reference': reference})
+        # Still sent to the app, but nothing of theirs is parked.
+        self.assertNotIn('drophub_pi_resume', response.cookies)
+
+
 class PiVerificationHelperTests(PiPaymentTestBase):
     """Unit tests for payments.pi_verify_payment itself."""
 

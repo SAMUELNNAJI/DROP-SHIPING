@@ -95,6 +95,8 @@ def provider_config(totals=None):
             'manual': manual_pi,
             # Pi is paid through Pi's own gateway, so the Pi Browser is required.
             'require_browser': payments.pi_browser_required(),
+            # Where to send a buyer who is not in the Pi Browser yet.
+            'app_url': settings.PI_BROWSER_APP_URL,
             'sandbox': settings.PI_SANDBOX,
             'wallet_address': settings.PI_WALLET_ADDRESS,
         },
@@ -129,6 +131,10 @@ def checkout_context(request):
         # Every figure the page renders, already converted into each rail's
         # currency, so the browser never has to guess an exchange rate.
         'payment_config': provider_config(totals),
+        # Set when this buyer was bounced to the Pi Browser mid-payment and has
+        # come back: the page offers to finish that exact payment rather than
+        # making them start over. See pi_resume_reference().
+        'pi_resume_reference': pi_resume_reference(request),
     }
 
 # ══════════════════════════════════════════════════════════════
@@ -234,6 +240,64 @@ def _remember_for_success_page(request, intent):
     # Store the reference so the success page can show expected totals for
     # Pi payments that are still awaiting admin verification (no orders yet).
     request.session['last_intent_reference'] = intent.reference
+
+
+# ══════════════════════════════════════════════════════════════
+#  Resuming a Pi payment after the switch to the Pi Browser
+# ══════════════════════════════════════════════════════════════
+# The Pi Browser is a separate browser, so the buyer's session cookie does not
+# follow them there. Their *cart* does (it lives in the DB), but the pending Pi
+# intent would otherwise be forgotten and they would start from scratch. This
+# cookie carries the reference across the gap.
+
+PI_RESUME_COOKIE = 'drophub_pi_resume'
+PI_RESUME_MAX_AGE = 7 * 24 * 60 * 60   # a week is plenty to install an app
+
+
+def pi_resume_reference(request):
+    """The still-open Pi payment this buyer should pick back up, else ``''``.
+
+    The cookie is treated as an untrusted hint only: the reference is re-checked
+    against the signed-in user's *own* intents, so a hand-edited value can never
+    point somebody at another customer's payment.
+    """
+    if request is None or not request.user.is_authenticated:
+        return ''
+    reference = str(request.COOKIES.get(PI_RESUME_COOKIE) or '').strip()
+    if not reference:
+        return ''
+    intent = _get_intent(reference, request.user, method='pi')
+    if intent is None or intent.is_paid or intent.status != PaymentIntent.STATUS_PENDING:
+        return ''
+    return reference
+
+
+@login_required
+def pi_resume(request):
+    """Send the buyer off to the Pi Browser, remembering the payment to finish.
+
+    The Pi SDK only runs inside Pi Browser, and that app has its own cookie jar —
+    so after installing it the buyer lands signed *out* and with no memory of the
+    payment they started. This parks the pending intent in a cookie and bounces
+    them to the app; :func:`pi_resume_reference` picks it up when they return.
+    """
+    reference = str(request.GET.get('reference') or '').strip()
+    intent = _get_intent(reference, request.user, method='pi')
+
+    app_url = settings.PI_BROWSER_APP_URL
+    if intent is None or intent.is_paid:
+        # Nothing of theirs to resume — just send them to the app.
+        return redirect(app_url)
+
+    response = redirect(app_url)
+    response.set_cookie(
+        PI_RESUME_COOKIE,
+        reference,
+        max_age=PI_RESUME_MAX_AGE,
+        secure=request.is_secure(),
+        samesite='Lax',
+    )
+    return response
 
 
 # ══════════════════════════════════════════════════════════════

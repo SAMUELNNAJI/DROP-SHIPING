@@ -168,6 +168,15 @@ PI_SANDBOX = env_bool('PI_SANDBOX', default=False)
 # non-Pi-Browser buyer is never charged. Set this to False only if you
 # deliberately want the older manual-transfer flow back.
 PI_REQUIRE_BROWSER = env_bool('PI_REQUIRE_BROWSER', default=True)
+# Where the "get Pi Browser" button sends buyers who are not in the Pi Browser.
+# The Pi SDK only authenticates inside the Pi Browser app, so a buyer on a normal
+# browser cannot be redirected straight into a live payment session — the best we
+# can do is hand them to the app, where they finish the payment. Point this at the
+# listing/deep link Pi currently recommends if it differs from the default.
+PI_BROWSER_APP_URL = os.environ.get(
+    'PI_BROWSER_APP_URL',
+    'https://play.google.com/store/apps/details?id=com.pi.browser',
+).strip()
 # Manual Pi transfer (buyer sends Pi to PI_WALLET_ADDRESS quoting the reference
 # and an admin reconciles it later). Ignored while PI_REQUIRE_BROWSER is on, and
 # off by default: it creates no order and no stock movement on its own.

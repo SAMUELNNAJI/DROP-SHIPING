@@ -126,6 +126,8 @@ urlpatterns = [
     path("checkout/pi/approve/", payment_views.pi_approve, name="pi_approve"),
     path("checkout/pi/complete/", payment_views.pi_complete, name="pi_complete"),
     path("checkout/pi/manual/", payment_views.pi_manual_claim, name="pi_manual_claim"),
+    # Hands a buyer to the Pi Browser, remembering the payment to finish there.
+    path("checkout/pi/resume/", payment_views.pi_resume, name="pi_resume"),
 
     # ── Generic section loader (must stay last) ───────────────
     path("<str:role>/<str:section>/", views.dashboard_section, name="dashboard_section"),

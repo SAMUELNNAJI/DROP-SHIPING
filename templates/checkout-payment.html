@@ -24,6 +24,10 @@
     .ck-pay-status--ok    { border-color: #c8e9d2; background: #f2fbf5; color: #15803d; }
     .ck-provider { margin-top: 14px; padding: 16px; border: 1px solid #e4eaf3; border-radius: 14px; background: #fbfcff; }
     .ck-provider[hidden] { display: none !important; }
+    /* .ck-btn-ghost sets display:inline-flex, which beats the UA rule for the
+       hidden attribute — without this the link shows on every page load. */
+    .ck-btn-ghost[hidden] { display: none !important; }
+
     .ck-provider-title { margin: 0 0 6px; font-size: 14px; font-weight: 800; color: #0f1b2d; }
     .ck-provider-text { margin: 0 0 10px; font-size: 13px; line-height: 1.6; color: #5b6b86; }
     .ck-provider-row { display: flex; gap: 10px; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #e4eaf3; font-size: 13px; color: #5b6b86; }
@@ -260,6 +264,15 @@
         {# Live status / error messages from the payment providers #}
         <div class="ck-pay-status" id="payStatus" role="status" aria-live="polite" hidden></div>
 
+        {% if pi_resume_reference %}
+        {# The buyer was sent off to the Pi Browser and has come back to finish. #}
+        <div class="ck-pay-status ck-pay-status--ok" style="display:block" id="piResumeBanner">
+          Welcome back — your Pi payment <b>{{ pi_resume_reference }}</b> is still open and your cart
+          is exactly where you left it. Choose <b>Pi Network</b> below and tap Pay to finish it
+          inside the Pi Browser.
+        </div>
+        {% endif %}
+
         <!-- PayPal — the official buttons are mounted here on demand -->
         <div class="ck-provider" id="paypalPanel" hidden>
           <p class="ck-provider-title">Finish paying with PayPal</p>
@@ -275,8 +288,10 @@
             Pi's own payment sheet will open and confirm the payment automatically.
             Your order is created the moment Pi confirms it.
           </p>
+          {# Filled in from payment_config.pi.app_url when the buyer needs it. #}
           <div class="ck-provider-actions">
-            <a class="ck-btn-ghost" id="piPiBrowserLink" href="#" hidden>Open in Pi Browser</a>
+            <a class="ck-btn-ghost" id="piPiBrowserLink" href="#" target="_blank"
+               rel="noopener noreferrer" hidden>Get Pi Browser</a>
           </div>
         </div>
       </section>
@@ -963,10 +978,42 @@ document.addEventListener('DOMContentLoaded', function () {
       return /PiBrowser|PiPhone/i.test(navigator.userAgent || '');
     }
 
-    /* Show the "open in Pi Browser" panel. Nothing is charged and no order
-       exists — the buyer simply pays the same way once they switch over. */
+    var piPiBrowserLink = document.getElementById('piPiBrowserLink');
+    var piPanelText = document.getElementById('piPanelText');
+
+    /* Show the "get Pi Browser" panel. Nothing is charged and no order exists.
+
+       Being straight about what is possible matters here: the Pi SDK only
+       authenticates inside the Pi Browser app, so a normal browser cannot be
+       bounced straight into a live payment session. The most we can do is send
+       the buyer to the app — they then open this same checkout page there to
+       pay. So we point them at the app and say exactly that, rather than
+       implying one tap here will charge their wallet. */
     function showPiBrowserNeeded() {
       if (piPanel) piPanel.hidden = false;
+
+      /* Route through our own resume endpoint rather than straight to the store:
+         it parks this payment in a cookie and bounces on, so when the buyer comes
+         back inside the Pi Browser (a separate cookie jar, so signed out) the
+         checkout page can pick this exact payment up again. */
+      var appUrl = (config.pi || {}).app_url;
+      if (piPiBrowserLink && appUrl) {
+        var ref = (lastStart && lastStart.reference) || '';
+        piPiBrowserLink.href = ref
+          ? '{% url "pi_resume" %}?reference=' + encodeURIComponent(ref)
+          : appUrl;
+        piPiBrowserLink.hidden = false;
+      }
+
+      var onPhone = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
+      if (piPanelText) {
+        piPanelText.textContent = onPhone
+          ? 'Open the Pi Browser app, then reopen this page there to pay with Pi. ' +
+            'Your order is created the moment Pi confirms it.'
+          : 'Pi payments run inside the Pi Browser app on your phone. Open this ' +
+            'checkout page there to pay with Pi. Nothing has been charged.';
+      }
+
       setBusy(false, 'Pay');
       setStatus(
         'Pi payments are made inside the Pi Browser. Open this page in Pi Browser to pay with Pi — nothing has been charged.',

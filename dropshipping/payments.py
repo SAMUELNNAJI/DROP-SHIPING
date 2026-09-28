@@ -330,6 +330,25 @@ def pi_sdk_enabled():
     return bool(settings.PI_API_KEY)
 
 
+def pi_browser_required():
+    """True when Pi may only be paid through the Pi Browser SDK gateway.
+
+    With this on there is deliberately no manual-transfer fallback: a buyer who
+    is not in the Pi Browser is never charged, and is told to open the checkout
+    in Pi Browser instead.
+    """
+    return bool(getattr(settings, 'PI_REQUIRE_BROWSER', False))
+
+
+def pi_manual_allowed():
+    """True when the manual wallet-transfer fallback may be offered."""
+    return bool(
+        getattr(settings, 'PI_MANUAL_TRANSFER', False)
+        and settings.PI_WALLET_ADDRESS
+        and not pi_browser_required()
+    )
+
+
 def _pi_headers():
     return {'Authorization': f'Key {settings.PI_API_KEY}'}
 
@@ -360,4 +379,65 @@ def pi_complete_payment(payment_id, txid):
         json_body={'txid': txid},
         headers=_pi_headers(),
     )
+
+
+
+def _as_decimal(value):
+    try:
+        return Decimal(str(value))
+    except (InvalidOperation, TypeError, ValueError):
+        return None
+
+
+def pi_verify_payment(payment_id, *, expected_amount, expected_user=None):
+    """Read a Pi payment back and confirm it is genuinely ours, then return it.
+
+    This is what makes the SDK flow as trustworthy as the Paystack/PayPal rails:
+    instead of trusting the ``txid`` the browser hands us, the server asks Pi
+    for the payment and refuses to complete it unless *all* of the following
+    hold —
+
+    * the payment exists and is addressed to this app's wallet,
+    * it covers at least the amount we asked the buyer for,
+    * and (when supplied) it was created by the user who is paying.
+
+    Raises :class:`PaymentError` with a buyer-safe message otherwise.
+    """
+    payment = pi_get_payment(payment_id)
+    if not payment or not payment.get('id'):
+        raise PaymentError('Pi could not find that payment.')
+
+    # ── It must be paying this app, not some other merchant ──
+    wallet = (settings.PI_WALLET_ADDRESS or '').strip()
+    if wallet:
+        transaction = payment.get('transaction') or {}
+        destination = str(transaction.get('dest_address') or '').strip()
+        if destination and destination.lower() != wallet.lower():
+            raise PaymentError('This Pi payment was not addressed to DropHub.')
+
+    # ── It must cover the full amount ──
+    paid = _as_decimal(payment.get('amount'))
+    if paid is None:
+        raise PaymentError('Pi did not report the amount paid.')
+    if paid < Decimal(str(expected_amount)):
+        raise PaymentError('The Pi amount paid was less than the amount due.')
+
+    # ── And it must be the payer's own payment ──
+    if expected_user:
+        payer = payment.get('user_uid') or payment.get('user') or {}
+        uid = payer.get('uid') if isinstance(payer, dict) else payer
+        if uid and str(uid) != str(expected_user):
+            raise PaymentError('This Pi payment belongs to a different account.')
+
+    return payment
+
+
+def pi_payment_is_completed(payment):
+    """True when Pi already reports this payment as completed on-chain."""
+    if not payment:
+        return False
+    transaction = payment.get('transaction') or {}
+    if transaction.get('txid'):
+        return True
+    return str(payment.get('status') or '').upper() in ('COMPLETED', 'CONFIRMED')
 

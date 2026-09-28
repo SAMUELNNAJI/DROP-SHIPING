@@ -153,16 +153,25 @@ PAYPAL_API_BASE = os.environ.get(
 # Pi Network — the app's API key (from the Pi Developer Portal) authorises the
 # server-side approve/complete calls made by the Pi Browser SDK flow.
 PI_API_KEY = os.environ.get('PI_API_KEY', '').strip()
-# Wallet that receives Pi payments (also shown to buyers who pay from a normal
-# browser, where the Pi SDK is unavailable).
+# Wallet that receives Pi payments. This must match the wallet registered on the
+# app in the Pi Developer Portal — the server cross-checks every payment against
+# it before completing, so a mismatch is rejected instead of silently accepted.
 PI_WALLET_ADDRESS = os.environ.get('PI_WALLET_ADDRESS', '').strip()
 PI_API_BASE = os.environ.get('PI_API_BASE', 'https://api.minepi.com').rstrip('/')
 # Pi Developer Portal sandbox mode. Leave off for the production Pi app.
 PI_SANDBOX = env_bool('PI_SANDBOX', default=False)
-# Allow a manual Pi transfer (buyer sends Pi to PI_WALLET_ADDRESS and quotes the
-# order reference) when the Pi Browser SDK cannot be used. The order is recorded
-# as awaiting confirmation so a human can reconcile it.
-PI_MANUAL_TRANSFER = env_bool('PI_MANUAL_TRANSFER', default=True)
+
+# Pi payments run through the Pi Browser SDK gateway: the buyer is handed to
+# Pi's own payment sheet, and the server then approves + completes the payment
+# with this app's API key. That is the only flow that can verify a payment
+# automatically, so the Pi option is reserved for Pi Browser users and a
+# non-Pi-Browser buyer is never charged. Set this to False only if you
+# deliberately want the older manual-transfer flow back.
+PI_REQUIRE_BROWSER = env_bool('PI_REQUIRE_BROWSER', default=True)
+# Manual Pi transfer (buyer sends Pi to PI_WALLET_ADDRESS quoting the reference
+# and an admin reconciles it later). Ignored while PI_REQUIRE_BROWSER is on, and
+# off by default: it creates no order and no stock movement on its own.
+PI_MANUAL_TRANSFER = env_bool('PI_MANUAL_TRANSFER', default=False) and not PI_REQUIRE_BROWSER
 
 # Shop prices are stored in USD. These rates decide how much the buyer is
 # charged when they pick a local rail (Naira) or Pi.

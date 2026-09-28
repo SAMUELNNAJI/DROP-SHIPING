@@ -201,7 +201,7 @@
             </div>
             <div class="ck-pay-info">
               <p class="ck-pay-name">Pi Network Wallet <span class="ck-pay-badge ck-pay-badge--crypto">Crypto</span></p>
-              <p class="ck-pay-sub">{% if payment_config.pi.sdk %}Pay with Pi inside the Pi Browser{% elif payment_config.pi.manual %}Send Pi to the DropHub wallet{% else %}Not available right now{% endif %}</p>
+              <p class="ck-pay-sub">{% if payment_config.pi.sdk %}Pay instantly in the Pi Browser{% elif payment_config.pi.manual %}Send Pi to the DropHub wallet{% else %}Not available right now{% endif %}</p>
             </div>
             <span class="ck-radio" aria-hidden="true">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -268,19 +268,15 @@
           <a class="ck-provider-alt" id="paypalRedirect" href="#" hidden>Having trouble? Continue on PayPal's website</a>
         </div>
 
-        <!-- Pi Network — manual transfer, used outside the Pi Browser -->
+        <!-- Pi Network — payments run through Pi's gateway inside Pi Browser -->
         <div class="ck-provider" id="piPanel" hidden>
-          <p class="ck-provider-title">Send Pi to the DropHub wallet</p>
-          <p class="ck-provider-text">
-            Send the exact amount below to the DropHub wallet address and use the reference as the memo.
-            Your order is recorded straight away and marked <b>awaiting confirmation</b> until the transfer is checked.
+          <p class="ck-provider-title">Pay with Pi</p>
+          <p class="ck-provider-text" id="piPanelText">
+            Pi's own payment sheet will open and confirm the payment automatically.
+            Your order is created the moment Pi confirms it.
           </p>
-          <div class="ck-provider-row"><span>Wallet</span><code id="piWallet">—</code></div>
-          <div class="ck-provider-row"><span>Amount</span><code id="piAmount">—</code></div>
-          <div class="ck-provider-row"><span>Memo</span><code id="piMemo">—</code></div>
           <div class="ck-provider-actions">
-            <button type="button" class="ck-btn-ghost" id="piCopyBtn">Copy wallet address</button>
-            <button type="button" class="ck-btn-primary" id="piClaimBtn">I have sent the Pi</button>
+            <a class="ck-btn-ghost" id="piPiBrowserLink" href="#" hidden>Open in Pi Browser</a>
           </div>
         </div>
       </section>
@@ -938,7 +934,7 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     }
 
-    /* ── Pi Network: Pi Browser SDK, or a manual transfer elsewhere ── */
+    /* ── Pi Network: the Pi Browser gateway ── */
     function ensurePiSdk() {
       if (window.Pi) return Promise.resolve();
       return loadScript('https://sdk.minepi.com/pi-sdk.js');
@@ -951,61 +947,52 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!txid || !payment.identifier) return;
       postJson('/dashboards/checkout/pi/complete/', {
         payment_id: payment.identifier,
-        txid: txid
+        txid: txid,
+        reference: lastStart ? lastStart.reference : ''
       }).catch(function () { /* reported server-side */ });
-    }
-
-    function showPiManual(data) {
-      lastStart = { method: 'pi', reference: data.reference, at: Date.now() };
-      document.getElementById('piWallet').textContent = data.wallet_address || '—';
-      document.getElementById('piAmount').textContent = 'π ' + data.amount_pi;
-      document.getElementById('piMemo').textContent = data.memo || data.reference;
-      if (piPanel) piPanel.hidden = false;
-      setBusy(false, 'Pay');
-      setStatus('Send the exact amount to the DropHub wallet, then confirm below.', 'warn');
-    }
-
-    /* Manual-transfer instructions built from the server config, used when
-       the Pi Browser SDK cannot run (i.e. any normal browser). */
-    function piManualData(data) {
-      return {
-        reference: data.reference,
-        amount_pi: data.amount_pi || data.amount,
-        memo: data.memo || data.reference,
-        wallet_address: data.wallet_address || (config.pi || {}).wallet_address || ''
-      };
     }
 
     /* The Pi SDK only actually works inside the Pi Browser. There the
        user agent contains "PiBrowser". In every other browser the SDK
        loads and init() resolves, but authenticate()/createPayment() hang
        forever without calling any callback — which used to leave the
-       button stuck on "Starting…". So we only try the SDK flow when we
-       really are in the Pi Browser, and show the manual transfer
-       everywhere else. */
+       button stuck on "Starting…". So we only ever start the SDK flow when
+       we really are in the Pi Browser, and everywhere else we simply tell
+       the buyer to reopen this page in Pi Browser. */
     function isPiBrowser() {
       return /PiBrowser|PiPhone/i.test(navigator.userAgent || '');
     }
 
+    /* Show the "open in Pi Browser" panel. Nothing is charged and no order
+       exists — the buyer simply pays the same way once they switch over. */
+    function showPiBrowserNeeded() {
+      if (piPanel) piPanel.hidden = false;
+      setBusy(false, 'Pay');
+      setStatus(
+        'Pi payments are made inside the Pi Browser. Open this page in Pi Browser to pay with Pi — nothing has been charged.',
+        'warn'
+      );
+    }
+
     function payWithPi(data) {
       lastStart = { method: 'pi', reference: data.reference, at: Date.now() };
+
       if (data.mode !== 'sdk') {
-        showPiManual(data);
+        setBusy(false, 'Pay');
+        setStatus('Pi payments are not available right now. Please choose Paystack or PayPal.', 'error');
         return Promise.resolve(null);
       }
+
       if (!isPiBrowser()) {
-        /* A normal browser cannot talk to the Pi wallet — offer the
-           manual transfer straight away instead of a silent hang. */
-        showPiManual(piManualData(data));
-        setStatus('Pi wallet payments open inside the Pi Browser. Send the transfer below and confirm it.', 'warn');
+        showPiBrowserNeeded();
         return Promise.resolve(null);
       }
-      /* Real Pi Browser: run the native one-tap flow. If anything still
-         fails, fall back to the manual transfer so the buyer is never
-         stuck. */
+
+      /* Real Pi Browser: run the native one-tap flow. */
+      setStatus('Waiting for you to approve the payment in Pi…', 'ok');
       return ensurePiSdk().then(function () {
         if (!window.Pi) {
-          showPiManual(piManualData(data));
+          showPiBrowserNeeded();
           return null;
         }
         var initPromise;
@@ -1025,15 +1012,19 @@ document.addEventListener('DOMContentLoaded', function () {
               metadata: { reference: data.reference, amount_usd: data.amount_usd }
             }, {
               onReadyForServerApproval: function (paymentId) {
-                postJson('/dashboards/checkout/pi/approve/', { payment_id: paymentId })
-                  .catch(function (error) { setStatus(error.message, 'error'); });
+                postJson('/dashboards/checkout/pi/approve/', {
+                  payment_id: paymentId,
+                  reference: data.reference
+                }).catch(function (error) { setStatus(error.message, 'error'); });
               },
               onReadyForServerCompletion: function (paymentId, txid) {
-                setStatus('Pi payment submitted — finalising your order…', 'ok');
+                setStatus('Pi confirmed the payment — creating your order…', 'ok');
                 postJson('/dashboards/checkout/pi/complete/', {
                   payment_id: paymentId,
-                  txid: txid
+                  txid: txid,
+                  reference: data.reference
                 }).then(goToSuccess).catch(function (error) {
+                  setBusy(false);
                   setStatus(error.message, 'error');
                 });
               },
@@ -1049,38 +1040,10 @@ document.addEventListener('DOMContentLoaded', function () {
             return null;
           })
           .catch(function () {
-            /* Not inside the Pi Browser (or the SDK refused) — offer the
-               manual transfer instead of a dead-end error. */
-            showPiManual(piManualData(data));
+            setBusy(false);
+            setStatus('Pi could not start the payment. Please try again.', 'error');
             return null;
           });
-      }).catch(function () {
-        showPiManual(piManualData(data));
-        return null;
-      });
-    }
-
-    /* ── Manual Pi transfer buttons ── */
-    var piClaimBtn = document.getElementById('piClaimBtn');
-    if (piClaimBtn) {
-      piClaimBtn.addEventListener('click', function () {
-        if (!lastStart || lastStart.method !== 'pi') {
-          setStatus('Start the Pi payment again so we can match your transfer.', 'warn');
-          return;
-        }
-        setBusy(true, 'Recording…');
-        postJson('/dashboards/checkout/pi/manual/', { reference: lastStart.reference })
-          .then(goToSuccess)
-          .catch(function (error) { setBusy(false); setStatus(error.message, 'error'); });
-      });
-    }
-
-    var piCopyBtn = document.getElementById('piCopyBtn');
-    if (piCopyBtn) {
-      piCopyBtn.addEventListener('click', function () {
-        var wallet = document.getElementById('piWallet').textContent;
-        if (navigator.clipboard) navigator.clipboard.writeText(wallet);
-        setStatus('DropHub Pi wallet address copied.', 'ok');
       });
     }
 

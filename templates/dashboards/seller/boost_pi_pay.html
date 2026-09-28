@@ -1,0 +1,268 @@
+{% load static %}
+<div class="dashboard-page" data-page-title="Pay with Pi — Boost">
+
+  <a class="pform-back" href="/dashboards/seller/products/" data-dashboard-link>
+    <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Back to products
+  </a>
+
+  <!-- Header -->
+  <div class="boost-hero" style="margin-bottom:24px">
+    <div class="boost-hero__left">
+      <img src="{{ boost.product.image_src }}" alt="{{ boost.product.name }}"
+           onerror="this.style.display='none'" />
+      <div>
+        <span style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6)">Boosting</span>
+        <h2>{{ boost.product.name }}</h2>
+        <p>{{ boost.plan_name }} · {{ boost.duration_days }} day{{ boost.duration_days|pluralize }} · π{{ pi_amount }}</p>
+      </div>
+    </div>
+    <div class="boost-hero__right">
+      <span class="boost-hero__badge">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 8h3.8a2.2 2.2 0 0 1 0 4.4H9.5V8zM9.5 12.4V16"/></svg>
+        Pi Network payment
+      </span>
+    </div>
+  </div>
+
+  <div class="boost-checkout-grid">
+
+    <!-- LEFT: what happens next -->
+    <div class="boost-checkout-left">
+      <div class="pi-step">
+        <span class="pi-step__num">1</span>
+        <div class="pi-step__body">
+          <strong>Confirm the payment in Pi</strong>
+          <p>Pi's own payment sheet opens next. You approve the payment there with your Pi passphrase.</p>
+        </div>
+      </div>
+
+      <div class="pi-step">
+        <span class="pi-step__num">2</span>
+        <div class="pi-step__body">
+          <strong>We verify it automatically</strong>
+          <p>DropHub checks the payment with Pi's API and confirms it is addressed to us and covers the full amount.</p>
+        </div>
+      </div>
+
+      <div class="pi-step">
+        <span class="pi-step__num">3</span>
+        <div class="pi-step__body">
+          <strong>Your product is boosted instantly</strong>
+          <p>As soon as Pi confirms, <b>{{ boost.product.name }}</b> goes live as a featured product for {{ boost.duration_days }} day{{ boost.duration_days|pluralize }}. No waiting, no manual approval.</p>
+        </div>
+      </div>
+    </div><!-- /.boost-checkout-left -->
+
+    <!-- RIGHT: the actual payment -->
+    <div class="boost-summary">
+      <h3>Pay with Pi</h3>
+
+      <div class="boost-summary__row">
+        <span>Plan</span>
+        <b>{{ boost.plan_name }}</b>
+      </div>
+      <div class="boost-summary__row">
+        <span>Duration</span>
+        <b>{{ boost.duration_days }} day{{ boost.duration_days|pluralize }}</b>
+      </div>
+      <div class="boost-summary__divider"></div>
+      <div class="boost-summary__row boost-summary__row--total">
+        <span>Total</span>
+        <b>π{{ pi_amount }}</b>
+      </div>
+
+      <div class="bpi-status" id="bpiStatus" role="status" aria-live="polite">
+        Tap the button below to open Pi's payment sheet.
+      </div>
+
+      <button class="boost-submit-btn" type="button" id="bpiPayBtn"
+              data-reference="{{ intent_reference }}" data-amount="{{ pi_amount }}">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3.6 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9-5.3-2.9-5.3 2.9 1.1-5.9L3.5 9.8l5.9-.8z"/></svg>
+        <span id="bpiBtnLabel">Pay with Pi</span>
+      </button>
+
+      <p class="boost-summary__note">
+        <svg class="sic" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11.2 14.2 15 10"/></svg>
+        Your boost is only activated after Pi confirms the payment.
+      </p>
+    </div>
+
+  </div><!-- /.boost-checkout-grid -->
+
+</div>
+
+<style>
+/* Reuse the Pi step list styling from the manual-claim page. */
+.pi-step {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 18px 0; border-bottom: 1px solid rgba(28,48,86,.07);
+}
+.pi-step:last-child { border-bottom: none; }
+.pi-step__num {
+  width: 32px; height: 32px; flex-shrink: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7048e8, #a78bfa);
+  color: #fff; font-size: 14px; font-weight: 800;
+  display: grid; place-items: center;
+}
+.pi-step__body { flex: 1; min-width: 0; }
+.pi-step__body strong { display: block; font-size: 14.5px; font-weight: 800; color: #16223c; margin-bottom: 4px; }
+.pi-step__body p { margin: 0; font-size: 13.5px; color: #6b7a90; line-height: 1.6; }
+
+<script>
+(function () {
+  var PI_AMOUNT    = parseFloat('{{ pi_amount|escapejs }}');
+  var REFERENCE    = '{{ intent_reference|escapejs }}';
+  var BOOST_PK     = {{ boost.pk }};
+  var SANDBOX      = {% if pi_sandbox %}true{% else %}false{% endif %};
+  var APPROVE_URL  = '/dashboards/checkout/pi/approve/';
+  var COMPLETE_URL = '/dashboards/checkout/pi/complete/';
+
+  var statusEl = document.getElementById('bpiStatus');
+  var payBtn   = document.getElementById('bpiPayBtn');
+  var btnLabel = document.getElementById('bpiBtnLabel');
+  var idleLabel = 'Pay π' + PI_AMOUNT.toFixed(2) + ' with Pi';
+
+  function say(message, kind) {
+    statusEl.textContent = message;
+    statusEl.className = 'bpi-status' + (kind ? ' bpi-status--' + kind : '');
+  }
+  function busy(on, label) {
+    payBtn.disabled = !!on;
+    btnLabel.textContent = label || (on ? 'Waiting for Pi…' : idleLabel);
+  }
+
+  function getCookie(name) {
+    var match = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return match ? decodeURIComponent(match[2]) : '';
+  }
+
+  function postJson(url, body) {
+    return fetch(url, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken'),
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: JSON.stringify(body)
+    }).then(function (response) {
+      return response.json().catch(function () { return {}; }).then(function (data) {
+        if (!response.ok || data.error) {
+          throw new Error(data.error || 'Something went wrong. Please try again.');
+        }
+        return data;
+      });
+    });
+  }
+
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      var el = document.createElement('script');
+      el.src = src; el.async = true;
+      el.onload = resolve;
+      el.onerror = function () { reject(new Error('Could not load the Pi SDK.')); };
+      document.head.appendChild(el);
+    });
+  }
+
+  function ensureSdk() {
+    if (window.Pi) return Promise.resolve();
+    return loadScript('https://sdk.minepi.com/pi-sdk.js');
+  }
+
+  /* The SDK only reaches the Pi wallet inside the Pi Browser. Anywhere else
+     authenticate() hangs forever without ever calling back, so we never
+     start it and the seller is told why instead. */
+  function isPiBrowser() {
+    return /PiBrowser|PiPhone/i.test(navigator.userAgent || '');
+  }
+
+  function onIncompletePayment(payment) {
+    /* Pi found an earlier payment that never finished — hand its txid over so
+       the server settles it instead of losing the money. */
+    var txid = payment && payment.transaction && payment.transaction.txid;
+    if (!txid || !payment.identifier) return;
+    postJson(COMPLETE_URL, {
+      payment_id: payment.identifier,
+      txid: txid,
+      reference: REFERENCE
+    }).catch(function () { /* recorded server-side */ });
+  }
+
+  function pay() {
+    if (!isPiBrowser()) {
+      say('Pi payments open inside the Pi Browser. Open this page in Pi Browser, then tap the button again.', 'warn');
+      return;
+    }
+
+    busy(true, 'Waiting for Pi…');
+    say('Waiting for you to approve the payment in Pi…');
+
+    ensureSdk()
+      .then(function () { return window.Pi.init({ version: '2.0', sandbox: SANDBOX }); })
+      .then(function () { return window.Pi.authenticate(['payments', 'username'], onIncompletePayment); })
+      .then(function () {
+        window.Pi.createPayment({
+          amount: PI_AMOUNT,
+          memo: 'DropHub boost ' + REFERENCE,
+          metadata: { reference: REFERENCE, purpose: 'boost', boost_pk: BOOST_PK }
+        }, {
+          onReadyForServerApproval: function (paymentId) {
+            postJson(APPROVE_URL, { payment_id: paymentId, reference: REFERENCE })
+              .catch(function (error) { say(error.message, 'err'); });
+          },
+          onReadyForServerCompletion: function (paymentId, txid) {
+            say('Pi confirmed the payment — activating your boost…', 'ok');
+            postJson(COMPLETE_URL, {
+              payment_id: paymentId,
+              txid: txid,
+              reference: REFERENCE
+            }).then(function (data) {
+              say('Paid — your product is now boosted.', 'ok');
+              window.location.href = data.redirect || '/dashboards/seller/products/';
+            }).catch(function (error) {
+              busy(false);
+              say(error.message, 'err');
+            });
+          },
+          onCancel: function () {
+            busy(false);
+            say('Payment cancelled — nothing has been charged.', 'warn');
+          },
+          onError: function (error) {
+            busy(false);
+            say((error && error.message) || 'Pi could not complete that payment.', 'err');
+          }
+        });
+      })
+      .catch(function (error) {
+        busy(false);
+        say((error && error.message) || 'Pi could not start the payment. Please try again.', 'err');
+      });
+  }
+
+  payBtn.addEventListener('click', pay);
+
+  /* Say so up front if this page cannot reach the Pi wallet at all. */
+  if (!isPiBrowser()) {
+    say('Open this page in the Pi Browser to pay with Pi. You have not been charged.', 'warn');
+  }
+})();
+</script>
+
+
+/* Status line above the pay button */
+.bpi-status {
+  margin: 16px 0 0; padding: 11px 13px;
+  border-radius: 11px; background: #f4f7fd;
+  border: 1px solid rgba(28,48,86,.08);
+  font-size: 13px; color: #16223c; line-height: 1.55;
+}
+.bpi-status--ok   { background: rgba(34,197,94,.08);  border-color: rgba(34,197,94,.28);  color: #15803d; }
+.bpi-status--warn { background: rgba(234,179,60,.10); border-color: rgba(234,179,60,.32); color: #b45309; }
+.bpi-status--err  { background: rgba(229,72,77,.08);  border-color: rgba(229,72,77,.28);  color: #c02a2f; }
+.boost-submit-btn[disabled] { opacity: .6; pointer-events: none; }
+</style>

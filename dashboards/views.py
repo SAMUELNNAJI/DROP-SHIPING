@@ -1,5 +1,6 @@
 import json
 from decimal import Decimal
+from uuid import uuid4
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -230,7 +231,7 @@ def admin_pi_confirm(request, pk):
                 boost.status     = BoostOrder.STATUS_PAID
                 boost.paid_at    = timezone.now()
                 boost.expires_at = timezone.now() + timezone.timedelta(days=boost.duration_days)
-                boost.save(update_fields=["status", "paid_at", "expires_at", "updated_at"])
+                boost.save(update_fields=["status", "paid_at", "expires_at"])
             intent.status  = PaymentIntent.STATUS_PAID
             intent.paid_at = timezone.now()
             intent.note    = (intent.note or "") + "  ✓ Admin confirmed Pi boost transfer."
@@ -1705,10 +1706,12 @@ def seller_boost_checkout(request, product_pk):
 
         elif payment_method == "paystack":
             try:
-                ngn_kobo = int(float(plan.price) * float(CurrencyRate.ngn_per_usd()) * 100)
-                init_data = _pay.paystack_init(
-                    email=request.user.email,
-                    amount_kobo=ngn_kobo,
+                ngn_amount = _pay.money(
+                    Decimal(str(boost.amount)) * Decimal(str(CurrencyRate.ngn_per_usd())), "1"
+                )
+                init_data = _pay.paystack_initialize(
+                    email=request.user.email or f"{request.user.username}@drophub.local",
+                    amount_ngn=ngn_amount,
                     reference=boost.reference,
                     callback_url=request.build_absolute_uri(
                         f"/dashboards/boost/paystack/callback/{boost.pk}/"
@@ -1728,8 +1731,44 @@ def seller_boost_checkout(request, product_pk):
                 return redirect("seller_boost_checkout", product_pk=product.pk)
 
         elif payment_method == "pi":
-            # Pi: same manual-transfer flow as checkout
-            return redirect("boost_pi_claim", boost_pk=boost.pk)
+            # Pi is paid through the Pi Browser SDK gateway, exactly like the
+            # marketplace checkout: create the intent now and hand the seller to
+            # Pi's own payment sheet. The boost is activated the moment Pi
+            # confirms the payment — no admin review, no self-reported txid.
+            if not _pay.pi_sdk_enabled():
+                boost.delete()
+                messages.error(
+                    request,
+                    "Pi payments are not available right now. Please choose PayPal or Paystack.",
+                )
+                return redirect("seller_boost_checkout", product_pk=product.pk)
+
+            # Close any earlier unfinished boost attempt so two boosts can never
+            # be open against the same product at once.
+            PaymentIntent.objects.filter(
+                user=request.user,
+                purpose=PaymentIntent.PURPOSE_BOOST,
+                status=PaymentIntent.STATUS_PENDING,
+            ).update(status=PaymentIntent.STATUS_CANCELLED, updated_at=timezone.now())
+
+            intent = PaymentIntent.objects.create(
+                user=request.user,
+                reference="PAY-%s" % uuid4().hex[:14].upper(),
+                method="pi",
+                purpose=PaymentIntent.PURPOSE_BOOST,
+                subtotal_usd=plan.price,
+                amount_usd=plan.price,
+                currency="PI",
+                amount=amount,
+                provider_payload={
+                    "mode": "sdk",
+                    "purpose": PaymentIntent.PURPOSE_BOOST,
+                    "boost_pk": boost.pk,
+                    "boost_reference": boost.reference,
+                    "plan_name": boost.plan_name,
+                },
+            )
+            return redirect("boost_pi_pay", boost_pk=boost.pk)
 
         else:
             boost.delete()
@@ -2340,7 +2379,8 @@ def _activate_boost(boost):
     boost.status     = BoostOrder.STATUS_PAID
     boost.paid_at    = timezone.now()
     boost.expires_at = timezone.now() + timezone.timedelta(days=boost.duration_days)
-    boost.save(update_fields=["status", "paid_at", "expires_at", "updated_at"])
+    # BoostOrder has no updated_at column.
+    boost.save(update_fields=["status", "paid_at", "expires_at"])
 
 
 # ── PayPal return (buyer approved the order) ─────────────────
@@ -2407,11 +2447,80 @@ def boost_paystack_callback(request, boost_pk):
     return redirect("seller_products")
 
 
+# ── Pi Network: the SDK payment page (Pi Browser gateway) ───
+@login_required
+def boost_pi_pay(request, boost_pk):
+    """Hand the seller to Pi's own payment sheet for a boost.
+
+    This is the automated counterpart of the old manual-transfer claim page: the
+    Pi SDK opens a payment, the server approves and completes it, and
+    ``_settle_boost_intent`` activates the boost immediately. Nothing is created
+    until Pi itself confirms the money.
+    """
+    from django.conf import settings as _settings
+    from dropshipping import payments as _pay
+
+    boost = get_object_or_404(
+        BoostOrder, pk=boost_pk, seller=request.user, status=BoostOrder.STATUS_PENDING
+    )
+
+    # The intent was created when the seller chose Pi on the checkout page.
+    intent = (
+        PaymentIntent.objects.filter(
+            user=request.user,
+            purpose=PaymentIntent.PURPOSE_BOOST,
+            method="pi",
+            status=PaymentIntent.STATUS_PENDING,
+        )
+        .order_by("-created_at")
+        .first()
+    )
+    if intent is None or (intent.provider_payload or {}).get("boost_pk") != boost.pk:
+        messages.error(request, "That boost payment is no longer open. Please start again.")
+        return redirect("seller_boost_checkout", product_pk=boost.product_id)
+
+    if not _pay.pi_sdk_enabled():
+        boost.delete()
+        messages.error(
+            request,
+            "Pi payments are not available right now. Please choose PayPal or Paystack.",
+        )
+        return redirect("seller_boost_checkout", product_pk=boost.product_id)
+
+    context = dashboard_context(request, "seller", "products")
+    context.update({
+        "boost":             boost,
+        "intent_reference":  intent.reference,
+        "pi_amount":         str(intent.amount),
+        "pi_sandbox":        bool(_settings.PI_SANDBOX),
+        "page_title":        "Pay with Pi",
+        "dashboard_template": "dashboards/seller/boost_pi_pay.html",
+    })
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return render(request, "dashboards/seller/boost_pi_pay.html", context)
+    return render(request, "dashboards/base.html", context)
+
+
 # ── Pi Network: manual claim page ────────────────────────────
 @login_required
 def boost_pi_claim(request, boost_pk):
     """Show the seller the DropHub Pi wallet address to transfer to,
-    and let them report the transfer so admin can confirm it."""
+    and let them report the transfer so admin can confirm it.
+
+    Legacy manual flow. With ``PI_REQUIRE_BROWSER`` on (the default) the seller
+    is sent to the Pi SDK page instead, because a self-reported transfer can
+    never be verified automatically. Kept working behind the flag so nothing
+    breaks if you deliberately turn the requirement off.
+    """
+    from dropshipping import payments as _pay
+
+    if _pay.pi_browser_required():
+        messages.error(
+            request,
+            "Pi payments must be completed in the Pi Browser so we can verify them automatically.",
+        )
+        return redirect("seller_boost_checkout", product_pk=boost_pk)
+
     boost = get_object_or_404(BoostOrder, pk=boost_pk, seller=request.user,
                                status=BoostOrder.STATUS_PENDING)
     from django.conf import settings as _settings
@@ -2422,7 +2531,7 @@ def boost_pi_claim(request, boost_pk):
         sender_wallet = request.POST.get("sender_wallet", "").strip()
         tx_id         = request.POST.get("tx_id", "").strip()
         boost.provider_reference = tx_id or boost.reference
-        boost.save(update_fields=["provider_reference", "updated_at"])
+        boost.save(update_fields=["provider_reference"])
         # Store claim details in a PaymentIntent so admin Pi panel picks it up
         from .models import PaymentIntent
         PaymentIntent.objects.get_or_create(

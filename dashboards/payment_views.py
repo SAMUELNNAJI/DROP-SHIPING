@@ -76,7 +76,8 @@ def cart_snapshot(user):
 
 def provider_config(totals=None):
     """Browser-safe provider configuration (never contains a secret key)."""
-    manual_pi = bool(settings.PI_MANUAL_TRANSFER and settings.PI_WALLET_ADDRESS)
+    manual_pi = payments.pi_manual_allowed()
+    sdk_pi = payments.pi_sdk_enabled()
     config = {
         'paystack': {
             'enabled': payments.paystack_enabled(),
@@ -89,9 +90,11 @@ def provider_config(totals=None):
             'mode': settings.PAYPAL_MODE,
         },
         'pi': {
-            'enabled': payments.pi_sdk_enabled() or manual_pi,
-            'sdk': payments.pi_sdk_enabled(),
+            'enabled': sdk_pi or manual_pi,
+            'sdk': sdk_pi,
             'manual': manual_pi,
+            # Pi is paid through Pi's own gateway, so the Pi Browser is required.
+            'require_browser': payments.pi_browser_required(),
             'sandbox': settings.PI_SANDBOX,
             'wallet_address': settings.PI_WALLET_ADDRESS,
         },
@@ -347,14 +350,6 @@ def _settle_intent(intent, request=None):
             '(%s). Our team has been notified and will contact you.' % exc
         ) from exc
 
-
-def _as_decimal(value, default='0'):
-    try:
-        return Decimal(str(value))
-    except (InvalidOperation, TypeError, ValueError):
-        return Decimal(default)
-
-
 # ══════════════════════════════════════════════════════════════
 #  Starting a payment
 # ══════════════════════════════════════════════════════════════
@@ -416,23 +411,27 @@ def _start_paypal(request, intent):
 
 
 def _start_pi(intent):
-    """Pi runs inside the Pi Browser; otherwise offer the manual transfer."""
-    if payments.pi_sdk_enabled():
-        return {'mode': 'sdk'}
+    """Open a Pi payment through Pi's own gateway (Pi Browser SDK).
 
-    wallet = settings.PI_WALLET_ADDRESS
-    if settings.PI_MANUAL_TRANSFER and wallet:
-        intent.note = 'Manual Pi transfer to %s — awaiting confirmation' % wallet[:20]
-        intent.provider_payload = {'mode': 'manual', 'wallet_address': wallet}
-        intent.save(update_fields=['note', 'provider_payload', 'updated_at'])
-        return {
-            'mode': 'manual',
-            'wallet_address': wallet,
-            'memo': intent.reference,
-            'amount_pi': str(intent.amount),
-        }
+    There is intentionally no silent fallback to a manual wallet transfer: the
+    SDK is the only way a Pi payment can be verified automatically, so a buyer
+    without it is told exactly what to do instead of being quietly switched to a
+    flow that no order ever comes from.
+    """
+    if not payments.pi_sdk_enabled():
+        raise CheckoutError(
+            'Pi payments are not available right now. Please choose Paystack or PayPal.'
+        )
 
-    raise CheckoutError('Pi payments are not configured yet. Please pick another method.')
+    intent.note = 'Pi Browser SDK payment in progress'
+    intent.provider_payload = {'mode': 'sdk', 'purpose': intent.purpose}
+    intent.save(update_fields=['note', 'provider_payload', 'updated_at'])
+
+    return {
+        'mode': 'sdk',
+        'require_browser': True,
+        'sandbox': settings.PI_SANDBOX,
+    }
 
 
 @require_POST
@@ -699,19 +698,43 @@ def paypal_cancel(request):
 #  Pi Network confirmation
 # ═════════════════════════════════════════════════════════════
 
+def _pi_intent_for(request, payload, payment_id=''):
+    """Resolve the Pi intent a Pi Browser callback belongs to.
+
+    The SDK callbacks only carry the Pi ``payment_id``, so they are matched on
+    the reference the page passed along, then on the stored Pi payment id, and
+    only as a last resort on the caller's single pending intent. Resolving by
+    reference (rather than "any pending Pi intent") is what lets a seller who has
+    both a boost and a checkout open pay the right one.
+    """
+    reference = str(payload.get('reference') or '').strip()
+    if reference:
+        intent = _get_intent(reference, request.user, method='pi')
+        if intent is not None:
+            return intent
+    if payment_id:
+        intent = _get_intent_by_provider(request.user, payment_id, method='pi')
+        if intent is not None:
+            return intent
+    return _pending_intent(request.user, 'pi')
+
+
 @require_POST
 @login_required
 def pi_approve(request):
     """The Pi Browser SDK asks the server to approve the payment it just opened."""
     payload = _request_payload(request)
     payment_id = str(payload.get('payment_id') or '').strip()
-    intent = _pending_intent(request.user, 'pi')
-    if intent is None:
-        return JsonResponse({'error': 'No Pi payment is waiting for approval.'}, status=404)
     if not payments.pi_sdk_enabled():
         return JsonResponse({'error': 'Pi payments are not configured on this server.'}, status=503)
     if not payment_id:
         return JsonResponse({'error': 'The Pi SDK did not send a payment id.'}, status=400)
+
+    intent = _pi_intent_for(request, payload, payment_id)
+    if intent is None:
+        return JsonResponse({'error': 'No Pi payment is waiting for approval.'}, status=404)
+    if intent.is_paid:
+        return JsonResponse({'ok': True})
 
     try:
         payments.pi_approve_payment(payment_id)
@@ -719,15 +742,71 @@ def pi_approve(request):
         _fail_intent(intent, str(exc))
         return JsonResponse({'error': str(exc)}, status=502)
 
+    # Remember the Pi payment id immediately so the completion callback resolves
+    # to this exact intent even if the buyer starts another payment meanwhile.
     intent.provider_reference = payment_id
-    intent.save(update_fields=['provider_reference', 'updated_at'])
+    intent.provider_payload = {
+        **(intent.provider_payload or {}),
+        'pi_payment_id': payment_id,
+        'approved_at': timezone.now().isoformat(),
+    }
+    intent.save(update_fields=['provider_reference', 'provider_payload', 'updated_at'])
     return JsonResponse({'ok': True})
+
+
+def _settle_boost_intent(intent):
+    """Activate the BoostOrder a verified Pi boost payment paid for."""
+    from .models import BoostOrder
+
+    boost_pk = (intent.provider_payload or {}).get('boost_pk')
+    if not boost_pk:
+        raise CheckoutError('This Pi payment is not linked to a boost order.')
+
+    boost = BoostOrder.objects.filter(pk=boost_pk, seller=intent.user).first()
+    if boost is None:
+        raise CheckoutError('We could not find the boost order for this payment.')
+
+    if boost.status != BoostOrder.STATUS_PAID:
+        boost.status = BoostOrder.STATUS_PAID
+        boost.paid_at = timezone.now()
+        boost.expires_at = timezone.now() + timezone.timedelta(days=boost.duration_days)
+        boost.payment_reference = intent.reference
+        # BoostOrder has no updated_at column — only name real fields here.
+        boost.save(update_fields=['status', 'paid_at', 'expires_at', 'payment_reference'])
+    return boost
+
+
+def _settle_pi_intent(intent, request=None):
+    """Settle a Pi payment Pi has confirmed, honouring what it was paying for."""
+    if intent.purpose == PaymentIntent.PURPOSE_BOOST:
+        with transaction.atomic():
+            _settle_boost_intent(intent)
+            if intent.status != PaymentIntent.STATUS_PAID:
+                intent.status = PaymentIntent.STATUS_PAID
+                intent.paid_at = timezone.now()
+                intent.save(update_fields=['status', 'paid_at', 'updated_at'])
+        return None
+
+    return _settle_intent(intent, request)
+
+
+def _pi_success_payload(intent, request=None):
+    """Where the browser should go once a Pi payment has settled."""
+    if intent.purpose == PaymentIntent.PURPOSE_BOOST:
+        return {'redirect': reverse('seller_products')}
+    _remember_for_success_page(request, intent)
+    return {'redirect': reverse('checkout-success')}
 
 
 @require_POST
 @login_required
 def pi_complete(request):
-    """Finish a Pi payment with the blockchain transaction id from the client."""
+    """Finish a Pi payment once Pi has confirmed the transaction on-chain.
+
+    The browser's ``txid`` is never trusted on its own: the payment is read back
+    from Pi and must be addressed to this app and cover the full amount before
+    it is completed and the order (or boost) is created.
+    """
     payload = _request_payload(request)
     payment_id = str(payload.get('payment_id') or '').strip()
     txid = str(payload.get('txid') or '').strip()
@@ -736,58 +815,68 @@ def pi_complete(request):
             {'error': 'The Pi payment id and transaction id are both required.'}, status=400
         )
 
-    intent = (
-        _get_intent_by_provider(request.user, payment_id, method='pi')
-        or _pending_intent(request.user, 'pi')
-    )
+    intent = _pi_intent_for(request, payload, payment_id)
     if intent is None:
         return JsonResponse({'error': 'We could not find that Pi payment.'}, status=404)
     if intent.is_paid:
-        _remember_for_success_page(request, intent)
-        return JsonResponse({'ok': True, 'redirect': reverse('checkout-success')})
+        return JsonResponse({'ok': True, **_pi_success_payload(intent, request)})
 
-    # Double-check the amount Pi recorded before completing the payment.
+    # Confirm with Pi that this payment is really ours and fully paid.
     try:
-        remote = payments.pi_get_payment(payment_id)
-    except PaymentError as exc:
-        # The txid comes from the client, so a lookup failure must not block the
-        # completion call — it is logged for follow-up instead.
-        logger.warning('Could not read Pi payment %s before completing it: %s', payment_id, exc)
-        remote = {}
-    remote_amount = _as_decimal((remote or {}).get('amount'))
-    if remote_amount and remote_amount < Decimal(intent.amount):
-        message = 'The Pi amount paid was less than the order total.'
-        _fail_intent(intent, message)
-        return JsonResponse({'error': message}, status=402)
-
-    try:
-        payments.pi_complete_payment(payment_id, txid)
+        remote = payments.pi_verify_payment(payment_id, expected_amount=intent.amount)
     except PaymentError as exc:
         _fail_intent(intent, str(exc))
-        return JsonResponse({'error': str(exc)}, status=502)
+        return JsonResponse({'error': str(exc)}, status=402)
+
+    # Pi has already broadcast this transaction (this is the "you paid earlier
+    # but never came back" path), so there is nothing left to complete — settling
+    # here is what stops that money from being stranded.
+    if not payments.pi_payment_is_completed(remote):
+        try:
+            payments.pi_complete_payment(payment_id, txid)
+        except PaymentError as exc:
+            _fail_intent(intent, str(exc))
+            return JsonResponse({'error': str(exc)}, status=502)
 
     intent.provider_reference = payment_id
-    intent.note = ('txid %s' % txid)[:200]
-    intent.save(update_fields=['provider_reference', 'note', 'updated_at'])
+    intent.note = ('Pi paid via the Pi Browser SDK — txid %s' % txid)[:200]
+    intent.provider_payload = {
+        **(intent.provider_payload or {}),
+        'pi_payment_id': payment_id,
+        'txid': txid,
+        'purpose': intent.purpose,
+        'completed_at': timezone.now().isoformat(),
+    }
+    intent.save(update_fields=['provider_reference', 'note', 'provider_payload', 'updated_at'])
 
     try:
-        _settle_intent(intent, request)
+        _settle_pi_intent(intent, request)
     except CheckoutError as exc:
         return JsonResponse({'error': str(exc)}, status=409)
 
-    return JsonResponse({'ok': True, 'redirect': reverse('checkout-success')})
+    return JsonResponse({'ok': True, **_pi_success_payload(intent, request)})
 
 
 @require_POST
 @login_required
 def pi_manual_claim(request):
-    """Buyer paid Pi from a normal browser: record the claim for admin verification.
+    """Record a manual Pi transfer for admin verification.
 
-    The Pi SDK only runs inside the Pi Browser, so buyers elsewhere send Pi to
-    the wallet in ``PI_WALLET_ADDRESS`` quoting the payment reference.  The
-    intent is marked ``pi_pending`` (not ``paid``) so an admin can verify the
-    transfer in the wallet before orders are created and stock is deducted.
+    Only reachable when ``PI_REQUIRE_BROWSER`` is off. With the Pi Browser
+    required this endpoint is closed: a manual transfer can never be verified
+    automatically, so accepting a self-reported claim would be the one way to
+    create a paid order without money. Pi payments go through
+    :func:`pi_complete` instead.
     """
+    if payments.pi_browser_required():
+        return JsonResponse(
+            {
+                'error': 'Pi payments must be completed in the Pi Browser. '
+                         'Open this page in Pi Browser to pay with Pi.'
+            },
+            status=403,
+        )
+
     payload = _request_payload(request)
     reference = str(payload.get('reference') or '').strip()
     intent = _get_intent(reference, request.user, method='pi')

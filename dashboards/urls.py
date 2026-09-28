@@ -31,6 +31,7 @@ urlpatterns = [
     path("boost/paypal/return/<int:boost_pk>/",    views.boost_paypal_return,    name="boost_paypal_return"),
     path("boost/paypal/cancel/<int:boost_pk>/",    views.boost_paypal_cancel,    name="boost_paypal_cancel"),
     path("boost/paystack/callback/<int:boost_pk>/",views.boost_paystack_callback,name="boost_paystack_callback"),
+    path("boost/pi/pay/<int:boost_pk>/",          views.boost_pi_pay,          name="boost_pi_pay"),
     path("boost/pi/claim/<int:boost_pk>/",         views.boost_pi_claim,         name="boost_pi_claim"),
 
     # ── Seller: orders ────────────────────────────────────────

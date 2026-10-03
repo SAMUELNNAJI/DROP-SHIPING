@@ -8,8 +8,17 @@ from django.core.paginator import Paginator
 from django.db.models import Avg, Q, Sum
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+
+# Redirects unauthenticated/non-staff users to the custom signin page
+# instead of the Django /admin/login/ page.
+def admin_required(view_func):
+    decorated = user_passes_test(
+        lambda u: u.is_active and u.is_staff,
+        login_url='/signin/',
+        redirect_field_name='next',
+    )(view_func)
+    return decorated
 from django.views.decorators.http import require_POST
 from django.utils import timezone
 
@@ -57,7 +66,7 @@ def buyer_dashboard(request):
     return dashboard_page(request, "buyer", "overview")
 
 
-@staff_member_required
+@admin_required
 def admin_dashboard(request):
     return dashboard_page(request, "admin", "overview")
 
@@ -94,7 +103,7 @@ SECTION_TITLES = {
 }
 
 
-@staff_member_required
+@admin_required
 def admin_posts(request):
     posts = BlogPost.objects.all().order_by("-created_at")
     context = dashboard_context(request, "admin", "posts")
@@ -111,7 +120,7 @@ def admin_posts(request):
     return render(request, "dashboards/base.html", context)
 
 
-@staff_member_required
+@admin_required
 @require_POST
 def admin_post_create(request):
     form = BlogPostForm(request.POST, request.FILES)
@@ -121,7 +130,7 @@ def admin_post_create(request):
     return redirect("admin_posts")
 
 
-@staff_member_required
+@admin_required
 def admin_post_edit(request, pk):
     post = get_object_or_404(BlogPost, pk=pk)
     if request.method == "POST":
@@ -149,7 +158,7 @@ def admin_post_edit(request, pk):
     return render(request, "dashboards/base.html", context)
 
 
-@staff_member_required
+@admin_required
 @require_POST
 def admin_post_delete(request, pk):
     get_object_or_404(BlogPost, pk=pk).delete(); messages.success(request, "Blog post deleted.")
@@ -182,7 +191,7 @@ def _run_auto_confirm():
 #  ADMIN: Pi payment verification (manual wallet transfers)
 # ═══════════════════════════════════════════════════════════════
 
-@staff_member_required
+@admin_required
 def admin_pi_payments(request):
     """Admin: list all Pi payments awaiting manual wallet verification."""
     context = dashboard_context(request, "admin", "pi-payments")
@@ -212,7 +221,7 @@ def admin_pi_payments(request):
     return render(request, "dashboards/base.html", context)
 
 
-@staff_member_required
+@admin_required
 @require_POST
 def admin_pi_confirm(request, pk):
     """Admin: verify Pi transfer in wallet then create orders via finalize_intent
@@ -287,7 +296,7 @@ def admin_pi_reject(request, pk):
     return redirect("admin_pi_payments")
 
 
-@staff_member_required
+@admin_required
 @require_POST
 def admin_pi_reclaim(request, pk):
     """Admin: reset a failed/cancelled Pi intent back to pending so buyer can retry."""
@@ -1251,7 +1260,7 @@ def order_request_refund(request, pk):
 
 
 @require_POST
-@staff_member_required
+@admin_required
 def order_release_payout(request, pk):
     """Admin: mark a confirmed order's escrow as paid to the seller.
 
@@ -1292,7 +1301,7 @@ def order_release_payout(request, pk):
 
 
 @require_POST
-@staff_member_required
+@admin_required
 def order_admin_refund(request, pk):
     """Admin resolves a delivery dispute by returning the escrowed payment."""
     order = get_object_or_404(Order, pk=pk)
@@ -1441,7 +1450,7 @@ def seller_request_payout(request):
 #  ADMIN: USERS
 # ═══════════════════════════════════════════════════════════════
 
-@staff_member_required
+@admin_required
 def admin_users_view(request):
     User = get_user_model()
     qs   = User.objects.all().order_by("-date_joined")
@@ -1481,7 +1490,7 @@ def admin_users_view(request):
 
 
 @require_POST
-@staff_member_required
+@admin_required
 def admin_user_toggle_active(request, pk):
     User   = get_user_model()
     target = get_object_or_404(User, pk=pk)
@@ -1493,7 +1502,7 @@ def admin_user_toggle_active(request, pk):
 
 
 @require_POST
-@staff_member_required
+@admin_required
 def admin_user_delete(request, pk):
     User = get_user_model()
     target = get_object_or_404(User, pk=pk)
@@ -1510,7 +1519,7 @@ def admin_user_delete(request, pk):
 #  ADMIN: PRODUCTS
 # ═══════════════════════════════════════════════════════════════
 
-@staff_member_required
+@admin_required
 def admin_products_view(request):
     qs = Product.objects.all().select_related("seller").order_by("-created_at")
 
@@ -1552,7 +1561,7 @@ def admin_products_view(request):
 
 
 @require_POST
-@staff_member_required
+@admin_required
 def admin_product_toggle_status(request, pk):
     product = get_object_or_404(Product, pk=pk)
     product.status = "draft" if product.status == "live" else "live"
@@ -1561,7 +1570,7 @@ def admin_product_toggle_status(request, pk):
 
 
 @require_POST
-@staff_member_required
+@admin_required
 def admin_product_delete(request, pk):
     product = get_object_or_404(Product, pk=pk)
     product.delete()
@@ -1573,7 +1582,7 @@ def admin_product_delete(request, pk):
 #  ADMIN: FEATURED / BOOST PLANS
 # ═══════════════════════════════════════════════════════════════
 
-@staff_member_required
+@admin_required
 def admin_featured_view(request):
     boost_plans = BoostPlan.objects.all()
 
@@ -1608,7 +1617,7 @@ def admin_featured_view(request):
 
 
 @require_POST
-@staff_member_required
+@admin_required
 def admin_boost_plan_create(request):
     form = BoostPlanForm(request.POST)
     if form.is_valid():
@@ -1621,7 +1630,7 @@ def admin_boost_plan_create(request):
 
 
 @require_POST
-@staff_member_required
+@admin_required
 def admin_boost_plan_delete(request, pk):
     plan = get_object_or_404(BoostPlan, pk=pk)
     plan.is_active = False
@@ -1631,7 +1640,7 @@ def admin_boost_plan_delete(request, pk):
 
 
 @require_POST
-@staff_member_required
+@admin_required
 def admin_boost_order_remove(request, pk):
     bo = get_object_or_404(BoostOrder, pk=pk)
     bo.status = BoostOrder.STATUS_EXPIRED
@@ -2098,7 +2107,7 @@ def checkout_success_view(request):
 #  ADMIN: VERIFICATION DETAIL
 # ═══════════════════════════════════════════════════════════════
 
-@staff_member_required
+@admin_required
 def admin_verification_detail(request, pk):
     """Show full verification document for a specific seller — admin only."""
     verification = get_object_or_404(SellerVerification.objects.select_related("user"), pk=pk)
@@ -2117,7 +2126,7 @@ def admin_verification_detail(request, pk):
 #  ADMIN: CURRENCY RATES
 # ═══════════════════════════════════════════════════════════════
 
-@staff_member_required
+@admin_required
 def admin_currency_rates(request):
     """Admin page to view and update USD→NGN and USD→PI exchange rates.
 
@@ -2209,7 +2218,7 @@ def buyer_refund_reply(request, complaint_pk):
 #  ADMIN: refund complaints list + detail/messaging
 # ═══════════════════════════════════════════════════════════════
 
-@staff_member_required
+@admin_required
 def admin_refund_complaints(request):
     """List all refund complaints with filter by status."""
     status_filter = request.GET.get("status", "open")
@@ -2333,7 +2342,7 @@ def admin_refund_complaint_detail(request, pk):
 #  ADMIN: seller payouts — confirmed orders awaiting payment
 # ═══════════════════════════════════════════════════════════════
 
-@staff_member_required
+@admin_required
 def admin_seller_payouts(request):
     """Admin page showing confirmed orders that need to be paid to sellers,
     plus a history of orders already marked paid."""

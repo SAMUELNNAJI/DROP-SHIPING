@@ -34,6 +34,19 @@ class SignInRedirectTests(TestCase):
 
         self.assertRedirects(response, '/dashboards/admin/')
 
+    def test_wrong_password_renders_signin_with_error(self):
+        """Bad credentials must re-render the page (HTTP 200) with the
+        error message — never a 500 — so the VPS login page stays usable."""
+        response = self.client.post(reverse('signin'), {
+            'username': self.admin.username,
+            'password': 'definitely-wrong',
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Invalid username or password.')
+        # The field accepts a username or an email — the label must say so.
+        self.assertContains(response, 'Email or username')
+
 
 class SignOutTests(TestCase):
     def setUp(self):

@@ -47,6 +47,38 @@ class SignInRedirectTests(TestCase):
         # The field accepts a username or an email — the label must say so.
         self.assertContains(response, 'Email or username')
 
+    def test_exact_username_beats_case_insensitive_duplicate(self):
+        """Two accounts whose usernames differ only by case must not collide.
+
+        A blind case-insensitive lookup resolves 'Samuel' to the lower-pk
+        'samuel' row and rejects the correct password — the exact symptom of
+        "works in /admin/, wrong password on /signin/".
+        """
+        User.objects.create_user(
+            username='samuel', email='sam.lower@example.com', password='LowerPass123!'
+        )
+        User.objects.create_user(
+            username='Samuel', email='sam.upper@example.com', password='UpperPass123!'
+        )
+
+        response = self.client.post(reverse('signin'), {
+            'username': 'Samuel',
+            'password': 'UpperPass123!',
+        })
+        self.assertRedirects(
+            response, reverse('dashboard_buyer'), fetch_redirect_response=False
+        )
+
+        # The case-variant account still signs in with its own password.
+        self.client.logout()
+        response = self.client.post(reverse('signin'), {
+            'username': 'samuel',
+            'password': 'LowerPass123!',
+        })
+        self.assertRedirects(
+            response, reverse('dashboard_buyer'), fetch_redirect_response=False
+        )
+
 
 class SignOutTests(TestCase):
     def setUp(self):

@@ -113,7 +113,17 @@ class SignInForm(ErrorClassMixin, AuthenticationForm):
         if not username:
             return username
 
-        user = User.objects.filter(username__iexact=username).first()
-        if user is None:
-            user = User.objects.filter(email__iexact=username).first()
+        # Resolve what the user typed to a real account, in this order:
+        #   1. exact username — identical to what Django's own /admin/ uses,
+        #   2. case-insensitive username,
+        #   3. case-insensitive email (so people can sign in with email).
+        # Exact-first matters: with two accounts whose usernames differ only
+        # by case, a blind iexact lookup could silently authenticate against
+        # the wrong row and report "wrong password" even though /admin/ (which
+        # matches exactly) accepts the same credentials.
+        user = (
+            User.objects.filter(username=username).first()
+            or User.objects.filter(username__iexact=username).first()
+            or User.objects.filter(email__iexact=username).first()
+        )
         return user.username if user else username
